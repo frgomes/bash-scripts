@@ -1,0 +1,1 @@
+sudo ln -s ${JAVA_HOME}/jre/lib/amd64/libnpjp2.so /usr/lib/mozilla/plugins/
