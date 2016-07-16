@@ -13,4 +13,4 @@ r-cran-tidyr
 EOD
 }
 
-apt-cache -t jessie search "^r-.*" | cut -d' ' -f1 | fgrep -v -f <(r_exclude) | xargs sudo apt-get install -V -s
+apt-cache -t jessie search "^r-.*" | cut -d' ' -f1 | fgrep -v -f <(r_exclude) | xargs sudo apt-get install
