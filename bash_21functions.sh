@@ -26,11 +26,11 @@ function _log() {
 # @param cookie: (optional) cookie to be employed in case authorization is required
 #
 function download {
-  url="$1"
-  cookie="$2"
+  local url="$1"
+  local cookie="$2"
 
   if [ ! -z "$1" ] ;then
-    dst=${dst:=$(basename $url)}
+    local dst=${dst:=$(basename $url)}
     pushd ${HOME}/Downloads > /dev/null 2>&1
     if [ ! -f ${dst} ] ;then
       if [ -z "$cookie" ] ;then
@@ -46,7 +46,7 @@ function download {
 
 
 function download_with_cookie_java {
-  url="$1"
+  local url="$1"
 
   if [ ! -z "$1" ] ;then
     download $url "gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie"
