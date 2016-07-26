@@ -23,23 +23,32 @@ function _log() {
 # Employs wget in order to download a file into directory ${HOME}/Downloads
 #
 # @param url:    source URL
-# @param dst:    (optional) destination file name
 # @param cookie: (optional) cookie to be employed in case authorization is required
 #
-function download() {
+function download {
   url="$1"
   cookie="$2"
 
-  dst=${dst:=$(basename $url)}
-
-  pushd ${HOME}/Downloads > /dev/null 2>&1
-  if [ ! -f ${dst} ] ;then
-    if [ -z "$cookie" ] ;then
-      wget --quiet -O "${dst}" "${url}"
-    else
-      _info wget --quiet --no-cookies --no-check-certificate --header "Cookie: ${cookie}" "${url}"
-      wget --quiet --no-cookies --no-check-certificate --header "Cookie: ${cookie}" "${url}"
+  if [ ! -z "$1" ] ;then
+    dst=${dst:=$(basename $url)}
+    pushd ${HOME}/Downloads > /dev/null 2>&1
+    if [ ! -f ${dst} ] ;then
+      if [ -z "$cookie" ] ;then
+        wget --quiet -O "${dst}" "${url}"
+      else
+        _info wget --quiet --no-cookies --no-check-certificate --header "Cookie: ${cookie}" "${url}"
+        wget --quiet --no-cookies --no-check-certificate --header "Cookie: ${cookie}" "${url}"
+      fi
     fi
+    popd > /dev/null 2>&1
   fi
-  popd > /dev/null 2>&1
+}
+
+
+function download_with_cookie_java {
+  url="$1"
+
+  if [ ! -z "$1" ] ;then
+    download $url "gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie"
+  fi
 }
