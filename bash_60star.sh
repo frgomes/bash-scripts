@@ -15,6 +15,19 @@ if [ -d ~/Development/repository ] ;then
     fi
   }
 
+  function _star_complete_branch() {
+    local cur prev opts base
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    opts=""
+
+    local branches=$( ls -p ~/Development/repository | fgrep / | sed 's:/::' )
+    COMPREPLY=( $(compgen -W "${branches}" -- ${cur}) )
+    return 0
+  }
+  complete -F _star_complete_branch branch
+
   # autoload utility functions if activated from a branch
   for script in $(pwd)/Star5/star_functions.sh $(pwd)/Star5/hghelper.sh ;do
     if [ -f $script ] ;then source $script ;fi
