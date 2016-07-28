@@ -16,8 +16,8 @@ if [ -d ~/Development/repository ] ;then
   }
 
   # autoload utility functions if activated from a branch
-  if [ -f $(pwd)/Star5/star_functions.sh ] ;then
-    source $(pwd)/Star5/star_functions.sh
-  fi
+  for script in $(pwd)/Star5/star_functions.sh $(pwd)/Star5/hghelper.sh ;do
+    if [ -f $script ] ;then source $script ;fi
+  done
 
 fi
