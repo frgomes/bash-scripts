@@ -42,6 +42,8 @@ alias kdiff='kdiff3'
 alias vdiff='/opt/developer/idea/bin/idea.sh diff'
 
 
+alias sbt='sbt -mem 4096'
+
 ## finding contents in files easily
 
 alias sources='fgrep -v /target/ | fgrep -v /target_sbt/ | fgrep -v /.hg/ | fgrep -v /.git/ | fgrep -v /.idea/'
