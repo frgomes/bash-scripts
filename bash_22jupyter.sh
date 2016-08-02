@@ -2,7 +2,7 @@
 
 
 function jupyter() {
-  pushd ~/Documents/jupyter
+  pushd ~/Documents/jupyter-notebooks
   ipython notebook
   popd
 }
