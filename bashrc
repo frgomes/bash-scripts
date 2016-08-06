@@ -1,5 +1,8 @@
 #!/bin/bash
 
+##########################################
+## Source this file from your ~/.bashrc ##
+##########################################
 
 dir=$(dirname $(test -L "$BASH_SOURCE" && readlink -f "$BASH_SOURCE" || echo "$BASH_SOURCE"))
 
@@ -18,3 +21,5 @@ shopt -s histappend
 HISTSIZE=50000
 HISTTIMEFORMAT="%Y%m%d_%H%M%S "
 ##HISTFILESIZE= # Does not truncate file size
+
+workon j8s11
