@@ -5,11 +5,11 @@
 ##########################
 
 
-function sbt_lazyci {
-  function sbt_lazyci_git { while true ;do sleep 600; git pull; done }
-  function sbt_lazyci_hg  { while true ;do sleep 600; hg  pull; done }
+function sbt_lazy_ci {
+  function sbt_lazy_ci_git { while true ;do sleep 900; git pull; done }
+  function sbt_lazy_ci_hg  { while true ;do sleep 900; hg  pull; done }
 
-  function sbt_continuous_tests {
+  function sbt_lazy_ci_tests {
     if [ -f ./sbt ] ;then
       ./sbt clean ~test
     else
@@ -18,10 +18,10 @@ function sbt_lazyci {
   }
 
   if [ -d .git ] ;then
-    sbt_lazyci_git &
-    sbt_continuous_tests
+    sbt_lazy_ci_git &
+    sbt_lazy_ci_tests
   elif [ -d .hg ] ;then
-    sbt_lazyci_hg &
-    sbt_continuous_tests
+    sbt_lazy_ci_hg &
+    sbt_lazy_ci_tests
   fi
 }
