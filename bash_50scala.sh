@@ -7,7 +7,7 @@
 
 function sbt_lazy_ci {
   function sbt_lazy_ci_git { while true ;do sleep 900; git pull; done }
-  function sbt_lazy_ci_hg  { while true ;do sleep 900; hg  pull; done }
+  function sbt_lazy_ci_hg  { while true ;do sleep 900; hg  pull --update; done }
 
   function sbt_lazy_ci_tests {
     cmds=$*
