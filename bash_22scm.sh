@@ -6,11 +6,11 @@
 
 
 ##
-## mercurial
+## Common
 ##
 
 
-function hg_filter {
+function scm_filter {
   while read line ;do
     s="$( echo $line | cut -d' ' -f 1 )"
     f="$( echo $line | cut -d' ' -f 2 )"
@@ -21,6 +21,11 @@ function hg_filter {
     fi
   done
 }
+
+
+##
+## mercurial
+##
 
 
 function hg_changeset {
@@ -34,26 +39,13 @@ function hg_changeset {
   now=$(date +%Y%m%d_%H%M%S )
   file=${dir}/${now}-${name}.tgz
 
-  hg status | hg_filter | xargs tar cpzf $file && echo $file
+  hg status | scm_filter | xargs tar cpzf $file && echo $file
 }
 
 
 ##
 ## git
 ##
-
-
-function git_filter {
-  while read line ;do
-    s="$( echo $line | cut -d' ' -f 1 )"
-    f="$( echo $line | cut -d' ' -f 2 )"
-    # echo ":::$s:::$f:::"
-    # if [ "$s" == "M" -o "$s" == "A" -o "$s" == "?" ] ;then
-    if [ -f "$f" ] ;then
-      echo $f
-    fi
-  done
-}
 
 
 function git_changeset {
@@ -67,7 +59,7 @@ function git_changeset {
   now=$(date +%Y%m%d_%H%M%S )
   file=${dir}/${now}-${name}.tgz
 
-  git status --porcelain | git_filter | xargs tar cpzf $file && echo $file
+  git status --porcelain | scm_filter | xargs tar cpzf $file && echo $file
 }
 
 
