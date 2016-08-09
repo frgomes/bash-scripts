@@ -6,7 +6,7 @@
 
 
 ##
-## Common
+## Common to git and mercurial
 ##
 
 
@@ -23,12 +23,16 @@ function scm_filter {
 }
 
 
-##
-## mercurial
-##
+function scm_modified {
+  if [ -d .hg ] ;then
+    hg status | scm_filter
+  elif [ -d .git ] ;then
+    git status --porcelain | scm_filter
+  fi
+}
 
 
-function hg_changeset {
+function scm_changeset {
 
   here=$( pwd )
   name=$( basename $here )
@@ -39,28 +43,13 @@ function hg_changeset {
   now=$(date +%Y%m%d_%H%M%S )
   file=${dir}/${now}-${name}.tgz
 
-  hg status | scm_filter | xargs tar cpzf $file && echo $file
+  scm_modified | xargs tar cpzf $file && echo $file
 }
 
 
 ##
 ## git
 ##
-
-
-function git_changeset {
-
-  here=$( pwd )
-  name=$( basename $here )
-  dir=~/backup/${SUDO_USER:=${USER}}/changesets${here}
-
-  mkdir -p $dir
-
-  now=$(date +%Y%m%d_%H%M%S )
-  file=${dir}/${now}-${name}.tgz
-
-  git status --porcelain | scm_filter | xargs tar cpzf $file && echo $file
-}
 
 
 function git_origin_ssh {
