@@ -11,6 +11,10 @@
 #           /etc/apt/apt.conf.d/80proxy
 ###
 
-alias proxy_reset='`env | fgrep -i _proxy | cut -d= -f1 | xargs echo unset`'
-alias proxy_define='source /etc/proxydriver.d/environment.sh'
-alias proxy_show='env | fgrep -i _proxy'
+#alias proxy_reset='`env | fgrep -i _proxy | cut -d= -f1 | xargs echo unset`'
+#alias proxy_define='source /etc/proxydriver.d/environment.sh'
+#alias proxy_show='env | fgrep -i _proxy'
+
+if [ $(netstat -an | fgrep 3128 | wc -l) -gt 0 ] ;then
+  export JAVA_OPTS="${JAVA_OPTS} -Dhttp.proxyHost=localhost -Dhttp.proxyPort=3128"
+fi
