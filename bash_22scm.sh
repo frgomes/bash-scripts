@@ -53,11 +53,19 @@ function scm_changeset {
 
 
 function git_origin_ssh {
-  url=$(git config --get remote.origin.url)
-  prj=$(basename $url)
-  owner=$(basename $(dirname $url))
-  git remote remove origin
-  git remote add origin git@github.com:$owner/$prj.git
+  protocol=$(git config --get remote.origin.url | cut -d/ -f1)
+  if [ X${protocol} == "Xhttp:" -o X${protocol} == "Xhttps:" ] ;then
+    provider=$(git config --get remote.origin.url | cut -d/ -f3 | cut -d@ -f2)
+    team=$(git config --get remote.origin.url | cut -d/ -f4)
+    prj=$(git config --get remote.origin.url | cut -d/ -f5)
+    git remote remove origin
+    # workaround https://bitbucket.org/site/master/issues/5154/someone-has-already-registered-that-ssh
+    company=$(fgrep Host ~/.ssh/config | fgrep -v Hostname | cut -d' ' -f2)
+    if [ X${company} != "X" -a X${provider} == "Xbitbucket.org" -a -f ~/.ssh/id_rsa_${team} ] ;then
+      provider=${company}
+    fi
+    git remote add origin git@${provider}:${team}/${prj}
+  fi
 }
 
 
