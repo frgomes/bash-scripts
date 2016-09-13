@@ -3,19 +3,29 @@
 ##
 # Utility logging functions
 #
-_fatal() { _log 5 "FATAL: $@"; }
-_error() { _log 4 "ERROR: $@"; }
-_warn()  { _log 3 "WARN:  $@"; }
-_info()  { _log 2 "INFO:  $@"; }
-_debug() { _log 1 "DEBUG: $@"; }
-_trace() { _log 0 "TRACE: $@"; } # Always prints
+
+function trace { export _V=5; }
+function fatal { export _V=4; }
+function error { export _V=3; }
+function warn  { export _V=2; }
+function info  { export _V=1; }
+function debug { export _V=0; }
+
+warn
+
 function _log() {
   level=$1
   shift
-  if [[ $_V -ge $level ]]; then
+  if [[ $level -ge $_V ]]; then
     echo "$@"
   fi
 }
+_trace() { _log 5 "TRACE: $@"; } # Always prints
+_fatal() { _log 4 "FATAL: $@"; }
+_error() { _log 3 "ERROR: $@"; }
+_warn()  { _log 2 "WARN:  $@"; }
+_info()  { _log 1 "INFO:  $@"; }
+_debug() { _log 0 "DEBUG: $@"; }
 
 
 ##
