@@ -4,7 +4,7 @@
 #                                                                                #
 # This is a very simple replacement for Debian package python-virtualenv.        #
 #                                                                                #
-# The aim is avoid the long list of intrinsic dependencies pulled out, including #
+# The aim is avoid the long list of transient dependencies pulled out, including #
 # development tools, which are not desired on production servers.                #
 #                                                                                #
 ##################################################################################
