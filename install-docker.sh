@@ -18,5 +18,5 @@ sudo docker run hello-world
 
 sudo group add docker
 sudo groupadd docker
-sudo gpasswd -a $USER docker
+sudo gpasswd -a $SUDO_USER docker
 sudo service docker restart
