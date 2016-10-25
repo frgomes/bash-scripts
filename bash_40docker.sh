@@ -6,11 +6,11 @@ function docker_jessie_torch7 {
                -v ${HOME}/Documents:/root/Documents \
                -v ${HOME}/Media:/root/Media \
                -v ${HOME}/workspace:/root/workspace \
-               rgomes/jessie-torch7
+               rgomes/jessie-torch7 $*
 }
 
 function docker_stretch_base {
-  docker run -it --rm rgomes/stretch-base
+  docker run -it --rm rgomes/stretch-base $*
 }
 
 function docker_stretch_kde_minimal {
@@ -24,7 +24,7 @@ function docker_stretch_kde_minimal {
              -p ${XRDP_PORT}:3389 \
              -v ${HOME}/Documents:/root/Documents \
              -v ${HOME}/Media:/root/Media \
-             rgomes/stretch-kde-minimal
+             rgomes/stretch-kde-minimal $*
 }
 
 function docker_stretch_kde_standard {
@@ -38,7 +38,7 @@ function docker_stretch_kde_standard {
              -p ${XRDP_PORT}:3389 \
              -v ${HOME}/Documents:/root/Documents \
              -v ${HOME}/Media:/root/Media \
-             rgomes/stretch-kde-standard
+             rgomes/stretch-kde-standard $*
 }
 
 function docker_stretch_kde_full {
@@ -52,7 +52,7 @@ function docker_stretch_kde_full {
              -p ${XRDP_PORT}:3389 \
              -v ${HOME}/Documents:/root/Documents \
              -v ${HOME}/Media:/root/Media \
-             rgomes/stretch-kde-full
+             rgomes/stretch-kde-full $*
 }
 
 function docker_stretch_kdenlive {
@@ -68,5 +68,5 @@ function docker_stretch_kdenlive {
              -v ${HOME}/kdenlive:/root/kdenlive \
              -v ${HOME}/Documents:/root/Documents \
              -v ${HOME}/Media:/root/Media \
-             rgomes/stretch-kdenlive
+             rgomes/stretch-kdenlive $*
 }
