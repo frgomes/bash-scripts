@@ -13,7 +13,7 @@ function docker_stretch_base {
   docker run -it --rm rgomes/stretch-base
 }
 
-function docker_kde_minimal {
+function docker_stretch_kde_minimal {
   # You may or may not have a xrdp already installed and kicking in your host computer.
   # In a clean setup, you should not. However, you may be in a transitioning state which
   # implies that your host computer still have a lot of things installed which should not
@@ -27,7 +27,7 @@ function docker_kde_minimal {
              rgomes/stretch-kde-minimal
 }
 
-function docker_kde_standard {
+function docker_stretch_kde_standard {
   # You may or may not have a xrdp already installed and kicking in your host computer.
   # In a clean setup, you should not. However, you may be in a transitioning state which
   # implies that your host computer still have a lot of things installed which should not
@@ -41,7 +41,7 @@ function docker_kde_standard {
              rgomes/stretch-kde-standard
 }
 
-function docker_kde_full {
+function docker_stretch_kde_full {
   # You may or may not have a xrdp already installed and kicking in your host computer.
   # In a clean setup, you should not. However, you may be in a transitioning state which
   # implies that your host computer still have a lot of things installed which should not
@@ -55,7 +55,7 @@ function docker_kde_full {
              rgomes/stretch-kde-full
 }
 
-function docker_kdenlive {
+function docker_stretch_kdenlive {
   # You may or may not have a xrdp already installed and kicking in your host computer.
   # In a clean setup, you should not. However, you may be in a transitioning state which
   # implies that your host computer still have a lot of things installed which should not
