@@ -1,20 +1,72 @@
 #!/bin/bash
 
-function docker_torch7 {
-    docker run -it --rm -p 18888:8888 -v $HOME/workspace:/root/workspace rgomes/jessie-torch7
+function docker_jessie_torch7 {
+    docker run -it --rm \
+	       -p 18888:8888 \
+               -v ${HOME}/Documents:/root/Documents \
+               -v ${HOME}/Media:/root/Media \
+               -v ${HOME}/workspace:/root/workspace \
+               rgomes/jessie-torch7
+}
+
+function docker_stretch_base {
+  docker run -it --rm rgomes/stretch-base
+}
+
+function docker_kde_minimal {
+  # You may or may not have a xrdp already installed and kicking in your host computer.
+  # In a clean setup, you should not. However, you may be in a transitioning state which
+  # implies that your host computer still have a lot of things installed which should not
+  # be installed in a clean container host. In this case, we should employ something
+  # different from the default port 3389.
+  XRDP_PORT=53389
+  docker run -it --rm \
+             -p ${XRDP_PORT}:3389 \
+             -v ${HOME}/Documents:/root/Documents \
+             -v ${HOME}/Media:/root/Media \
+             rgomes/stretch-kde-minimal
+}
+
+function docker_kde_standard {
+  # You may or may not have a xrdp already installed and kicking in your host computer.
+  # In a clean setup, you should not. However, you may be in a transitioning state which
+  # implies that your host computer still have a lot of things installed which should not
+  # be installed in a clean container host. In this case, we should employ something
+  # different from the default port 3389.
+  XRDP_PORT=53389
+  docker run -it --rm \
+             -p ${XRDP_PORT}:3389 \
+             -v ${HOME}/Documents:/root/Documents \
+             -v ${HOME}/Media:/root/Media \
+             rgomes/stretch-kde-standard
+}
+
+function docker_kde_full {
+  # You may or may not have a xrdp already installed and kicking in your host computer.
+  # In a clean setup, you should not. However, you may be in a transitioning state which
+  # implies that your host computer still have a lot of things installed which should not
+  # be installed in a clean container host. In this case, we should employ something
+  # different from the default port 3389.
+  XRDP_PORT=53389
+  docker run -it --rm \
+             -p ${XRDP_PORT}:3389 \
+             -v ${HOME}/Documents:/root/Documents \
+             -v ${HOME}/Media:/root/Media \
+             rgomes/stretch-kde-full
 }
 
 function docker_kdenlive {
-    XSOCK=/tmp/.X11-unix
-    XAUTH=/tmp/.docker.xauth
-    xauth nlist :0 | sed -e 's/^..../ffff/' | xauth -f $XAUTH nmerge -
-    [[ ! -d $HOME/kdenlive ]] && mkdir -p $HOME/kdenlive
-    docker run -it --rm \
-               -e DISPLAY=$DISPLAY \
-               -e XAUTHORITY=$XAUTH \
-               -v $XSOCK:$XSOCK \
-               -v $XAUTH:$XAUTH \
-               -v $HOME/kdenlive/:/root/kdenlive/ \
-               -v /media/b1582a88-e1e6-413d-bcac-881206487eb6/:/root/Media/ \
-               rgomes/stretch-kdenlive
+  # You may or may not have a xrdp already installed and kicking in your host computer.
+  # In a clean setup, you should not. However, you may be in a transitioning state which
+  # implies that your host computer still have a lot of things installed which should not
+  # be installed in a clean container host. In this case, we should employ something
+  # different from the default port 3389.
+  XRDP_PORT=53389
+  [[ ! -d $HOME/kdenlive ]] && mkdir -p $HOME/kdenlive
+  docker run -it --rm \
+             -p ${XRDP_PORT}:3389 \
+             -v ${HOME}/kdenlive:/root/kdenlive \
+             -v ${HOME}/Documents:/root/Documents \
+             -v ${HOME}/Media:/root/Media \
+             rgomes/stretch-kdenlive
 }
