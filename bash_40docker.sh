@@ -3,12 +3,18 @@
 DOCKER_JUPYTER_PORT=18888
 DOCKER_VNC_PORT=55901
 
+WORK_DOCUMENTS=${HOME}/Documents
+WORK_MEDIA=/media/b1582a88-e1e6-413d-bcac-881206487eb6
+WORK_WORKSPACE=${HOME}/workspace
+
+
+
 function docker_jessie_torch7 {
     docker run -it --rm \
 	       -p ${DOCKER_JUPYTER_PORT}:8888 \
-               -v ${HOME}/Documents:/root/Documents \
-               -v ${HOME}/Media:/root/Media \
-               -v ${HOME}/workspace:/root/workspace \
+               -v ${WORK_DOCUMENTS}:/root/Documents \
+               -v ${WORK_MEDIA}:/root/Media \
+               -v ${WORK_WORKSPACE}:/root/workspace \
                rgomes/jessie-torch7 $*
 }
 
@@ -22,24 +28,24 @@ function docker_sid_base {
 function docker_sid_kde_minimal {
   docker run -it --rm \
              -p ${DOCKER_VNC_PORT}:5901 \
-             -v ${HOME}/Documents:/root/Documents \
-             -v ${HOME}/Media:/root/Media \
+             -v ${WORK_DOCUMENTS}:/root/Documents \
+             -v ${WORK_MEDIA}:/root/Media \
              rgomes/sid-kde-minimal $*
 }
 
 function docker_sid_kde_standard {
   docker run -it --rm \
              -p ${DOCKER_VNC_PORT}:5901 \
-             -v ${HOME}/Documents:/root/Documents \
-             -v ${HOME}/Media:/root/Media \
+             -v ${WORK_DOCUMENTS}:/root/Documents \
+             -v ${WORK_MEDIA}:/root/Media \
              rgomes/sid-kde-standard $*
 }
 
 function docker_sid_kde_full {
   docker run -it --rm \
              -p ${DOCKER_VNC_PORT}:5901 \
-             -v ${HOME}/Documents:/root/Documents \
-             -v ${HOME}/Media:/root/Media \
+             -v ${WORK_DOCUMENTS}:/root/Documents \
+             -v ${WORK_MEDIA}:/root/Media \
              rgomes/sid-kde-full $*
 }
 
@@ -48,7 +54,7 @@ function docker_sid_kdenlive {
   docker run -it --rm \
              -p ${DOCKER_VNC_PORT}:5901 \
              -v ${HOME}/kdenlive:/root/kdenlive \
-             -v ${HOME}/Documents:/root/Documents \
-             -v ${HOME}/Media:/root/Media \
+             -v ${WORK_DOCUMENTS}:/root/Documents \
+             -v ${WORK_MEDIA}:/root/Media \
              rgomes/sid-kdenlive $*
 }
