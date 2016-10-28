@@ -9,7 +9,7 @@ WORK_WORKSPACE=${HOME}/workspace
 
 
 
-function docker_jessie_torch7 {
+function docker_run_jessie_torch7 {
     docker run -it --rm \
 	       -p ${DOCKER_JUPYTER_PORT}:8888 \
                -v ${WORK_DOCUMENTS}:/root/Documents \
@@ -18,14 +18,15 @@ function docker_jessie_torch7 {
                rgomes/jessie-torch7 $*
 }
 
-function docker_stretch_base {
+function docker_run_stretch {
   docker run -it --rm rgomes/stretch-base $*
 }
-function docker_sid_base {
+
+function docker_run_sid {
   docker run -it --rm rgomes/sid-base $*
 }
 
-function docker_sid_kde_minimal {
+function docker_run_minimal {
   docker run -it --rm \
              -p ${DOCKER_VNC_PORT}:5901 \
              -v ${WORK_DOCUMENTS}:/root/Documents \
@@ -33,7 +34,7 @@ function docker_sid_kde_minimal {
              rgomes/sid-kde-minimal $*
 }
 
-function docker_sid_kde_standard {
+function docker_run_standard {
   docker run -it --rm \
              -p ${DOCKER_VNC_PORT}:5901 \
              -v ${WORK_DOCUMENTS}:/root/Documents \
@@ -41,7 +42,7 @@ function docker_sid_kde_standard {
              rgomes/sid-kde-standard $*
 }
 
-function docker_sid_kde_full {
+function docker_run_full {
   docker run -it --rm \
              -p ${DOCKER_VNC_PORT}:5901 \
              -v ${WORK_DOCUMENTS}:/root/Documents \
@@ -49,7 +50,7 @@ function docker_sid_kde_full {
              rgomes/sid-kde-full $*
 }
 
-function docker_sid_kdenlive {
+function docker_run_kdenlive {
   [[ ! -d $HOME/kdenlive ]] && mkdir -p $HOME/kdenlive
   docker run -it --rm \
              -p ${DOCKER_VNC_PORT}:5901 \
