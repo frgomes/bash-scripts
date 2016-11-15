@@ -1,10 +1,10 @@
 #!/bin/bash
 
 DOCKER_JUPYTER_PORT=18888
-DOCKER_VNC_PORT=55901
+DOCKER_X2GO_PORT=${DOCKER_X2GO_PORT:=22}
 
 WORK_DOCUMENTS=${HOME}/Documents
-WORK_MEDIA=/media/b1582a88-e1e6-413d-bcac-881206487eb6
+WORK_MEDIA=${HOME}/Media
 WORK_WORKSPACE=${HOME}/workspace
 
 
@@ -18,44 +18,42 @@ function docker_run_jessie_torch7 {
                rgomes/jessie-torch7 $*
 }
 
-function docker_run_stretch {
-  docker run -it --rm rgomes/stretch-base $*
+
+function docker_run_base {
+  docker run -it --rm rgomes/debian-base $*
 }
 
-function docker_run_sid {
-  docker run -it --rm rgomes/sid-base $*
-}
-
-function docker_run_minimal {
+function docker_run_xfce4 {
   docker run -it --rm \
-             -p ${DOCKER_VNC_PORT}:5901 \
-             -v ${WORK_DOCUMENTS}:/root/Documents \
-             -v ${WORK_MEDIA}:/root/Media \
-             rgomes/sid-kde-minimal $*
+             -p ${DOCKER_X2GO_PORT}:22 \
+             rgomes/xfce4 $*
+}
+
+function docker_run_openbox {
+  docker run -it --rm \
+             -p ${DOCKER_X2GO_PORT}:22 \
+             -v ${WORK_DOCUMENTS}:/home/x2go/Documents \
+             -v ${WORK_MEDIA}:/home/x2go/Media \
+             -v ${WORK_WORKSPACE}:/home/x2go/workspace \
+             rgomes/openbox $*
 }
 
 function docker_run_standard {
   docker run -it --rm \
-             -p ${DOCKER_VNC_PORT}:5901 \
-             -v ${WORK_DOCUMENTS}:/root/Documents \
-             -v ${WORK_MEDIA}:/root/Media \
-             rgomes/sid-kde-standard $*
-}
-
-function docker_run_full {
-  docker run -it --rm \
-             -p ${DOCKER_VNC_PORT}:5901 \
-             -v ${WORK_DOCUMENTS}:/root/Documents \
-             -v ${WORK_MEDIA}:/root/Media \
-             rgomes/sid-kde-full $*
+             -p ${DOCKER_X2GO_PORT}:22 \
+             -v ${WORK_DOCUMENTS}:/home/x2go/Documents \
+             -v ${WORK_MEDIA}:/home/x2go/Media \
+             -v ${WORK_WORKSPACE}:/home/x2go/workspace \
+             rgomes/kde-standard $*
 }
 
 function docker_run_kdenlive {
   [[ ! -d $HOME/kdenlive ]] && mkdir -p $HOME/kdenlive
   docker run -it --rm \
-             -p ${DOCKER_VNC_PORT}:5901 \
-             -v ${HOME}/kdenlive:/root/kdenlive \
-             -v ${WORK_DOCUMENTS}:/root/Documents \
-             -v ${WORK_MEDIA}:/root/Media \
-             rgomes/sid-kdenlive $*
+             -p ${DOCKER_X2GO_PORT}:22 \
+             -v ${HOME}/kdenlive:/home/x2go/kdenlive \
+             -v ${WORK_DOCUMENTS}:/home/x2go/Documents \
+             -v ${WORK_MEDIA}:/home/x2go/Media \
+             -v ${WORK_WORKSPACE}:/home/x2go/workspace \
+             rgomes/kdenlive $*
 }
