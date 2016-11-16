@@ -28,6 +28,7 @@ alias e='emacs -nw'
 # some simple helpers
 alias upper='tr [:lower:] [:upper:]'
 alias lower='tr [:upper:] [:lower:]'
+alias ips='ip -o addr show | fgrep "scope global" | sed -r "s/[ \t]+/ /g" | cut -d" " -f2,3,4'
 
 # viewing files nicely
 export LESS=' -R '
