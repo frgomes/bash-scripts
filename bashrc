@@ -19,4 +19,5 @@ export PATH=~/bin:${PATH}
 export HISTSIZE=50000
 export HISTFILESIZE=50000
 export HISTTIMEFORMAT="%Y%m%d_%H%M%S "
+export HISTCONTROL=ignoreboth
 shopt -s histappend
