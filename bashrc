@@ -15,11 +15,9 @@ done
 
 export PATH=~/bin:${PATH}
 
-
 # Make sure these variables are defined ONLY ONCE and only ONLY HERE.
+export HISTSIZE=50000
+export HISTFILESIZE=50000
+export HISTTIMEFORMAT="%Y%m%d_%H%M%S "
+export HISTCONTROL=ignoreboth
 shopt -s histappend
-HISTSIZE=50000
-HISTTIMEFORMAT="%Y%m%d_%H%M%S "
-##HISTFILESIZE= # Does not truncate file size
-
-workon j8s11
