@@ -40,3 +40,16 @@ function sbt_offline {
 function sbt_online {
    sbt_runner "set offline:=false" $*
 }
+
+function scalanative_build {
+  pushd $HOME/workspace/scala-native
+  java -version
+  git clone https://github.com/scala-native/sbt-cross.git
+  pushd sbt-cross
+  sbt publishLocal
+  popd
+  sbt 'cleanCache' 'cleanLocal' 'nscplugin/publishLocal' 'nativelib/publishLocal' 'publishLocal' 
+  ## sbt 'sandbox/run' 'demoNative/run' 
+  ## sbt 'tests/run' 'tools/test' 'benchmarks/run' 'scripted' 'publishSnapshot'
+  popd
+}
