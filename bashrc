@@ -15,6 +15,8 @@ done
 
 export PATH=~/bin:${PATH}
 
+PS1='[$(date +%H:%M:%S)]'${PS1}
+
 # Make sure these variables are defined ONLY ONCE and only ONLY HERE.
 export HISTSIZE=50000
 export HISTFILESIZE=50000
