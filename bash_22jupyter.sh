@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-function jupyter() {
+function jupyter_start {
   if [ ! -d $HOME/workspace/jupyter-notebooks ] ;then
     [[ ! -d $HOME/workspace ]] && mkdir -p $HOME/workspace
     pushd $HOME/workspace
@@ -9,6 +9,6 @@ function jupyter() {
     popd
   fi
   pushd $HOME/workspace/jupyter-notebooks
-  ipython notebook
+  jupyter notebook
   popd
 }
