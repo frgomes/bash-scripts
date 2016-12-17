@@ -54,14 +54,13 @@ function makepdf_cats_builder {
   out=$HOME/Downloads/cats.pdf
 
   [[ ! -d $domain/$path ]] && httrack http://$domain/$path
-  makepdf_cats_files | pdf_converter_and_combiner $out \
-    echo $out
+  makepdf_cats_files | pdf_converter_and_combiner $out && echo $out
 }
 
 
 function makepdf_cats {
-  mkdir -p $HOME/websites && pushd $HOME/websites
+  mkdir -p $HOME/websites && pushd $HOME/websites >> /dev/null
   msg=$(makepdf_cats_builder)
-  popd
+  popd >> /dev/null
   echo $msg
 }
