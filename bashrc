@@ -6,6 +6,8 @@
 
 dir=$(dirname $(test -L "$BASH_SOURCE" && readlink -f "$BASH_SOURCE" || echo "$BASH_SOURCE"))
 
+export PATH=~/bin:/opt/bin:${PATH}
+
 for script in $dir/bash_*.sh ;do
     if [ -f $script ]; then
         echo "sourcing $script"
@@ -13,7 +15,6 @@ for script in $dir/bash_*.sh ;do
     fi
 done
 
-export PATH=~/bin:${PATH}
 
 PS1='[$(date +%H:%M:%S)]'${PS1}
 

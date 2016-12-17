@@ -1,6 +1,17 @@
 #!/bin/bash
 
-###TODO: install wkhtmltopdf under /opt
+
+function pdf_check_wkhtmltopdf {
+  if [ X$(which wkhtmltopdf) == X ] ;then
+    echo .
+    echo "***********************************************"
+    echo "* Please install wkhtmltox for your platform. *"
+    echo "* See: http://wkhtmltopdf.org/downloads.html  *"
+    echo "***********************************************"
+    echo .
+    return 1
+  fi
+}
 
  ##
 ## Convert HTML pages and combine theminto a single PDF
@@ -19,9 +30,11 @@ function pdf_converter_and_combiner {
 
       mkdir -p $work/$dir                           >> $log 2>&1
       echo ============== Convert "$html" to "$pdf" >> $log 2>&1
-      /opt/wkhtmltox/bin/wkhtmltopdf "$html" "$pdf" >> $log 2>&1
+      wkhtmltopdf "$html" "$pdf" >> $log 2>&1
 
       echo '"'"$pdf"'"'
     done | \
       xargs gs -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=$out >> $log 2>&1
 }
+
+pdf_check_wkhtmltopdf
