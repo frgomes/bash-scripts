@@ -13,15 +13,15 @@ function pdf_converter_and_combiner {
 
   egrep -v -e '^#' | \
     while read html ;do
-      dir=$(dirname $html)
-      name=$(basename $html .html)
-      pdf=$work/$dir/$name.pdf
+      dir=$(dirname "$html")
+      name=$(basename "$html" .html)
+      pdf=$work/$dir/"$name".pdf
 
-      mkdir -p $work/$dir                       >> $log 2>&1
-      echo ============================== $html >> $log 2>&1
-      /opt/wkhtmltox/bin/wkhtmltopdf $html $pdf >> $log 2>&1
+      mkdir -p $work/$dir                           >> $log 2>&1
+      echo ============== Convert "$html" to "$pdf" >> $log 2>&1
+      /opt/wkhtmltox/bin/wkhtmltopdf "$html" "$pdf" >> $log 2>&1
 
-      echo $pdf
+      echo '"'"$pdf"'"'
     done | \
       xargs gs -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=$out >> $log 2>&1
 }
