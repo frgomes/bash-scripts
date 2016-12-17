@@ -1,6 +1,6 @@
 #!/bin/bash
 
-## List of files to be combined, in the correct order
+
 function makepdf_dogs_files {
 cat <<EOD
 stew.github.io/dogs/index.html
@@ -18,19 +18,17 @@ EOD
 }
 
 
-function makepdf_dogs_builder {
+function makepdf_dogs {
   domain=stew.github.io
   path=dogs
-  out=$HOME/Downloads/${path}.pdf
 
-  [[ ! -d $domain/$path ]] && httrack http://$domain/$path
-  makepdf_dogs_files | pdf_converter_and_combiner $out && echo $out
-}
+  local out="$HOME/Downloads/${path}.pdf"
 
+  httrack_fetch "$HOME/websites" "$domain" "$path" httrack "http://$domain/$path"
 
-function makepdf_dogs {
-  mkdir -p $HOME/websites && pushd $HOME/websites >> /dev/null
-  msg=$(makepdf_dogs_builder)
-  popd >> /dev/null
-  echo $msg
+  [[ -d "$HOME/websites/$domain/$path" ]] \
+  && pushd "$HOME/websites/$domain/$path" >> /dev/null \
+  &&   makepdf_dogs_files | pdf_converter_and_combiner $out \
+  && popd >> /dev/null \
+  && echo $out
 }

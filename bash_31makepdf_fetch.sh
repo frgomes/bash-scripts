@@ -1,6 +1,6 @@
 #!/bin/bash
 
-## List of files to be combined, in the correct order
+
 function makepdf_fetch_files {
 cat <<EOD
 47deg.github.io/fetch/index.html
@@ -10,19 +10,17 @@ EOD
 }
 
 
-function makepdf_fetch_builder {
+function makepdf_fetch {
   domain=47deg.github.io
   path=fetch
-  out=$HOME/Downloads/${path}.pdf
 
-  [[ ! -d $domain/$path ]] && httrack http://$domain/$path
-  makepdf_fetch_files | pdf_converter_and_combiner $out && echo $out
-}
+  local out="$HOME/Downloads/${path}.pdf"
 
+  httrack_fetch "$HOME/websites" "$domain" "$path" httrack "http://$domain/$path"
 
-function makepdf_fetch {
-  mkdir -p $HOME/websites && pushd $HOME/websites >> /dev/null
-  msg=$(makepdf_fetch_builder)
-  popd >> /dev/null
-  echo $msg
+  [[ -d "$HOME/websites/$domain/$path" ]] \
+  && pushd "$HOME/websites/$domain/$path" >> /dev/null \
+  &&   makepdf_fetch_files | pdf_converter_and_combiner $out \
+  && popd >> /dev/null \
+  && echo $out
 }

@@ -48,19 +48,17 @@ EOD
 }
 
 
-function makepdf_cats_builder {
+function makepdf_cats {
   domain=typelevel.org
   path=cats
-  out=$HOME/Downloads/cats.pdf
 
-  [[ ! -d $domain/$path ]] && httrack http://$domain/$path
-  makepdf_cats_files | pdf_converter_and_combiner $out && echo $out
-}
+  local out="$HOME/Downloads/${path}.pdf"
 
+  httrack_fetch "$HOME/websites" "$domain" "$path" httrack "http://$domain/$path"
 
-function makepdf_cats {
-  mkdir -p $HOME/websites && pushd $HOME/websites >> /dev/null
-  msg=$(makepdf_cats_builder)
-  popd >> /dev/null
-  echo $msg
+  [[ -d "$HOME/websites/$domain/$path" ]] \
+  && pushd "$HOME/websites/$domain/$path" >> /dev/null \
+  &&   makepdf_cats_files | pdf_converter_and_combiner $out \
+  && popd >> /dev/null \
+  && echo $out
 }
