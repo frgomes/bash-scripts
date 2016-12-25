@@ -1,20 +1,19 @@
 #!/bin/bash
 
-###
-# NOTE: Proxy definitions are NOT LOADED BY DEFAULT.
-#       This is intentional, since some applications do not behave well
-#       behind a proxy server.
-#       More info:
-#           /var/lib/proxydriver/environment.sh
-#           /etc/proxydriver.d/environment.sh
-#           /etc/proxy.pac
-#           /etc/apt/apt.conf.d/80proxy
-###
+function proxy_status {
+  env | fgrep -i _proxy
+}
 
-#alias proxy_reset='`env | fgrep -i _proxy | cut -d= -f1 | xargs echo unset`'
-#alias proxy_define='source /etc/proxydriver.d/environment.sh'
-#alias proxy_show='env | fgrep -i _proxy'
+function proxy_on {
+  if [ $(netstat -an | fgrep 3128 | wc -l) -gt 0 ] ;then
+    export JAVA_OPTS="${JAVA_OPTS} -Dhttp.proxyHost=localhost -Dhttp.proxyPort=3128"
+    export HTTP_PROXY=localhost:3128
+    export http_proxy=localhost:3128
+    export  FTP_PROXY=localhost:3128
+    export  ftp_proxy=localhost:3128
+  fi
+}
 
-if [ $(netstat -an | fgrep 3128 | wc -l) -gt 0 ] ;then
-  export JAVA_OPTS="${JAVA_OPTS} -Dhttp.proxyHost=localhost -Dhttp.proxyPort=3128"
-fi
+function proxy_off {
+  unset HTTP_PROXY http_proxy FTP_PROXY ftp_proxy
+}
