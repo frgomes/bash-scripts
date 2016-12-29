@@ -16,9 +16,9 @@ function nmcli_remove {
 }
 
 ########################################################################################
-# The intent here is avoid that a connection named "never sleep in this hotel" matches #
-# a timestamp "never". So, we have to make sure that we match colon followed by never  #
-# followed by spaces and/or tabs and finally an end of line.                           #
+# The intent here is avoid that a connection named "never sleep drive after you drink" #
+# matches a timestamp "never". So, we have to make sure that we match colon followed   #
+# by "never"  followed by spaces and/or tabs and finally an end of line.               #
 #                                                                                      #
 # WARNING: However, I didn't get a chance to test this scenario.                       #
 #          So, I provide this code the way it is, in the hope that I've covered well   #
