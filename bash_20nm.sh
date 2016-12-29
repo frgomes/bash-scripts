@@ -22,7 +22,7 @@ function nmcli_remove {
 #                                                                                #
 # WARNING: However, I didn't get a chance to test this scenario.                 #
 #          So, I provide this code the way it is, in the hope that I've covered  #
-# well the behavior from some other simulations I did.                           #
+#          well the behavior from some other simulations I did.                  #
 ##################################################################################
 function nmcli_remove_never_used {
   nmcli --terse --fields NAME,TIMESTAMP-REAL con show | \
