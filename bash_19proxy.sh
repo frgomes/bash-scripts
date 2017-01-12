@@ -4,14 +4,28 @@ function proxy_status {
   env | fgrep -i _proxy
 }
 
-function proxy_on {
+function proxy_finder {
   if [ $(netstat -an | fgrep 3128 | wc -l) -gt 0 ] ;then
     ip=$(netstat -an | fgrep ":3128 " | head -1 | sed -r 's/[ \t]+/ /g' | cut -d' ' -f5 | cut -d: -f1)
-    export JAVA_OPTS="${JAVA_OPTS} -Dhttp.proxyHost=${ip} -Dhttp.proxyPort=3128"
-    export HTTP_PROXY=http://${ip}:3128
-    export http_proxy=http://${ip}:3128
-    export  FTP_PROXY=http://${ip}:3128
-    export  ftp_proxy=http://${ip}:3128
+    if [[ -z "$ip" ]] ;then
+      echo "http://localhost:3128"
+    else
+      echo "http://${ip}:3128"
+    fi
+  fi
+}
+
+function proxy_on {
+  local proxy=$(proxy_finder)
+  if [[ ! -z "${proxy}" ]] ;then
+    export HTTP_PROXY=${proxy}
+    export http_proxy=${proxy}
+    export  FTP_PROXY=${proxy}
+    export  ftp_proxy=${proxy}
+
+    local host=$(echo $proxy | cut -d/ -f3 | cut -d: -f1)
+    local port=$(echo $proxy | cut -d/ -f3 | cut -d: -f2)
+    export JAVA_OPTS="${JAVA_OPTS} -Dhttp.proxyHost=${host} -Dhttp.proxyPort=${port}"
   fi
 }
 
