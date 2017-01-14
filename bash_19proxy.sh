@@ -16,7 +16,11 @@ function proxy_finder {
 }
 
 function proxy_on {
-  local proxy=$(proxy_finder)
+  if [ -z "$1" ] ;then
+    local proxy=$(proxy_finder)
+  else
+    local proxy=$1
+  fi
   if [[ ! -z "${proxy}" ]] ;then
     export HTTP_PROXY=${proxy}
     export http_proxy=${proxy}
