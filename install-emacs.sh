@@ -14,6 +14,8 @@ else
 fi
 
 ./autogen.sh
-./configure --prefix=/opt/developer/emacs25
+./configure --prefix=/opt/emacs25
 make bootstrap
-make install
+make clean
+make
+sudo make install
