@@ -19,3 +19,6 @@ make bootstrap
 make clean
 make
 sudo make install
+
+sudo mkdir -p /opt/bin
+sudo ln -s /opt/emacs/${EMACS_VERSION}/bin/emacs /opt/bin/emacs
