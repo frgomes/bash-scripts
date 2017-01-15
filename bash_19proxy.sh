@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function proxy_status {
-  env | fgrep -i _proxy
+  env | fgrep -i _proxy | sort
 }
 
 function proxy_finder {
@@ -22,19 +22,23 @@ function proxy_on {
     local proxy=$1
   fi
   if [[ ! -z "${proxy}" ]] ;then
+    # bash
     export HTTP_PROXY=${proxy}
     export http_proxy=${proxy}
     export  FTP_PROXY=${proxy}
     export  ftp_proxy=${proxy}
-
+    # npm
+    export npm_config_proxy=${proxy}
+    export npm_config_https_proxy=${proxy}
+    # java
     local host=$(echo $proxy | cut -d/ -f3 | cut -d: -f1)
     local port=$(echo $proxy | cut -d/ -f3 | cut -d: -f2)
-    export JAVA_OPTS="${JAVA_OPTS} -Dhttp.proxyHost=${host} -Dhttp.proxyPort=${port}"
+    export JAVA_OPTS_PROXY="-Dhttp.proxyHost=${host} -Dhttp.proxyPort=${port}"
   fi
 }
 
 function proxy_off {
-  unset HTTP_PROXY http_proxy FTP_PROXY ftp_proxy
+  unset HTTP_PROXY http_proxy FTP_PROXY ftp_proxy npm_config_proxy npm_config_https_proxy JAVA_OPTS_PROXY
 }
 
 proxy_on
