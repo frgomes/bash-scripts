@@ -54,7 +54,9 @@ export KAFKA_HOME=${TOOLS_HOME}/kafka_${KAFKA_VERSION}
 export ANDROID_HOME=${TOOLS_HOME}/android-sdk
 
 
-export PATH=${JAVA_HOME}/bin:${SCALA_HOME}/bin:${SBT_HOME}/bin:${ANT_HOME}/bin:${M2_HOME}/bin:${GRADLE_HOME}/bin:\
+export PATH=\
+/opt/bin:$SCRIPTS_HOME:$PATH:$PUB_CACHE/bin:\
+${JAVA_HOME}/bin:${SCALA_HOME}/bin:${SBT_HOME}/bin:${ANT_HOME}/bin:${M2_HOME}/bin:${GRADLE_HOME}/bin:\
 ${LLVM_HOME}/bin:\
 ${NODE_HOME}/bin:${DART_HOME}/bin:\
-$SCRIPTS_HOME:$PATH:/opt/bin:$PUB_CACHE/bin
+${PATH}
