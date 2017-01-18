@@ -28,4 +28,4 @@ function install_emacs {
   sudo ln -s /opt/emacs/${version}/bin/emacs /opt/bin/emacs${major}
 }
 
-# install_emacs
+install_emacs
