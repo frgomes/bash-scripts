@@ -47,7 +47,7 @@ alias sbt='sbt -mem 4096'
 
 ## finding contents in files easily
 
-alias sources='fgrep -v /target/ | fgrep -v /target_sbt/ | fgrep -v /.hg/ | fgrep -v /.git/ | fgrep -v /.idea/'
+alias sources='fgrep -v /target/ | fgrep -v /.hg/ | fgrep -v /.git/ | fgrep -v /.idea/'
 
 alias  fffile='find . -type f | sources'
 alias   ffdir='find . -type d | sources'
@@ -60,8 +60,8 @@ alias   ffpom='find . -type f -name "pom.xml"      | sources'
 alias    ffrs='find . -type f -name "*.rs"         | sources'
 alias    ffpy='find . -type f -name "*.py"         | sources'
 alias    ffsh='find . -type f -name "*.sh"         | sources'
-alias    ffts='find . -type f -name "*.ts"         | sources'
-alias    ffjs='find . -type f -name "*.js"         | sources'
+alias    ffts='find . -type f -name "*.ts"         | fgrep -v /node_modules/ | sources'
+alias    ffjs='find . -type f -name "*.js"         | fgrep -v /node_modules/ | sources'
 alias   ffcss='find . -type f -name "*.css"        | sources'
 alias  ffform='find . -type f -name "*.form"       | sources'
 alias  ffconf='find . -type f -name "*.conf"       | sources'

@@ -85,7 +85,7 @@ function backup {
       mkdir -p ${dst} > /dev/null 2>&1
       echo "$dir" ...
       archive=${dst}/${now}_${name}.tar.bz2
-      tar cpJf ${archive} ${dir}
+      tar cpJf --exclude=${dir}/node_modules/ --exclude-vcs ${archive} ${dir}
 
       # copy to Dropbox, if available
       replica=${HOME}/Dropbox/Private/backup/"${dst}"
@@ -112,7 +112,7 @@ function backup_zip {
       mkdir -p ${dst} > /dev/null 2>&1
       echo "$dir" ...
       archive=${dst}/${now}_${name}.zip
-      zip -q -r ${archive} ${dir} -x ${dir}/.idea\* -x ${dir}/.hg/\* -x ${dir}/.git/\* -x ${dir}/.lib/\*
+      zip -q -r ${archive} ${dir} -x ${dir}/.idea\* -x ${dir}/.hg/\* -x ${dir}/.git/\* -x ${dir}/.lib/\* -x ${dir}/node_modules/
 
       # copy to Dropbox, if available
       replica=${HOME}/Dropbox/Private/backup/"${dst}"
