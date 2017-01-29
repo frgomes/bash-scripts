@@ -43,8 +43,6 @@ export GRADLE_HOME=${TOOLS_HOME}/gradle-${GRADLE_VERSION}
 export LLVM_HOME=${TOOLS_HOME}/clang+llvm-${LLVM_VERSION}-${LLVM_HWPLATFORM}-${LLVM_OSPLATFORM}
 
 export NODE_HOME=${TOOLS_HOME}/node-v${NODE_VERSION}-${NODE_ARCH}
-export DART_HOME=${TOOLS_HOME}/dart-sdk-${DART_VERSION}-${DART_ARCH}
-export DART_SDK=$DART_HOME
 
 export HIVE_HOME=${TOOLS_HOME}/apache-hive-${HIVE_VERSION}-bin
 export FLINK_HOME=${TOOLS_HOME}/flink-${FLINK_VERSION}
@@ -55,8 +53,8 @@ export ANDROID_HOME=${TOOLS_HOME}/android-sdk
 
 
 export PATH=\
-/opt/bin:$SCRIPTS_HOME:$PATH:$PUB_CACHE/bin:\
+/opt/bin:$SCRIPTS_HOME:$PATH:\
 ${JAVA_HOME}/bin:${SCALA_HOME}/bin:${SBT_HOME}/bin:${ANT_HOME}/bin:${M2_HOME}/bin:${GRADLE_HOME}/bin:\
 ${LLVM_HOME}/bin:\
-${NODE_HOME}/bin:${DART_HOME}/bin:\
+${NODE_HOME}/bin:\
 ${PATH}
