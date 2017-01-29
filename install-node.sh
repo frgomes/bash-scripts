@@ -11,3 +11,5 @@ fi
 
 mkdir -p /opt/developer && cd /opt/developer \
 && curl http://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-${NODE_ARCH}.tar.xz | bsdtar -xf -
+&& /opt/developer/node-v${NODE_VERSION}-${NODE_ARCH}/bin/npm install yarn -g --save
+&& /opt/developer/node-v${NODE_VERSION}-${NODE_ARCH}/bin/yarn global add typescript tslint typings webpack angular-cli
