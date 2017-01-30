@@ -10,6 +10,6 @@ if [ ! \( -e "$(which curl)" -a -e "$(which bsdtar)" \) ] ;then
 fi
 
 mkdir -p /opt/developer && cd /opt/developer \
-&& curl http://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-${NODE_ARCH}.tar.xz | bsdtar -xf -
-&& /opt/developer/node-v${NODE_VERSION}-${NODE_ARCH}/bin/npm install yarn -g --save
+&& curl http://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-${NODE_ARCH}.tar.xz | bsdtar -xf - \
+&& /opt/developer/node-v${NODE_VERSION}-${NODE_ARCH}/bin/npm install yarn -g --save \
 && /opt/developer/node-v${NODE_VERSION}-${NODE_ARCH}/bin/yarn global add typescript typings webpack angular-cli
