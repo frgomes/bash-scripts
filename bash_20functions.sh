@@ -123,3 +123,21 @@ function backup_zip {
       fi
   fi
 }
+
+
+function workspace() {
+  cd ~/workspace/$1
+}
+
+function _complete_workspace() {
+  local cur prev opts base
+  COMPREPLY=()
+  cur="${COMP_WORDS[COMP_CWORD]}"
+  prev="${COMP_WORDS[COMP_CWORD-1]}"
+  opts=""
+
+  local projects=$( ls -p ~/workspace | fgrep / | sed 's:/::' | grep -v -E -e '[.]OLD$' | grep -v -E -e '[.]DELETE-ME$' )
+  COMPREPLY=( $(compgen -W "${projects}" -- ${cur}) )
+  return 0
+}
+complete -F _complete_workspace workspace
