@@ -23,4 +23,5 @@ export HISTSIZE=50000
 export HISTFILESIZE=50000
 export HISTTIMEFORMAT="%Y%m%d_%H%M%S "
 export HISTCONTROL=ignoreboth
+export PROMPT_COMMAND='history -a'
 shopt -s histappend
