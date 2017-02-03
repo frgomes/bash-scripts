@@ -1,6 +1,6 @@
 #!/bin/bash
 
-NODE_VERSION=${NODE_VERSION:=4.7.3}
+NODE_VERSION=${NODE_VERSION:=6.4.0}
 NODE_ARCH=${NODE_ARCH:=linux-x64}
 
 # make sure all necessary tools are installed
