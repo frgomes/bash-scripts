@@ -41,4 +41,4 @@ function proxy_off {
   unset HTTP_PROXY http_proxy FTP_PROXY ftp_proxy npm_config_proxy npm_config_https_proxy JAVA_OPTS_PROXY
 }
 
-proxy_on
+proxy_off
