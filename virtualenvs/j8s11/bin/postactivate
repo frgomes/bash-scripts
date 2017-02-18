@@ -53,7 +53,7 @@ export ANDROID_HOME=${TOOLS_HOME}/android-sdk
 
 
 export PATH=\
-/opt/bin:$SCRIPTS_HOME:$PATH:\
+/opt/bin:$SCRIPTS_HOME:\
 ${JAVA_HOME}/bin:${SCALA_HOME}/bin:${SBT_HOME}/bin:${ANT_HOME}/bin:${M2_HOME}/bin:${GRADLE_HOME}/bin:\
 ${LLVM_HOME}/bin:\
 ${NODE_HOME}/bin:\

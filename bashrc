@@ -16,8 +16,6 @@ for script in $dir/bash_*.sh ;do
 done
 
 
-PS1='[$(date +%H:%M:%S)]'${PS1}
-
 # Make sure these variables are defined ONLY ONCE and only ONLY HERE.
 export HISTSIZE=10000
 export HISTFILESIZE=10000

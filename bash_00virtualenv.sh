@@ -12,7 +12,8 @@ function workon() {
     if [ ! -z "$1" -a -d ~/.virtualenvs/"$1" ] ;then
         for script in activate postactivate ;do
             if [ -f ~/.virtualenvs/"$1"/bin/$script ] ;then
-                local __shopts=$-; set +eu; source ~/.virtualenvs/"$1"/bin/$script; set -${__shopts}
+                local __shopts=$( echo $- | tr -d is); set +eu; source ~/.virtualenvs/"$1"/bin/$script; set -${__shopts}
+                PS1='[$(date +%H:%M:%S)]'"($1)"${PS1}
             fi
         done
     else
@@ -20,3 +21,11 @@ function workon() {
         return 1
     fi
 }
+
+function deactivate() {
+  PATH=${workon_PATH}
+  PS1=${workon_PS1}
+}
+
+workon_PATH=$PATH
+workon_PS1=$PS1
