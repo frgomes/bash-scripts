@@ -1,6 +1,7 @@
 #!/bin/bash
 
 ## see: http://askubuntu.com/questions/650941/how-to-set-global-proxy-in-ubuntu-from-configuration-url
+##      http://askubuntu.com/questions/13963/call-script-after-connecting-to-a-wireless-network
 
 function proxy_plugin_environment {
   local proxy=$1
