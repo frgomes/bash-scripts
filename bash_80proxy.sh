@@ -91,5 +91,3 @@ function proxy_off {
   proxy_plugin_npm
   proxy_plugin_java
 }
-
-proxy_off
