@@ -8,7 +8,7 @@ function proxy_plugin_environment {
   if [ -z "${proxy}" ] ;then
     [[ -f /etc/environment ]] && sudo rm /etc/environment
   else
-    sudo tee - /etc/environment << EOD
+    sudo tee /etc/environment > /dev/null << EOD
 http_proxy=${proxy}
 https_proxy=${proxy}
 ftp_proxy=${proxy}
@@ -21,7 +21,7 @@ function proxy_plugin_apt {
   if [ -z "${proxy}" ] ;then
     [[ -f /etc/apt/apt.conf.d/80proxy ]] && sudo rm /etc/apt/apt.conf.d/80proxy
   else
-    sudo tee - /etc/apt/apt.conf.d/80proxy << EOD
+    sudo tee /etc/apt/apt.conf.d/80proxy > /dev/null << EOD
 Acquire::http::Proxy  "${proxy}";
 Acquire::https::Proxy "${proxy}";
 Acquire::ftp::Proxy   "${proxy}";
