@@ -15,6 +15,7 @@ for script in $dir/bash_*.sh ;do
     fi
 done
 
+[[ ~/.bashrc.custom ]] && source ~/.bashrc.custom
 
 # Make sure these variables are defined ONLY ONCE and only ONLY HERE.
 export HISTSIZE=10000
