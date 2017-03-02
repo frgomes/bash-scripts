@@ -33,7 +33,7 @@ function proxy_plugin_gsettings {
         gsettings set org.gnome.system.proxy mode 'manual'
         gsettings set org.gnome.system.proxy use-same-proxy true
         gsettings set org.gnome.system.proxy autoconfig-url ''
-        gsettings set org.gnome.system.proxy ignore-hosts "['localhost','127.0.0.0/8','10.0.0.0/8','192.168.0.0/16','172.16.0.0/12','::1']"
+        gsettings set org.gnome.system.proxy ignore-hosts "['localhost','127.0.0.0/8','10.0.0.0/8','192.168.0.0/16','172.16.0.0/12','::1','fc00::/7','fe80::/10']"
         # first http
         gsettings set org.gnome.system.proxy.http host "${host}"
         gsettings set org.gnome.system.proxy.http port "${port}"
@@ -66,7 +66,7 @@ function proxy_plugin_environment {
 http_proxy="$proxy"
 https_proxy="$proxy"
 ftp_proxy="$proxy"
-no_proxy="localhost,127.0.0.1,::1"
+no_proxy="localhost,127.0.0.1,192.168.0.0/16,172.16.0.0/12,10.0.0.0/8,:1,fc00::/7,fe80::/10"
 EOD
   fi
 }
@@ -93,13 +93,16 @@ EOD
 function proxy_plugin_shell {
   local proxy=$1
   if [ -z "$proxy" ] ;then
-    for var in http_proxy https_proxy ftp_proxy HTTP_PROXY HTTPS_PROXY FTP_PROXY ;do
+    for var in http_proxy https_proxy ftp_proxy no_proxy HTTP_PROXY HTTPS_PROXY FTP_PROXY NO_PROXY ;do
       unset $var
     done
+    
   else
     for var in http_proxy https_proxy ftp_proxy HTTP_PROXY HTTPS_PROXY FTP_PROXY ;do
       export $var="$proxy"
     done
+    export no_proxy="localhost,127.0.0.1,192.168.0.0/16,172.16.0.0/12,10.0.0.0/8,:1,fc00::/7,fe80::/10"
+    export NO_PROXY="localhost,127.0.0.1,192.168.0.0/16,172.16.0.0/12,10.0.0.0/8,:1,fc00::/7,fe80::/10"
   fi
 }
 
