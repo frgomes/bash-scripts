@@ -4,7 +4,7 @@
 
 sudo apt-get update
 sudo apt-get dist-upgrade -y
-sudo apt-get install apt-transport-https ca-certificates -y
+sudo apt-get install lsb-release apt-transport-https ca-certificates -y
 
 release=$(lsb_release -cs)
 sudo sh -c "echo deb https://apt.dockerproject.org/repo debian-${release} main > /etc/apt/sources.list.d/docker.list"
