@@ -126,7 +126,8 @@ function backup_zip {
 
 
 function workspace() {
-  cd ~/workspace/$1
+  local dir=${WORKSPACE:=$HOME/workspace}
+  cd ${dir}/$1
 }
 
 function _complete_workspace() {
@@ -136,7 +137,8 @@ function _complete_workspace() {
   prev="${COMP_WORDS[COMP_CWORD-1]}"
   opts=""
 
-  local projects=$( ls -p ~/workspace | fgrep / | sed 's:/::' | grep -v -E -e '[.]OLD$' | grep -v -E -e '[.]DELETE-ME$' )
+  local dir=${WORKSPACE:=$HOME/workspace}
+  local projects=$( ls -p ${dir} | fgrep / | sed 's:/::' | grep -v -E -e '[.]OLD$' | grep -v -E -e '[.]DELETE-ME$' )
   COMPREPLY=( $(compgen -W "${projects}" -- ${cur}) )
   return 0
 }

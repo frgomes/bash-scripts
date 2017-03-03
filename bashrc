@@ -6,6 +6,8 @@
 
 dir=$(dirname $(test -L "$BASH_SOURCE" && readlink -f "$BASH_SOURCE" || echo "$BASH_SOURCE"))
 
+[[ -x ~/.bashrc.scripts.before ]] && source ~/.bashrc.scripts.before
+
 export PATH=~/bin:/opt/bin:${PATH}
 
 for script in $dir/bash_*.sh ;do
@@ -15,7 +17,7 @@ for script in $dir/bash_*.sh ;do
     fi
 done
 
-[[ ~/.bashrc.custom ]] && source ~/.bashrc.custom
+[[ -x ~/.bashrc.scripts.after ]] && source ~/.bashrc.scripts.after
 
 # Make sure these variables are defined ONLY ONCE and only ONLY HERE.
 export HISTSIZE=10000
