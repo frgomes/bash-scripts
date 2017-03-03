@@ -5,6 +5,7 @@
 ##########################
 
 function sbt_runner {
+  proxy_on
   if [ -f ./sbt ] ;then
     ./sbt ${cmds}
   else
