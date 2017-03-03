@@ -139,6 +139,8 @@ function proxy_finder {
     else
       echo "http://${ip}:3128"
     fi
+  else
+    fgrep http_proxy /etc/environment | cut -d= -f2
   fi
 }
 
