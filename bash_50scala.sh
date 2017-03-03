@@ -6,6 +6,7 @@
 
 function sbt_runner {
   proxy_on
+  local JAVA_OPTS="${JAVA_OPTS} ${JAVA_OPTS_PROXY}"
   if [ -f ./sbt ] ;then
     ./sbt ${cmds}
   else
