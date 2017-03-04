@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# Note: Squid does not handle DNS requests. For DNS caching we use: unbound.
+# Note: Squid does not handle DNS requests. For DNS caching we use Unbound.
+#       DNS caching does not happen by magic: you need to explicitly configure
+#       your DNS server to 127.0.0.1
 
 sudo apt-get install unbound squid3 -y
 
