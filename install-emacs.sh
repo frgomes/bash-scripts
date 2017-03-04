@@ -1,9 +1,8 @@
 #!/bin/bash
 
 function install_emacs {
-  local version=$1
-  local version=${version:="$EMACS_VERSION"}
-  local version=${version:=25.1}
+  local version=${1:-"$EMACS_VERSION"}
+  local version=${version:-"25.1"}
   local major=$(echo $version | cut -d. -f1)
 
   sudo apt-get install curl -y

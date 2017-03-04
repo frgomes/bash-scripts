@@ -2,14 +2,11 @@
 
 
 function install_node {
+  local version=${1:-"$NODE_VERSION"}
+  local version=${version:-"7.5.0"}
 
-  local version=$1
-  local version=${version:="$NODE_VERSION"}
-  local version=${version:=7.5.0}
-
-  local arch=$2
-  local arch=${arch:="$NODE_ARCH"}
-  local arch=${arch:=linux-x64}
+  local arch=${2:-"$NODE_ARCH"}
+  local arch=${arch:-"linux-x64"}
 
   # make sure all necessary tools are installed
   if [ ! \( -e "$(which curl)" -a -e "$(which bsdtar)" \) ] ;then

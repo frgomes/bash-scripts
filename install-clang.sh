@@ -10,10 +10,8 @@ EOD
 }
 
 function clang_install() {
-  release=$1
-  version=$2
-  release=${release:="stable"}
-  version=${version:="3.5"}
+  release=${1:-"stable"}
+  version=${2:-"3.5"}
   echo "Installing clang-${version} and llvm-${version} from ${release} ..."
   sudo apt-get install -t ${release} \
        clang-${version} clang-${version}-doc clang-format-${version} \
