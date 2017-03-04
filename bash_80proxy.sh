@@ -131,6 +131,7 @@ function proxy_plugin_java {
 
 #-------------------------------------------------------------------------------------------------------
 
+
 function proxy_finder {
   if [ $(netstat -an | fgrep 3128 | wc -l) -gt 0 ] ;then
     ip=$(netstat -an | fgrep ":3128 " | head -1 | sed -r 's/[ \t]+/ /g' | cut -d' ' -f5 | cut -d: -f1)
@@ -143,6 +144,7 @@ function proxy_finder {
     fgrep http_proxy /etc/environment | cut -d= -f2
   fi
 }
+
 
 #-------------------------------------------------------------------------------------------------------
 
@@ -172,4 +174,69 @@ function proxy_off {
   proxy_plugin_shell
   proxy_plugin_npm
   proxy_plugin_java
+}
+
+
+#-------------------------------------------------------------------------------------------------------
+
+
+function unbound_convert_local_data {
+  grep -v -E '^#' | grep -v -E '^[ \t]*$' | \
+    sed -r 's/[ \t]+/,/g' | \
+      awk -F "," '{ printf "        local-data: \"%s. IN A %s\"\n", $2, $1 }'
+}
+
+function unbound_convert_local_data_ptr {
+  grep -v -E '^#' | grep -v -E '^[ \t]*$' | \
+    sed -r 's/[ \t]+/,/g' | \
+      awk -F "," '{ printf "        local-data-ptr: \"%s %s\"\n", $1, $2 }'
+}
+
+function unbound_convert_domain {
+  local ip=${1:-127.0.0.1}
+  local host=${2:-$(hostname)}
+  local domain=${3:-$(dnsdomainname)}
+
+  printf "        local-data: \"%s.%s. IN A %s\"\n" $2 $domain $ip
+  printf "        local-data-ptr: \"%s %s.%s\"\n" $ip $2 $domain
+
+  cat /etc/hosts | fgrep $domain | fgrep -v "$host.$domain" | unbound_convert_local_data
+  cat /etc/hosts | fgrep $domain | fgrep -v "$host.$domain" | unbound_convert_local_data_ptr
+}
+
+function unbound_convert_domain_ignore {
+  local domain=${1:-$(dnsdomainname)}
+
+  cat /etc/hosts | fgrep -v $domain | fgrep -v :: | unbound_convert_local_data
+  cat /etc/hosts | fgrep -v $domain | fgrep -v :: | unbound_convert_local_data_ptr
+}
+
+function unbound_convert {
+  local ip=${1:-"127.0.0.1"}
+  local host=${2:-$(hostname)}
+  local domain=${3:-$(dnsdomainname)}
+
+  printf "server:\n"
+  printf "    local-zone: \"%s.\" static\n" $domain
+  unbound_convert_domain $ip $host $domain
+  unbound_convert_domain_ignore $domain
+}
+
+function unbound_local_zones {
+  local ip=${1:-"127.0.0.1"}
+  local host=${2:-$(hostname)}
+  local domain=${3:-$(dnsdomainname)}
+
+  unbound_convert $ip $host $domain | sudo tee /etc/unbound/unbound.conf.d/local-zones.conf > /dev/null
+  sudo unbound-checkconf /etc/unbound/unbound.conf.d/local-zones.conf
+}
+
+
+function unbound_local_zones_ifnet {
+  if [[ ! -z "$1" ]] ;then
+    local ip=$(ip -o addr show | fgrep "scope global" | sed -r 's/[ \t]+/ /g' | fgrep "$1" |  cut -d ' ' -f4 | cut -d'/' -f1)
+  else
+    local ip=127.0.0.1
+  fi
+  unbound_local_zones $ip
 }
