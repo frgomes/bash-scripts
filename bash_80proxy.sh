@@ -234,7 +234,7 @@ function unbound_local_zones {
 
 function unbound_local_zones_ifnet {
   if [[ ! -z "$1" ]] ;then
-    local ip=$(ip -o addr show | fgrep "scope global" | sed -r 's/[ \t]+/ /g' | fgrep "$1" |  cut -d ' ' -f4 | cut -d'/' -f1)
+    local ip=$(ip -o addr show | fgrep "scope global" | sed -r 's/[ \t]+/ /g' | fgrep "$1" | fgrep "inet " | cut -d ' ' -f4 | cut -d'/' -f1)
   else
     local ip=127.0.0.1
   fi
