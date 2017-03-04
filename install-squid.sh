@@ -1,6 +1,8 @@
 #!/bin/bash
 
-sudo apt-get install -y squid3
+# Note: Squid does not handle DNS requests. For DNS caching we use: unbound.
+
+sudo apt-get install unbound squid3 -y
 
 # make a configuration which just works
 sudo cp -p /etc/squid/squid.conf /etc/squid/squid.conf.ORIGINAL
