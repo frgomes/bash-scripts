@@ -66,7 +66,7 @@ function proxy_plugin_environment {
 http_proxy="$proxy"
 https_proxy="$proxy"
 ftp_proxy="$proxy"
-no_proxy="localhost,127.0.0.1,192.168.0.0/16,172.16.0.0/12,10.0.0.0/8,:1,fc00::/7,fe80::/10"
+no_proxy="localhost,127.0.0.1,192.168.0.0/16,172.16.0.0/12,10.0.0.0/8,::1,fc00::/7,fe80::/10"
 EOD
   fi
 }
@@ -101,8 +101,8 @@ function proxy_plugin_shell {
     for var in http_proxy https_proxy ftp_proxy HTTP_PROXY HTTPS_PROXY FTP_PROXY ;do
       export $var="$proxy"
     done
-    export no_proxy="localhost,127.0.0.1,192.168.0.0/16,172.16.0.0/12,10.0.0.0/8,:1,fc00::/7,fe80::/10"
-    export NO_PROXY="localhost,127.0.0.1,192.168.0.0/16,172.16.0.0/12,10.0.0.0/8,:1,fc00::/7,fe80::/10"
+    export no_proxy="localhost,127.0.0.1,192.168.0.0/16,172.16.0.0/12,10.0.0.0/8,::1,fc00::/7,fe80::/10"
+    export NO_PROXY="localhost,127.0.0.1,192.168.0.0/16,172.16.0.0/12,10.0.0.0/8,::1,fc00::/7,fe80::/10"
   fi
 }
 
