@@ -63,4 +63,4 @@ git config --global user.name "Richard Gomes"
 git config --global user.email "rgomes.info@gmail.com"
 
 export WORKSPACE=$HOME/workspace
-mkdir -p $WORKSPACE > /dev/null
+[[ ! -d $WORKSPACE ]] && mkdir -p $WORKSPACE
