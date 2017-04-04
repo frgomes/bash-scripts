@@ -66,8 +66,8 @@ function download_with_cookie_java {
 function zap {
   local args=$@
   cmd=${args:=xargs rm -r -f}
-  find . -maxdepth 2 -type d \( -name target -o -name target_sbt -o -name .ensime_cache \) | $cmd
-  find .             -type d \( -name target -o -name target_sbt -o -name .ensime_cache \) | $cmd
+  find . -maxdepth 2 -type d \( -name target -o -name node_modules -o -name .ensime_cache \) | $cmd
+  find .             -type d \( -name target -o -name node_modules -o -name .ensime_cache \) | $cmd
   find . -type f \( -name \~ -o -name '*~' \) | $cmd
 }
 
