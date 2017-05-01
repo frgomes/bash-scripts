@@ -7,13 +7,13 @@ TOOLS_HOME=/opt/developer
 # ---- These tools are available in the PATH ----
 JAVA_VERSION=1.8.0_121
 SCALA_VERSION_MAJOR=2.11
-SCALA_VERSION=${SCALA_VERSION_MAJOR}.8
+SCALA_VERSION=${SCALA_VERSION_MAJOR}.11
 ANT_VERSION=1.9.7
 M2_VERSION=3.3.9
 SBT_VERSION=0.13.12
 GRADLE_VERSION=2.13
 
-NODE_VERSION=7.8.0
+NODE_VERSION=7.9.0
 NODE_ARCH=linux-x64
 
 # ---- These tools are NOT available in the PATH ----
@@ -36,6 +36,8 @@ export M2_HOME=${TOOLS_HOME}/apache-maven-${M2_VERSION}
 export SBT_HOME=${TOOLS_HOME}/sbt-${SBT_VERSION}
 export GRADLE_HOME=${TOOLS_HOME}/gradle-${GRADLE_VERSION}
 
+export CONSCRIPT_HOME=${HOME}/.conscript
+
 export NODE_VERSION
 export NODE_ARCH
 export NODE_HOME=${TOOLS_HOME}/node-v${NODE_VERSION}-${NODE_ARCH}
@@ -51,7 +53,7 @@ export ANDROID_HOME=${TOOLS_HOME}/android-sdk
 export PATH=\
 /opt/bin:\
 ${RUST_HOME}/bin:\
-${JAVA_HOME}/bin:${SCALA_HOME}/bin:${SBT_HOME}/bin:${ANT_HOME}/bin:${M2_HOME}/bin:${GRADLE_HOME}/bin:\
+${JAVA_HOME}/bin:${SCALA_HOME}/bin:${SBT_HOME}/bin:${ANT_HOME}/bin:${M2_HOME}/bin:${GRADLE_HOME}/bin:${CONSCRIPT_HOME}/bin:\
 ${NODE_HOME}/bin:\
 $SCRIPTS_HOME:\
 ${PATH}
