@@ -22,7 +22,10 @@ function install_node {
   
   [[ ! -d /opt/developer ]] && mkdir -p /opt/developer
   pushd /opt/developer \
-    && bsdtar -xf ~/Downloads/node-v${version}-${arch}.tar.xz
+    && bsdtar -xf ~/Downloads/node-v${version}-${arch}.tar.xz \
+    && /opt/developer/node-v${version}-${arch}/bin/npm install npm@latest -g \
+    && /opt/developer/node-v${version}-${arch}/bin/node -v \
+    && /opt/developer/node-v${version}-${arch}/bin/npm -v
   popd
 }
 
