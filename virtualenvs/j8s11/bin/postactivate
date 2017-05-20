@@ -47,6 +47,7 @@ export FLINK_HOME=${TOOLS_HOME}/flink-${FLINK_VERSION}
 export SPARK_HOME=${TOOLS_HOME}/spark-${SPARK_VERSION}
 export KAFKA_HOME=${TOOLS_HOME}/kafka_${KAFKA_VERSION}
 
+export CHROMIUM_BIN=$(which chromium)
 export ANDROID_HOME=${TOOLS_HOME}/android-sdk
 
 
