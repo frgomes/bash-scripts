@@ -60,9 +60,14 @@ Simply create a file named ``$HOME/.bashrc.scripts.after``, as the example below
 ```bash
 #!/bin/bash
 
+#--
+# Select the preferred virtualenv in case I have a VPN connection alive.
+#--
 if [[ $( nmcli -t -f device,type,state,connection dev | fgrep tun:connected:tun0 ) ]] ;then
-  workon hmrc
+  # This is just an example. I do not really need this... but yeah... it's possible and tested!
+  workon my-customer-vpn
 else
+  # see: https://github.com/frgomes/debian-bin/blob/master/virtualenvs/j8s11/bin/postactivate
   workon j8s11
 fi
 
