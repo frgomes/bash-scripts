@@ -14,7 +14,7 @@ $ git clone http://github.com/frgomes/debian-bin
 $ cd $HOME
 $ mv bin bin.OLD
 $ ln -s $HOME/workspace/debian-bin bin
-source $HOME/bin/bashrc
+$ source $HOME/bin/bashrc
 ```
 
 Then add a call to the main script which does all the magic onto your ``$HOME/.bashrc``:
