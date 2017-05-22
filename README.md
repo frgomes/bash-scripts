@@ -17,7 +17,7 @@ $ ln -s $HOME/workspace/debian-bin bin
 $ source $HOME/bin/bashrc
 ```
 
-Then add a call to the main script which does all the magic onto your ``$HOME/.bashrc``:
+Then add a call to ``$HOME/bin/bashrc`` into your ``$HOME/.bashrc``:
 
 ```bash
 $ echo 'source $HOME/bin/bashrc' >> $HOME/.bashrc
