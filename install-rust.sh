@@ -1,5 +1,13 @@
 #!/bin/bash
 
-[[ ! -d /opt/developer/cargo ]] && mkdir -p /opt/developer/cargo
-[[ ! -L ~/.cargo ]] && ln -s /opt/developer/cargo ~/.cargo
-curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path -y
+function install_rust {
+  local tools=${TOOLS_HOME:=$HOME/tools}
+  [[ ! -d $tools ]] && mkdir -p $tools
+
+  [[ ! -d $tools/cargo ]] && mkdir -p $tools/cargo
+  [[ ! -L ~/.cargo ]] && ln -s $tools/cargo ~/.cargo
+  curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path -y
+}
+
+install_rust
+

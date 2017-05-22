@@ -20,11 +20,13 @@ function install_node {
     sudo apt-get install wget bsdtar -y
   fi
 
-  [[ ! -d /opt/developer ]] && mkdir -p /opt/developer
-  pushd /opt/developer \
+  local tools=${TOOLS_HOME:=$HOME/tools}
+
+  [[ ! -d $tools ]] && mkdir -p $tools
+  pushd tools \
     && bsdtar -xf ~/Downloads/node-v${version}-${arch}.tar.xz
 
-  echo /opt/developer/node-v${version}-${arch}
+  echo $tools/node-v${version}-${arch}
 }
 
 

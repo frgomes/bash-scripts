@@ -11,8 +11,13 @@ function install_mongo {
     sudo apt-get install curl bsdtar -y
   fi
 
-  mkdir -p /opt/developer && cd /opt/developer \
-  && curl https://fastdl.mongodb.org/linux/mongodb-${MONGO_ARCH}-${MONGO_OS}-${MONGO_VERSION}.tgz | bsdtar -xf -
+  local tools=${TOOLS_HOME:=$HOME/tools}
+
+  [[ ! -d $tools ]] && mkdir -p $tools
+
+  pushd $tools \
+    && curl https://fastdl.mongodb.org/linux/mongodb-${MONGO_ARCH}-${MONGO_OS}-${MONGO_VERSION}.tgz | bsdtar -xf - \
+    && popd
 }
 
 install_mongo
