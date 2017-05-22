@@ -47,6 +47,11 @@ function nmcli_connected_wifi {
   nmcli -t -f active,ssid dev wifi | fgrep yes: | cut -d: -f2
 }
 
+#--
+# Define environment variable WORKSPACE
+# In case I'm connected to "my customer" access point, I'd rather defined it as
+# a folder which contains "my customer's" stuff. Otherwise, I simply left undefined.
+#--
 if [[ "$(nmcli_connected_wifi)" == "MY_CUSTOMERS_WIFI" ]] ;then
   export WORKSPACE=$HOME/Applications/my-customers-development-environment/
   mkdir -p $WORKSPACE > /dev/null
