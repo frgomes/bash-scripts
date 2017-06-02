@@ -11,7 +11,7 @@ function virtualenv_profile_list {
 }
 
 
-# Link virtualenvs to corresponding profiles, if possible, if needed.
+# Relink virtualenvs to corresponding profiles, if possible, if needed.
 function virtualenv_profile_relink_all {
   local tstamp=$(date +%Y%m%d%H%M%S)
   virtualenv_profile_list | while read source ;do
@@ -24,4 +24,16 @@ function virtualenv_profile_relink_all {
 }
 
 
-virtualenv_profile_relink_all
+# Link virtualenvs to corresponding profiles, if possible, if needed.
+function virtualenv_profile_link_all {
+  local tstamp=$(date +%Y%m%d%H%M%S)
+  virtualenv_profile_list | while read source ;do
+    local target=$HOME/.virtualenvs/${source}
+    if [ \( ! -L ${target} \) -a \( -f ${target} \) ] ;then
+      mv ${target} ${target}.${tstamp}
+      ln -s $HOME/bin/virtualenvs/${source} ${target}
+    fi
+  done
+}
+
+virtualenv_profile_link_all
