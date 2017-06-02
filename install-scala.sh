@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 #
 # Installs Scala; API documentation; Language Specification
@@ -10,7 +10,7 @@ function install_scala {
   local major=$( echo ${version} | cut -d. -f 1-2 )
 
   # make sure all necessary tools are installed
-  if [ ! \( -e "$(which wget)" -a -e "$(which bsdtar)" -a -e "$(wich httrack)" \) ] ;then
+  if [ ! \( -e "$(which wget)" -a -e "$(which bsdtar)" -a -e "$(which httrack)" \) ] ;then
     echo apt-get install wget bsdtar xz-utils httrack -y
     sudo apt-get install wget bsdtar xz-utils httrack -y
   fi
