@@ -2,7 +2,7 @@
 
 
 # ---- Location where developer tools are installed ----
-TOOLS_HOME=/opt/developer
+TOOLS_HOME=${TOOLS_HOME:=$HOME/tools}
 
 # ---- These tools are available in the PATH ----
 JAVA_VERSION=1.8.0_121
@@ -17,7 +17,8 @@ NODE_VERSION=7.9.0
 NODE_ARCH=linux-x64
 
 # ---- These tools are NOT available in the PATH ----
-SPARK_VERSION=2.0.2-bin-hadoop2.7
+SPARK_VERSION=2.0.2
+HADOOP_VERSION=2.7
 FLINK_VERSION=1.1.3
 HIVE_VERSION=2.1.1
 KAFKA_VERSION=${SCALA_VERSION_MAJOR}-0.10.1.1
@@ -44,7 +45,7 @@ export NODE_HOME=${TOOLS_HOME}/node-v${NODE_VERSION}-${NODE_ARCH}
 
 export HIVE_HOME=${TOOLS_HOME}/apache-hive-${HIVE_VERSION}-bin
 export FLINK_HOME=${TOOLS_HOME}/flink-${FLINK_VERSION}
-export SPARK_HOME=${TOOLS_HOME}/spark-${SPARK_VERSION}
+export SPARK_HOME=${TOOLS_HOME}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}
 export KAFKA_HOME=${TOOLS_HOME}/kafka_${KAFKA_VERSION}
 
 export CHROMIUM_BIN=$(which chromium)
