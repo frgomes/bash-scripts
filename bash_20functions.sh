@@ -37,16 +37,17 @@ _debug() { _log 0 "DEBUG: $@"; }
 function download {
   local url="$1"
   local cookie="$2"
+  local params="$*"
 
   if [ ! -z "$1" ] ;then
     local dst=${dst:=$(basename $url)}
     pushd ${HOME}/Downloads > /dev/null 2>&1
     if [ ! -f ${dst} ] ;then
       if [ -z "$cookie" ] ;then
-        wget --quiet -O "${dst}" "${url}"
+        wget "$params" -O "${dst}" "${url}"
       else
         _info wget --quiet --no-cookies --no-check-certificate --header "Cookie: ${cookie}" "${url}"
-        wget --quiet --no-cookies --no-check-certificate --header "Cookie: ${cookie}" "${url}"
+        wget "$params" --no-cookies --no-check-certificate --header "Cookie: ${cookie}" "${url}"
       fi
     fi
     popd > /dev/null 2>&1
