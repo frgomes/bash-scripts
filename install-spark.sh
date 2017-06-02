@@ -1,0 +1,39 @@
+#!/bin/bash
+
+
+function install_spark {
+  echo default Spark  is $SPARK_VERSION
+  echo default Hadoop is $HADOOP_VERSION
+
+  local spark_version=${1:-"$SPARK_VERSION"}
+  local spark_version=${spark_version:-"2.1.1"}
+
+  local hadoop_version=${1:-"$HADOOP_VERSION"}
+  local hadoop_version=${hadoop_version:-"2.7"}
+
+  # make sure all necessary tools are installed
+  if [ ! \( -e "$(which wget)" -a -e "$(which bsdtar)" -a -e "$(which httrack)" \) ] ;then
+    echo apt-get install wget bsdtar xz-utils httrack -y
+    sudo apt-get install wget bsdtar xz-utils httrack -y
+  fi
+
+  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
+  pushd ~/Downloads > /dev/null
+  [[ ! -f spark-${spark_version}-bin-hadoop${hadoop_version}.tgz ]] && wget http://www.apache.org/dyn/closer.lua/spark/spark-${spark_version}/spark-${spark_version}-bin-hadoop${hadoop_version}.tgz
+  popd > /dev/null
+
+  local tools=${TOOLS_HOME:=$HOME/tools}
+
+  [[ ! -d ${tools} ]] && mkdir -p ${tools}
+  
+  if [ ! -d ${tools}/spark-${spark_version}-bin-hadoop${hadoop_version} ] ;then
+    pushd ${tools} > /dev/null
+    bsdtar -xf ~/Downloads/spark-${spark_version}-bin-hadoop${hadoop_version}.tgz
+    popd > /dev/null
+  fi
+
+  echo ${tools}/spark-${spark_version}-bin-hadoop${hadoop_version}
+}
+
+
+install_spark $*
