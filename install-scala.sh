@@ -4,8 +4,6 @@
 # Installs Scala; API documentation; Language Specification
 #
 function install_scala {
-  echo default is $SCALA_VERSION
-
   local version=${1:-"$SCALA_VERSION"}
   local version=${version:-"2.12.2"}
 
