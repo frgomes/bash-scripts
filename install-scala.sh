@@ -16,31 +16,31 @@ function install_scala {
   fi
 
   [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
-  pushd ~/Downloads
+  pushd ~/Downloads > /dev/null
   [[ ! -f scala-${version}.tgz ]]      && wget http://downloads.lightbend.com/scala/${version}/scala-${version}.tgz
   [[ ! -f scala-docs-${version}.txz ]] && wget http://downloads.lightbend.com/scala/${version}/scala-docs-${version}.txz
-  popd
+  popd > /dev/null
 
   local tools=${TOOLS_HOME:=$HOME/tools}
 
   [[ ! -d ${tools} ]] && mkdir -p ${tools}
   
   if [ ! -d ${tools}/scala-${version} ] ;then
-    pushd ${tools}
+    pushd ${tools} > /dev/null
     bsdtar -xf ~/Downloads/scala-${version}.tgz
-    popd
+    popd > /dev/null
   fi
 
   if [ ! -d ${tools}/scala-${version}/api ] ;then
-    pushd ${tools}
+    pushd ${tools} > /dev/null
     bsdtar -xf ~/Downloads/scala-docs-${version}.txz
-    popd
+    popd > /dev/null
   fi
 
   if [ ! -d ${tools}/scala-${version}-spec ] ;then
-    mkdir -p ${tools}/scala-${major}-spec && pushd ${tools}/scala-${major}-spec
+    mkdir -p ${tools}/scala-${major}-spec && pushd ${tools}/scala-${major}-spec > /dev/null
     httrack http://www.scala-lang.org/files/archive/spec/${major}
-    popd
+    popd > /dev/null
   fi
 
   echo ${tools}/scala-${version}
