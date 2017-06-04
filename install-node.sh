@@ -23,7 +23,7 @@ function install_node {
   local tools=${TOOLS_HOME:=$HOME/tools}
 
   [[ ! -d $tools ]] && mkdir -p $tools
-  pushd tools \
+  pushd $tools \
     && bsdtar -xf ~/Downloads/node-v${version}-${arch}.tar.xz
 
   echo $tools/node-v${version}-${arch}
