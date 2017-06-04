@@ -2,25 +2,13 @@
 
 function install_spark_mesos {
 
-  local apache=$HOME/sources/github.com/apache
-  local zeppelin=${apache}/zeppelin
-  local tag=v0.7.1
+  # make sure all necessary tools are installed
+  if [ ! -e "$(which docker)" ] ;then
+    echo apt-get install docker-engine -y
+    sudo apt-get install docker-engine -y
+  fi
 
-#  if [ -d ${zeppelin} ] ;then
-#    pushd ${zeppelin}
-#    git pull
-#  else
-#    mkdir -p ${apache} && pushd ${apache}
-#    git clone http://github.com/apache/zeppelin
-#    pushd ${zeppelin}
-#  fi
-
-#  git checkout ${tag}
-#  git reset --hard
-
-#  cd scripts/docker/spark-cluster-managers/spark_mesos
-
-  pushd $HOME/scripts/install-docker-spark+mesos
+  pushd $HOME/workspace/debian-scripts/install-docker-spark+mesos
   echo docker build \
            --build-arg SPARK_VERSION=$SPARK_VERSION \
            --build-arg SPARK_PROFILE=$SPARK_PROFILE \
@@ -49,7 +37,7 @@ docker run -it \
   spark_mesos bash;
 EOD
 
-  chmod 755 /opt/bin/zeppelin.sh
+  chmod 755 /opt/bin/spark_mesos.sh
 }
 
 
