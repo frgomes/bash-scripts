@@ -16,8 +16,8 @@ function install_node {
   
   # make sure all necessary tools are installed
   if [ ! \( -e "$(which wget)" -a -e "$(which bsdtar)" \) ] ;then
-    echo apt-get install wget bsdtar -y
-    sudo apt-get install wget bsdtar -y
+    echo apt-get install wget bsdtar xz-utils -y
+    sudo apt-get install wget bsdtar xz-utils -y
   fi
 
   local tools=${TOOLS_HOME:=$HOME/tools}

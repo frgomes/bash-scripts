@@ -7,8 +7,8 @@ function install_mongo {
 
   # make sure all necessary tools are installed
   if [ ! \( -e "$(which curl)" -a -e "$(which bsdtar)" \) ] ;then
-    echo apt-get install curl bsdtar -y
-    sudo apt-get install curl bsdtar -y
+    echo apt-get install curl bsdtar xz-utils -y
+    sudo apt-get install curl bsdtar xz-utils -y
   fi
 
   local tools=${TOOLS_HOME:=$HOME/tools}
