@@ -95,7 +95,7 @@ function git_ssh_to_http {
       if [ X"${company}" != "X" -a X"${provider}" == "Xbitbucket.org" -a -f "~/.ssh/id_rsa_${team}" ] ;then
         provider="${company}"
       fi
-      echo git remote set-url $name "http://${provider}/${team}/${prj}.git"
+      git remote set-url $name "http://${provider}/${team}/${prj}.git"
     fi
   done
 }
