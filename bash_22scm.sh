@@ -52,20 +52,23 @@ function scm_changeset {
 ##
 
 
-function git_origin_ssh {
-  protocol=$(git config --get remote.origin.url | cut -d/ -f1)
-  if [ X"${protocol}" == "Xhttp:" -o X"${protocol}" == "Xhttps:" ] ;then
-    provider=$(git config --get remote.origin.url | cut -d/ -f3 | cut -d@ -f2)
-    team=$(git config --get remote.origin.url | cut -d/ -f4)
-    prj=$(git config --get remote.origin.url | cut -d/ -f5)
-    git remote remove origin
-    # workaround https://bitbucket.org/site/master/issues/5154/someone-has-already-registered-that-ssh
-    company=$(fgrep Host ~/.ssh/config | fgrep -v Hostname | cut -d' ' -f2)
-    if [ X"${company}" != "X" -a X"${provider}" == "Xbitbucket.org" -a -f "~/.ssh/id_rsa_${team}" ] ;then
-      provider="${company}"
+function git_http_to_ssh {
+  git remote | while read name ;do
+    local url=$( git remote get-url $name )
+    [[ "$url" =~ (http[s]?)://(.+)/(.+)/(.+)(.git) ]]
+    local protocol="${BASH_REMATCH[1]}"
+    if [ \( "$protocol" == "http" \) -o \( "$protocol" == "https" \) ] ;then
+      local provider="${BASH_REMATCH[2]}"
+      local team="${BASH_REMATCH[3]}"
+      local prj="${BASH_REMATCH[4]}"
+      # workaround https://bitbucket.org/site/master/issues/5154/someone-has-already-registered-that-ssh
+      company=$(fgrep Host ~/.ssh/config | fgrep -v Hostname | cut -d' ' -f2)
+      if [ X"${company}" != "X" -a X"${provider}" == "Xbitbucket.org" -a -f "~/.ssh/id_rsa_${team}" ] ;then
+        provider="${company}"
+      fi
+      git remote set-url $name "git@${provider}:${team}/${prj}.git"
     fi
-    git remote add origin "git@${provider}:${team}/${prj}"
-  fi
+  done
 }
 
 
