@@ -7,9 +7,9 @@ function install_java {
   local tag=$( echo $version | sed 's/1.7.0_/7u/' | sed 's/1.8.0_/8u/' )
 
   # make sure all necessary tools are installed
-  if [ ! \( -e "$(which wget)" -a -e "$(which bsdtar)" -a -e "$(which httrack)" \) ] ;then
-    echo apt-get install wget bsdtar xz-utils httrack -y
-    sudo apt-get install wget bsdtar xz-utils httrack -y
+  if [ ! \( -e "$(which wget)" \) -a \( -e "$(which bsdtar)" \) -a \( -e "$(which unzip)" \) -a \( -e "$(which httrack)" \) ] ;then
+    echo apt-get install wget bsdtar xz-utils unzip httrack -y
+    sudo apt-get install wget bsdtar xz-utils unzip httrack -y
   fi
 
   local tools=${TOOLS_HOME:=$HOME/tools}
@@ -19,6 +19,8 @@ function install_java {
   if [ ! -d ${tools}/jdk-${tag}-linux-x64.tar.gz ] ;then
     pushd ${tools} > /dev/null
     bsdtar -xf ~/Downloads/jdk-${tag}-linux-x64.tar.gz
+    mkdir src && cd src
+    unzip ../src.zip
     popd > /dev/null
   else
     echo ERROR: Please download jdk-${tag}-linux-x64.tar.gz from http://java.sun.com/
