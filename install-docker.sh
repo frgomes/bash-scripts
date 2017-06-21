@@ -12,7 +12,7 @@ sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58
 
 sudo apt-get update
 sudo apt-cache policy docker-engine
-sudo apt-get install docker-engine -y
+sudo apt-get install docker-engine docker-compose -y
 
 sudo service docker start
 sudo docker run hello-world
