@@ -46,6 +46,24 @@ function scm_changeset {
   scm_modified | xargs tar cpzf $file && echo $file
 }
 
+function scm_pullall {
+  local branch=$1
+
+  for prj in */ ;do
+    pushd $prj
+    if [ -d .hg ] ;then
+      hg pull
+      hg checkout branch=${branch:=trunk}
+    elif [ -d .git ] ;then
+      git pull
+      hg checkout branch=${branch:=master}
+    fi
+    popd
+  done
+}
+
+
+
 
 ##
 ## git
