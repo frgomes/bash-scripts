@@ -33,7 +33,6 @@ function scm_modified {
 
 
 function scm_changeset {
-
   here=$( pwd )
   name=$( basename $here )
   dir=~/backup/${SUDO_USER:=${USER}}/changesets${here}
@@ -46,14 +45,15 @@ function scm_changeset {
   scm_modified | xargs tar cpzf $file && echo $file
 }
 
+
 function scm_pullall {
   local branch=$1
 
-  for prj in */ ;do
+  for prj in ./ */ ;do
     pushd $prj
     if [ -d .hg ] ;then
       hg pull
-      hg checkout branch=${branch:=trunk}
+      hg checkout branch=${branch:=default}
     elif [ -d .git ] ;then
       git pull
       hg checkout branch=${branch:=master}
