@@ -5,11 +5,10 @@ function install_jupyter_core {
 }
 
 function install_jupyter_coursier {
-  [[ ! -d /opt/bin ]] && mkdir -p /opt/bin
-  pushd /opt/bin
+  pushd /usr/local/bin
   [[ ! -e coursier ]] && \
-    curl -L -o coursier https://git.io/vgvpD && \
-      chmod +x coursier && pwd && ./coursier --help
+    sudo curl -L -o coursier https://git.io/vgvpD && \
+      sudo chmod 755 coursier && pwd && ./coursier --help
   popd
 }
 
@@ -17,7 +16,7 @@ function install_jupyter_kernel_scala {
   pushd /tmp
   curl -L -o jupyter-scala https://raw.githubusercontent.com/alexarchambault/jupyter-scala/master/jupyter-scala \
     && chmod +x jupyter-scala \
-      && ./jupyter-scala
+      && ./jupyter-scala --force
   popd
 }
 

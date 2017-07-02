@@ -17,17 +17,16 @@ function install_emacs {
 
   cd emacs-${version}
 
-  [[ -e /opt/share/emacs/${version} ]] && rm /opt/share/emacs/${version}
+  [[ -e /usr/share/emacs-${version} ]] && rm /usr/share/emacs-${version}
 
   ./autogen.sh
-  ./configure --prefix=/opt/share/emacs/${version}
+  ./configure --prefix=/usr/share/emacs-${version}
   make bootstrap
   make clean
   make
   sudo make install
 
-  sudo mkdir -p /opt/bin
-  sudo ln -s /opt/share/emacs/${version}/bin/emacs /opt/bin/emacs${major}
+  sudo ln -s /usr/share/emacs-${version}/bin/emacs /usr/local/bin/emacs-${version}
 }
 
 install_emacs
