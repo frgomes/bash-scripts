@@ -69,6 +69,10 @@ function scm_pullall {
 ## git
 ##
 
+function git_squash_all {
+  git reset $(git commit-tree HEAD^{tree} -m "Initial import.")
+}
+
 
 function git_remotes {
   if [ $# == 0 ] ;then
