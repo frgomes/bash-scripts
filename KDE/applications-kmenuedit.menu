@@ -1,0 +1,98 @@
+<!DOCTYPE Menu PUBLIC '-//freedesktop//DTD Menu 1.0//EN' 'http://www.freedesktop.org/standards/menu-spec/1.0/menu.dtd'>
+<Menu>
+ <Menu>
+  <Name>Internet</Name>
+  <Include>
+   <Filename>Thunderbird.desktop</Filename>
+   <Filename>Firefox.desktop</Filename>
+   <Filename>Wire.desktop</Filename>
+  </Include>
+  <Layout>
+   <Merge type="files"/>
+   <Filename>Wire.desktop</Filename>
+   <Filename>jitsi.desktop</Filename>
+   <Filename>Firefox.desktop</Filename>
+   <Filename>Thunderbird.desktop</Filename>
+   <Merge type="menus"/>
+   <Menuname>Terminal</Menuname>
+   <Filename>org.kde.akregator.desktop</Filename>
+   <Filename>org.kde.contactprintthemeeditor.desktop</Filename>
+   <Filename>org.kde.contactthemeeditor.desktop</Filename>
+   <Filename>org.kde.headerthemeeditor.desktop</Filename>
+   <Filename>org.kde.kmail.desktop</Filename>
+   <Filename>kde4-konqbrowser.desktop</Filename>
+   <Filename>org.kde.ktnef.desktop</Filename>
+   <Filename>org.kde.pimsettingexporter.desktop</Filename>
+   <Filename>org.kde.sieveeditor.desktop</Filename>
+   <Separator/>
+   <Menuname>More</Menuname>
+  </Layout>
+ </Menu>
+ <Menu>
+  <Name>Utilities</Name>
+  <Include>
+   <Filename>WP.desktop</Filename>
+   <Filename>KSnapShot.desktop</Filename>
+  </Include>
+  <Layout>
+   <Merge type="files"/>
+   <Filename>KSnapShot.desktop</Filename>
+   <Filename>org.kde.AddPrinter.desktop</Filename>
+   <Filename>gucharmap.desktop</Filename>
+   <Filename>org.kde.ConfigurePrinter.desktop</Filename>
+   <Filename>gitter.desktop</Filename>
+   <Filename>yelp.desktop</Filename>
+   <Filename>org.kde.kfontview.desktop</Filename>
+   <Filename>org.kde.klipper.desktop</Filename>
+   <Filename>org.kde.PrintQueue.desktop</Filename>
+   <Filename>WP.desktop</Filename>
+   <Merge type="menus"/>
+   <Menuname>XUtilities</Menuname>
+   <Filename>org.kde.ark.desktop</Filename>
+   <Filename>emacs25.desktop</Filename>
+   <Filename>emacs25-term.desktop</Filename>
+   <Filename>kde4-jovieapp.desktop</Filename>
+   <Filename>org.kde.kate.desktop</Filename>
+   <Filename>org.kde.kcalc.desktop</Filename>
+   <Filename>org.kde.importwizard.desktop</Filename>
+   <Filename>kde4-kmouth.desktop</Filename>
+   <Filename>org.kde.knotes.desktop</Filename>
+   <Filename>org.kde.ktnef.desktop</Filename>
+   <Filename>org.kde.kwrite.desktop</Filename>
+   <Filename>org.kde.spectacle.desktop</Filename>
+   <Filename>kde4-sweeper.desktop</Filename>
+   <Filename>debian-uxterm.desktop</Filename>
+   <Filename>debian-xterm.desktop</Filename>
+   <Separator/>
+   <Menuname>More</Menuname>
+  </Layout>
+ </Menu>
+ <Menu>
+  <Name>Development</Name>
+  <Include/>
+  <Layout>
+   <Merge type="files"/>
+   <Filename>jetbrains-idea-ce.desktop</Filename>
+   <Filename>python2.7.desktop</Filename>
+   <Filename>python3.5.desktop</Filename>
+   <Filename>zeal.desktop</Filename>
+   <Merge type="menus"/>
+   <Menuname>Translation</Menuname>
+   <Menuname>Web Development</Menuname>
+   <Filename>emacs25.desktop</Filename>
+   <Filename>emacs25-term.desktop</Filename>
+   <Filename>thg.desktop</Filename>
+  </Layout>
+  <Exclude>
+   <Filename>IntelliJ.desktop</Filename>
+  </Exclude>
+ </Menu>
+ <Menu>
+  <Name>.hidden</Name>
+  <Include>
+   <Filename>IntelliJ.desktop</Filename>
+  </Include>
+  <Layout/>
+  <Exclude/>
+ </Menu>
+</Menu>
