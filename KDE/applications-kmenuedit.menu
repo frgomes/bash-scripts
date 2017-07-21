@@ -70,6 +70,9 @@
  <Menu>
   <Name>Development</Name>
   <Include/>
+  <Exclude>
+   <Filename>IntelliJ.desktop</Filename>
+  </Exclude>
   <Layout>
    <Merge type="files"/>
    <Filename>jetbrains-idea-ce.desktop</Filename>
@@ -83,16 +86,13 @@
    <Filename>emacs25-term.desktop</Filename>
    <Filename>thg.desktop</Filename>
   </Layout>
-  <Exclude>
-   <Filename>IntelliJ.desktop</Filename>
-  </Exclude>
  </Menu>
  <Menu>
   <Name>.hidden</Name>
   <Include>
    <Filename>IntelliJ.desktop</Filename>
   </Include>
-  <Layout/>
   <Exclude/>
+  <Layout/>
  </Menu>
 </Menu>
