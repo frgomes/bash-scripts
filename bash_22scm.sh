@@ -69,7 +69,16 @@ function scm_pullall {
 ## git
 ##
 
-function git_squash_all {
+function git_squash_top {
+  local tmp=$(tempfile)
+  git log --format=%B -n 1 | head -1 > $tmp
+  git reset --soft HEAD~
+  git commit --amend -F $tmp
+  rm $tmp
+}
+
+
+function git_tree_squash_all {
   git reset $(git commit-tree HEAD^{tree} -m "Initial import.")
 }
 
