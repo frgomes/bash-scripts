@@ -61,8 +61,5 @@ $SCRIPTS_HOME:\
 ${PATH}
 
 
-git config --global user.name "Richard Gomes"
-git config --global user.email "rgomes.info@gmail.com"
-
 export WORKSPACE=$HOME/workspace
 [[ ! -d $WORKSPACE ]] && mkdir -p $WORKSPACE
