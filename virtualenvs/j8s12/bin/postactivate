@@ -26,6 +26,10 @@ export HIVE_VERSION=2.1.1
 export KAFKA_VERSION=${SCALA_VERSION_MAJOR}-0.10.1.1
 export ZEPPELIN_VERSION=0.7.1
 
+# ---- Options which in general work well ----
+export MAVEN_OPTS="-Xmx2048m"
+
+
 ## ---- NOTHING SHOULD CHANGE BELOW THIS POINT ----
 
 export SCRIPTS_HOME=$HOME/workspace/debian-scripts
