@@ -8,9 +8,10 @@ function swagger_editor {
 
 
 function swagger_cli_download {
-  local ver=2.3.0-SNAPSHOT
-  local name=swagger-codegen-cli-2.3.0-20170731.145436-42.jar
-  local url=https://oss.sonatype.org/content/repositories/snapshots/io/swagger/swagger-codegen-cli/$ver/$name
+  local r=snapshots
+  local v=3.0.0-SNAPSHOT
+  local name=swagger-codegen-cli-3.0.0-20170824.041313-2.jar
+  local url=https://oss.sonatype.org/content/repositories/${r}/io/swagger/swagger-codegen-cli/${v}/${name}
   local file=~/Downloads/$name
   if [ ! -f $file ] ;then
     mkdir -p ~/Downloads > /dev/null
