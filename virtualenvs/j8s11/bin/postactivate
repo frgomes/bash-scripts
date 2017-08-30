@@ -44,7 +44,7 @@ export ANT_HOME=${TOOLS_HOME}/apache-ant-${ANT_VERSION}
 export M2_HOME=${TOOLS_HOME}/apache-maven-${M2_VERSION}
 export SBT_HOME=${TOOLS_HOME}/sbt-${SBT_VERSION}
 export GRADLE_HOME=${TOOLS_HOME}/gradle-${GRADLE_VERSION}
-export ZINC_HOME=${TOOLS_HOME}/zinc=${ZINC_VERSION}
+export ZINC_HOME=${TOOLS_HOME}/zinc-${ZINC_VERSION}
 
 export CONSCRIPT_HOME=${HOME}/.conscript
 
