@@ -12,7 +12,6 @@ export ANT_VERSION=1.9.7
 export M2_VERSION=3.5.0
 export SBT_VERSION=0.13.15
 export GRADLE_VERSION=2.13
-export ZINC_VERSION=0.3.13
 
 export NODE_VERSION=7.9.0
 export NODE_ARCH=linux-x64
@@ -44,7 +43,6 @@ export ANT_HOME=${TOOLS_HOME}/apache-ant-${ANT_VERSION}
 export M2_HOME=${TOOLS_HOME}/apache-maven-${M2_VERSION}
 export SBT_HOME=${TOOLS_HOME}/sbt-${SBT_VERSION}
 export GRADLE_HOME=${TOOLS_HOME}/gradle-${GRADLE_VERSION}
-export ZINC_HOME=${TOOLS_HOME}/zinc-${ZINC_VERSION}
 
 export CONSCRIPT_HOME=${HOME}/.conscript
 
@@ -61,7 +59,7 @@ export ANDROID_HOME=${TOOLS_HOME}/android-sdk
 
 export PATH=\
 ${RUST_HOME}/bin:\
-${JAVA_HOME}/bin:${SCALA_HOME}/bin:${SBT_HOME}/bin:${ANT_HOME}/bin:${M2_HOME}/bin:${GRADLE_HOME}/bin:${ZINC_HOME}/bin:\
+${JAVA_HOME}/bin:${SCALA_HOME}/bin:${SBT_HOME}/bin:${ANT_HOME}/bin:${M2_HOME}/bin:${GRADLE_HOME}/bin:\
 ${CONSCRIPT_HOME}/bin:\
 ${NODE_HOME}/bin:\
 $SCRIPTS_HOME:\
