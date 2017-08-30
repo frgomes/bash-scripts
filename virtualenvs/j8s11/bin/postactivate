@@ -14,8 +14,8 @@ export SBT_VERSION=0.13.15
 export GRADLE_VERSION=2.13
 export ZINC_VERSION=0.3.13
 
-export NODE_VERSION=7.9.0
-export NODE_ARCH=linux-x64
+## export NODE_VERSION=7.9.0
+## export NODE_ARCH=linux-x64
 
 # ---- These tools are NOT available in the PATH ----
 export SPARK_PROFILE=2.1
@@ -48,7 +48,7 @@ export ZINC_HOME=${TOOLS_HOME}/zinc-${ZINC_VERSION}
 
 export CONSCRIPT_HOME=${HOME}/.conscript
 
-export NODE_HOME=${TOOLS_HOME}/node-v${NODE_VERSION}-${NODE_ARCH}
+## export NODE_HOME=${TOOLS_HOME}/node-v${NODE_VERSION}-${NODE_ARCH}
 export HIVE_HOME=${TOOLS_HOME}/apache-hive-${HIVE_VERSION}-bin
 export FLINK_HOME=${TOOLS_HOME}/flink-${FLINK_VERSION}
 export SPARK_HOME=${TOOLS_HOME}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_PROFILE}
@@ -63,9 +63,10 @@ export PATH=\
 ${RUST_HOME}/bin:\
 ${JAVA_HOME}/bin:${SCALA_HOME}/bin:${SBT_HOME}/bin:${ANT_HOME}/bin:${M2_HOME}/bin:${GRADLE_HOME}/bin:${ZINC_HOME}/bin:\
 ${CONSCRIPT_HOME}/bin:\
-${NODE_HOME}/bin:\
 $SCRIPTS_HOME:\
 ${PATH}
+
+## ${NODE_HOME}/bin:\
 
 
 export WORKSPACE=$HOME/workspace
