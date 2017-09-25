@@ -23,14 +23,14 @@ export HADOOP_PROFILE=2.7
 export HADOOP_VERSION=${HADOOP_PROFILE}.3
 export FLINK_VERSION=1.3.2
 export HIVE_VERSION=2.1.1
-export KAFKA_VERSION=${SCALA_VERSION_MAJOR}-0.11.0.1
+export KAFKA_VERSION=${SCALA_VERSION_MAJOR}-0.10.2.1
 export ZEPPELIN_VERSION=0.7.1
 
 # ---- Options which in general work well ----
 export MAVEN_OPTS="-Xmx2048m"
 
 
-## ---- NOTHING SHOULD CHANGE BELOW THIS POINT ----
+## ---- USEFUL EXPORTS ----
 
 export SCRIPTS_HOME=$HOME/workspace/debian-scripts
 export PUB_CACHE=$HOME/.pub-cache
@@ -57,10 +57,11 @@ export CHROMIUM_BIN=$(which chromium)
 export ANDROID_HOME=${TOOLS_HOME}/android-sdk
 
 
+## ---- ENVIRONMENT DEPENDENT EXPORTS ----
+
 export PATH=\
 ${RUST_HOME}/bin:\
 ${JAVA_HOME}/bin:${SCALA_HOME}/bin:${SBT_HOME}/bin:${ANT_HOME}/bin:${M2_HOME}/bin:${GRADLE_HOME}/bin:\
-${NODE_HOME}/bin:\
 ${CONSCRIPT_HOME}/bin:\
 $SCRIPTS_HOME:\
 ${PATH}
