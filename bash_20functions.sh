@@ -28,6 +28,13 @@ _info()  { _log 1 "INFO:  $@"; }
 _debug() { _log 0 "DEBUG: $@"; }
 
 
+function paths() {
+  for p in $* ;do
+    export PATH=$PATH:${p}
+  done
+}
+
+
 ##
 # Employs wget in order to download a file into directory ${HOME}/Downloads
 #
