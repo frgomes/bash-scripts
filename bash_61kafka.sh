@@ -1,0 +1,12 @@
+#!/bin/bash
+
+function kafka_delete_all_topics {
+  local server=${1}
+  local server=${server:="localhost:2181"}
+
+  $KAFKA_HOME/bin/zookeeper-shell.sh ${server} <<EOD
+rmr /config/topics
+rmr /brokers/topics
+rmr /admin/delete_topics
+EOD
+}
