@@ -3,7 +3,7 @@
 
 function install_node {
   local version=${1:-"$NODE_VERSION"}
-  local version=${version:-"7.9.0"}
+  local version=${version:-"8.4.0"}
 
   local arch=${2:-"$NODE_ARCH"}
   local arch=${arch:-"linux-x64"}

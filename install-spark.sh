@@ -6,7 +6,7 @@ function install_spark {
   echo default Hadoop is $HADOOP_VERSION
 
   local spark_version=${1:-"$SPARK_VERSION"}
-  local spark_version=${spark_version:-"2.1.1"}
+  local spark_version=${spark_version:-"2.2.0"}
 
   local hadoop_version=${1:-"$HADOOP_VERSION"}
   local hadoop_version=${hadoop_version:-"2.7"}
