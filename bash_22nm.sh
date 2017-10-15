@@ -1,7 +1,8 @@
 #!/bin/bash
 
-[[ ! $(dpkg --list | fgrep network-manager) ]] && sudo apt-get install network-manager -y
-[[ ! $(dpkg --list | fgrep wireless-tools)  ]] && sudo apt-get install wireless-tools -y
+
+apt_install_no_prompt network-manager
+apt_install_no_prompt wireless-tools
 
 
 function nmcli_list {
