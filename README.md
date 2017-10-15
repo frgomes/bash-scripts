@@ -25,20 +25,18 @@ $ echo 'source $HOME/bin/bashrc' >> $HOME/.bashrc
 
 ### Additional tricks
 
-You may find useful to run something _before_ and/or something _after_ you load all scripts
-into your terminal session.
+You may find useful to run something _before_ and/or something _after_ you load [these] scripts
+[provided by this package] into your terminal session.
 
-To be more specific, my shell scripts and tricks have some dependencies from environment 
-variables which may or may not be defined when these scripts are first loaded. If these
-environment variables are not loaded, some reasonable defaults are assumed but, given that
-you have chance to run things _before_ these scripts are loaded, you have chance to adjust
-things as your needs dictate. For example, if you have multiple workspaces, one per customer,
-or if you have special WiFi settings depending on the customer you are visiting... well... you
-have chance to adjust these details _before_ the scripts are loaded.
+This way, you can define defauls for environment variables before scripts run.
+You can also adjust keyboard configurations and other preferences after all scripts run.
 
 #### Actions before loading scripts
 
-Simply create a file named ``$HOME/.bashrc.scripts.before``, as the example below shows:
+Simply create a file named ``$HOME/.bashrc.scripts.before`` and it will be executed before
+[these] scripts [provided by this package] run.
+
+This is an example, provided under 
 
 ```bash
 #!/bin/bash
@@ -52,10 +50,12 @@ function nmcli_connected_wifi {
 # In case I'm connected to "my customer" access point, I'd rather defined it as
 # a folder which contains "my customer's" stuff. Otherwise, I simply left undefined.
 #--
-if [[ "$(nmcli_connected_wifi)" == "MY_CUSTOMERS_WIFI" ]] ;then
-  export WORKSPACE=$HOME/Applications/my-customers-development-environment/
-  mkdir -p $WORKSPACE > /dev/null
-fi
+case "$(nmcli_connected_wifi)" in
+  "MY_CUSTOMERS_WIFI") export WORKSPACE=$HOME/Applications/my-customers-development-environment/
+                       ;;
+  *)                   export WORKSPACR=$HOME/workspace
+                       ;;
+esac
 ```
 
 #### Actions after loading scripts
@@ -66,14 +66,10 @@ Simply create a file named ``$HOME/.bashrc.scripts.after``, as the example below
 #!/bin/bash
 
 #--
-# Select the preferred virtualenv in case I have a VPN connection alive.
+# Select preferences in case a VPN connection is active.
 #--
 if [[ $( nmcli -t -f device,type,state,connection dev | fgrep tun:connected:tun0 ) ]] ;then
-  # This is just an example. I do not really need this... but yeah... it's possible and tested!
-  workon my-customer-vpn
-else
-  # see: https://github.com/frgomes/debian-bin/blob/master/virtualenvs/j8s11/bin/postactivate
-  workon j8s11
+  echo "VPN is active"
 fi
 
 #--
@@ -87,4 +83,7 @@ elif [[ $( lsusb | fgrep feed:6060 ) ]] ;then
 else
   carpalx_hyena_gb
 fi
+
+# see: https://github.com/frgomes/debian-bin/blob/master/virtualenvs/j8s12/bin/postactivate
+workon j8s12
 ```

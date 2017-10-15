@@ -1,0 +1,23 @@
+#!/bin/bash
+
+#--
+# Select preferences in case a VPN connection is active.
+#--
+if [[ $( nmcli -t -f device,type,state,connection dev | fgrep tun:connected:tun0 ) ]] ;then
+  echo "VPN is active"
+fi
+
+#--
+# Configure keyboard, depending on which one is connected.
+# See also: http://github.com/frgomes/carpalx
+#---
+if [[ $( lsusb | fgrep 17f6:0905 | fgrep Unicomp ) ]] ;then
+  carpalx_hyena_us
+elif [[ $( lsusb | fgrep feed:6060 ) ]] ;then
+  carpalx_hyena_us
+else
+  carpalx_hyena_gb
+fi
+
+# see: https://github.com/frgomes/debian-bin/blob/master/virtualenvs/j8s12/bin/postactivate
+workon j8s12
