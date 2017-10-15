@@ -69,12 +69,21 @@ function scm_pullall {
 ## git
 ##
 
-function git_squash_top {
+function git_top_squash {
   local tmp=$(tempfile)
   git log --format=%B -n 1 | head -1 > $tmp
   git reset --soft HEAD~
   git commit --amend -F $tmp
   rm $tmp
+}
+
+
+function git_top_swap {
+  git tag top
+  git reset --hard HEAD~2
+  git cherry-pick top
+  git cherry-pick top~1
+  git tag -d top
 }
 
 
