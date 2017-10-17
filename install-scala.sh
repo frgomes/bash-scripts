@@ -5,7 +5,7 @@
 #
 function install_scala {
   local version=${1:-"$SCALA_VERSION"}
-  local version=${version:-"2.12.2"}
+  local version=${version:-"2.12.3"}
 
   local major=$( echo ${version} | cut -d. -f 1-2 )
 
