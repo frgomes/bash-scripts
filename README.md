@@ -2,6 +2,12 @@ These are several shell scripts aiming facilitate installation of applications, 
 
 ## For the impatient
 
+### Requirements
+
+Some scripts depend on functions defined at:
+
+* http://github.com/frgomes/debian-bin
+
 ### Installation
 
 This is how I install these scripts in my environment:
