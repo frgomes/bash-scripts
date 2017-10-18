@@ -36,7 +36,7 @@ You can also adjust keyboard configurations and other preferences after all scri
 Simply create a file named ``$HOME/.bashrc.scripts.before`` and it will be executed before
 [these] scripts [provided by this package] run.
 
-This is an example, provided under 
+This is an example which may be useful if you visit several clients:
 
 ```bash
 #!/bin/bash
@@ -51,10 +51,12 @@ function nmcli_connected_wifi {
 # a folder which contains "my customer's" stuff. Otherwise, I simply left undefined.
 #--
 case "$(nmcli_connected_wifi)" in
-  "MY_CUSTOMERS_WIFI") export WORKSPACE=$HOME/Applications/my-customers-development-environment/
-                       ;;
-  *)                   export WORKSPACR=$HOME/workspace
-                       ;;
+  "CUSTOMER_A") export WORKSPACE=$HOME/Documents/customers/CustomerA/
+                ;;
+  "CUSTOMER_B") export WORKSPACE=$HOME/Documents/customers/CustomerB/
+                ;;
+  *)            export WORKSPACR=$HOME/workspace
+                ;;
 esac
 ```
 
