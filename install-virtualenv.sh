@@ -1,6 +1,5 @@
 #!/bin/bash
 
-function 
 sudo apt-get install virtualenvwrapper -y
 
 source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
