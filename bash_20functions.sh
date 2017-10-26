@@ -44,20 +44,20 @@ function paths() {
 function download {
   local url="$1"
   local cookie="$2"
+  shift; shift
   local params="$*"
 
-  if [ ! -z "$1" ] ;then
-    local dst=${dst:=$(basename $url)}
-    pushd ${HOME}/Downloads > /dev/null 2>&1
+  if [ ! -z "$url" ] ;then
+    local dst=${HOME}/Downloads/$(basename $url)
+    [[ ! -d $HOME/Downloads ]] && mkdir -p $HOME/Downloads
     if [ ! -f ${dst} ] ;then
       if [ -z "$cookie" ] ;then
         wget "$params" -O "${dst}" "${url}"
       else
-        _info wget --quiet --no-cookies --no-check-certificate --header "Cookie: ${cookie}" "${url}"
-        wget "$params" --no-cookies --no-check-certificate --header "Cookie: ${cookie}" "${url}"
+        _info wget --quiet --no-cookies --no-check-certificate --header "Cookie: ${cookie}" -O "${dst}" "${url}"
+        wget "$params" --no-cookies --no-check-certificate --header "Cookie: ${cookie}" -O "${dst}" "${url}"
       fi
     fi
-    popd > /dev/null 2>&1
   fi
 }
 

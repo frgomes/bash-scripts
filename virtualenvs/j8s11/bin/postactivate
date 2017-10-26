@@ -5,7 +5,7 @@
 export TOOLS_HOME=${TOOLS_HOME:=$HOME/tools}
 
 # ---- These tools are available in the PATH ----
-export JAVA_VERSION=1.8.0_144
+export JAVA_VERSION=1.8.0_151
 export SCALA_VERSION_MAJOR=2.11
 export SCALA_VERSION=${SCALA_VERSION_MAJOR}.11
 export ANT_VERSION=1.9.7
