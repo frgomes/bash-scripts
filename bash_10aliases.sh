@@ -42,6 +42,9 @@ alias sdiff='diff -Npry'
 alias kdiff='kdiff3'
 alias vdiff='/opt/developer/idea/bin/idea.sh diff'
 
+# caopy/paste using the clipboard
+alias ctrlc='xclip -i -selection clipboard'
+alias ctrlv='xclip -o -selection clipboard'
 
 ## finding contents in files easily
 
