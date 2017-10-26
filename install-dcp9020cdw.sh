@@ -2,23 +2,32 @@
 
 source $HOME/bin/bash_20functions.sh
 
-download http://download.brother.com/welcome/dlf100441/dcp9020cdwlpr-1.1.2-1.i386.deb
-download http://download.brother.com/welcome/dlf100443/dcp9020cdwcupswrapper-1.1.4-0.i386.deb
-download http://download.brother.com/welcome/dlf006645/brscan4-0.4.4-4.amd64.deb
-download http://download.brother.com/welcome/dlf006652/brscan-skey-0.2.4-1.amd64.deb
-download http://download.brother.com/welcome/dlf006654/brother-udev-rule-type1-1.0.2-0.all.deb
-
 function install_dcp9020cdw_packages {
-  sudo dpkg --add-architecture i386 && \
-  sudo apt-get update && \
-  sudo apt-get install lib32stdc++6 libkf5kdelibs4support5-bin libnotify-bin kio-extras nomacs sane-utils psutils gscan2pdf -y && \
-  sudo dpkg --install --force-all \
-        $HOME/Downloads/dcp9020cdwlpr-1.1.2-1.i386.deb \
-        $HOME/Downloads/dcp9020cdwcupswrapper-1.1.4-0.i386.deb \
-        $HOME/Downloads/brscan4-0.4.4-4.amd64.deb \
-        $HOME/Downloads/brscan-skey-0.2.4-1.amd64.deb \
-        $HOME/Downloads/brother-udev-rule-type1-1.0.2-0.all.deb && \
-  sudo apt-get -f install
+  download http://download.brother.com/welcome/dlf100441/dcp9020cdwlpr-1.1.2-1.i386.deb
+  download http://download.brother.com/welcome/dlf100443/dcp9020cdwcupswrapper-1.1.4-0.i386.deb
+  download http://download.brother.com/welcome/dlf006645/brscan4-0.4.4-4.amd64.deb
+  download http://download.brother.com/welcome/dlf006652/brscan-skey-0.2.4-1.amd64.deb
+  download http://download.brother.com/welcome/dlf006654/brother-udev-rule-type1-1.0.2-0.all.deb
+
+  if [ -f $HOME/Downloads/dcp9020cdwlpr-1.1.2-1.i386.deb -a \
+       -f $HOME/Downloads/dcp9020cdwcupswrapper-1.1.4-0.i386.deb -a \
+       -f $HOME/Downloads/brscan4-0.4.4-4.amd64.deb -a \
+       -f $HOME/Downloads/brscan-skey-0.2.4-1.amd64.deb -a \
+       -f $HOME/Downloads/brother-udev-rule-type1-1.0.2-0.all.deb ] ;then \
+    sudo dpkg --add-architecture i386 && \
+    sudo apt-get update && \
+    sudo apt-get install lib32stdc++6 libkf5kdelibs4support5-bin libnotify-bin kio-extras nomacs sane-utils psutils gscan2pdf -y && \
+    sudo dpkg --install --force-all \
+          $HOME/Downloads/dcp9020cdwlpr-1.1.2-1.i386.deb \
+          $HOME/Downloads/dcp9020cdwcupswrapper-1.1.4-0.i386.deb \
+          $HOME/Downloads/brscan4-0.4.4-4.amd64.deb \
+          $HOME/Downloads/brscan-skey-0.2.4-1.amd64.deb \
+          $HOME/Downloads/brother-udev-rule-type1-1.0.2-0.all.deb && \
+    sudo apt-get -f install
+  else
+    echo ERROR: Could not download installation packages
+    return 1
+  fi
 }
 
 function install_dcp9020cdw_configure_scanner {
