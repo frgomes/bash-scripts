@@ -102,7 +102,8 @@ function git_remotes {
 
 
 function git_http_to_ssh {
-  git_remotes $* | while read name ;do
+    local name=${1}
+    local name=${name:=origin}
     local url=$( git remote get-url $name )
     [[ "$url" =~ (http[s]?)://(.+)/(.+)/(.+)(\.git)? ]]
     local protocol="${BASH_REMATCH[1]}"
@@ -116,14 +117,15 @@ function git_http_to_ssh {
       if [ X"${company}" != "X" -a X"${provider}" == "Xbitbucket.org" -a -f "~/.ssh/id_rsa_${team}" ] ;then
         provider="${company}"
       fi
-      git remote set-url $name "git@${provider}:${team}/${prj}${ext}"
+      git remote set-url        $name "git@${provider}:${team}/${prj}${ext}"
+      git remote set-url --push $name "git@${provider}:${team}/${prj}${ext}"
     fi
-  done
 }
 
 
 function git_ssh_to_http {
-  git_remotes $* | while read name ;do
+    local name=${1}
+    local name=${name:=origin}
     local url=$( git remote get-url $name )
     [[ "$url" =~ (.+)@(.+):(.+)/(.+)(\.git)? ]]
     local user="${BASH_REMATCH[1]}"
@@ -137,9 +139,9 @@ function git_ssh_to_http {
       if [ X"${company}" != "X" -a X"${provider}" == "Xbitbucket.org" -a -f "~/.ssh/id_rsa_${team}" ] ;then
         provider="${company}"
       fi
-      git remote set-url $name "http://${provider}/${team}/${prj}${ext}"
+      git remote set-url        $name "https://${provider}/${team}/${prj}${ext}"
+      git remote set-url --push $name "https://${provider}/${team}/${prj}${ext}"
     fi
-  done
 }
 
 
