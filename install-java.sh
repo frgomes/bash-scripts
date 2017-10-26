@@ -42,7 +42,7 @@ function install_java {
     return 1
   fi
 
-  echo ${tools}/java-${version}
+  echo ${tools}/jdk${version}
 }
 
 
