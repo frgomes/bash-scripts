@@ -1,6 +1,18 @@
-#!/bin/bash -x
+#!/bin/bash
 
 source $HOME/bin/bash_20functions.sh
+
+function install_cdp9020cdw_requirements {
+  if command -p fgrep dcp9020cdw.localdomain /etc/hosts ;then
+    [[ ! $( dpkg -s lib32stdc++6 > /dev/null &2>1 ) ]] \
+      && sudo dpkg --add-architecture i386 \
+      && sudo apt-get update \
+      && sudo apt-get install lib32stdc++6 -y 
+  else
+    echo ERROR: please insert the IP address of dcp9020cdw.localdomain into /etc/hosts
+    return 1
+  fi
+}
 
 function install_dcp9020cdw_packages {
   download http://download.brother.com/welcome/dlf100441/dcp9020cdwlpr-1.1.2-1.i386.deb
@@ -14,16 +26,15 @@ function install_dcp9020cdw_packages {
        -f $HOME/Downloads/brscan4-0.4.4-4.amd64.deb -a \
        -f $HOME/Downloads/brscan-skey-0.2.4-1.amd64.deb -a \
        -f $HOME/Downloads/brother-udev-rule-type1-1.0.2-0.all.deb ] ;then \
-    sudo dpkg --add-architecture i386 && \
-    sudo apt-get update && \
-    sudo apt-get install lib32stdc++6 libkf5kdelibs4support5-bin libnotify-bin kio-extras nomacs skanlite sane-utils psutils gscan2pdf -y && \
-    sudo dpkg --install --force-all \
+    [[ ! -d /var/spool/lpd/dcp9020cdw ]] && sudo mkdir -p /var/spool/lpd/dcp9020cdw
+    sudo apt-get install libkf5kdelibs4support5-bin libnotify-bin kio-extras nomacs skanlite sane-utils psutils gscan2pdf -y \
+    && sudo dpkg --install --force-all \
           $HOME/Downloads/dcp9020cdwlpr-1.1.2-1.i386.deb \
           $HOME/Downloads/dcp9020cdwcupswrapper-1.1.4-0.i386.deb \
           $HOME/Downloads/brscan4-0.4.4-4.amd64.deb \
           $HOME/Downloads/brscan-skey-0.2.4-1.amd64.deb \
-          $HOME/Downloads/brother-udev-rule-type1-1.0.2-0.all.deb && \
-    sudo apt-get -f install
+          $HOME/Downloads/brother-udev-rule-type1-1.0.2-0.all.deb \
+    && sudo apt-get -f install
   else
     echo ERROR: Could not download installation packages
     return 1
@@ -92,7 +103,8 @@ function install_dcp9020cdw_configure_autostart {
 }
 
 
-install_dcp9020cdw_packages && \
-  install_dcp9020cdw_configure_scanner && \
-    install_dcp9020cdw_configure_dolphin && \
-      install_dcp9020cdw_configure_autostart
+install_cdp9020cdw_requirements && \
+  install_dcp9020cdw_packages && \
+    install_dcp9020cdw_configure_scanner && \
+      install_dcp9020cdw_configure_dolphin && \
+        install_dcp9020cdw_configure_autostart
