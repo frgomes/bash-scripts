@@ -16,7 +16,7 @@ function install_dcp9020cdw_packages {
        -f $HOME/Downloads/brother-udev-rule-type1-1.0.2-0.all.deb ] ;then \
     sudo dpkg --add-architecture i386 && \
     sudo apt-get update && \
-    sudo apt-get install lib32stdc++6 libkf5kdelibs4support5-bin libnotify-bin kio-extras nomacs sane-utils psutils gscan2pdf -y && \
+    sudo apt-get install lib32stdc++6 libkf5kdelibs4support5-bin libnotify-bin kio-extras nomacs skanlite sane-utils psutils gscan2pdf -y && \
     sudo dpkg --install --force-all \
           $HOME/Downloads/dcp9020cdwlpr-1.1.2-1.i386.deb \
           $HOME/Downloads/dcp9020cdwcupswrapper-1.1.4-0.i386.deb \
