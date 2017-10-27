@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 
 function install_node {
@@ -8,18 +8,18 @@ function install_node {
   local arch=${2:-"$NODE_ARCH"}
   local arch=${arch:-"linux-x64"}
 
-  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
-  pushd ~/Downloads
-  [[ ! -f node-v${version}-${arch}.tar.xz ]] \
-    && wget http://nodejs.org/dist/v${version}/node-v${version}-${arch}.tar.xz
-  popd
-  
   # make sure all necessary tools are installed
   if [ ! \( -e "$(which wget)" -a -e "$(which bsdtar)" \) ] ;then
     echo apt-get install wget bsdtar xz-utils -y
     sudo apt-get install wget bsdtar xz-utils -y
   fi
 
+  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
+  pushd ~/Downloads
+  [[ ! -f node-v${version}-${arch}.tar.xz ]] \
+    && wget http://nodejs.org/dist/v${version}/node-v${version}-${arch}.tar.xz
+  popd
+  
   local tools=${TOOLS_HOME:=$HOME/tools}
 
   [[ ! -d $tools ]] && mkdir -p $tools
