@@ -38,8 +38,9 @@ function install_scala {
   fi
 
   if [ ! -d ${tools}/scala-${version}-spec ] ;then
-    mkdir -p ${tools}/scala-${major}-spec && pushd ${tools}/scala-${major}-spec > /dev/null
-    httrack http://www.scala-lang.org/files/archive/spec/${major}
+    [[ ! -d ${tools}/scala-${major}-spec ]] && mkdir -p ${tools}/scala-${major}-spec
+    pushd ${tools}/scala-${major}-spec > /dev/null
+    [[ ! -f index.html ]] && httrack http://www.scala-lang.org/files/archive/spec/${major}
     popd > /dev/null
   fi
 
