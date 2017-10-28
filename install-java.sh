@@ -34,7 +34,8 @@ function install_java {
     pushd ${tools} > /dev/null
     bsdtar -xf ~/Downloads/jdk-${tag}-linux-x64.tar.gz
     cd jdk${version}
-    mkdir src && cd src
+    [[ ! -d src ]] && mkdir src
+    cd src
     bsdtar -xf ../src.zip
     popd > /dev/null
   else
