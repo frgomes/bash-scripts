@@ -1,5 +1,39 @@
 #!/bin/bash
 
+
+function install_scala_requirements {
+  if [ ! \( -e "$(which wget)" -a -e "$(which bsdtar)" -a -e "$(which httrack)" \) ] ;then
+    echo apt-get install wget bsdtar xz-utils httrack -y
+    sudo apt-get install wget bsdtar xz-utils httrack -y
+  fi
+}
+
+function install_scala_sbt {
+  local version=${1:-"$SBT_VERSION"}
+  local version=${version:-"1.0.2"}
+
+  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
+  pushd ~/Downloads > /dev/null
+  [[ ! -f sbt-${version}.tgz ]] && wget http://github.com/sbt/sbt/releases/download/v${version}/sbt-${version}.tgz
+
+  popd > /dev/null
+
+  local tools=${TOOLS_HOME:=$HOME/tools}
+
+  [[ ! -d ${tools} ]] && mkdir -p ${tools}
+  
+  if [ ! -d ${tools}/sbt-${version} ] ;then
+    pushd ${tools} > /dev/null
+    [[ -e sbt ]] && rm -r -f sbt
+    bsdtar -xf ~/Downloads/sbt-${version}.tgz
+    mv sbt sbt-${version}
+    ln -s sbt-version sbt
+    popd > /dev/null
+  fi
+
+  echo ${tools}/sbt-${version}
+}
+
 #
 # Installs Scala; API documentation; Language Specification
 #
@@ -8,12 +42,6 @@ function install_scala {
   local version=${version:-"2.12.3"}
 
   local major=$( echo ${version} | cut -d. -f 1-2 )
-
-  # make sure all necessary tools are installed
-  if [ ! \( -e "$(which wget)" -a -e "$(which bsdtar)" -a -e "$(which httrack)" \) ] ;then
-    echo apt-get install wget bsdtar xz-utils httrack -y
-    sudo apt-get install wget bsdtar xz-utils httrack -y
-  fi
 
   [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
   pushd ~/Downloads > /dev/null
@@ -48,4 +76,6 @@ function install_scala {
 }
 
 
-install_scala $*
+install_scala_requirements \
+  && install_scala_sbt \
+    && install_scala $*
