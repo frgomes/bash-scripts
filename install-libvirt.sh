@@ -4,6 +4,8 @@
 function install_libvirt_working_folder {
   [[ ! -d /srv/lib/libvirt ]] && sudo mkdir -p /srv/lib/libvirt
   [[ ! -d /var/lib/libvirt ]] && sudo ln -s /srv/lib/libvirt /var/lib/libvirt
+  sudo chown -R libvirt-qemu:libvirt-qemu /srv/lib/libvirt
+  sudo chown    libvirt-qemu:libvirt-qemu /var/lib/libvirt
 }
 
 function install_libvirt {
@@ -16,17 +18,19 @@ function install_libvirt_user_enable {
     ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa
   fi
 
-  sudo usermod -a -G libvirt ${USER}
-  sudo usermod -a -G kvm     ${USER}
+  sudo usermod -a -G libvirt-qemu ${USER}
 
-  sudo rmmod kvm_amd
+  # amd or intel or maybe arm or whatever?
+  local cpu=amd
+
+  # shake the tree
+  sudo rmmod kvm_${cpu}
   sudo rmmod kvm
   sudo modprobe kvm
-  sudo modprobe kvm_amd
+  sudo modprobe kvm_${cpu}
 }
 
 
-#install_libvirt_working_folder \
-#  && install_libvirt \
-#    && 
-install_libvirt_user_enable
+install_libvirt_working_folder \
+  && install_libvirt \
+    && install_libvirt_user_enable
