@@ -33,6 +33,7 @@ function install_node {
 export NODE_HOME=$(install_node $*) \
   && export PATH=$PATH:${NODE_HOME}/bin \
     && npm install npm@latest -g \
+    && npm install -g yarn \
     && npm install -g @angular/cli \
     && npm install -g create-react-native-app \
     && npm ls -g --depth=0
