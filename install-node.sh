@@ -29,9 +29,27 @@ function install_node {
   echo $tools/node-v${version}-${arch}
 }
 
+function install_node_tools {
+  ## npm  install -g npm@latest
+  npm install -g yarn
+  npm install -g  gulp-cli
+}
+
+function install_node_angular {
+  npm intall -g @angular/cli
+}
+
+function install_node_react {
+  npm install -g react-native-vector-icons
+  npm install -g react-native-cli
+  npm install -g create-react-native-app
+  npm install -g exp
+}
+
+
 
 export NODE_HOME=$(install_node $*) \
   && export PATH=$PATH:${NODE_HOME}/bin \
-    && npm install npm@latest -g \
-    && for pkg in yarn gulp-cli @angular/cli create-react-native-app exp ;do npm install -g $pkg ;done \
+    && install_node_tools \
+    && install_node_react \
     && npm ls -g --depth=0
