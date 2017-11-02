@@ -37,16 +37,20 @@ function reactjs_new {
     local package=${package:=io.mathminds.$project}
 
     pushd ~/workspace
-    rm -r -f project
-    g8 file:///${HOME}/workspace/mobile.g8 --name=$project --package=$package
-### sbt new scalajs-react-interface/mobile.g8  --name=$project --package=$package -b drawer-navigation
-    pushd $project
-    react-native init $project
-    mv $project/android/ $project/ios/ .
-    rm -r -f $project
-    reactjs_update
-### react-native link react-native-vector-icons
-    popd
+    if [ -d $project ] ;then
+      echo ERROR: project already exists: $project
+      return 1
+    else
+      g8 file:///${HOME}/workspace/mobile.g8 --name=$project --package=$package
+###   sbt new scalajs-react-interface/mobile.g8  --name=$project --package=$package -b drawer-navigation
+      pushd $project
+      react-native init $project
+      mv $project/android/ $project/ios/ .
+      rm -r -f $project
+      reactjs_update
+###   react-native link react-native-vector-icons
+      popd
+    fi
     popd
   fi
 }
