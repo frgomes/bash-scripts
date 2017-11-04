@@ -44,7 +44,8 @@ function reactjs_new {
       return 1
     else
       pushd ~/workspace
-      g8 file:///${HOME}/workspace/mobile.g8 --name=$project --package=$package -b expo-support
+      g8 -b expo-support https://github.com/frgomes/mobile.g8 --name=$project --package=$package
+###   g8 file:///${HOME}/workspace/mobile.g8 --name=$project --package=$package -b expo-support
 ###   sbt new scalajs-react-interface/mobile.g8  --name=$project --package=$package -b drawer-navigation
       if [ ! -d $project ] ;then
         echo ERROR: failed to create $project
