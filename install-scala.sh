@@ -27,7 +27,6 @@ function install_scala_sbt {
     [[ -e sbt ]] && rm -r -f sbt
     bsdtar -xf ~/Downloads/sbt-${version}.tgz
     mv sbt sbt-${version}
-    ln -s sbt-version sbt
     popd > /dev/null
   fi
 
@@ -39,7 +38,7 @@ function install_scala_sbt {
 #
 function install_scala {
   local version=${1:-"$SCALA_VERSION"}
-  local version=${version:-"2.12.3"}
+  local version=${version:-"2.12.4"}
 
   local major=$( echo ${version} | cut -d. -f 1-2 )
 
