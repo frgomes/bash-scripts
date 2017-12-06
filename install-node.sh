@@ -30,13 +30,13 @@ function install_node {
 }
 
 function install_node_tools {
-  ## npm  install -g npm@latest
+  npm install -g npm@latest
   npm install -g yarn
   npm install -g  gulp-cli
 }
 
 function install_node_angular {
-  npm intall -g @angular/cli
+  npm install -g @angular/cli
 }
 
 function install_node_react {
