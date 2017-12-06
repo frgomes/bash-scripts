@@ -10,7 +10,7 @@ function install_scala_requirements {
 
 function install_scala_sbt {
   local version=${1:-"$SBT_VERSION"}
-  local version=${version:-"1.0.2"}
+  local version=${version:-"1.0.4"}
 
   [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
   pushd ~/Downloads > /dev/null
