@@ -33,6 +33,24 @@ function install_scala_sbt {
   echo ${tools}/sbt-${version}
 }
 
+function install_scala_sbt_ensime {
+
+for version in 0.13 1.0 ;do
+
+mkdir -p ~/.sbt/${version}/plugins
+
+cat << EOD >> ~/.sbt/${version}/plugins/plugins.sbt
+addSbtPlugin("org.ensime" % "sbt-ensime" % "2.1.0")
+EOD
+
+cat << EOD >> ~/.sbt/${version}/global.sbt
+import org.ensime.EnsimeKeys._
+ensimeIgnoreMissingDirectories := true
+EOD
+
+done
+}
+
 #
 # Installs Scala; API documentation; Language Specification
 #
@@ -76,5 +94,5 @@ function install_scala {
 
 
 install_scala_requirements \
-  && install_scala_sbt \
+  && install_scala_sbt && install_scala_sbt_ensime \
     && install_scala $*
