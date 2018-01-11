@@ -30,8 +30,7 @@ function install_pureftpd_config {
 }
 
 function install_pureftpd_virtual_users {
-  #FIXME: should obtain usernames via getent
-  for user in rgomes sgomes ;do
+  for user in $(getent passwd | awk -F: '{ if ( $4 >= 1000 && $4 < 10000 ) print $1 }') ;do
     sudo mkdir -p /home/${user}/pure-ftpd
     sudo chown ${user}:${user} /home/${user}/pure-ftpd
     echo "[ Enter pure-ftpd password for ${user} ]"
