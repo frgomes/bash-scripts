@@ -53,6 +53,10 @@ function postinstall_networking {
   sudo apt-get install dnsutils -y
 }
 
+function postinstall_printing {
+  sudo apt-get install system-config-printer print-manager -y
+}
+
 function postinstall_virtualenv {
   sudo apt-get install virtualenvwrapper -y
   source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
@@ -70,6 +74,7 @@ postinstall_compression
 postinstall_scm
 postinstall_downloads
 postinstall_networking
+postinstall_printing
 postinstall_x11
 postinstall_editors
 postinstall_parallelism
