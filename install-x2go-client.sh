@@ -27,7 +27,7 @@ function install_x2go_client {
   sudo apt-get update
   sudo apt-get install x2go-keyring -y && sudo apt-get update
 
-  sudo apt-get install x2goclient -y
+  sudo apt-get install x2goclient plasma-widget-x2go -y
 }
 
 
