@@ -9,7 +9,7 @@ function install_libvirt_working_folder {
 
 function install_libvirt {
   # install libvirt and vagrant
-  sudo apt-get install libvirt-daemon libvirt-clients virt-top virtinst virt-manager vagrant vagrant-libvirt -y
+  sudo apt-get install libvirt-daemon libvirt-clients virt-top virtinst virt-manager libosinfo-bin libguestfs-tools virt-top vagrant vagrant-libvirt -y
   sudo chown libvirt-qemu:libvirt-qemu /var/lib/libvirt /srv/lib/libvirt
 }
 
