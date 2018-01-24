@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 
 function postinstall_compression {
@@ -66,17 +66,107 @@ function postinstall_source_code_utils {
   sudo apt-get install zeal wkhtmltopdf source-highlight -y
 }
 
+function postinstall_browser_chromium {
+  sudo apt-get install chromium -y
+}
+
+function postinstall_browser_firefox {
+  [[ ! -d $HOME/Downloads ]] && mkdir -p $HOME/Downloads
+  local app=firefox
+  local lang=$(echo $LANG | cut -d. -f1 | sed "s/_/-/")
+  local hwarch=$(uname -m)
+  local osarch=$(uname -s | tr [:upper:] [:lower:])
+  local version=58.0
+
+  if [ ! -e $HOME/Downloads/${app}-${version}.tar.bz2 ] ;then
+    pushd $HOME/Downloads
+    wget https://ftp.mozilla.org/pub/${app}/releases/${version}/${osarch}-${hwarch}/${lang}/${app}-${version}.tar.bz2
+    popd
+  fi
+
+  if [ ! -d $HOME/tools/${app} ] ;then
+    [[ ! -d $HOME/tools ]] && mkdir -p $HOME/tools
+    pushd $HOME/tools
+    tar xpf $HOME/Downloads/${app}-${version}.tar.bz2
+    popd
+  fi
+  if [ -L /usr/local/bin/${app} ] ;then
+    sudo rm /usr/local/bin/${app}
+  fi
+
+  sudo ln -s $HOME/tools/${app}/${app} /usr/local/bin/${app}
+  echo /usr/local/bin/${app}
+}
+
+function postinstall_browser_thunderbird {
+  [[ ! -d $HOME/Downloads ]] && mkdir -p $HOME/Downloads
+  local app=thunderbird
+  local lang=$(echo $LANG | cut -d. -f1 | sed "s/_/-/")
+  local hwarch=$(uname -m)
+  local osarch=$(uname -s | tr [:upper:] [:lower:])
+  local version=58.0b3
+
+  if [ ! -e $HOME/Downloads/${app}-${version}.tar.bz2 ] ;then
+    pushd $HOME/Downloads
+    wget https://ftp.mozilla.org/pub/${app}/releases/${version}/${osarch}-${hwarch}/${lang}/${app}-${version}.tar.bz2
+    popd
+  fi
+
+  if [ ! -d $HOME/tools/${app} ] ;then
+    [[ ! -d $HOME/tools ]] && mkdir -p $HOME/tools
+    pushd $HOME/tools
+    tar xpf $HOME/Downloads/${app}-${version}.tar.bz2
+    popd
+  fi
+  if [ -L /usr/local/bin/${app} ] ;then
+    sudo rm /usr/local/bin/${app}
+  fi
+
+  sudo ln -s $HOME/tools/${app}/${app} /usr/local/bin/${app}
+  echo /usr/local/bin/${app}
+}
+
+function postinstall_browsers {
+  postinstall_browser_chromium
+  postinstall_browser_firefox
+  postinstall_browser_thunderbird
+}
+
+function postinstall_utilities_wp34s {
+  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
+  pushd ~/Downloads
+  [[ ! -f wp-34s-emulator-linux64.tgz ]] \
+    && wget -O ~/Downloads/wp-34s-emulator-linux64.tgz https://downloads.sourceforge.net/project/wp34s/emulator/wp-34s-emulator-linux64.tgz?r=https%3A%2F%2Fsourceforge.net%2Fprojects%2Fwp34s%2Ffiles%2Femulator%2F&ts=1509137814&use_mirror=netcologne
+  popd
+
+  if [ -f ~/Downloads/wp-34s-emulator-linux64.tgz ] ;then
+    [[ ! -d $HOME/tools ]] && mkdir -p $HOME/tools
+    pushd $HOME/tools
+    tar -xf ~/Downloads/wp-34s-emulator-linux64.tgz
+    popd
+  fi
+  
+  if [ -L /usr/local/bin/WP-34s ] ;then
+    sudo rm /usr/local/bin/WP-34s
+  fi
+      
+  sudo ln -s $HOME/tools/wp-34s/WP-34s /usr/local/bin
+  echo /usr/local/bin/WP-34S
+}
+
 
 sudo apt-get update -y
-postinstall_security_hardening
 postinstall_apt
-postinstall_compression
-postinstall_scm
-postinstall_downloads
 postinstall_networking
+postinstall_downloads
+postinstall_compression
+postinstall_editors
+postinstall_scm
+postinstall_source_code_utils
 postinstall_printing
 postinstall_x11
-postinstall_editors
+postinstall_browsers
+postinstall_utilities_wp34s
 postinstall_parallelism
 postinstall_virtualenv
-postinstall_source_code_utils
+postinstall_security_hardening
