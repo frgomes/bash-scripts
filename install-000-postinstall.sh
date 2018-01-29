@@ -50,7 +50,7 @@ function postinstall_x11 {
 }
 
 function postinstall_networking {
-  sudo apt-get install dnsutils -y
+  sudo apt-get install dnsutils nmap -y
 }
 
 function postinstall_printing {
