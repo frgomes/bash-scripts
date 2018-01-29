@@ -1,11 +1,9 @@
 #!/bin/bash
 
-function dpkg_rc() {
-  dpkg --list | grep -E '^rc' | awk '{ print $2 }'
-}
-
-function dpkg_ii() {
-  dpkg --list | grep -E '^ii' | awk '{ print $2 }'
+function dpkg_list() {
+  if [ "$1" != "" ] ;then
+    apt list --installed 2> /dev/null | fgrep "$1"
+  fi
 }
 
 function dpkg_purge() {
