@@ -1,5 +1,22 @@
 #!/bin/bash -x
 
+apt-get update -y
+apt-get dist-upgrade -y
+apt-get autoremove --purge -y
+
+apt-get install sudo -y
+
+
+##------------------------------------------
+
+
+function postinstall_remove_if_installed {
+  dpkg-query -W $* | while read pkg ;do sudo apt-get remove --purge -y $pkg ;done
+}
+
+
+##------------------------------------------
+
 
 function postinstall_compression {
   sudo apt-get install tar bsdtar bzip2 pbzip2 lbzip2 zstd lzip plzip xz-utils pxz pigz zip unzip p7zip p7zip-rar -y
@@ -14,9 +31,8 @@ function postinstall_compression {
   #[[ ! -e /usr/local/bin/xz      ]] && sudo ln -s /usr/bin/pxz      /usr/local/bin/xz
 }
 
-
 function postinstall_scm {
-  sudo apt-get install git gitk mercurial tortoisehg -y
+  sudo apt-get install git mercurial -y
 }
 
 function postinstall_downloads {
@@ -24,11 +40,7 @@ function postinstall_downloads {
 }
 
 function postinstall_editors {
-  sudo apt-get install zile emacs25 -y
-}
-
-function postinstall_parallelism {
-  sudo apt-get install parallel -y
+  sudo apt-get install zile vim -y
 }
 
 function postinstall_apt {
@@ -45,16 +57,8 @@ function postinstall_security_hardening {
   sudo apt-get install chkrootkit rkhunter scanssh -y
 }
 
-function postinstall_x11 {
-  sudo apt-get install xclip -y
-}
-
 function postinstall_networking {
   sudo apt-get install dnsutils nmap -y
-}
-
-function postinstall_printing {
-  sudo apt-get install system-config-printer print-manager -y
 }
 
 function postinstall_virtualenv {
@@ -63,110 +67,134 @@ function postinstall_virtualenv {
 }
 
 function postinstall_source_code_utils {
-  sudo apt-get install zeal wkhtmltopdf source-highlight -y
+  sudo apt-get install less source-highlight -y
 }
 
-function postinstall_browser_chromium {
-  sudo apt-get install chromium -y
-}
-
-function postinstall_browser_firefox {
-  [[ ! -d $HOME/Downloads ]] && mkdir -p $HOME/Downloads
+function postinstall_firefox {
+  [[ ! -d /root/Downloads ]] && sudo mkdir -p /root/Downloads
   local app=firefox
   local lang=$(echo $LANG | cut -d. -f1 | sed "s/_/-/")
   local hwarch=$(uname -m)
   local osarch=$(uname -s | tr [:upper:] [:lower:])
   local version=58.0
 
-  if [ ! -e $HOME/Downloads/${app}-${version}.tar.bz2 ] ;then
-    pushd $HOME/Downloads
+  if [ ! -e /root/Downloads/${app}-${version}.tar.bz2 ] ;then
+    pushd /root/Downloads 2>&1 > /dev/null
     wget https://ftp.mozilla.org/pub/${app}/releases/${version}/${osarch}-${hwarch}/${lang}/${app}-${version}.tar.bz2
-    popd
+    popd 2>&1 > /dev/null
   fi
 
-  if [ ! -d $HOME/tools/${app} ] ;then
-    [[ ! -d $HOME/tools ]] && mkdir -p $HOME/tools
-    pushd $HOME/tools
-    tar xpf $HOME/Downloads/${app}-${version}.tar.bz2
-    popd
+  if [ ! -d /opt/${app} ] ;then
+    [[ ! -d /opt ]] && mkdir -p /opt
+    pushd /opt 2>&1 > /dev/null
+    tar xpf /root/Downloads/${app}-${version}.tar.bz2
+    popd 2>&1 > /dev/null
   fi
   if [ -L /usr/local/bin/${app} ] ;then
     sudo rm /usr/local/bin/${app}
   fi
 
-  sudo ln -s $HOME/tools/${app}/${app} /usr/local/bin/${app}
+  sudo ln -s /opt/${app}/${app} /usr/local/bin/${app}
   echo /usr/local/bin/${app}
+
+  postinstall_remove_if_installed firefox-esr
 }
 
-function postinstall_browser_thunderbird {
-  [[ ! -d $HOME/Downloads ]] && mkdir -p $HOME/Downloads
+function postinstall_thunderbird {
+  [[ ! -d /root/Downloads ]] && sudo mkdir -p /root/Downloads
   local app=thunderbird
   local lang=$(echo $LANG | cut -d. -f1 | sed "s/_/-/")
   local hwarch=$(uname -m)
   local osarch=$(uname -s | tr [:upper:] [:lower:])
   local version=58.0b3
 
-  if [ ! -e $HOME/Downloads/${app}-${version}.tar.bz2 ] ;then
-    pushd $HOME/Downloads
+  if [ ! -e /root/Downloads/${app}-${version}.tar.bz2 ] ;then
+    pushd /root/Downloads 2>&1 > /dev/null
     wget https://ftp.mozilla.org/pub/${app}/releases/${version}/${osarch}-${hwarch}/${lang}/${app}-${version}.tar.bz2
-    popd
+    popd 2>&1 > /dev/null
   fi
 
-  if [ ! -d $HOME/tools/${app} ] ;then
-    [[ ! -d $HOME/tools ]] && mkdir -p $HOME/tools
-    pushd $HOME/tools
-    tar xpf $HOME/Downloads/${app}-${version}.tar.bz2
-    popd
+  if [ ! -d /opt/${app} ] ;then
+    [[ ! -d /opt ]] && mkdir -p /opt
+    pushd /opt 2>&1 > /dev/null
+    tar xpf /root/Downloads/${app}-${version}.tar.bz2
+    popd 2>&1 > /dev/null
   fi
   if [ -L /usr/local/bin/${app} ] ;then
     sudo rm /usr/local/bin/${app}
   fi
 
-  sudo ln -s $HOME/tools/${app}/${app} /usr/local/bin/${app}
+  sudo ln -s /opt/${app}/${app} /usr/local/bin/${app}
   echo /usr/local/bin/${app}
-}
 
-function postinstall_browsers {
-  postinstall_browser_chromium
-  postinstall_browser_firefox
-  postinstall_browser_thunderbird
+  postinstall_remove_if_installed thunderbird lightning
 }
 
 function postinstall_utilities_wp34s {
   [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
-  pushd ~/Downloads
+  pushd ~/Downloads 2>&1 > /dev/null
   [[ ! -f wp-34s-emulator-linux64.tgz ]] \
     && wget -O ~/Downloads/wp-34s-emulator-linux64.tgz https://downloads.sourceforge.net/project/wp34s/emulator/wp-34s-emulator-linux64.tgz?r=https%3A%2F%2Fsourceforge.net%2Fprojects%2Fwp34s%2Ffiles%2Femulator%2F&ts=1509137814&use_mirror=netcologne
-  popd
+  popd 2>&1 > /dev/null
 
   if [ -f ~/Downloads/wp-34s-emulator-linux64.tgz ] ;then
-    [[ ! -d $HOME/tools ]] && mkdir -p $HOME/tools
-    pushd $HOME/tools
+    [[ ! -d /opt ]] && mkdir -p /opt
+    pushd /opt 2>&1 > /dev/null
     tar -xf ~/Downloads/wp-34s-emulator-linux64.tgz
-    popd
+    popd 2>&1 > /dev/null
   fi
   
   if [ -L /usr/local/bin/WP-34s ] ;then
     sudo rm /usr/local/bin/WP-34s
   fi
       
-  sudo ln -s $HOME/tools/wp-34s/WP-34s /usr/local/bin
+  sudo ln -s /opt/wp-34s/WP-34s /usr/local/bin
   echo /usr/local/bin/WP-34S
 }
 
 
-sudo apt-get update -y
+##------------------------------------------
+
+
+function postinstall_x11 {
+  sudo apt-get install xclip gitk tortoisehg zeal -y
+  sudo apt-get install chromium -y
+  sudo apt-get install emacs25 -y
+}
+
+function postinstall_console {
+  sudo apt-get install emacs25-nox -y
+}
+
+
+##------------------------------------------
+
+
 postinstall_apt
-postinstall_networking
+postinstall_scm
 postinstall_downloads
 postinstall_compression
+postinstall_networking
 postinstall_editors
-postinstall_scm
 postinstall_source_code_utils
-postinstall_printing
-postinstall_x11
-postinstall_browsers
+postinstall_firefox
+postinstall_thunderbird
 postinstall_utilities_wp34s
 postinstall_parallelism
 postinstall_virtualenv
 postinstall_security_hardening
+
+## dependent on graphical environments installed
+if [[ $(dpkg-query -W xorg) ]] ;then
+  postinstall_x11
+else
+  postinstall_console
+fi
+
+
+##------------------------------------------
+
+
+apt-get autoremove --purge -y
+apt-get autoclean
+apt-get clean
