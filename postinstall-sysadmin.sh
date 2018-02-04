@@ -152,6 +152,10 @@ function postinstall_utilities_wp34s {
   echo /usr/local/bin/WP-34S
 }
 
+function postinstall_monitoring {
+  apt-get install htop -y
+}
+
 
 ##------------------------------------------
 
@@ -180,7 +184,7 @@ postinstall_source_code_utils
 postinstall_firefox
 postinstall_thunderbird
 postinstall_utilities_wp34s
-postinstall_parallelism
+postinstall_monitoring
 postinstall_virtualenv
 postinstall_security_hardening
 
