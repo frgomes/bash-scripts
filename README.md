@@ -2,20 +2,12 @@ These are several shell scripts aiming facilitate installation of applications, 
 
 ## For the impatient
 
-### Requirements
-
-Some scripts depend on functions defined at:
-
-* http://github.com/frgomes/debian-bin
-
-### Installation
-
-This is how I install these scripts in my environment:
-
+System administrators do:
 ```bash
-$ mkdir $HOME/workspace && cd $HOME/workspace
-$ git clone http://github.com/frgomes/debian-scripts
+$ wget https://raw.githubusercontent.com/frgomes/debian-scripts/master/postinstall-sysadmin.sh | bash
+```
 
-$ cd $HOME
-$ ln -s $HOME/workspace/debian-scripts scripts
+End users do:
+```bash
+$ wget https://raw.githubusercontent.com/frgomes/debian-scripts/master/postinstall-normal-user.sh | bash
 ```
