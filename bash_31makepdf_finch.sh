@@ -18,7 +18,7 @@ function makepdf_finch {
 
   local out="$HOME/Downloads/${path}.pdf"
 
-  httrack_fetch "$HOME/websites" "$domain" "$path" httrack "http://$domain/$path"
+  httrack_fetch "$HOME/websites" "$domain" "$path" "http://$domain/$path"
 
   [[ -d "$HOME/websites/$domain/$path" ]] \
   && pushd "$HOME/websites/$domain/$path" >> /dev/null \
