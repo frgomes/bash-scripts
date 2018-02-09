@@ -40,7 +40,7 @@ export VIEWER=less
 alias cdiff='diff -Naur'
 alias sdiff='diff -Npry'
 alias kdiff='kdiff3'
-alias vdiff='/opt/developer/idea/bin/idea.sh diff'
+alias vdiff='${TOOLS_HOME}/idea/bin/idea.sh diff'
 
 # caopy/paste using the clipboard
 alias ctrlc='xclip -i -selection clipboard'
