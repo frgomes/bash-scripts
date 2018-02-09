@@ -1,4 +1,4 @@
-##!/bin/bash -x
+#!/bin/bash -x
 
 function postinstall_user_ssh_make_config {
 cat <<EOD
@@ -14,11 +14,12 @@ Host bitbucket.org
 EOD
 }
 
-function postinstall_user_ssh_keygen {
-  [[ ! -f ~/.ssh/id_rsa ]] && ssh-keygen -t rsa -b 4096
-}
+##function postinstall_user_ssh_keygen {
+##  [[ ! -f ~/.ssh/id_rsa ]] && ssh-keygen -t rsa -b 4096
+##}
 
 function postinstall_user_ssh_config {
+  [[ ! -d ~/.ssh ]] && mkdir -p ~/.ssh && chmod 700 ~/.ssh
   [[ ! -f ~/.ssh/config ]] && postinstall_user_ssh_make_config >> ~/.ssh/config
 }
 
@@ -62,7 +63,67 @@ function postinstall_user_git_config {
   fi
 }
 
+function postinstall_user_download_debian_bin {
+  [[ ! -d $HOME/workspace ]] && mkdir -p $HOME/workspace
+  pushd $HOME/workspace
+  if [ ! -d debian-bin ] ;then
+    git clone http://github.com/frgomes/debian-bin
+  else
+    cd debian-bin
+    git pull
+  fi
+  popd
+  [[ ! -e $HOME/bin ]] && ln -s $HOME/workspace/debian-bin $HOME/bin
+}
 
-postinstall_user_ssh_keygen
+function postinstall_user_download_debian_scripts {
+  [[ ! -d $HOME/workspace ]] && mkdir -p $HOME/workspace
+  pushd $HOME/workspace
+  if [ ! -d debian-scripts ] ;then
+    git clone http://github.com/frgomes/debian-scripts
+  else
+    cd debian-scripts
+    git pull
+  fi
+  popd
+  [[ ! -e $HOME/scripts ]] && ln -s $HOME/workspace/debian-scripts $HOME/scripts
+}
+
+function postinstall_user_download_carpalx {
+  [[ ! -d $HOME/workspace ]] && mkdir -p $HOME/workspace
+  pushd $HOME/workspace
+  if [ ! -d carpalx ] ;then
+    git clone http://github.com/frgomes/carpalx
+  else
+    cd carpalx
+    git pull
+  fi
+  popd
+}
+
+function postinstall_user_download_dot_emacsd {
+  pushd $HOME
+  if [ ! -d .emacs.d ] ;then
+    git clone http://github.com/frgomes/.emacs.d
+  else
+    cd .emacs.d
+    git pull
+  fi
+  popd
+}
+
+function postinstall_user_virtualenvs {
+  mkvirtualenv -p /usr/bin/python3 j8s11
+  mkvirtualenv -p /usr/bin/python3 j8s12
+}
+
+## postinstall_user_ssh_keygen
 postinstall_user_ssh_config
 postinstall_user_git_config
+
+postinstall_user_download_debian_bin
+postinstall_user_download_debian_scripts
+postinstall_user_download_carpalx
+postinstall_user_download_dot_emacsd
+
+postinstall_user_virtualenvs
