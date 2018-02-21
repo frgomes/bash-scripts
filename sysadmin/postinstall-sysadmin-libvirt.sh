@@ -4,7 +4,7 @@
 function postinstall_sysadmin_libvirt {
   [[ ! -d /srv/lib/libvirt ]] && mkdir -p /srv/lib/libvirt
   [[ ! -d /var/lib/libvirt ]] && ln -s /srv/lib/libvirt /var/lib/libvirt
-  apt-get install libvirt-daemon libvirt-clients virt-top xmlstarlet -y
+  apt-get install libvirt-daemon libvirt-clients virt-top xmlstarlet uuid-runtime -y
 }
 
 function postinstall_sysadmin_libvirt_modprobe {
