@@ -29,13 +29,23 @@ function install_pureftpd_config {
   echo "yes" | sudo tee /etc/pure-ftpd/conf/ChrootEveryone
 }
 
+function install_pureftpd_ignore_users {
+cat <<EOD
+root
+vagrant
+EOD
+}
+
 function install_pureftpd_virtual_users {
-  for user in $(getent passwd | awk -F: '{ if ( $4 >= 1000 && $4 < 10000 ) print $1 }') ;do
-    sudo mkdir -p /home/${user}/pure-ftpd
-    sudo chown ${user}:${user} /home/${user}/pure-ftpd
-    echo "[ Enter pure-ftpd password for ${user} ]"
-    sudo pure-pw useradd ${user} -u ${user} -g ${user} -d /home/${user}/pure-ftpd
-  done
+  getent passwd | \
+    awk -F: '{ if ( $4 >= 1000 && $4 < 10000 ) print $1 }' | \
+      fgrep -i -f <(install_pureftpd_ignore_users) | \
+        while read user ;do
+          sudo mkdir -p /home/${user}/pure-ftpd
+          sudo chown ${user}:${user} /home/${user}/pure-ftpd
+          echo "[ Enter pure-ftpd password for ${user} ]"
+          sudo pure-pw useradd ${user} -u ${user} -g ${user} -d /home/${user}/pure-ftpd
+        done
   sudo pure-pw mkdb
 }
 
