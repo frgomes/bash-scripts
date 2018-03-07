@@ -29,28 +29,31 @@ local user=$1
 local email=$2
 cat <<EOD
 [user]
- user  = ${user}
- email = ${email}
+  user  = ${user}
+  email = ${email}
 
 [alias]
- pullall  = !"git fetch origin -v && git fetch upstream -v && git merge upstream/master"
- incoming = !"git fetch && git log ..origin/master"
+  pullall  = !"git fetch origin -v && git fetch upstream -v && git merge upstream/master"
+  incoming = !"git fetch && git log ..origin/master"
+  unstage = reset HEAD
+  pre-merge = merge --no-commit --no-ff
+  del-branch = push origin --delete
 
 [diff]
- tool = "intellij"
+  tool = "intellij"
 
 [difftool "intellij"]
- cmd = $HOME/tools/idea/bin/idea.sh diff \"$LOCAL\" \"$REMOTE\"               
+  cmd = $HOME/tools/idea/bin/idea.sh diff \"$LOCAL\" \"$REMOTE\"               
 
 [merge]
- tool = "intellij"
- conflictstyle = diff3
+  tool = "intellij"
+  conflictstyle = diff3
 
 [mergetool]
- prompt = false
+  prompt = false
 
 [mergetool "intellij"]
- cmd = $HOME/tools/idea/bin/idea.sh merge \"$LOCAL\" \"$BASE\" \"$REMOTE\" \"$MERGED\"  
+  cmd = $HOME/tools/idea/bin/idea.sh merge \"$LOCAL\" \"$BASE\" \"$REMOTE\" \"$MERGED\"  
 EOD
 }
 
