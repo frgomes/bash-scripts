@@ -116,8 +116,12 @@ function postinstall_user_download_dot_emacsd {
 }
 
 function postinstall_user_virtualenvs {
-  mkvirtualenv -p /usr/bin/python3 j8s11
-  mkvirtualenv -p /usr/bin/python3 j8s12
+  source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
+  for name in j8s11 j8s12 ;do
+    if [[ ! -d ~/.virtualenvs/${name} ]] ;then
+      mkvirtualenv -p /usr/bin/python3 ${name}
+    fi
+  done
 }
 
 ## postinstall_user_ssh_keygen
