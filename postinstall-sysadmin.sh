@@ -171,6 +171,11 @@ function postinstall_console {
 }
 
 
+function postinstall_remove_smtp_servers {
+  apt-get remove --purge exim4-daemon-light exim4-config exim4-base
+}
+
+
 ##------------------------------------------
 
 
@@ -198,6 +203,8 @@ fi
 
 ##------------------------------------------
 
+
+postinstall_remove_smtp_servers
 
 apt-get autoremove --purge -y
 apt-get autoclean
