@@ -1,16 +1,22 @@
-#!/bin/bash
+#!/bin/bash -x
 
 # compiled from https://docs.docker.com/engine/installation/linux/debian/
 
 function install_docker_working_folder {
-  [[ ! -d /srv/lib/docker ]] && sudo mkdir -p /srv/lib/docker
-  [[ ! -d /var/lib/docker ]] && sudo ln -s /srv/lib/docker /var/lib/docker
+  if [ -d /data ] ;then 
+    local storage=/data/srv/lib/docker
+  else
+    local storage=/srv/lib/docker
+  fi
+  [[ ! -d ${storage} ]] && sudo mkdir -p ${storage}
+  [[ ! -d /var/lib/docker ]] && sudo ln -s ${storage} /var/lib/docker
 } 
 
 function install_docker {
   sudo apt-get install lsb-release apt-transport-https dirmngr -y
 
-  release=$(lsb_release -cs)
+  local release=$(lsb_release -cs)
+
   echo deb https://apt.dockerproject.org/repo debian-${release} main | sudo tee /etc/apt/sources.list.d/docker.list
   sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
 
