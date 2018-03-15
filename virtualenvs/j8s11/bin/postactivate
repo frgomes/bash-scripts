@@ -23,7 +23,7 @@ export HADOOP_PROFILE=2.7
 export HADOOP_VERSION=${HADOOP_PROFILE}.3
 export FLINK_VERSION=1.3.2
 export HIVE_VERSION=2.1.1
-export KAFKA_VERSION=${SCALA_VERSION_MAJOR}-0.11.0.1
+export KAFKA_VERSION=1.0.1
 export ZEPPELIN_VERSION=0.7.1
 
 # ---- Options which in general work well ----
@@ -50,7 +50,7 @@ export NODE_HOME=${TOOLS_HOME}/node-v${NODE_VERSION}-${NODE_ARCH}
 export HIVE_HOME=${TOOLS_HOME}/apache-hive-${HIVE_VERSION}-bin
 export FLINK_HOME=${TOOLS_HOME}/flink-${FLINK_VERSION}
 export SPARK_HOME=${TOOLS_HOME}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_PROFILE}
-export KAFKA_HOME=${TOOLS_HOME}/kafka_${KAFKA_VERSION}
+export KAFKA_HOME=${TOOLS_HOME}/kafka_${SCALA_VERSION_MAJOR}-${KAFKA_VERSION}
 export ZEPPELIN_HOME=${TOOLS_HOME}/zeppelin-${ZEPPELIN_VERSION}-bin-all
 
 export CHROMIUM_BIN=$(which chromium)
@@ -61,6 +61,7 @@ export ANDROID_HOME=${TOOLS_HOME}/android-sdk
 
 export PATH=\
 ${JAVA_HOME}/bin:${SCALA_HOME}/bin:${SBT_HOME}/bin:${M2_HOME}/bin:${GRADLE_HOME}/bin:${ANT_HOME}/bin:\
+${KAFKA_HOME}/bin:\
 ${NODE_HOME}/bin:\
 ${CONSCRIPT_HOME}/bin:\
 ${RUST_HOME}/bin:\
