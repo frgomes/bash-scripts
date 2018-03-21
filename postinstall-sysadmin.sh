@@ -19,7 +19,7 @@ function postinstall_remove_if_installed {
 
 
 function postinstall_compression {
-  apt-get install tar bsdtar bzip2 pbzip2 lbzip2 zstd lzip plzip xz-utils pxz pigz zip unzip p7zip p7zip-rar -y
+  apt-get install tar bsdtar bzip2 pbzip2 lbzip2 zstd lzip plzip xz-utils pxz pigz zip unzip p7zip p7zip-rar httrack -y
 
   #TODO: needs code review and tests!!!
   #[[ ! -e /usr/local/bin/bzip2   ]] && ln -s /usr/bin/lbzip2   /usr/local/bin/bzip2
@@ -160,6 +160,12 @@ function postinstall_monitoring {
 ##------------------------------------------
 
 
+function postinstall_remove_java {
+  apt-get remove -y --purge gcj-6 gcj-6-jdk gcj-6-jre gcj-6-jre-headless gcj-6-jre-lib default-jdk default-jdk-doc default-jdk-headless default-jre default-jre-headless openjdk-8-dbg openjdk-8-demo openjdk-8-doc openjdk-8-jdk openjdk-8-jdk-headless openjdk-8-jre openjdk-8-jre-headless openjdk-8-jre-zero
+  apt-get autoremove -y --purge  
+}
+
+
 function postinstall_x11 {
   apt-get install xclip gitk tortoisehg zeal -y
   apt-get install chromium -y
@@ -186,16 +192,17 @@ postinstall_compression
 postinstall_networking
 postinstall_editors
 postinstall_source_code_utils
-postinstall_firefox
-postinstall_thunderbird
-postinstall_utilities_wp34s
 postinstall_monitoring
 postinstall_virtualenv
 postinstall_security_hardening
 
 ## dependent on graphical environments installed
 if [[ $(dpkg-query -W xorg) ]] ;then
+  postinstall_remove_java
   postinstall_x11
+  postinstall_firefox
+  postinstall_thunderbird
+  postinstall_utilities_wp34s
 else
   postinstall_console
 fi
