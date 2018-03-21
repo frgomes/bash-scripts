@@ -1,13 +1,6 @@
 #!/bin/bash
 
 
-function install_kafka_requirements {
-  if [ ! \( -e "$(which wget)" -a -e "$(which bsdtar)" -a -e "$(which httrack)" \) ] ;then
-    echo apt-get install wget bsdtar xz-utils httrack -y
-    sudo apt-get install wget bsdtar xz-utils httrack -y
-  fi
-}
-
 function install_kafka {
   local version=${1:-"$KAFKA_VERSION"}
   local version=${version:-"1.0.1"}
@@ -37,5 +30,5 @@ function install_kafka {
   echo ${tools}/${product}
 }
 
-install_kafka_requirements \
-  && install_kafka $*
+
+install_kafka $*

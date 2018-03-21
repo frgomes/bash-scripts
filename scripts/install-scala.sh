@@ -1,13 +1,6 @@
 #!/bin/bash
 
 
-function install_scala_requirements {
-  if [ ! \( -e "$(which wget)" -a -e "$(which bsdtar)" -a -e "$(which httrack)" \) ] ;then
-    echo apt-get install wget bsdtar xz-utils httrack -y
-    sudo apt-get install wget bsdtar xz-utils httrack -y
-  fi
-}
-
 function install_scala_sbt {
   local version=${1:-"$SBT_VERSION"}
   local version=${version:-"1.1.0"}
@@ -93,6 +86,4 @@ function install_scala {
 }
 
 
-install_scala_requirements \
-  && install_scala_sbt && install_scala_sbt_ensime \
-    && install_scala $*
+install_scala_sbt && install_scala_sbt_ensime && install_scala $*

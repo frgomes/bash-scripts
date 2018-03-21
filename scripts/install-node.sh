@@ -8,12 +8,6 @@ function install_node {
   local arch=${2:-"$NODE_ARCH"}
   local arch=${arch:-"linux-x64"}
 
-  # make sure all necessary tools are installed
-  if [ ! \( -e "$(which wget)" -a -e "$(which bsdtar)" \) ] ;then
-    echo apt-get install wget bsdtar xz-utils -y
-    sudo apt-get install wget bsdtar xz-utils -y
-  fi
-
   [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
   pushd ~/Downloads
   [[ ! -f node-v${version}-${arch}.tar.xz ]] \

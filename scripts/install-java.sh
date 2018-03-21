@@ -14,12 +14,6 @@ function install_java {
   ##FIXME: hardcode
   local url=http://download.oracle.com/otn-pub/java/jdk/8u161-b12/2f38c3b165be4555a1fa6e98c45e0808/jdk-8u161-linux-x64.tar.gz
 
-  # make sure all necessary tools are installed
-  if [ ! \( -e "$(which wget)" \) -a \( -e "$(which bsdtar)" \) -a \( -e "$(which unzip)" \) -a \( -e "$(which httrack)" \) ] ;then
-    echo apt-get install wget bsdtar xz-utils unzip httrack -y
-    sudo apt-get install wget bsdtar xz-utils unzip httrack -y
-  fi
-
   local tools=${TOOLS_HOME:=$HOME/tools}
 
   [[ ! -d ${HOME}/Downloads ]] && mkdir -p ${HOME}/Downloads
