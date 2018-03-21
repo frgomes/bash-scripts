@@ -11,7 +11,8 @@ apt-get install -y
 
 
 function postinstall_remove_if_installed {
-  dpkg-query -W $* | while read pkg ;do apt-get remove --purge -y $pkg ;done
+  ##TODO: should do this properly
+  apt-get remove --purge -y $*
 }
 
 
