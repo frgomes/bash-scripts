@@ -56,7 +56,7 @@ function scm_pullall {
       hg checkout branch=${branch:=default}
     elif [ -d .git ] ;then
       git pull
-      hg checkout branch=${branch:=master}
+      git checkout ${branch:=master}
     fi
     popd
   done
