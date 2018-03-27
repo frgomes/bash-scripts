@@ -33,7 +33,8 @@ cat <<EOD
   email = ${email}
 
 [alias]
-  pullall  = !"git fetch origin -v && git fetch upstream -v && git pull"
+  pullall  = !"git fetch origin -v && git pull && git fetch upstream -v" 
+  fetch-force = !"git fetch && git reset --hard FETCH_HEAD && git clean -df"
   incoming = !"git fetch && git log ..origin/master"
   unstage = reset HEAD
   pre-merge = merge --no-commit --no-ff
