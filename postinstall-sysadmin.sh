@@ -49,15 +49,6 @@ function postinstall_apt {
   apt-file update
 }
 
-function postinstall_security_hardening {
-  apt-get install lsb-release -y
-  apt-get install fail2ban -y
-  apt-get install policycoreutils haveged network-manager-openvpn -y
-  restorecon -R -v ~/.cert
-  # See: https://www.cyberciti.biz/faq/howto-check-linux-rootkist-with-detectors-software/
-  apt-get install chkrootkit rkhunter scanssh -y
-}
-
 function postinstall_networking {
   apt-get install dnsutils nmap -y
 }
@@ -195,7 +186,6 @@ postinstall_editors
 postinstall_source_code_utils
 postinstall_monitoring
 postinstall_virtualenv
-postinstall_security_hardening
 
 ## dependent on graphical environments installed
 if [[ $(dpkg-query -W xorg) ]] ;then
