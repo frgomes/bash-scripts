@@ -3,8 +3,8 @@
 
 # List profiles made available by debian-bin
 function virtualenv_profile_list {
-  if [ -d $HOME/bin/virtualenvs ] ;then
-    pushd $HOME/bin/virtualenvs > /dev/null
+  if [ -d $HOME/bin/bashrc-virtualenvs ] ;then
+    pushd $HOME/bin/bashrc-virtualenvs > /dev/null
     find . -type f -name postactivate
     popd > /dev/null
   fi
@@ -18,7 +18,7 @@ function virtualenv_profile_relink_all {
     local target=$HOME/.virtualenvs/${source}
     if [ -f ${target} ] ;then
       mv ${target} ${target}.${tstamp}
-      ln -s $HOME/bin/virtualenvs/${source} ${target}
+      ln -s $HOME/bin/bashrc-virtualenvs/${source} ${target}
     fi
   done
 }
@@ -31,7 +31,7 @@ function virtualenv_profile_link_all {
     local target=$HOME/.virtualenvs/${source}
     if [ \( ! -L ${target} \) -a \( -f ${target} \) ] ;then
       mv ${target} ${target}.${tstamp}
-      ln -s $HOME/bin/virtualenvs/${source} ${target}
+      ln -s $HOME/bin/bashrc-virtualenvs/${source} ${target}
     fi
   done
 }
