@@ -1,13 +1,14 @@
 These are several shell scripts containing aliases, useful functions and tricks
 aiming to deliver increased productivity.
 
-**NOTE:** This project is deprecated and kept here for historical reasons only.
+Shell scripts are definitely tested in Debian. Support CentOS is done on a best effort basis.
 
-----
 
-Please visit http://github.com/frgomes/bash-scripts/ for the new version.
+### Features in a nutshell
 
-----
+* Useful shell scripts mainly aiming daily mundane tasks, such as finding text on large codebases;
+* Useful post installation scripts, when a sysadmin is configuring a brand new laptop or server;
+* Useful installation scripts, when a regular user is installing Java, Node, Rust or Scala, among a bunch of other things.
 
 
 ## For the impatient
@@ -18,18 +19,17 @@ This is how I install these scripts in my environment:
 
 ```bash
 $ mkdir $HOME/workspace && cd $HOME/workspace
-$ git clone http://github.com/frgomes/debian-bin
+$ git clone http://github.com/frgomes/bash-scripts
 
 $ cd $HOME
-$ mv bin bin.OLD
-$ ln -s $HOME/workspace/debian-bin bin
-$ source $HOME/bin/bashrc
+$ ln -s $HOME/workspace/bash-scripts scripts
+$ source $HOME/scripts/bashrc
 ```
 
-Then add a call to ``$HOME/bin/bashrc`` into your ``$HOME/.bashrc``:
+Then add a call to ``$HOME/scripts/bashrc`` into your ``$HOME/.bashrc``:
 
 ```bash
-$ echo 'source $HOME/bin/bashrc' >> $HOME/.bashrc
+$ echo 'source $HOME/scripts/bashrc' >> $HOME/.bashrc
 ```
 
 ### Additional tricks
@@ -95,6 +95,6 @@ else
   carpalx_hyena_gb
 fi
 
-# see: https://github.com/frgomes/debian-bin/blob/master/virtualenvs/j8s12/bin/postactivate
+# see: https://github.com/frgomes/bash-scripts/blob/master/bashrc-virtualenvs/j8s12/bin/postactivate
 workon j8s12
 ```
