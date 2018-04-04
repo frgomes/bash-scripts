@@ -1,6 +1,15 @@
 These are several shell scripts containing aliases, useful functions and tricks
 aiming to deliver increased productivity.
 
+**NOTE:** This project is deprecated and kept here for historical reasons only.
+
+----
+
+Please visit http://github.com/frgomes/bash-scripts/ for the new version.
+
+----
+
+
 ## For the impatient
 
 ### Installation
