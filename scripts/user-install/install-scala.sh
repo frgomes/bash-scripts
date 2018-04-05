@@ -38,7 +38,9 @@ addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.9.0")
 addSbtPlugin("org.ensime" % "sbt-ensime" % "2.1.0")
 addSbtPlugin("org.wartremover" % "sbt-wartremover" % "2.2.1")
 EOD
-cat ~/.sbt/${version}/plugins/plugins.sbt | sort | uniq > ~/.sbt/${version}/plugins/plugins.sbt
+
+cp ~/.sbt/${version}/plugins/plugins.sbt /tmp/sbt-plugins.tmp
+cat /tmp/sbt-plugins.tmp | sort | uniq > ~/.sbt/${version}/plugins/plugins.sbt
 
 cat << EOD >> ~/.sbt/${version}/global.sbt
 import org.ensime.EnsimeKeys._
