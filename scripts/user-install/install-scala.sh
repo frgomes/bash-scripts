@@ -33,7 +33,6 @@ for version in 1.0 ;do
 mkdir -p ~/.sbt/${version}/plugins
 
 cat << EOD >> ~/.sbt/${version}/plugins/plugins.sbt
-addSbtPlugin("com.sksamuel.scapegoat" %% "sbt-scapegoat" % "1.0.4")
 addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.9.0")
 addSbtPlugin("org.ensime" % "sbt-ensime" % "2.1.0")
 addSbtPlugin("org.wartremover" % "sbt-wartremover" % "2.2.1")
