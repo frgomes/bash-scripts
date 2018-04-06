@@ -23,12 +23,10 @@ else
   ###################################################################################
   function workon() {
       if [ ! -z "$1" -a -d ${WORKON_HOME}/"$1" ] ;then
-          for script in activate postactivate ;do
-              if [ -f ${WORKON_HOME}/"$1"/bin/$script ] ;then
-                  local __shopts=$( echo $- | tr -d is); set +eu; source ${WORKON_HOME}/"$1"/bin/$script; set -${__shopts}
-                  PS1='[$(date +%H:%M:%S)]'"($1)"${PS1}
-              fi
-          done
+          if [ -f ${WORKON_HOME}/"$1"/bin/postactivate ] ;then
+              local __shopts=$(echo $- | tr -d is); set +eu; source ${WORKON_HOME}/"$1"/bin/postactivate; set -${__shopts}
+              PS1='[$(date +%H:%M:%S)]'"($1)"${PS1}
+          fi
       else
           echo ${WORKON_HOME}/"$1": virtualenv not found
           return 1
@@ -43,4 +41,3 @@ else
   workon_PATH=$PATH
   workon_PS1=$PS1
 fi
-
