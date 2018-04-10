@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-# List profiles made available by debian-bin
+# List profiles
 function virtualenv_profile_list {
   if [ -d $HOME/scripts/bashrc-virtualenvs ] ;then
     pushd $HOME/scripts/bashrc-virtualenvs > /dev/null

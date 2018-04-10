@@ -70,30 +70,17 @@ function postinstall_user_git_config {
   fi
 }
 
-function postinstall_user_download_debian_bin {
+function postinstall_user_download_bash_scripts {
   [[ ! -d $HOME/workspace ]] && mkdir -p $HOME/workspace
   pushd $HOME/workspace
-  if [ ! -d debian-bin ] ;then
-    git clone http://github.com/frgomes/debian-bin
+  if [ ! -d bash-scripts ] ;then
+    git clone http://github.com/frgomes/bash-scripts
   else
-    cd debian-bin
+    cd bash-scripts
     git pull
   fi
   popd
-  [[ ! -e $HOME/bin ]] && ln -s $HOME/workspace/debian-bin $HOME/bin
-}
-
-function postinstall_user_download_debian_scripts {
-  [[ ! -d $HOME/workspace ]] && mkdir -p $HOME/workspace
-  pushd $HOME/workspace
-  if [ ! -d debian-scripts ] ;then
-    git clone http://github.com/frgomes/debian-scripts
-  else
-    cd debian-scripts
-    git pull
-  fi
-  popd
-  [[ ! -e $HOME/scripts ]] && ln -s $HOME/workspace/debian-scripts $HOME/scripts
+  [[ ! -e $HOME/scripts ]] && ln -s $HOME/workspace/bash-scripts $HOME/scripts
 }
 
 function postinstall_user_download_carpalx {
@@ -132,8 +119,7 @@ function postinstall_user_virtualenvs {
 postinstall_user_ssh_config
 postinstall_user_git_config
 
-postinstall_user_download_debian_bin
-postinstall_user_download_debian_scripts
+postinstall_user_download_bash_scripts
 postinstall_user_download_carpalx
 postinstall_user_download_dot_emacsd
 
