@@ -43,6 +43,11 @@ function wiredtiger_install {
   make install
 
   popd
+
+  mkdir -p ~/bin > /dev/null 2>&1
+  ln -s ${tools}/wiredtiger/bin/wt ~/bin/wt
+
+  echo $HOME/bin/wt
 }
 
 wiredtiger_requirements && wiredtiger_install
