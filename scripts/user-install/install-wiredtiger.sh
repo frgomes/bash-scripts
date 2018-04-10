@@ -35,6 +35,7 @@ function wiredtiger_install {
   local tools=${TOOLS_HOME:=$HOME/tools}
   [[ ! -d ${tools} ]] && mkdir -p ${tools}
 
+  cd ~/workspace/wiredtiger
   ./autogen.sh
   ./configure --enable-java --prefix=${tools}/wiredtiger
 
