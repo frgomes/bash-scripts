@@ -32,9 +32,7 @@ export MAVEN_OPTS="-Xmx2048m"
 
 ## ---- USEFUL EXPORTS ----
 
-export SCRIPTS_HOME=$HOME/workspace/debian-scripts
 export PUB_CACHE=$HOME/.pub-cache
-
 export RUST_HOME=${TOOLS_HOME}/cargo
 
 export JAVA_HOME=${TOOLS_HOME}/jdk${JAVA_VERSION}
@@ -65,7 +63,6 @@ ${KAFKA_HOME}/bin:\
 ${NODE_HOME}/bin:\
 ${CONSCRIPT_HOME}/bin:\
 ${RUST_HOME}/bin:\
-$SCRIPTS_HOME:\
 ${PATH}
 
 export WORKSPACE=$HOME/workspace
