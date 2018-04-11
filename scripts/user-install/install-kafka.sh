@@ -3,7 +3,7 @@
 
 function install_kafka {
   local version=${1:-"$KAFKA_VERSION"}
-  local version=${version:-"1.0.1"}
+  local version=${version:-"1.1.0"}
 
   local scala=${2:-"$SCALA_VERSION_MAJOR"}
   local scala=${scala:-"2.12"}
