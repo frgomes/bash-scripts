@@ -58,6 +58,7 @@ export ANDROID_HOME=${TOOLS_HOME}/android-sdk
 ## ---- ENVIRONMENT DEPENDENT EXPORTS ----
 
 export PATH=\
+${HOME}/.local/bin:\
 ${JAVA_HOME}/bin:${SCALA_HOME}/bin:${SBT_HOME}/bin:${M2_HOME}/bin:${GRADLE_HOME}/bin:${ANT_HOME}/bin:\
 ${KAFKA_HOME}/bin:\
 ${NODE_HOME}/bin:\
