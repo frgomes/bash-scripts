@@ -57,7 +57,7 @@ cat <<EOD
   cmd = $HOME/tools/idea/bin/idea.sh merge \"$LOCAL\" \"$BASE\" \"$REMOTE\" \"$MERGED\"  
 
 [push]
-  default = matching
+  default = simple
 EOD
 }
 
