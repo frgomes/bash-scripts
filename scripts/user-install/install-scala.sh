@@ -3,7 +3,7 @@
 
 function install_scala_sbt {
   local version=${1:-"$SBT_VERSION"}
-  local version=${version:-"1.1.2"}
+  local version=${version:-"1.1.0"}
 
   [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
   pushd ~/Downloads > /dev/null
@@ -27,26 +27,22 @@ function install_scala_sbt {
 }
 
 function install_scala_sbt_ensime {
+  # support for SBT 0.13 is now dropped; only version 1.0 now.
+  local version=1.0
 
-for version in 1.0 ;do
+  mkdir -p ~/.sbt/${version}/plugins
 
-mkdir -p ~/.sbt/${version}/plugins
-
-cat << EOD >> ~/.sbt/${version}/plugins/plugins.sbt
-addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.9.0")
-addSbtPlugin("org.ensime" % "sbt-ensime" % "2.1.0")
-addSbtPlugin("org.wartremover" % "sbt-wartremover" % "2.2.1")
+cat << EOD > ~/.sbt/${version}/plugins/ensime.sbt
+addSbtPlugin("org.ensime" % "sbt-ensime" % "2.5.1")
 EOD
-
-cp ~/.sbt/${version}/plugins/plugins.sbt /tmp/sbt-plugins.tmp
-cat /tmp/sbt-plugins.tmp | sort | uniq > ~/.sbt/${version}/plugins/plugins.sbt
 
 cat << EOD >> ~/.sbt/${version}/global.sbt
 import org.ensime.EnsimeKeys._
 ensimeIgnoreMissingDirectories := true
 EOD
 
-done
+  cp ~/.sbt/${version}/global.sbt /tmp/sbt-globals.tmp
+  cat /tmp/sbt-globals.tmp | sort | uniq > ~/.sbt/${version}/global.sbt 
 }
 
 #
@@ -54,7 +50,7 @@ done
 #
 function install_scala {
   local version=${1:-"$SCALA_VERSION"}
-  local version=${version:-"2.12.5"}
+  local version=${version:-"2.12.4"}
 
   local major=$( echo ${version} | cut -d. -f 1-2 )
 
