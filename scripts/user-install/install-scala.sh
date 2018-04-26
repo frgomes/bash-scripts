@@ -40,9 +40,6 @@ cat << EOD >> ~/.sbt/${version}/global.sbt
 import org.ensime.EnsimeKeys._
 ensimeIgnoreMissingDirectories := true
 EOD
-
-  cp ~/.sbt/${version}/global.sbt /tmp/sbt-globals.tmp
-  cat /tmp/sbt-globals.tmp | sort | uniq > ~/.sbt/${version}/global.sbt 
 }
 
 #
