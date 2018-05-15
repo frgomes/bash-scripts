@@ -3,7 +3,7 @@
 _V=1
 
 function install_karaf {
-  source ~/bin/bash_20functions.sh
+  source ~/scripts/bash_20functions.sh
 
   KARAF_VERSION=4.0.0.M3
 

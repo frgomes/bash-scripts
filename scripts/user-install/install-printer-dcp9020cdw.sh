@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source $HOME/bin/bash_20functions.sh
+source ~/scripts/bash_20functions.sh
 
 function install_cdp9020cdw_requirements {
   if command -p fgrep dcp9020cdw.localdomain /etc/hosts ;then

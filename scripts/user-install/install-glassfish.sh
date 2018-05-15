@@ -3,7 +3,7 @@
 _V=1
 
 function install_glassfish {
-  source ~/bin/bash_20functions.sh
+  source ~/scripts/bash_20functions.sh
 
   GLASSFISH_VERSION=4.1
 

@@ -1,6 +1,6 @@
 #!/bin/bash -x
 
-source $HOME/bin/bash_20functions.sh
+source ~/scripts/bash_20functions.sh
 
 ##
 ## FIXME: There's hardcode in this function :-(

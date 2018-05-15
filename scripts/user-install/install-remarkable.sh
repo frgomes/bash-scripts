@@ -3,7 +3,7 @@
 _V=1
 
 function install_remarkable {
-  source ~/bin/bash_20functions.sh
+  source ~/scripts/bash_20functions.sh
 
   REMARKABLE_VERSION=1.87_all
 
