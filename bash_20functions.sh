@@ -36,6 +36,29 @@ function paths() {
 
 
 ##
+# Test if package is installed
+#
+function installed {
+  if [ "${1}" == "" ] ;then
+    return 1
+  else
+    apt list --installed 2> /dev/null | egrep "^${1}/" > /dev/null
+  fi
+}
+
+##
+# Test if package is not installed
+#
+function not_installed {
+  if [ "${1}" == "" ] ;then
+    return 1
+  else
+    ! installed $*
+  fi
+}
+
+
+##
 # Employs wget in order to download a file into directory ${HOME}/Downloads
 #
 # @param url:    source URL
