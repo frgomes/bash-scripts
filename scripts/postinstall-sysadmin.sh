@@ -68,7 +68,7 @@ function postinstall_firefox {
   local lang=$(echo $LANG | cut -d. -f1 | sed "s/_/-/")
   local hwarch=$(uname -m)
   local osarch=$(uname -s | tr [:upper:] [:lower:])
-  local version=58.0
+  local version=60.0
 
   if [ ! -e /root/Downloads/${app}-${version}.tar.bz2 ] ;then
     pushd /root/Downloads 2>&1 > /dev/null
@@ -98,7 +98,7 @@ function postinstall_thunderbird {
   local lang=$(echo $LANG | cut -d. -f1 | sed "s/_/-/")
   local hwarch=$(uname -m)
   local osarch=$(uname -s | tr [:upper:] [:lower:])
-  local version=58.0b3
+  local version=60.0b6
 
   if [ ! -e /root/Downloads/${app}-${version}.tar.bz2 ] ;then
     pushd /root/Downloads 2>&1 > /dev/null
