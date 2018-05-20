@@ -8,8 +8,8 @@ EOD
 }
 
 function hipchat_install() {
-  sudo apt-get update
-  sudo apt-get install hipchat
+  sudo apt update
+  sudo apt install hipchat
 }
 
 hipchat_repository

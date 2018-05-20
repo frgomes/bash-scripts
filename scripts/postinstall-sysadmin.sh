@@ -1,26 +1,14 @@
 #!/bin/bash -x
 
-apt-get update -y
-apt-get dist-upgrade -y
-apt-get autoremove --purge -y
+apt update -y
+apt dist-upgrade -y
+apt autoremove --purge -y
 
-apt-get install -y
-
-
-##------------------------------------------
-
-
-function postinstall_remove_if_installed {
-  ##TODO: should do this properly
-  apt-get remove --purge -y $*
-}
-
-
-##------------------------------------------
+apt install -y
 
 
 function postinstall_compression {
-  apt-get install tar bsdtar bzip2 pbzip2 lbzip2 zstd lzip plzip xz-utils pxz pigz zip unzip p7zip p7zip-rar httrack -y
+  apt install tar bsdtar bzip2 pbzip2 lbzip2 zstd lzip plzip xz-utils pxz pigz zip unzip p7zip p7zip-rar httrack -y
 
   #TODO: needs code review and tests!!!
   #[[ ! -e /usr/local/bin/bzip2   ]] && ln -s /usr/bin/lbzip2   /usr/local/bin/bzip2
@@ -33,33 +21,33 @@ function postinstall_compression {
 }
 
 function postinstall_scm {
-  apt-get install git mercurial -y
+  apt install git mercurial -y
 }
 
 function postinstall_downloads {
-  apt-get install wget curl -y
+  apt install wget curl -y
 }
 
 function postinstall_editors {
-  apt-get install zile vim -y
+  apt install zile vim -y
 }
 
 function postinstall_apt {
-  apt-get install apt-file apt-transport-https apt-utils -y
+  apt install apt-file apt-transport-https apt-utils -y
   apt-file update
 }
 
 function postinstall_networking {
-  apt-get install dnsutils nmap -y
+  apt install dnsutils nmap -y
 }
 
 function postinstall_virtualenv {
-  apt-get install virtualenvwrapper -y
+  apt install virtualenvwrapper -y
   source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
 }
 
 function postinstall_source_code_utils {
-  apt-get install less source-highlight -y
+  apt install less source-highlight -y
 }
 
 function postinstall_firefox {
@@ -89,7 +77,7 @@ function postinstall_firefox {
   ln -s /opt/${app}/${app} /usr/local/bin/${app}
   echo /usr/local/bin/${app}
 
-  postinstall_remove_if_installed firefox-esr
+  installed firefox-esr && sudo apt remove -y --purge firefox-esr
 }
 
 function postinstall_thunderbird {
@@ -119,7 +107,7 @@ function postinstall_thunderbird {
   ln -s /opt/${app}/${app} /usr/local/bin/${app}
   echo /usr/local/bin/${app}
 
-  postinstall_remove_if_installed thunderbird lightning
+  installed thunderbird lightning && sudo apt remove -y --purge thunderbird lightning
 }
 
 function postinstall_utilities_wp34s {
@@ -144,8 +132,8 @@ function postinstall_utilities_wp34s {
   echo /usr/local/bin/WP-34S
 }
 
-function postinstall_monitoring {
-  apt-get install htop -y
+function postinstall_misc {
+  apt install psmisc htop -y
 }
 
 
@@ -153,30 +141,31 @@ function postinstall_monitoring {
 
 
 function postinstall_remove_java {
-  apt-get remove -y --purge gcj-6 gcj-6-jdk gcj-6-jre gcj-6-jre-headless gcj-6-jre-lib default-jdk default-jdk-doc default-jdk-headless default-jre default-jre-headless openjdk-8-dbg openjdk-8-demo openjdk-8-doc openjdk-8-jdk openjdk-8-jdk-headless openjdk-8-jre openjdk-8-jre-headless openjdk-8-jre-zero
-  apt-get autoremove -y --purge  
+  apt remove -y --purge gcj-6 gcj-6-jdk gcj-6-jre gcj-6-jre-headless gcj-6-jre-lib default-jdk default-jdk-doc default-jdk-headless default-jre default-jre-headless openjdk-8-dbg openjdk-8-demo openjdk-8-doc openjdk-8-jdk openjdk-8-jdk-headless openjdk-8-jre openjdk-8-jre-headless openjdk-8-jre-zero
+  apt autoremove -y --purge  
 }
 
 
 function postinstall_x11 {
-  apt-get install xclip gitk tortoisehg zeal -y
-  apt-get install chromium -y
-  apt-get install emacs25 -y
+  apt install xclip gitk tortoisehg zeal -y
+  apt install chromium -y
+  apt install emacs25 -y
 }
 
 function postinstall_console {
-  apt-get install emacs25-nox -y
+  apt install emacs25-nox -y
 }
 
 
 function postinstall_remove_smtp_servers {
-  apt-get remove --purge exim4-daemon-light exim4-config exim4-base
+  installed exim4-base && apt remove -y --purge exim4-daemon-light exim4-config exim4-base
 }
 
 
 ##------------------------------------------
 
 
+postinstall_misc
 postinstall_apt
 postinstall_scm
 postinstall_downloads
@@ -184,11 +173,9 @@ postinstall_compression
 postinstall_networking
 postinstall_editors
 postinstall_source_code_utils
-postinstall_monitoring
 postinstall_virtualenv
 
-## dependent on graphical environments installed
-if [[ $(dpkg-query -W xorg) ]] ;then
+if [[ $(installed xorg) ]] ;then
   postinstall_remove_java
   postinstall_x11
   postinstall_firefox
@@ -204,6 +191,6 @@ fi
 
 postinstall_remove_smtp_servers
 
-apt-get autoremove --purge -y
-apt-get autoclean
-apt-get clean
+apt autoremove --purge -y
+apt autoclean
+apt clean

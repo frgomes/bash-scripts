@@ -5,12 +5,12 @@
 
 function install_pureftpd_remove_all {
   sudo service pure-ftpd stop
-  sudo apt-get remove --purge  pure-ftpd-common pure-ftpd -y
+  sudo apt remove -y --purge  pure-ftpd-common pure-ftpd
   sudo rm -r -f /etc/pure-ftpd
 }
 
 function install_pureftpd {
-  sudo apt-get install pure-ftpd-common pure-ftpd -y
+  sudo apt install pure-ftpd-common pure-ftpd -y
 }
 
 function install_pureftpd_config {
@@ -29,17 +29,9 @@ function install_pureftpd_config {
   echo "yes" | sudo tee /etc/pure-ftpd/conf/ChrootEveryone
 }
 
-function install_pureftpd_ignore_users {
-cat <<EOD
-root
-vagrant
-EOD
-}
-
 function install_pureftpd_virtual_users {
   getent passwd | \
     awk -F: '{ if ( $4 >= 1000 && $4 < 10000 ) print $1 }' | \
-      fgrep -i -f <(install_pureftpd_ignore_users) | \
         while read user ;do
           sudo mkdir -p /home/${user}/pure-ftpd
           sudo chown ${user}:${user} /home/${user}/pure-ftpd

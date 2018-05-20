@@ -5,12 +5,12 @@ function install_pulseaudio_raspbian_firmware_update {
   if [ "${machine}" == "armv7l" ] ;then
       # Update all Raspbian packages.
       # Do this *before* the firmware update.
-      sudo apt-get update
-      sudo apt-get upgrade
+      sudo apt update
+      sudo apt upgrade -y
 
       # Install rpi-update as described at
       # https://github.com/Hexxeh/rpi-update
-      sudo apt-get install git-core -y
+      sudo apt install git-core -y
       sudo wget https://raw.github.com/Hexxeh/rpi-update/master/rpi-update -O /usr/bin/rpi-update
       sudo chmod +x /usr/bin/rpi-update
 
@@ -23,7 +23,7 @@ function install_pulseaudio_raspbian_firmware_update {
 }
 
 function install_pulseaudio_packages {
-  sudo apt-get install pulseaudio pulseaudio-utils -y
+  sudo apt install pulseaudio pulseaudio-utils -y
 }
 
 

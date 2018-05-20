@@ -6,7 +6,7 @@ function install_postfix {
   USERNAME=your.username@gmail.com
   PASSWORD=your.password
    
-  sudo apt-get install postfix sasl2-bin bsd-mailx -y
+  sudo apt install postfix sasl2-bin bsd-mailx -y
    
   sudo cp -p /etc/postfix/main.cf /etc/postfix/main.cf.ORIGINAL
 
@@ -31,12 +31,12 @@ EOD
 
 function install_openmediavault {
   sudo bash -c 'echo "deb http://packages.openmediavault.org/public erasmus main" > /etc/apt/sources.list.d/openmediavault.list'
-  sudo apt-get update
+  sudo apt update
    
-  sudo apt-get install openmediavault-keyring 
-  sudo apt-get update
+  sudo apt install openmediavault-keyring 
+  sudo apt update
    
-  sudo apt-get install \
+  sudo apt install \
           --yes --force-yes --auto-remove --show-upgraded \
           --no-install-recommends \
           --option Dpkg::Options::="--force-confdef" \

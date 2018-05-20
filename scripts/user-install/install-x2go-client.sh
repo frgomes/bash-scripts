@@ -8,7 +8,7 @@
 
 
 function install_x2go_client {
-  sudo apt-get install lsb-release apt-transport-https dirmngr -y
+  sudo apt install lsb-release apt-transport-https dirmngr -y
 
   local machine=$(uname -m)
   case "${machine}" in
@@ -24,10 +24,10 @@ function install_x2go_client {
   echo deb http://packages.x2go.org/${distro} ${release} main | sudo tee /etc/apt/sources.list.d/x2go.list
   sudo apt-key adv --recv-keys --keyserver keys.gnupg.net E1F958385BFE2B6E
 
-  sudo apt-get update
-  sudo apt-get install x2go-keyring -y && sudo apt-get update
+  sudo apt update
+  sudo apt install x2go-keyring -y && sudo apt update
 
-  sudo apt-get install x2goclient plasma-widget-x2go -y
+  sudo apt install x2goclient plasma-widget-x2go -y
 }
 
 

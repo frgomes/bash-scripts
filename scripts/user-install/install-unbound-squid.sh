@@ -4,7 +4,7 @@
 #       DNS caching does not happen by magic: you need to explicitly configure
 #       your DNS server to 127.0.0.1
 
-sudo apt-get install unbound squid3 -y
+sudo apt install unbound squid3 -y
 
 # make a configuration which just works
 sudo cp -p /etc/squid/squid.conf /etc/squid/squid.conf.ORIGINAL

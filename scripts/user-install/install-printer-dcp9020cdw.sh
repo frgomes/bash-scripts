@@ -3,13 +3,14 @@
 source ~/scripts/bash_20functions.sh
 
 function install_cdp9020cdw_requirements {
-  if command -p fgrep dcp9020cdw.localdomain /etc/hosts ;then
+  local ip=$(getent ahostsv4 dcp9020cdw | head -1 | cut -d' ' -f1)
+  if [ ! -z "$ip" ] ;then
     [[ ! $( dpkg -s lib32stdc++6 > /dev/null 2>&1 ) ]] \
       && sudo dpkg --add-architecture i386 \
-      && sudo apt-get update \
-      && sudo apt-get install lib32stdc++6 -y 
+      && sudo apt update \
+      && sudo apt install lib32stdc++6 -y 
   else
-    echo ERROR: please insert the IP address of dcp9020cdw.localdomain into /etc/hosts
+    echo ERROR: please make sure that IP address dcp9020cdw can be resolved.
     return 1
   fi
 }
@@ -27,14 +28,14 @@ function install_dcp9020cdw_packages {
        -f $HOME/Downloads/brscan-skey-0.2.4-1.amd64.deb -a \
        -f $HOME/Downloads/brother-udev-rule-type1-1.0.2-0.all.deb ] ;then \
     [[ ! -d /var/spool/lpd/dcp9020cdw ]] && sudo mkdir -p /var/spool/lpd/dcp9020cdw
-    sudo apt-get install libkf5kdelibs4support5-bin libnotify-bin kio-extras nomacs skanlite sane-utils psutils gscan2pdf -y \
+    sudo apt install libkf5kdelibs4support5-bin libnotify-bin kio-extras nomacs skanlite sane-utils psutils gscan2pdf -y \
     && sudo dpkg --install --force-all \
           $HOME/Downloads/dcp9020cdwlpr-1.1.2-1.i386.deb \
           $HOME/Downloads/dcp9020cdwcupswrapper-1.1.4-0.i386.deb \
           $HOME/Downloads/brscan4-0.4.4-4.amd64.deb \
           $HOME/Downloads/brscan-skey-0.2.4-1.amd64.deb \
           $HOME/Downloads/brother-udev-rule-type1-1.0.2-0.all.deb \
-    && sudo apt-get -f install
+    && sudo apt install -y -f
   else
     echo ERROR: Could not download installation packages
     return 1
@@ -42,7 +43,7 @@ function install_dcp9020cdw_packages {
 }
 
 function install_dcp9020cdw_configure_scanner {
-  local IP=$(getent hosts dcp9020cdw.localdomain | awk '{ print $1 }')
+  local IP=$(getent hosts dcp9020cdw | awk '{ print $1 }')
   hash -r && \
   sudo brsaneconfig4 -a name=DCP9020CDW model=DCP-9020CDW ip=${IP} && \
   brscan-skey -l
