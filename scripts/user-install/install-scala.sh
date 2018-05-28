@@ -3,7 +3,7 @@
 
 function install_scala_sbt {
   local version=${1:-"$SBT_VERSION"}
-  local version=${version:-"1.1.0"}
+  local version=${version:-"1.1.5"}
 
   [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
   pushd ~/Downloads > /dev/null
@@ -47,7 +47,7 @@ EOD
 #
 function install_scala {
   local version=${1:-"$SCALA_VERSION"}
-  local version=${version:-"2.12.4"}
+  local version=${version:-"2.12.6"}
 
   local major=$( echo ${version} | cut -d. -f 1-2 )
 

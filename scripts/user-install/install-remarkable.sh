@@ -16,7 +16,7 @@ function install_remarkable {
   _info Installing Remarkable
 
   sudo dpkg -i $HOME/Downloads/remarkable_${REMARKABLE_VERSION}.deb
-  sudo apt-get -f install -y
+  sudo apt install -y -f
 }
 
 install_remarkable

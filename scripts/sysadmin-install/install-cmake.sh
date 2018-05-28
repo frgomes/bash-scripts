@@ -18,7 +18,7 @@ make
 
 ## make sure CMake is remove from the system
 source ~/scripts/bash_20functions.sh
-installed cmake && apt-get remove --purge cmake cmake-data -y
+installed cmake && apt remove --purge cmake cmake-data -y
 
 ## install
 sudo make install

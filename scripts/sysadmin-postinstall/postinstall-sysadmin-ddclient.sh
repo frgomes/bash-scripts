@@ -31,7 +31,7 @@ function postinstall_sysadmin_ddclient_config {
 }
 
 function postinstall_sysadmin_ddclient {
-  apt-get install ddclient -y
+  apt install ddclient -y
 }
 
 postinstall_sysadmin_ddclient_config

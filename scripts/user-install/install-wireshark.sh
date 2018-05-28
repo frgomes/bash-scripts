@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo apt-get install wireshark -y
+sudo apt install wireshark -y
 
 sudo groupadd wireshark
 sudo chgrp wireshark /usr/bin/dumpcap

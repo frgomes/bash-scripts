@@ -21,7 +21,7 @@ Pin: origin obs.kolabsys.com
 Pin-Priority: 501
 FINISH
 
-apt-get update
+apt update
 # workaround: first install apache2 from Jessie, we don't want apache2 from the Kolab repos which was needed for Wheezy
-apt-get install apache2 -t stable
+apt install apache2 -t stable
 aptitude install kolab

@@ -1,8 +1,8 @@
 #!/bin/bash -x
 
 
-sudo apt-get update
-sudo apt-get install -y build-essential git libatlas-base-dev libopencv-dev
+sudo apt update
+sudo apt install -y build-essential git libatlas-base-dev libopencv-dev
 
 cd $HOME/workspace
 

@@ -1,23 +1,12 @@
 #!/bin/bash -x
 
-source /etc/os-release
-
-case "$ID" in
-  debian) export apt=/usr/bin/apt ;;
-  ubuntu) export apt=/usr/bin/apt ;;
-  centos) export apt=/usr/bin/yum ;;
-  fedora) export apt=/usr/bin/yum ;;
-  *)      export apt=/usr/bin/apt ;;
-esac
-
-
 function wiredtiger_requirements {
-  sudo $apt -y update
-  sudo $apt -y install autogen
-  sudo $apt -y install autoconf autogen intltool
-  sudo $apt -y install libtool
-  sudo $apt -y install make
-  sudo $apt -y install swig
+  sudo apt update -y
+  sudo apt install -y autogen
+  sudo apt install -y autoconf autogen intltool
+  sudo apt install -y libtool
+  sudo apt install -y make
+  sudo apt install -y swig
 }
 
 
