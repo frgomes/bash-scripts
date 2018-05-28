@@ -35,35 +35,23 @@ function paths() {
 }
 
 
-##
-# Test if package is installed
-#
 function installed {
   if [ "${1}" == "" ] ;then
     return 1
   else
-    apt list --installed 2> /dev/null | egrep "^${1}/" > /dev/null
+    apt list --installed $* 2> /dev/null
   fi
 }
 
-##
-# Test if package is not installed
-#
 function not_installed {
   if [ "${1}" == "" ] ;then
     return 1
   else
-    ! installed $*
+    fgrep -v -f <(apt list --installed $* 2> /dev/null) <(apt list $* 2> /dev/null)
   fi
 }
 
 
-##
-# Employs wget in order to download a file into directory ${HOME}/Downloads
-#
-# @param url:    source URL
-# @param cookie: (optional) cookie to be employed in case authorization is required
-#
 function download {
   local url="$1"
   local cookie="$2"

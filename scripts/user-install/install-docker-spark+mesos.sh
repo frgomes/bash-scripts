@@ -2,10 +2,9 @@
 
 function install_spark_mesos {
 
-  # make sure all necessary tools are installed
   if [ ! -e "$(which docker)" ] ;then
-    echo apt-get install docker-engine -y
-    sudo apt-get install docker-engine -y
+    echo apt install docker-engine -y
+    sudo apt install docker-engine -y
   fi
 
   pushd $HOME/workspace/debian-scripts/install-docker-spark+mesos
