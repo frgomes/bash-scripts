@@ -43,7 +43,7 @@ function installed {
   fi
 }
 
-function not_installed {
+function uninstalled {
   if [ "${1}" == "" ] ;then
     return 1
   else
