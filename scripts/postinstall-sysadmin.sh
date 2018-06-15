@@ -38,7 +38,7 @@ function postinstall_apt {
 }
 
 function postinstall_networking {
-  apt install dnsutils nmap -y
+  apt install avahi-ui-utils kde-zeroconf avahi-utils cups-client avahi-daemon dnsutils nmap -y
 }
 
 function postinstall_virtualenv {
