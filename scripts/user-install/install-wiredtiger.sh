@@ -39,4 +39,4 @@ function wiredtiger_install {
   echo $HOME/bin/wt
 }
 
-wiredtiger_requirements && wiredtiger_install
+wiredtiger_install
