@@ -23,7 +23,7 @@ function install_kafka {
   if [ ! -d ${tools}/${product} ] ;then
     pushd ${tools} > /dev/null
     [[ -e sbt ]] && rm -r -f sbt
-    bsdtar -xf ~/Downloads/${archive}
+    tar -xf ~/Downloads/${archive}
     popd > /dev/null
   fi
 
