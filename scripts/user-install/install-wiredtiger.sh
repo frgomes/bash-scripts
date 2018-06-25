@@ -2,11 +2,7 @@
 
 function wiredtiger_requirements {
   sudo apt update -y
-  sudo apt install -y autogen
-  sudo apt install -y autoconf autogen intltool
-  sudo apt install -y libtool
-  sudo apt install -y make
-  sudo apt install -y swig
+  sudo apt install -y autoconf autogen intltool libtool make swig
 }
 
 
@@ -39,4 +35,5 @@ function wiredtiger_install {
   echo $HOME/bin/wt
 }
 
-wiredtiger_install
+which autoconf && which autogen && which make && which swig && [[ ! -f $HOME/bin/wt ]] && wiredtiger_install
+[[ -f $HOME/bin/wt ]]
