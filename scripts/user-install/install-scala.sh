@@ -86,7 +86,10 @@ function install_scala {
 [[ ! -d ~/bin ]] && mkdir -p ~/bin
 
 ( install_scala_sbt && install_scala_sbt_ensime && install_scala $* ) | while read dir ;do
-  name=$(basename $dir | cut -d- -f1)
-  [[ -e ~/bin/${name} ]] && rm ~/bin/${name}
-  ln -s ${dir}/bin/${name} ~/bin/${name}
+  echo ${dir}
+  name=$(basename ${dir} | cut -d'-' -f1)
+  if [ ! -z ${name} ] ;then
+    [[ -f ~/bin/${name} ]] && rm ~/bin/${name}
+    ln -s ${dir}/bin/${name} ~/bin/${name}
+  fi
 done
