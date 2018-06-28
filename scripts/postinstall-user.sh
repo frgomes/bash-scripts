@@ -1,5 +1,8 @@
 #!/bin/bash -x
 
+
+dir=$(dirname $(test -L "$BASH_SOURCE" && readlink -f "$BASH_SOURCE" || echo "$BASH_SOURCE"))
+
 function postinstall_user_ssh_make_config {
 cat <<EOD
 Host github.com
@@ -14,15 +17,10 @@ Host bitbucket.org
 EOD
 }
 
-##function postinstall_user_ssh_keygen {
-##  [[ ! -f ~/.ssh/id_rsa ]] && ssh-keygen -t rsa -b 4096
-##}
-
 function postinstall_user_ssh_config {
   [[ ! -d ~/.ssh ]] && mkdir -p ~/.ssh && chmod 700 ~/.ssh
   [[ ! -f ~/.ssh/config ]] && postinstall_user_ssh_make_config >> ~/.ssh/config
 }
-
 
 function postinstall_user_git_make_config {
 local user=$1
@@ -115,7 +113,62 @@ function postinstall_user_virtualenvs {
   done
 }
 
-## postinstall_user_ssh_keygen
+function postinstall_user_firefox {
+  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
+  local app=firefox
+  local lang=$(echo $LANG | cut -d. -f1 | sed "s/_/-/")
+  local hwarch=$(uname -m)
+  local osarch=$(uname -s | tr [:upper:] [:lower:])
+  local version=61.0
+
+  if [ ! -e ~/Downloads/${app}-${version}.tar.bz2 ] ;then
+    pushd ~/Downloads 2>&1 > /dev/null
+    wget https://ftp.mozilla.org/pub/${app}/releases/${version}/${osarch}-${hwarch}/${lang}/${app}-${version}.tar.bz2
+    popd 2>&1 > /dev/null
+  fi
+
+  local tools=${TOOLS_HOME:=$HOME/tools}
+  [[ ! -d ${tools}        ]] && mkdir -p ${tools}
+
+  pushd ${tools} 2>&1 > /dev/null
+  tar xpf ~/Downloads/${app}-${version}.tar.bz2
+  popd 2>&1 > /dev/null
+
+  [[ ! -d ~/bin ]] && mkdir -p ~/bin
+  ln -s ${tools}/${app}/${app} ~/bin/${app}
+  echo ~/bin/${app}
+}
+
+function postinstall_user_thunerbird {
+  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
+  local app=thunderbird
+  local lang=$(echo $LANG | cut -d. -f1 | sed "s/_/-/")
+  local hwarch=$(uname -m)
+  local osarch=$(uname -s | tr [:upper:] [:lower:])
+  local version=60.0b9
+
+  if [ ! -e ~/Downloads/${app}-${version}.tar.bz2 ] ;then
+    pushd ~/Downloads 2>&1 > /dev/null
+    wget https://ftp.mozilla.org/pub/${app}/releases/${version}/${osarch}-${hwarch}/${lang}/${app}-${version}.tar.bz2
+    popd 2>&1 > /dev/null
+  fi
+
+  local tools=${TOOLS_HOME:=$HOME/tools}
+  [[ ! -d ${tools}        ]] && mkdir -p ${tools}
+
+  pushd ${tools} 2>&1 > /dev/null
+  tar xpf ~/Downloads/${app}-${version}.tar.bz2
+  popd 2>&1 > /dev/null
+
+  [[ ! -d ~/bin ]] && mkdir -p ~/bin
+  ln -s ${tools}/${app}/${app} ~/bin/${app}
+  echo ~/bin/${app}
+}
+
+
+postinstall_user_firefox
+postinstall_user_thunerbird
+
 postinstall_user_ssh_config
 postinstall_user_git_config
 
