@@ -20,9 +20,9 @@ done
 [[ -x ~/.bashrc.scripts.after ]] && source ~/.bashrc.scripts.after
 
 # Make sure these variables are defined ONLY ONCE and only ONLY HERE.
-export HISTSIZE=10000
-export HISTFILESIZE=10000
+export HISTSIZE=20000
+export HISTFILESIZE=20000
 export HISTTIMEFORMAT="%Y%m%d_%H%M%S "
-export HISTCONTROL=ignoreboth
+export HISTCONTROL=ignoredups:erasedups
 export PROMPT_COMMAND='history -a'
 shopt -s histappend

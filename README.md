@@ -1,5 +1,4 @@
-These are several shell scripts containing aliases, useful functions and tricks
-aiming to deliver increased productivity.
+These are several shell scripts containing aliases, useful functions and tricks aiming to deliver increased productivity.
 
 Shell scripts are definitely tested in Debian. Support CentOS is done on a best effort basis.
 
@@ -13,7 +12,17 @@ Shell scripts are definitely tested in Debian. Support CentOS is done on a best 
 
 ## For the impatient
 
-### Installation
+### Post-installation scripts for sysadmins
+
+```bash
+$ wget https://raw.githubusercontent.com/frgomes/bash-scripts/master/postinstall-sysadmin.sh -O - | bash
+```
+### Post-installation scripts for regular users
+```bash
+$ wget https://raw.githubusercontent.com/frgomes/bash-scripts/master/postinstall-user.sh -O - | bash
+```
+
+### Toolbox of useful shell scripts and aliases
 
 This is how I install these scripts in my environment:
 
@@ -32,7 +41,7 @@ Then add a call to ``$HOME/scripts/bashrc`` into your ``$HOME/.bashrc``:
 $ echo 'source $HOME/scripts/bashrc' >> $HOME/.bashrc
 ```
 
-### Additional tricks
+## Additional tricks
 
 You may find useful to run something _before_ and/or something _after_ you load [these] scripts
 [provided by this package] into your terminal session.
@@ -40,7 +49,7 @@ You may find useful to run something _before_ and/or something _after_ you load 
 This way, you can define defauls for environment variables before scripts run.
 You can also adjust keyboard configurations and other preferences after all scripts run.
 
-#### Actions before loading scripts
+### Actions before loading scripts
 
 Simply create a file named ``$HOME/.bashrc.scripts.before`` and it will be executed before
 [these] scripts [provided by this package] run.
@@ -69,7 +78,7 @@ case "$(nmcli_connected_wifi)" in
 esac
 ```
 
-#### Actions after loading scripts
+### Actions after loading scripts
 
 Simply create a file named ``$HOME/.bashrc.scripts.after``, as the example below shows:
 

@@ -50,66 +50,6 @@ function postinstall_source_code_utils {
   apt install less source-highlight -y
 }
 
-function postinstall_firefox {
-  [[ ! -d /root/Downloads ]] && mkdir -p /root/Downloads
-  local app=firefox
-  local lang=$(echo $LANG | cut -d. -f1 | sed "s/_/-/")
-  local hwarch=$(uname -m)
-  local osarch=$(uname -s | tr [:upper:] [:lower:])
-  local version=60.0
-
-  if [ ! -e /root/Downloads/${app}-${version}.tar.bz2 ] ;then
-    pushd /root/Downloads 2>&1 > /dev/null
-    wget https://ftp.mozilla.org/pub/${app}/releases/${version}/${osarch}-${hwarch}/${lang}/${app}-${version}.tar.bz2
-    popd 2>&1 > /dev/null
-  fi
-
-  if [ ! -d /opt/${app} ] ;then
-    [[ ! -d /opt ]] && mkdir -p /opt
-    pushd /opt 2>&1 > /dev/null
-    tar xpf /root/Downloads/${app}-${version}.tar.bz2
-    popd 2>&1 > /dev/null
-  fi
-  if [ -L /usr/local/bin/${app} ] ;then
-    rm /usr/local/bin/${app}
-  fi
-
-  ln -s /opt/${app}/${app} /usr/local/bin/${app}
-  echo /usr/local/bin/${app}
-
-  installed firefox-esr && sudo apt remove -y --purge firefox-esr
-}
-
-function postinstall_thunderbird {
-  [[ ! -d /root/Downloads ]] && mkdir -p /root/Downloads
-  local app=thunderbird
-  local lang=$(echo $LANG | cut -d. -f1 | sed "s/_/-/")
-  local hwarch=$(uname -m)
-  local osarch=$(uname -s | tr [:upper:] [:lower:])
-  local version=60.0b6
-
-  if [ ! -e /root/Downloads/${app}-${version}.tar.bz2 ] ;then
-    pushd /root/Downloads 2>&1 > /dev/null
-    wget https://ftp.mozilla.org/pub/${app}/releases/${version}/${osarch}-${hwarch}/${lang}/${app}-${version}.tar.bz2
-    popd 2>&1 > /dev/null
-  fi
-
-  if [ ! -d /opt/${app} ] ;then
-    [[ ! -d /opt ]] && mkdir -p /opt
-    pushd /opt 2>&1 > /dev/null
-    tar xpf /root/Downloads/${app}-${version}.tar.bz2
-    popd 2>&1 > /dev/null
-  fi
-  if [ -L /usr/local/bin/${app} ] ;then
-    rm /usr/local/bin/${app}
-  fi
-
-  ln -s /opt/${app}/${app} /usr/local/bin/${app}
-  echo /usr/local/bin/${app}
-
-  installed thunderbird lightning && sudo apt remove -y --purge thunderbird lightning
-}
-
 function postinstall_utilities_wp34s {
   [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
   pushd ~/Downloads 2>&1 > /dev/null
@@ -178,8 +118,6 @@ postinstall_virtualenv
 if [[ $(installed xorg) ]] ;then
   postinstall_remove_java
   postinstall_x11
-  postinstall_firefox
-  postinstall_thunderbird
   postinstall_utilities_wp34s
 else
   postinstall_console
