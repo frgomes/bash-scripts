@@ -23,6 +23,6 @@ done
 export HISTSIZE=20000
 export HISTFILESIZE=20000
 export HISTTIMEFORMAT="%Y%m%d_%H%M%S "
-export HISTCONTROL=ignoredups:erasedups
+export HISTCONTROL=ignoredups
 export PROMPT_COMMAND='history -a'
 shopt -s histappend
