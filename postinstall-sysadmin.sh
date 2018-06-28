@@ -7,6 +7,22 @@ apt autoremove --purge -y
 apt install -y
 
 
+function installed {
+  if [ "${1}" == "" ] ;then
+    return 1
+  else
+    apt list --installed $* 2> /dev/null
+  fi
+}
+
+function uninstalled {
+  if [ "${1}" == "" ] ;then
+    return 1
+  else
+    fgrep -v -f <(apt list --installed $* 2> /dev/null) <(apt list $* 2> /dev/null)
+  fi
+}
+
 function postinstall_compression {
   apt install tar bsdtar bzip2 pbzip2 lbzip2 zstd lzip plzip xz-utils pxz pigz zip unzip p7zip p7zip-rar httrack -y
 
@@ -87,9 +103,12 @@ function postinstall_remove_java {
 
 
 function postinstall_x11 {
-  apt install xclip gitk tortoisehg zeal -y
-  apt install chromium -y
-  apt install emacs25 -y
+  apt install -y xclip
+  apt install -y zeal
+  apt install -y gitk
+  apt install -y tortoisehg
+  apt install -y chromium
+  apt install -y emacs25
 }
 
 function postinstall_console {
@@ -115,13 +134,8 @@ postinstall_editors
 postinstall_source_code_utils
 postinstall_virtualenv
 
-if [[ $(installed xorg) ]] ;then
-  postinstall_remove_java
-  postinstall_x11
-  postinstall_utilities_wp34s
-else
-  postinstall_console
-fi
+installed   xorg && (postinstall_x11; postinstall_utilities_wp34s; postinstall_remove_java)
+uninstalled xorg && postinstall_console
 
 
 ##------------------------------------------
