@@ -1,8 +1,6 @@
 #!/bin/bash -x
 
 
-dir=$(dirname $(test -L "$BASH_SOURCE" && readlink -f "$BASH_SOURCE" || echo "$BASH_SOURCE"))
-
 function postinstall_user_ssh_make_config {
 cat <<EOD
 Host github.com
