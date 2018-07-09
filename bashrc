@@ -26,3 +26,5 @@ export HISTTIMEFORMAT="%Y%m%d_%H%M%S "
 export HISTCONTROL=ignoredups
 export PROMPT_COMMAND='history -a'
 shopt -s histappend
+shopt -s checkwinsize
+shopt -s globstar
