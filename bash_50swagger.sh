@@ -10,7 +10,7 @@ function swagger_editor {
 function swagger_cli_download {
   local r=snapshots
   local v=3.0.0-SNAPSHOT
-  local name=swagger-codegen-cli-3.0.0-20170824.041313-2.jar
+  local name=swagger-codegen-cli-3.0.0-20180630.155857-85-javadoc.jar
   local url=https://oss.sonatype.org/content/repositories/${r}/io/swagger/swagger-codegen-cli/${v}/${name}
   local file=~/Downloads/$name
   if [ ! -f $file ] ;then
