@@ -18,7 +18,7 @@ function install_scala_sbt {
   if [ ! -d ${tools}/sbt-${version} ] ;then
     pushd ${tools} > /dev/null
     [[ -e sbt ]] && rm -r -f sbt
-    bsdtar -xf ~/Downloads/sbt-${version}.tgz
+    tar -xf ~/Downloads/sbt-${version}.tgz
     mv sbt sbt-${version}
     popd > /dev/null
   fi
@@ -63,13 +63,13 @@ function install_scala {
   
   if [ ! -d ${tools}/scala-${version} ] ;then
     pushd ${tools} > /dev/null
-    bsdtar -xf ~/Downloads/scala-${version}.tgz
+    tar -xf ~/Downloads/scala-${version}.tgz
     popd > /dev/null
   fi
 
   if [ ! -d ${tools}/scala-${version}/api ] ;then
     pushd ${tools} > /dev/null
-    bsdtar -xf ~/Downloads/scala-docs-${version}.txz
+    tar -xf ~/Downloads/scala-docs-${version}.txz
     popd > /dev/null
   fi
 
