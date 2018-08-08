@@ -41,6 +41,7 @@ alias cdiff='diff -Naur'
 alias sdiff='diff -Npry'
 alias kdiff='kdiff3'
 alias vdiff='${TOOLS_HOME}/idea/bin/idea.sh diff'
+alias beakerx='docker run -p 8888:8888 beakerx/beakerx $*'
 
 # caopy/paste using the clipboard
 alias ctrlc='xclip -i -selection clipboard'
