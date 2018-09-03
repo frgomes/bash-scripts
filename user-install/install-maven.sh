@@ -3,7 +3,7 @@
 
 function install_maven {
   local version=${1:-"$M2_VERSION"}
-  local version=${version:-"3.5.3"}
+  local version=${version:-"3.5.4"}
 
   [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
   pushd ~/Downloads
@@ -15,7 +15,7 @@ function install_maven {
 
   [[ ! -d $tools ]] && mkdir -p $tools
   pushd $tools \
-    && bsdtar -xf ~/Downloads/apache-maven-${version}-bin.tar.gz
+    && tar -xf ~/Downloads/apache-maven-${version}-bin.tar.gz
 
   echo $tools/apache-maven-${version}
 }
