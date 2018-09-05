@@ -83,9 +83,21 @@ function install_scala {
   echo ${tools}/scala-${version}
 }
 
+function install_scala_amm {
+  local tools=${TOOLS_HOME:=$HOME/tools}
+  local version=${1:-"1.1.2"}
+
+  if [ ! -d ${tools}/amm-${version}/bin ] ;then
+    mkdir -p ${tools}/amm-${version}/bin
+    (echo "#!/usr/bin/env bash" && curl -L https://github.com/lihaoyi/Ammonite/releases/download/${version}/2.12-${version}) > ${tools}/amm-${version}/bin/amm && chmod +x ${tools}/amm-${version}/bin/amm
+  fi
+  echo ${tools}/amm-${version}
+}
+
+
 [[ ! -d ~/bin ]] && mkdir -p ~/bin
 
-( install_scala_sbt && install_scala_sbt_ensime && install_scala $* ) | while read dir ;do
+( install_scala_sbt && install_scala_sbt_ensime && install_scala_amm && install_scala $* ) | while read dir ;do
   echo ${dir}
   name=$(basename ${dir} | cut -d'-' -f1)
   if [ ! -z ${name} ] ;then
