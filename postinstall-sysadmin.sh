@@ -57,11 +57,6 @@ function postinstall_networking {
   apt install avahi-ui-utils kde-zeroconf avahi-utils cups-client avahi-daemon dnsutils nmap -y
 }
 
-function postinstall_virtualenv {
-  apt install virtualenvwrapper -y
-  source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
-}
-
 function postinstall_source_code_utils {
   apt install less source-highlight -y
 }
@@ -132,7 +127,6 @@ postinstall_compression
 postinstall_networking
 postinstall_editors
 postinstall_source_code_utils
-postinstall_virtualenv
 
 installed   xorg && (postinstall_x11; postinstall_utilities_wp34s; postinstall_remove_java)
 uninstalled xorg && postinstall_console
