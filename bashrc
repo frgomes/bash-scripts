@@ -4,7 +4,7 @@
 ## Source this file from your ~/.bashrc ##
 ##########################################
 
-dir=$(dirname $(test -L "$BASH_SOURCE" && readlink -f "$BASH_SOURCE" || echo "$BASH_SOURCE"))
+dir=$(dirname $(readlink -f "${BASH_SOURCE[0]}"))
 
 [[ -x ~/.bashrc.scripts.before ]] && source ~/.bashrc.scripts.before
 
