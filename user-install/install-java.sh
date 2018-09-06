@@ -25,11 +25,11 @@ function install_java {
 
   if [ -f ${HOME}/Downloads/jdk-${tag}-linux-x64.tar.gz ] ;then
     pushd ${tools} > /dev/null
-    bsdtar -xf ~/Downloads/jdk-${tag}-linux-x64.tar.gz
+    tar -xf ~/Downloads/jdk-${tag}-linux-x64.tar.gz
     cd jdk${version}
     [[ ! -d src ]] && mkdir src
     cd src
-    bsdtar -xf ../src.zip
+    tar -xf ../src.zip
     popd > /dev/null
   else
     echo ERROR: Please download jdk-${tag}-linux-x64.tar.gz from http://java.sun.com/

@@ -39,7 +39,7 @@ function install_zeppelin {
 
   [[ ! -d $tools ]] && mkdir -p $tools
   pushd $tools \
-    && bsdtar -xf ~/Downloads/zeppelin-${version}-bin-all.tgz
+    && tar -xf ~/Downloads/zeppelin-${version}-bin-all.tgz
 
   echo $tools/zeppelin-${version}-bin-all
 }

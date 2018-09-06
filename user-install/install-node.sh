@@ -18,7 +18,7 @@ function install_node {
 
   [[ ! -d $tools ]] && mkdir -p $tools
   pushd $tools \
-    && bsdtar -xf ~/Downloads/node-v${version}-${arch}.tar.xz
+    && tar -xf ~/Downloads/node-v${version}-${arch}.tar.xz
 
   echo $tools/node-v${version}-${arch}
 }

@@ -10,7 +10,7 @@ function install_mongo {
   [[ ! -d $tools ]] && mkdir -p $tools
 
   pushd $tools \
-    && curl https://fastdl.mongodb.org/linux/mongodb-${MONGO_ARCH}-${MONGO_OS}-${MONGO_VERSION}.tgz | bsdtar -xf - \
+    && curl https://fastdl.mongodb.org/linux/mongodb-${MONGO_ARCH}-${MONGO_OS}-${MONGO_VERSION}.tgz | tar -xf - \
     && popd
 }
 

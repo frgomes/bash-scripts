@@ -22,7 +22,7 @@ function install_spark {
   
   if [ ! -d ${tools}/spark-${spark_version}-bin-hadoop${hadoop_version} ] ;then
     pushd ${tools} > /dev/null
-    bsdtar -xf ~/Downloads/spark-${spark_version}-bin-hadoop${hadoop_version}.tgz
+    tar -xf ~/Downloads/spark-${spark_version}-bin-hadoop${hadoop_version}.tgz
     popd > /dev/null
   fi
 
