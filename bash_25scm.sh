@@ -187,3 +187,26 @@ function git_switch {
         popd
     fi
 }
+
+function git_sparse_clone() (
+  local rurl="$1"
+  local localdir="$2"
+  local branch="$3"
+  shift 3
+
+  mkdir -p "$localdir"
+  pushd "$localdir"
+
+  git init
+  git remote add -f origin "$rurl"
+
+  git config core.sparseCheckout true
+
+  # Loops over remaining args
+  for path in $*; do
+    echo "$path" >> .git/info/sparse-checkout
+  done
+
+  git pull origin "$branch"
+  popd
+)
