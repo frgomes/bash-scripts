@@ -22,7 +22,7 @@ function install_docker {
   wget https://download.docker.com/linux/debian/gpg -O - | sudo apt-key add -
 
   echo "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list
-  sudo apt install -y docker-ce
+  sudo apt install -y docker-ce docker-compose
 }
 
 function install_docker_permissions {
