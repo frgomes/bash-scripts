@@ -11,5 +11,11 @@ function install_rust {
       && rustup update
 }
 
-install_rust
+function install_rust_racer {
+  rustup toolchain add nightly && \
+    rustup default nightly && \
+      rustup component add rust-src && \
+        cargo install racer
+}
 
+install_rust && install_rust_racer
