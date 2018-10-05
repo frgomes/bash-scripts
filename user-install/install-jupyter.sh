@@ -1,8 +1,15 @@
 #!/bin/bash
 
 function install_jupyter_core {
-  pip3 install --upgrade pip
-  pip3 install --upgrade jupyter
+  mkdir -p ~/Downloads
+  pushd ~/Downloads
+  if [ ! -f get-pip.py ] ;then
+    wget https://bootstrap.pypa.io/get-pip.py
+  fi
+  python get-pip.py --user
+  popd
+  pip3 install --user --upgrade pip
+  pip3 install --user --upgrade jupyter
 }
 
 function install_jupyter_coursier {
@@ -21,7 +28,7 @@ function install_jupyter_kernel_scala_2_12 {
     -i user -I user:sh.almond:scala-kernel-api_$SCALA_VERSION:$ALMOND_VERSION \
     sh.almond:scala-kernel_$SCALA_VERSION:$ALMOND_VERSION \
     -f -o ${HOME}/bin/almond \
-      && ${HOME}/bin/almond --install --force
+      && ${HOME}/bin/almond --install --user --force
 }
 
 mkdir -p ${HOME}/bin
