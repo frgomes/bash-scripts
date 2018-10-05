@@ -31,8 +31,14 @@ function install_jupyter_kernel_scala_2_12 {
       && ${HOME}/bin/almond --install --user --force
 }
 
+function install_jupyter_nbextensions {
+  pip install jupyter_contrib_nbextensions --user --force
+}
+
+
 mkdir -p ${HOME}/bin
 install_jupyter_core \
   && install_jupyter_coursier \
     && install_jupyter_kernel_scala_2_12 \
-      && hash -r; jupyter kernelspec list
+      && install_jupyter_nbextensions \
+        && hash -r; jupyter kernelspec list
