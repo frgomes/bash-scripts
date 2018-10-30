@@ -7,11 +7,11 @@ export TOOLS_HOME=${TOOLS_HOME:=$HOME/tools}
 # ---- These tools are available in the PATH ----
 export JAVA_VERSION=1.8.0_171
 export SCALA_VERSION_MAJOR=2.12
-export SCALA_VERSION=${SCALA_VERSION_MAJOR}.6
+export SCALA_VERSION=${SCALA_VERSION_MAJOR}.7
 export GROOVY_VERSION=2.5.0
 export ANT_VERSION=1.9.7
 export M2_VERSION=3.5.4
-export SBT_VERSION=1.2.1
+export SBT_VERSION=1.2.6
 export GRADLE_VERSION=2.13
 
 export NODE_VERSION=8.8.1
