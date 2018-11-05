@@ -6,10 +6,10 @@ function install_jupyter_core {
   if [ ! -f get-pip.py ] ;then
     wget https://bootstrap.pypa.io/get-pip.py
   fi
-  python get-pip.py --user
+  python ~/Downloads/get-pip.py --user
   popd
-  pip3 install --user --upgrade pip
-  pip3 install --user --upgrade jupyter
+  pip install --user --upgrade pip
+  pip install --user --upgrade jupyter
 }
 
 function install_jupyter_coursier {
