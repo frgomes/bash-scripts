@@ -8,10 +8,11 @@ export TOOLS_HOME=${TOOLS_HOME:=$HOME/tools}
 export JAVA_VERSION=1.8.0_171
 export SCALA_VERSION_MAJOR=2.11
 export SCALA_VERSION=${SCALA_VERSION_MAJOR}.12
+export GROOVY_VERSION=2.5.4
 export ANT_VERSION=1.9.7
 export M2_VERSION=3.5.4
-export SBT_VERSION=1.2.1
-export GRADLE_VERSION=2.13
+export SBT_VERSION=1.2.6
+export GRADLE_VERSION=4.10.2
 
 export NODE_VERSION=8.8.1
 export NODE_ARCH=linux-x64
@@ -37,6 +38,7 @@ export RUST_HOME=${TOOLS_HOME}/cargo
 
 export JAVA_HOME=${TOOLS_HOME}/jdk${JAVA_VERSION}
 export SCALA_HOME=${TOOLS_HOME}/scala-${SCALA_VERSION}
+export GROOVY_HOME=${TOOLS_HOME}/groovy-${GROOVY_VERSION}
 export ANT_HOME=${TOOLS_HOME}/apache-ant-${ANT_VERSION}
 export M2_HOME=${TOOLS_HOME}/apache-maven-${M2_VERSION}
 export SBT_HOME=${TOOLS_HOME}/sbt-${SBT_VERSION}
@@ -59,7 +61,8 @@ export ANDROID_HOME=${TOOLS_HOME}/android-sdk
 
 export PATH=\
 ${HOME}/.local/bin:\
-${JAVA_HOME}/bin:${SCALA_HOME}/bin:${SBT_HOME}/bin:${M2_HOME}/bin:${GRADLE_HOME}/bin:${ANT_HOME}/bin:\
+${JAVA_HOME}/bin:${SCALA_HOME}/bin:${GROOVY_HOME}/bin:\
+${SBT_HOME}/bin:${M2_HOME}/bin:${GRADLE_HOME}/bin:${ANT_HOME}/bin:\
 ${KAFKA_HOME}/bin:\
 ${NODE_HOME}/bin:\
 ${CONSCRIPT_HOME}/bin:\
