@@ -1,11 +1,15 @@
 #!/bin/bash
 
+# ---- HW platform and OS platform
+export HWPLATFORM=$(uname -m | tr [:upper:] [:lower:])
+export OSPLATFORM=$(uname -s | tr [:upper:] [:lower:])
 
 # ---- Location where developer tools are installed ----
 export TOOLS_HOME=${TOOLS_HOME:=$HOME/tools}
 
 # ---- These tools are available in the PATH ----
-export JAVA_VERSION=1.8.0_171
+export RUST_HOME=${TOOLS_HOME}/cargo
+export JAVA_VERSION=1.8.0_191
 export SCALA_VERSION_MAJOR=2.11
 export SCALA_VERSION=${SCALA_VERSION_MAJOR}.12
 export GROOVY_VERSION=2.5.4
@@ -14,10 +18,13 @@ export M2_VERSION=3.5.4
 export SBT_VERSION=1.2.6
 export GRADLE_VERSION=4.10.2
 
+# ---- These tools are NOT available in the PATH ----
+export ANDROID_SDK_RELEASE=4333796
+export ANDROID_SDK_VERSION=26.0.1
+export ANDROID_NDK_RELEASE=r12b
+export ANDROID_NDK_VERSION=18
 export NODE_VERSION=8.8.1
 export NODE_ARCH=linux-x64
-
-# ---- These tools are NOT available in the PATH ----
 export SPARK_PROFILE=2.2
 export SPARK_VERSION=${SPARK_PROFILE}.0
 export HADOOP_PROFILE=2.7
@@ -33,9 +40,6 @@ export MAVEN_OPTS="-Xmx2048m"
 
 ## ---- USEFUL EXPORTS ----
 
-export PUB_CACHE=$HOME/.pub-cache
-export RUST_HOME=${TOOLS_HOME}/cargo
-
 export JAVA_HOME=${TOOLS_HOME}/jdk${JAVA_VERSION}
 export SCALA_HOME=${TOOLS_HOME}/scala-${SCALA_VERSION}
 export GROOVY_HOME=${TOOLS_HOME}/groovy-${GROOVY_VERSION}
@@ -43,9 +47,14 @@ export ANT_HOME=${TOOLS_HOME}/apache-ant-${ANT_VERSION}
 export M2_HOME=${TOOLS_HOME}/apache-maven-${M2_VERSION}
 export SBT_HOME=${TOOLS_HOME}/sbt-${SBT_VERSION}
 export GRADLE_HOME=${TOOLS_HOME}/gradle-${GRADLE_VERSION}
-
 export CONSCRIPT_HOME=${HOME}/.conscript
 
+export ANDROID_NDK=${TOOLS_HOME}/android-ndk-${ANDROID_NDK_RELEASE}
+export ANDROID_SDK=${TOOLS_HOME}/sdk-tools-${OSPLATFORM}-${ANDROID_SDK_RELEASE}
+export ANDROID_HOME=${ANDROID_SDK}
+
+
+export PUB_CACHE=$HOME/.pub-cache
 export NODE_HOME=${TOOLS_HOME}/node-v${NODE_VERSION}-${NODE_ARCH}
 export HIVE_HOME=${TOOLS_HOME}/apache-hive-${HIVE_VERSION}-bin
 export FLINK_HOME=${TOOLS_HOME}/flink-${FLINK_VERSION}
@@ -53,20 +62,17 @@ export SPARK_HOME=${TOOLS_HOME}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_PROFIL
 export KAFKA_HOME=${TOOLS_HOME}/kafka_${SCALA_VERSION_MAJOR}-${KAFKA_VERSION}
 export ZEPPELIN_HOME=${TOOLS_HOME}/zeppelin-${ZEPPELIN_VERSION}-bin-all
 
-export CHROMIUM_BIN=$(which chromium)
-export ANDROID_HOME=${TOOLS_HOME}/android-sdk
 
 
 ## ---- ENVIRONMENT DEPENDENT EXPORTS ----
 
 export PATH=\
 ${HOME}/.local/bin:\
+${RUST_HOME}/bin:\
 ${JAVA_HOME}/bin:${SCALA_HOME}/bin:${GROOVY_HOME}/bin:\
 ${SBT_HOME}/bin:${M2_HOME}/bin:${GRADLE_HOME}/bin:${ANT_HOME}/bin:\
-${KAFKA_HOME}/bin:\
-${NODE_HOME}/bin:\
 ${CONSCRIPT_HOME}/bin:\
-${RUST_HOME}/bin:\
+${ANDROID_HOME}/tools:$ANDROID_HOME/platform-tools:\
 ${PATH}
 
 export WORKSPACE=$HOME/workspace
