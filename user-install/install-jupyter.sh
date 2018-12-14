@@ -25,6 +25,7 @@ function install_jupyter_kernel_scala_2_12 {
   local ALMOND_VERSION=0.1.11
 
   coursier bootstrap \
+    -r jitpack \
     -i user -I user:sh.almond:scala-kernel-api_$SCALA_VERSION:$ALMOND_VERSION \
     sh.almond:scala-kernel_$SCALA_VERSION:$ALMOND_VERSION \
     -f -o ${HOME}/bin/almond \
