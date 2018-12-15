@@ -26,7 +26,7 @@ function install_spark {
     popd > /dev/null
   fi
 
-  echo ${tools}/spark-${spark_version}-bin-hadoop${hadoop_version}
+  echo ${tools}/spark-${spark_version}-bin-hadoop${hadoop_version} | tee -a ~/.bashrc-path-addons
 }
 
 

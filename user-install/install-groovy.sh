@@ -25,7 +25,7 @@ https://dl.bintray.com/groovy/maven/apache-groovy-sdk-2.5.0.zip
     popd > /dev/null
   fi
 
-  echo ${tools}/groovy-${version}
+  echo ${tools}/groovy-${version} | tee -a ~/.bashrc-path-addons
 }
 
 

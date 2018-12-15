@@ -36,7 +36,7 @@ function install_java {
     return 1
   fi
 
-  echo ${tools}/jdk${version}
+  echo ${tools}/jdk${version} | tee -a ~/.bashrc-path-addons
 }
 
 

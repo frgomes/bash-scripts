@@ -15,7 +15,7 @@ function install_nifi {
   [[ ! -d ${tools}/nifi-${version} ]] 
   tar -C ${tools} -xf ~/Downloads/nifi-${version}-bin.tar.gz
 
-  echo ${tools}/nifi-${version}
+  echo ${tools}/nifi-${version} | tee -a ~/.bashrc-path-addons
 }
 
 export NIFI_HOME=$(install_nifi $*) && echo $NIFI_HOME \

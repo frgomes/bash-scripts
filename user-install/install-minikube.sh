@@ -31,7 +31,7 @@ function install_minikube_kubectl {
     popd > /dev/null
   fi
 
-  echo ${tools}/kube-${version}
+  echo ${tools}/kube-${version} | tee -a ~/.bashrc-path-addons
 }
 
 # see: https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters

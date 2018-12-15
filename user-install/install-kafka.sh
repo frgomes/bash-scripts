@@ -27,7 +27,7 @@ function install_kafka {
     popd > /dev/null
   fi
 
-  echo ${tools}/${product}
+  echo ${tools}/${product} | tee -a ~/.bashrc-path-addons
 }
 
 

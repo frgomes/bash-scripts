@@ -21,7 +21,7 @@ function install_gradle {
     popd > /dev/null
   fi
 
-  echo ${tools}/gradle-${version}-bin
+  echo ${tools}/gradle-${version}-bin | tee -a ~/.bashrc-path-addons
 }
 
 
