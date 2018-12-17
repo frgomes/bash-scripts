@@ -21,8 +21,8 @@ function install_jupyter_coursier {
 }
 
 function install_jupyter_kernel_scala_2_12 {
-  local SCALA_VERSION=2.12.7
-  local ALMOND_VERSION=0.1.11
+  local SCALA_VERSION=2.12.8
+  local ALMOND_VERSION=0.2.0
 
   coursier bootstrap \
     -r jitpack \
