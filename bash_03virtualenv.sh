@@ -25,7 +25,7 @@ else
       if [ ! -z "$1" -a -d ${WORKON_HOME}/"$1" ] ;then
           if [ -f ${WORKON_HOME}/"$1"/bin/postactivate ] ;then
               local __shopts=$(echo $- | tr -d is); set +eu; source ${WORKON_HOME}/"$1"/bin/postactivate; set -${__shopts}
-              PS1='[$(date +%H:%M:%S)]'"($1)"${PS1}
+              PS1="($1) "${PS1}
           fi
       else
           echo ${WORKON_HOME}/"$1": virtualenv not found

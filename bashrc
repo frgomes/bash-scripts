@@ -10,6 +10,12 @@ dir=$(dirname $(readlink -f "${BASH_SOURCE[0]}"))
 
 export PATH=~/bin:/opt/bin:${PATH}
 
+if [ -x /usr/bin/dircolors ]; then
+    export PS1='\[\033[01;31m\][$(date +%Y%m%d-%H:%M:%S)]\[\033[00m\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+else
+    export PS1='[$(date +%Y%m%d-%H:%M:%S)]${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+fi
+
 for script in $dir/bash_*.sh ;do
     if [ -f $script ]; then
         echo "sourcing $script"
