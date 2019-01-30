@@ -117,7 +117,7 @@ function postinstall_user_firefox {
   local lang=$(echo $LANG | cut -d. -f1 | sed "s/_/-/")
   local hwarch=$(uname -m)
   local osarch=$(uname -s | tr [:upper:] [:lower:])
-  local version=61.0
+  local version=65.0
 
   if [ ! -e ~/Downloads/${app}-${version}.tar.bz2 ] ;then
     pushd ~/Downloads 2>&1 > /dev/null
@@ -143,8 +143,7 @@ function postinstall_user_thunerbird {
   local lang=$(echo $LANG | cut -d. -f1 | sed "s/_/-/")
   local hwarch=$(uname -m)
   local osarch=$(uname -s | tr [:upper:] [:lower:])
-  local version=60.0b9
-
+  local version=60.5.0
   if [ ! -e ~/Downloads/${app}-${version}.tar.bz2 ] ;then
     pushd ~/Downloads 2>&1 > /dev/null
     wget https://ftp.mozilla.org/pub/${app}/releases/${version}/${osarch}-${hwarch}/${lang}/${app}-${version}.tar.bz2
