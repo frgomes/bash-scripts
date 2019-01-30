@@ -24,7 +24,7 @@ function uninstalled {
 }
 
 function postinstall_compression {
-  apt install tar bzip2 pbzip2 lbzip2 zstd lzip plzip xz-utils pxz pigz zip unzip p7zip p7zip-rar httrack -y
+  apt install tar bzip2 pbzip2 lbzip2 zstd lzip plzip xz-utils xzdec pxz pigz zip unzip p7zip p7zip-rar httrack -y
 
   #TODO: needs code review and tests!!!
   #[[ ! -e /usr/local/bin/bzip2   ]] && ln -s /usr/bin/lbzip2   /usr/local/bin/bzip2
@@ -34,6 +34,10 @@ function postinstall_compression {
   #[[ ! -e /usr/local/bin/gunzip  ]] && ln -s /usr/bin/unpigz   /usr/local/bin/gunzip
   #[[ ! -e /usr/local/bin/lzip    ]] && ln -s /usr/bin/plzip    /usr/local/bin/lzip
   #[[ ! -e /usr/local/bin/xz      ]] && ln -s /usr/bin/pxz      /usr/local/bin/xz
+}
+
+function postinstall_texlive {
+  apt install texlive-latex-base texlive-latex-extra texlive-latex-recommended
 }
 
 function postinstall_scm {
@@ -124,6 +128,7 @@ postinstall_apt
 postinstall_scm
 postinstall_downloads
 postinstall_compression
+postinstall_texlive
 postinstall_networking
 postinstall_editors
 postinstall_source_code_utils
