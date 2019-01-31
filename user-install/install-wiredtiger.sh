@@ -1,12 +1,13 @@
-#!/bin/bash -x
+#!/bin/bash
 
-function wiredtiger_requirements {
+
+function install_wiredtiger_requirements {
   sudo apt update -y
   sudo apt install -y autoconf autogen intltool libtool make swig openjdk-8-jdk-headless
 }
 
 
-function wiredtiger_install {
+function install_wiredtiger_binaries {
   [[ ! -d ~/workspace ]] && mkdir -p ~/workspace
   pushd ~/workspace
 
@@ -35,5 +36,23 @@ function wiredtiger_install {
   echo $HOME/bin/wt
 }
 
-which autoconf && which autogen && which make && which swig && [[ ! -f $HOME/bin/wt ]] && wiredtiger_install
-[[ -f $HOME/bin/wt ]]
+function install_wiredtiger {
+    which autoconf && which autogen && which make && which swig && [[ ! -f $HOME/bin/wt ]] && wiredtiger_install && [[ -f $HOME/bin/wt ]]
+}
+
+
+if [ $_ != $0 ] ;then
+  # echo "Script is being sourced"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  # echo $dir
+  # echo $self
+  fgrep "function " $self | cut -d' ' -f2 | head -n -2
+else
+  # echo "Script is a subshell"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  # echo $dir
+  # echo $self
+  cmd=$(fgrep "function " $self | cut -d' ' -f2 | head -n -2 | tail -1)
+  # echo $cmd
+  $cmd
+fi

@@ -1,6 +1,5 @@
 #!/bin/bash -x
 
-source ~/scripts/bash_20functions.sh
 
 ##
 ## FIXME: There's hardcode in this function :-(
@@ -19,8 +18,10 @@ function install_java {
   [[ ! -d ${HOME}/Downloads ]] && mkdir -p ${HOME}/Downloads
   [[ ! -d ${tools} ]] && mkdir -p ${tools}
   
-  if [ ! -d ${tools}/jdk-${tag}-linux-x64.tar.gz ] ;then
-    download_with_cookie_java $url
+  if [ ! -d ${tools}/jdk-${tag}-linux-x64 ] ;then
+    wget "$url" \
+         --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" \
+         -O ${HOME}/Downloads/jdk-${tag}-linux-x64.tar.gz
   fi
 
   if [ -f ${HOME}/Downloads/jdk-${tag}-linux-x64.tar.gz ] ;then
@@ -40,4 +41,18 @@ function install_java {
 }
 
 
-install_java $*
+if [ $_ != $0 ] ;then
+  # echo "Script is being sourced"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  # echo $dir
+  # echo $self
+  fgrep "function " $self | cut -d' ' -f2 | head -n -2
+else
+  # echo "Script is a subshell"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  # echo $dir
+  # echo $self
+  cmd=$(fgrep "function " $self | cut -d' ' -f2 | head -n -2 | tail -1)
+  # echo $cmd
+  $cmd $*
+fi

@@ -104,8 +104,27 @@ function install_dcp9020cdw_configure_autostart {
 }
 
 
-install_cdp9020cdw_requirements && \
-  install_dcp9020cdw_packages && \
-    install_dcp9020cdw_configure_scanner && \
-      install_dcp9020cdw_configure_dolphin && \
+function install_dcp9020dcw {
+    install_cdp9020cdw_requirements && \
+        install_dcp9020cdw_packages && \
+        install_dcp9020cdw_configure_scanner && \
+        install_dcp9020cdw_configure_dolphin && \
         install_dcp9020cdw_configure_autostart
+}
+
+
+if [ $_ != $0 ] ;then
+  # echo "Script is being sourced"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  # echo $dir
+  # echo $self
+  fgrep "function " $self | cut -d' ' -f2 | head -n -2
+else
+  # echo "Script is a subshell"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  # echo $dir
+  # echo $self
+  cmd=$(fgrep "function " $self | cut -d' ' -f2 | head -n -2 | tail -1)
+  # echo $cmd
+  $cmd $*
+fi

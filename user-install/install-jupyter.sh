@@ -36,10 +36,28 @@ function install_jupyter_nbextensions {
   pip install jupyter_contrib_nbextensions --user --force
 }
 
-
-mkdir -p ${HOME}/bin
-install_jupyter_core \
-  && install_jupyter_coursier \
-    && install_jupyter_kernel_scala_2_12 \
-      && install_jupyter_nbextensions \
+function install_jupyter {
+    mkdir -p ${HOME}/bin
+    install_jupyter_core \
+        && install_jupyter_coursier \
+        && install_jupyter_kernel_scala_2_12 \
+        && install_jupyter_nbextensions \
         && hash -r; jupyter kernelspec list
+}
+
+
+if [ $_ != $0 ] ;then
+  # echo "Script is being sourced"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  # echo $dir
+  # echo $self
+  fgrep "function " $self | cut -d' ' -f2 | head -n -2
+else
+  # echo "Script is a subshell"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  # echo $dir
+  # echo $self
+  cmd=$(fgrep "function " $self | cut -d' ' -f2 | head -n -2 | tail -1)
+  # echo $cmd
+  $cmd $*
+fi

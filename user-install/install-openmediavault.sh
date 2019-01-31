@@ -1,6 +1,7 @@
 #!/bin/bash
 
-function install_postfix {
+
+function install_openmediavault_postfix {
   # Substitute server, username and password below by your own settings
   SERVER=smtp.gmail.com
   USERNAME=your.username@gmail.com
@@ -29,7 +30,7 @@ EOD
 }
 
 
-function install_openmediavault {
+function install_openmediavault_binaries {
   sudo bash -c 'echo "deb http://packages.openmediavault.org/public erasmus main" > /etc/apt/sources.list.d/openmediavault.list'
   sudo apt update
    
@@ -46,5 +47,23 @@ function install_openmediavault {
   sudo omv-initsystem
 }
 
-install_postfix
-install_openmediavault
+function install_openmediavault {
+    install_openmediavault_postfix && install_openmediavault_binaries
+}
+
+
+if [ $_ != $0 ] ;then
+  # echo "Script is being sourced"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  # echo $dir
+  # echo $self
+  fgrep "function " $self | cut -d' ' -f2 | head -n -2
+else
+  # echo "Script is a subshell"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  # echo $dir
+  # echo $self
+  cmd=$(fgrep "function " $self | cut -d' ' -f2 | head -n -2 | tail -1)
+  # echo $cmd
+  $cmd $*
+fi

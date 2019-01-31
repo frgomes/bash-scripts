@@ -1,8 +1,7 @@
 #!/bin/bash -x
 
-export fqdn=$(hostname --fqdn)
-export ip=$(dig @ns1.he.net +short ${fqdn} a)
-export domain=$(cat /etc/resolv.conf | fgrep search | cut -d' ' -f2 | tail -1)
+
+## NOTE: THIS SCRIPT IS EXPERIMENTAL
 
 
 # see: http://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/docs/configuring-dns.md
@@ -19,7 +18,7 @@ function install_matrix_checkdns {
   return 1
 }
 
-function install_matrix {
+function install_matrix_binaries {
   local email="$1"
 
   apt install git pwgen -y
@@ -82,12 +81,34 @@ function install_matrix_status {
   popd
 }
 
+function install_matrix {
+    local username="${1:-admin}"
+    local password="${2:-secret}"
+    local email="${3:-admin@${domain}}"
 
-username="${1:-admin}"
-password="${2:-secret}"
-email="${3:-admin@${domain}}"
+    local fqdn=$(hostname --fqdn)
+    local ip=$(dig @ns1.he.net +short ${fqdn} a)
+    local domain=$(cat /etc/resolv.conf | fgrep search | cut -d' ' -f2 | tail -1)
 
-install_matrix_checkdns && \
-  install_matrix "$1" && \
-    install_matrix_start && install_matrix_register "${username}" "${password}" yes && \
-      install_matrix_status
+    install_matrix_checkdns && \
+        install_matrix_binaries "${username}" && \
+        install_matrix_start && install_matrix_register "${username}" "${password}" yes && \
+        install_matrix_status
+}
+
+
+if [ $_ != $0 ] ;then
+  # echo "Script is being sourced"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  # echo $dir
+  # echo $self
+  fgrep "function " $self | cut -d' ' -f2 | head -n -2
+else
+  # echo "Script is a subshell"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  # echo $dir
+  # echo $self
+  cmd=$(fgrep "function " $self | cut -d' ' -f2 | head -n -2 | tail -1)
+  # echo $cmd
+  $cmd $*
+fi

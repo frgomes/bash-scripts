@@ -45,7 +45,7 @@ EOD
 #
 # Installs Scala; API documentation; Language Specification
 #
-function install_scala {
+function install_scala_binaries {
   local version=${1:-"$SCALA_VERSION"}
   local version=${version:-"2.12.8"}
 
@@ -83,6 +83,23 @@ function install_scala {
   echo ${tools}/scala-${version} | tee -a ~/.bashrc-path-addons
 }
 
-[[ ! -d ~/bin ]] && mkdir -p ~/bin
+function install_scala {
+    install_scala_sbt && install_scala_sbt_ensime && install_scala_binaries $*
+}
 
-install_scala_sbt && install_scala_sbt_ensime && install_scala $*
+
+if [ $_ != $0 ] ;then
+  # echo "Script is being sourced"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  # echo $dir
+  # echo $self
+  fgrep "function " $self | cut -d' ' -f2 | head -n -2
+else
+  # echo "Script is a subshell"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  # echo $dir
+  # echo $self
+  cmd=$(fgrep "function " $self | cut -d' ' -f2 | head -n -2 | tail -1)
+  # echo $cmd
+  $cmd $*
+fi

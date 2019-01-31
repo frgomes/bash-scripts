@@ -8,7 +8,7 @@
 # See also: install_pulseaudio.sh
 
 
-function install_x2go_server {
+function install_x2go_server_binaries {
   sudo apt install lsb-release apt-transport-https dirmngr -y
 
   local machine=$(uname -m)
@@ -35,5 +35,23 @@ function install_x2go_configure_printer {
   sudo lpadmin -p "X2GO" -D "Virtual X2Go Printer" -E -v cups-x2go:/ -m lsb/usr/cups-x2go/CUPS-X2GO.ppd
 }
 
+function install_x2go_server {
+    install_x2go_server_binaries && install_x2go_configure_printer
+}
 
-install_x2go_server && install_x2go_configure_printer
+
+if [ $_ != $0 ] ;then
+  # echo "Script is being sourced"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  # echo $dir
+  # echo $self
+  fgrep "function " $self | cut -d' ' -f2 | head -n -2
+else
+  # echo "Script is a subshell"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  # echo $dir
+  # echo $self
+  cmd=$(fgrep "function " $self | cut -d' ' -f2 | head -n -2 | tail -1)
+  echo $cmd
+  $cmd
+fi

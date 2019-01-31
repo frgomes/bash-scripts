@@ -1,10 +1,9 @@
-#!/bin/bash -x
+#!/bin/bash
+
 
 ## NOTE: THIS SCRIPT IS EXPERIMENTAL.
 ## IN PARTICULAR, THE INIT SCRIPTS MAY NOTWORK AS EXPECTED.
 
-export fqdn=$(hostname --fqdn)
-export ip=$(dig @ns1.he.net +short ${fqdn} a)
 
 function install_rocketchat_nginx {
   apt install fail2ban nginx python-certbot-nginx -y
@@ -138,13 +137,34 @@ EOD
 }
 
 
-install_rocketchat_nginx
-install_rocketchat_services
+function install_rocket_chat {
+    local fqdn=$(hostname --fqdn)
+    local ip=$(dig @ns1.he.net +short ${fqdn} a)
 
-service nginx            restart
+    install_rocketchat_nginx
+    install_rocketchat_services
+
+    service nginx            restart
+
+    #service rocketchat_mongo restart
+    #service rocketchat_app   restart
+    cd /opt/rocket.chat
+    docker-compose up
+}
 
 
-#service rocketchat_mongo restart
-#service rocketchat_app   restart
-cd /opt/rocket.chat
-docker-compose up
+if [ $_ != $0 ] ;then
+  # echo "Script is being sourced"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  # echo $dir
+  # echo $self
+  fgrep "function " $self | cut -d' ' -f2 | head -n -2
+else
+  # echo "Script is a subshell"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  # echo $dir
+  # echo $self
+  cmd=$(fgrep "function " $self | cut -d' ' -f2 | head -n -2 | tail -1)
+  # echo $cmd
+  $cmd $*
+fi

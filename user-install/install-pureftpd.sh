@@ -9,7 +9,7 @@ function install_pureftpd_remove_all {
   sudo rm -r -f /etc/pure-ftpd
 }
 
-function install_pureftpd {
+function install_pureftpd_binaries {
   sudo apt install pure-ftpd-common pure-ftpd -y
 }
 
@@ -42,7 +42,26 @@ function install_pureftpd_virtual_users {
 }
 
 
-install_pureftpd_remove_all && install_pureftpd \
-  && install_pureftpd_config \
-    && install_pureftpd_virtual_users \
-      && sudo service pure-ftpd restart
+function install_pureftpd {
+    install_pureftpd_remove_all && install_pureftpd \
+        && install_pureftpd_config \
+        && install_pureftpd_virtual_users \
+        && sudo service pure-ftpd restart
+}
+
+
+if [ $_ != $0 ] ;then
+  # echo "Script is being sourced"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  # echo $dir
+  # echo $self
+  fgrep "function " $self | cut -d' ' -f2 | head -n -2
+else
+  # echo "Script is a subshell"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  # echo $dir
+  # echo $self
+  cmd=$(fgrep "function " $self | cut -d' ' -f2 | head -n -2 | tail -1)
+  # echo $cmd
+  $cmd $*
+fi

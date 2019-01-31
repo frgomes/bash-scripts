@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 
 function postinstall_user_ssh_make_config {
@@ -107,6 +107,8 @@ function postinstall_user_virtualenvs {
   for name in j8s11 j8s12 ;do
     if [[ ! -d ~/.virtualenvs/${name} ]] ;then
       mkvirtualenv -p /usr/bin/python3 ${name}
+      pip install --upgrade pip
+      pip install --upgrade pylint pyflakes
     fi
   done
 }
@@ -137,7 +139,7 @@ function postinstall_user_firefox {
   echo ~/bin/${app}
 }
 
-function postinstall_user_thunerbird {
+function postinstall_user_thunderbird {
   [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
   local app=thunderbird
   local lang=$(echo $LANG | cut -d. -f1 | sed "s/_/-/")
@@ -162,15 +164,33 @@ function postinstall_user_thunerbird {
   echo ~/bin/${app}
 }
 
+function postinstall_user {
+  postinstall_user_firefox
+  postinstall_user_thunderbird
 
-postinstall_user_firefox
-postinstall_user_thunerbird
+  postinstall_user_ssh_config
+  postinstall_user_git_config
 
-postinstall_user_ssh_config
-postinstall_user_git_config
+  postinstall_user_download_bash_scripts
+  postinstall_user_download_carpalx
+  postinstall_user_download_dot_emacsd
 
-postinstall_user_download_bash_scripts
-postinstall_user_download_carpalx
-postinstall_user_download_dot_emacsd
+  postinstall_user_virtualenvs
+}
 
-postinstall_user_virtualenvs
+
+if [ $_ != $0 ] ;then
+  # echo "Script is being sourced"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  # echo $dir
+  # echo $self
+  fgrep "function " $self | cut -d' ' -f2 | head -n -2
+else
+  # echo "Script is a subshell"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  # echo $dir
+  # echo $self
+  cmd=$(fgrep "function " $self | cut -d' ' -f2 | head -n -2 | tail -1)
+  echo $cmd
+  $cmd $*
+fi

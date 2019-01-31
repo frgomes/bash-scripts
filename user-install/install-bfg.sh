@@ -16,7 +16,7 @@ java -jar /opt/lib/bfg-1.12.16.jar $*
 EOD
 }
 
-function install_bfg {
+function install_bfg_binaries {
   if [ -f ~/Downloads/bfg-1.12.16.jar ] ;then
     [[ ! -d /opt/lib ]] && sudo mkdir -p /opt/lib
     sudo cp ~/Downloads/bfg-1.12.16.jar /opt/lib
@@ -29,5 +29,23 @@ function install_bfg {
   fi
 }
 
+function install_bfg {
+    install_bfg_download && install_bfg_binaries
+}
 
-install_bfg_download && install_bfg
+
+if [ $_ != $0 ] ;then
+  # echo "Script is being sourced"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  # echo $dir
+  # echo $self
+  fgrep "function " $self | cut -d' ' -f2 | head -n -2
+else
+  # echo "Script is a subshell"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  # echo $dir
+  # echo $self
+  cmd=$(fgrep "function " $self | cut -d' ' -f2 | head -n -2 | tail -1)
+  # echo $cmd
+  $cmd $*
+fi

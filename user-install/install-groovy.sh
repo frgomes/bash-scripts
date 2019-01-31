@@ -1,14 +1,11 @@
 #!/bin/bash
 
+
 function install_groovy {
   local version=${1:-"$GROOVY_VERSION"}
   local version=${version:-"2.5.0"}
 
   local major=$( echo ${version} | cut -d. -f 1-2 )
-
-
-https://dl.bintray.com/groovy/maven/apache-groovy-sdk-2.5.0.zip
-
 
   [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
   pushd ~/Downloads > /dev/null
@@ -29,4 +26,18 @@ https://dl.bintray.com/groovy/maven/apache-groovy-sdk-2.5.0.zip
 }
 
 
-install_groovy $*
+if [ $_ != $0 ] ;then
+  # echo "Script is being sourced"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  # echo $dir
+  # echo $self
+  fgrep "function " $self | cut -d' ' -f2 | head -n -2
+else
+  # echo "Script is a subshell"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  # echo $dir
+  # echo $self
+  cmd=$(fgrep "function " $self | cut -d' ' -f2 | head -n -2 | tail -1)
+  # echo $cmd
+  $cmd $*
+fi
