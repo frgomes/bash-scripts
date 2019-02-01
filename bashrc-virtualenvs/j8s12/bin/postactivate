@@ -17,15 +17,14 @@ export ANT_VERSION=1.9.7
 export M2_VERSION=3.5.4
 export SBT_VERSION=1.2.8
 export GRADLE_VERSION=4.10.2
-
-export GO_HOME=${TOOLS_HOME}/go
-export GOPATH=${HOME}/go
+export GO_VERSION=1.11.5
 
 # ---- These tools are NOT available in the PATH ----
 export ANDROID_SDK_RELEASE=4333796
 export ANDROID_SDK_VERSION=28.0.3
 export NODE_VERSION=8.15.0
 export NODE_ARCH=linux-x64
+export GO_ARCH=linux-amd64
 export SPARK_PROFILE=2.2
 export SPARK_VERSION=${SPARK_PROFILE}.0
 export HADOOP_PROFILE=2.7
@@ -49,6 +48,9 @@ export M2_HOME=${TOOLS_HOME}/apache-maven-${M2_VERSION}
 export SBT_HOME=${TOOLS_HOME}/sbt-${SBT_VERSION}
 export GRADLE_HOME=${TOOLS_HOME}/gradle-${GRADLE_VERSION}
 export CONSCRIPT_HOME=${HOME}/.conscript
+
+export GO_HOME=${TOOLS_HOME}/go
+export GOPATH=${HOME}/go
 
 export ANDROID_SDK=${TOOLS_HOME}/sdk-tools-${OSPLATFORM}-${ANDROID_SDK_RELEASE}/
 export ANDROID_NDK=${ANDROID_SDK}ndk-bundle/
