@@ -31,6 +31,7 @@ function install_hyperledger_fabric {
 }
 
 function install_hyperledger_iroha {
+    local tag=${1:-1.0.0_rc2}
     local network=$(docker network ls -f "name=iroha-network" -q)
     [[ -z "${network}" ]] && docker network create iroha-network
     docker run \
@@ -53,6 +54,7 @@ function install_hyperledger_iroha {
         cd iroha
         git pull
     fi
+    git checkout ${tag}
     
     docker run -it \
            --name iroha \
@@ -61,7 +63,7 @@ function install_hyperledger_iroha {
            -v blockstore:/tmp/block_store \
            --network=iroha-network \
            --entrypoint=/bin/bash \
-           hyperledger/iroha
+           hyperledger/iroha:${tag}
     popd
 }
 
