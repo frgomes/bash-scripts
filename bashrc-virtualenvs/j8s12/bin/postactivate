@@ -16,7 +16,7 @@ export GROOVY_VERSION=2.5.4
 export ANT_VERSION=1.9.7
 export M2_VERSION=3.5.4
 export SBT_VERSION=1.2.8
-export GRADLE_VERSION=4.10.2
+export GRADLE_VERSION=5.2.1
 export GO_VERSION=1.11.5
 
 # ---- These tools are NOT available in the PATH ----
