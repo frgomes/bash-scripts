@@ -26,3 +26,9 @@ function docker_registry_import {
     fi
   done
 }
+
+function docker_prune_all {
+  docker container prune -f
+  docker volume    prune -f
+  docker network   prune -f
+}

@@ -9,7 +9,7 @@ WORK_WORKSPACE=${HOME}/workspace
 
 
 
-function docker_run_jessie_torch7 {
+function containers_run_jessie_torch7 {
     docker run -it --rm \
 	       -p ${DOCKER_JUPYTER_PORT}:8888 \
                -v ${WORK_DOCUMENTS}:/root/Documents \
@@ -19,17 +19,17 @@ function docker_run_jessie_torch7 {
 }
 
 
-function docker_run_base {
+function containers_run_base {
   docker run -it --rm rgomes/debian-base $*
 }
 
-function docker_run_xfce4 {
+function containers_run_xfce4 {
   docker run -it --rm \
              -p ${DOCKER_X2GO_PORT}:22 \
              rgomes/xfce4 $*
 }
 
-function docker_run_openbox {
+function containers_run_openbox {
   docker run -it --rm \
              -p ${DOCKER_X2GO_PORT}:22 \
              -v ${WORK_DOCUMENTS}:/home/x2go/Documents \
@@ -38,7 +38,7 @@ function docker_run_openbox {
              rgomes/openbox $*
 }
 
-function docker_run_standard {
+function containers_run_standard {
   docker run -it --rm \
              -p ${DOCKER_X2GO_PORT}:22 \
              -v ${WORK_DOCUMENTS}:/home/x2go/Documents \
@@ -47,7 +47,7 @@ function docker_run_standard {
              rgomes/kde-standard $*
 }
 
-function docker_run_kdenlive {
+function containers_run_kdenlive {
   [[ ! -d $HOME/kdenlive ]] && mkdir -p $HOME/kdenlive
   docker run -it --rm \
              -p ${DOCKER_X2GO_PORT}:22 \
