@@ -9,7 +9,7 @@ WORK_WORKSPACE=${HOME}/workspace
 
 
 
-function containers_run_jessie_torch7 {
+function containers_jessie_torch7 {
     docker run -it --rm \
 	       -p ${DOCKER_JUPYTER_PORT}:8888 \
                -v ${WORK_DOCUMENTS}:/root/Documents \
@@ -19,17 +19,17 @@ function containers_run_jessie_torch7 {
 }
 
 
-function containers_run_base {
+function containers_rgomes_debian_base {
   docker run -it --rm rgomes/debian-base $*
 }
 
-function containers_run_xfce4 {
+function containers_rgomes_xfce4 {
   docker run -it --rm \
              -p ${DOCKER_X2GO_PORT}:22 \
              rgomes/xfce4 $*
 }
 
-function containers_run_openbox {
+function containers_rgomes_openbox {
   docker run -it --rm \
              -p ${DOCKER_X2GO_PORT}:22 \
              -v ${WORK_DOCUMENTS}:/home/x2go/Documents \
@@ -38,7 +38,7 @@ function containers_run_openbox {
              rgomes/openbox $*
 }
 
-function containers_run_standard {
+function containers_rgomes_kde_standard {
   docker run -it --rm \
              -p ${DOCKER_X2GO_PORT}:22 \
              -v ${WORK_DOCUMENTS}:/home/x2go/Documents \
@@ -47,7 +47,7 @@ function containers_run_standard {
              rgomes/kde-standard $*
 }
 
-function containers_run_kdenlive {
+function containers_rgomes_kdenlive {
   [[ ! -d $HOME/kdenlive ]] && mkdir -p $HOME/kdenlive
   docker run -it --rm \
              -p ${DOCKER_X2GO_PORT}:22 \
@@ -56,4 +56,8 @@ function containers_run_kdenlive {
              -v ${WORK_MEDIA}:/home/x2go/Media \
              -v ${WORK_WORKSPACE}:/home/x2go/workspace \
              rgomes/kdenlive $*
+}
+
+function containers_debian_buster {
+  docker run -it $* debian:buster /bin/bash
 }
