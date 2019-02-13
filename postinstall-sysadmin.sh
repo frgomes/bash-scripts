@@ -52,7 +52,7 @@ function postinstall_apt {
 }
 
 function postinstall_networking {
-  apt install avahi-ui-utils kde-zeroconf avahi-utils cups-client avahi-daemon dnsutils nmap -y
+  apt install net-tools bridge-utils avahi-ui-utils kde-zeroconf avahi-utils cups-client avahi-daemon dnsutils nmap -y
 }
 
 function postinstall_source_code_utils {

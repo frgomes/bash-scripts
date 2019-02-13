@@ -27,8 +27,10 @@ function docker_registry_import {
   done
 }
 
-function docker_prune_all {
-  docker container prune -f
-  docker volume    prune -f
-  docker network   prune -f
+function docker_network_reload {
+  sudo systemctl stop docker
+  sudo iptables -t nat -F
+  sudo ifconfig docker0 down
+  sudo ip link del docker0
+  sudo systemctl start docker
 }
