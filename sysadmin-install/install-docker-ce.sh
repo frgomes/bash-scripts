@@ -30,7 +30,7 @@ function install_docker_permissions {
 }
 
 function install_docker {
-    install_docker_working_folder && install_docker && install_docker_permissions
+    install_docker_working_folder && install_docker_binaries && install_docker_permissions
 }
 
 
