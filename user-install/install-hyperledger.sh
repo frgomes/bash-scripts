@@ -31,7 +31,7 @@ function install_hyperledger_fabric {
 }
 
 function install_hyperledger_iroha {
-    local tag=${1:-1.0.0_rc2}
+    local tag=${1:-1.0.0_rc3}
     local network=$(docker network ls -f "name=iroha-network" -q)
     [[ -z "${network}" ]] && docker network create iroha-network
     docker run \
@@ -65,6 +65,9 @@ function install_hyperledger_iroha {
            --entrypoint=/bin/bash \
            hyperledger/iroha:${tag}
     popd
+    echo "NOTES:"
+    echo "    1. dnsmasq must be running. See: https://docs.docker.com/v17.09/engine/userguide/networking/configure-dns/"
+    echo "    2. Remember to disable the firewall when in development mode."
 }
 
 function install_hyperledger {
