@@ -67,6 +67,9 @@ function install_scala_binaries {
     popd > /dev/null
   fi
 
+  [[ -d ${tools}/scala ]] && rm ${tools}/scala
+  ln -s ${tools}/scala-${version} ${tools}/scala
+
   if [ ! -d ${tools}/scala-${version}/api ] ;then
     pushd ${tools} > /dev/null
     tar -xf ~/Downloads/scala-docs-${version}.txz
