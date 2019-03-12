@@ -18,7 +18,7 @@ function uninstalled {
 }
 
 function postinstall_compression {
-  apt install tar bzip2 pbzip2 lbzip2 zstd lzip plzip xz-utils xzdec pxz pigz zip unzip p7zip p7zip-rar httrack -y
+  apt install -y tar bzip2 pbzip2 lbzip2 zstd lzip plzip xz-utils xzdec pxz pigz zip unzip p7zip p7zip-rar httrack
 
   #TODO: needs code review and tests!!!
   #[[ ! -e /usr/local/bin/bzip2   ]] && ln -s /usr/bin/lbzip2   /usr/local/bin/bzip2
@@ -31,32 +31,36 @@ function postinstall_compression {
 }
 
 function postinstall_texlive {
-  apt install texlive-latex-base texlive-latex-extra texlive-latex-recommended
+  apt install -y texlive-latex-base texlive-latex-extra texlive-latex-recommended
 }
 
 function postinstall_scm {
-  apt install git mercurial -y
+  apt install -y git mercurial
 }
 
 function postinstall_downloads {
-  apt install wget curl -y
+  apt install -y wget curl
 }
 
 function postinstall_editors {
-  apt install zile vim -y
+  apt install -y zile vim
 }
 
 function postinstall_apt {
-  apt install apt-file apt-transport-https apt-utils -y
+  apt install -y apt-file apt-transport-https apt-utils
   apt-file update
 }
 
+function postinstall_python {
+  apt install -y python-pip virtualenvwrapper
+}
+
 function postinstall_networking {
-  apt install dnsmasq net-tools bridge-utils avahi-ui-utils kde-zeroconf avahi-utils cups-client avahi-daemon dnsutils nmap -y
+  apt install -y dnsmasq net-tools bridge-utils avahi-ui-utils kde-zeroconf avahi-utils cups-client avahi-daemon dnsutils nmap
 }
 
 function postinstall_source_code_utils {
-  apt install less source-highlight -y
+  apt install -y less source-highlight
 }
 
 function postinstall_utilities_wp34s {
@@ -82,7 +86,7 @@ function postinstall_utilities_wp34s {
 }
 
 function postinstall_misc {
-  apt install psmisc htop -y
+  apt install -y psmisc htop
 }
 
 
@@ -105,7 +109,7 @@ function postinstall_x11 {
 }
 
 function postinstall_console {
-  apt install emacs25-nox -y
+  apt install -y emacs25-nox
 }
 
 
@@ -121,11 +125,11 @@ function postinstall_sysadmin {
   apt update -y
   apt dist-upgrade -y
   apt autoremove --purge -y
-  apt install -y
 
   postinstall_misc
   postinstall_apt
   postinstall_scm
+  postinstall_python
   postinstall_downloads
   postinstall_compression
   postinstall_texlive
@@ -144,18 +148,4 @@ function postinstall_sysadmin {
 }
 
 
-if [ $_ != $0 ] ;then
-  # echo "Script is being sourced"
-  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  # echo $dir
-  # echo $self
-  fgrep "function " $self | cut -d' ' -f2 | head -n -2
-else
-  # echo "Script is a subshell"
-  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  # echo $dir
-  # echo $self
-  cmd=$(fgrep "function " $self | cut -d' ' -f2 | head -n -2 | tail -1)
-  echo $cmd
-  $cmd $*
-fi
+postinstall_sysadmin
