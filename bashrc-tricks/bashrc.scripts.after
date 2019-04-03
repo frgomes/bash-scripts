@@ -19,5 +19,5 @@ else
   carpalx_hyena_gb
 fi
 
-# see: https://github.com/frgomes/debian-bin/blob/master/virtualenvs/j8s12/bin/postactivate
-workon j8s12
+# see: https://github.com/frgomes/debian-bin/blob/master/virtualenvs/p3j8s12/bin/postactivate
+workon p3j8s12

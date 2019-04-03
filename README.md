@@ -104,6 +104,6 @@ else
   carpalx_hyena_gb
 fi
 
-# see: https://github.com/frgomes/bash-scripts/blob/master/bashrc-virtualenvs/j8s12/bin/postactivate
-workon j8s12
+# see: https://github.com/frgomes/bash-scripts/blob/master/bashrc-virtualenvs/p3j8s12/bin/postactivate
+workon p3j8s12
 ```

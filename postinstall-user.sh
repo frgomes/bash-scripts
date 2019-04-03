@@ -104,12 +104,14 @@ function postinstall_user_download_dot_emacsd {
 
 function postinstall_user_virtualenvs {
   source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
-  for name in j8s11 j8s12 ;do
-    if [[ ! -d ~/.virtualenvs/${name} ]] ;then
-      mkvirtualenv -p /usr/bin/python3 ${name}
-      pip install --upgrade pip
-      pip install --upgrade pylint pyflakes
-    fi
+  for v in 3 ;do
+    for name in j8s11 j8s12 ;do
+      if [[ ! -d ~/.virtualenvs/p${v}${name} ]] ;then
+        mkvirtualenv -p /usr/bin/python${v} p${v}${name}
+        pip${v} install --upgrade pip
+        pip${v} install --upgrade pylint pyflakes
+      fi
+    done
   done
 }
 
