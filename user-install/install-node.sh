@@ -26,7 +26,8 @@ function install_node_binaries {
 function install_node_tools {
   npm install -g npm@latest
   npm install -g yarn
-  npm install -g  gulp-cli
+  npm install -g gulp-cli
+  npm install -g ibm-openapi-validator
 }
 
 function install_node_angular {
