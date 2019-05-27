@@ -6,10 +6,10 @@ function install_jupyter_core {
   if [ ! -f get-pip.py ] ;then
     wget https://bootstrap.pypa.io/get-pip.py
   fi
-  python ~/Downloads/get-pip.py --user
+  python ~/Downloads/get-pip.py
   popd
-  pip install --user --upgrade pip
-  pip install --user --upgrade jupyter
+  pip install --upgrade pip
+  pip install --upgrade jupyter
 }
 
 function install_jupyter_coursier {
@@ -22,7 +22,7 @@ function install_jupyter_coursier {
 
 function install_jupyter_kernel_scala_2_12 {
   local SCALA_VERSION=2.12.8
-  local ALMOND_VERSION=0.3.0
+  local ALMOND_VERSION=0.5.0
 
   coursier bootstrap \
     -r jitpack \
@@ -33,7 +33,7 @@ function install_jupyter_kernel_scala_2_12 {
 }
 
 function install_jupyter_nbextensions {
-  pip install jupyter_contrib_nbextensions --user --force
+  pip install jupyter_contrib_nbextensions --force
 }
 
 function install_jupyter {
