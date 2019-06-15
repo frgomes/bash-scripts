@@ -17,7 +17,16 @@ function install_maven {
   pushd $tools \
     && tar -xf ~/Downloads/apache-maven-${version}-bin.tar.gz
 
-  echo $tools/apache-maven-${version}
+  [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed
+  cat << EOD > ~/.bashrc-scripts/installed/330-maven.sh
+#!/bin/bash
+
+export M2_VERSION=${M2_VERSION}
+export M2_HOME=\${TOOLS_HOME:=\$HOME/tools}/apache-maven-\${M2_VERSION}
+export MAVEN_OPTS="-Xmx2048m"
+
+export PATH=\${M2_HOME}/bin:\${PATH}
+EOD
 }
 
 

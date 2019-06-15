@@ -2,18 +2,16 @@
 
 
 function install_spark {
-  echo default Spark  is $SPARK_VERSION
-  echo default Hadoop is $HADOOP_VERSION
-
   local spark_version=${1:-"$SPARK_VERSION"}
-  local spark_version=${spark_version:-"2.2.0"}
+  local spark_version=${spark_version:-"2.4.3"}
 
   local hadoop_version=${1:-"$HADOOP_VERSION"}
   local hadoop_version=${hadoop_version:-"2.7"}
 
   [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
   pushd ~/Downloads > /dev/null
-  [[ ! -f spark-${spark_version}-bin-hadoop${hadoop_version}.tgz ]] && wget http://www.apache.org/dyn/closer.lua/spark/spark-${spark_version}/spark-${spark_version}-bin-hadoop${hadoop_version}.tgz
+  [[ ! -f spark-${spark_version}-bin-hadoop${hadoop_version}.tgz ]] && \
+    wget https://www-eu.apache.org/dist/spark/spark-${spark_version}/spark-${spark_version}-bin-hadoop${hadoop_version}.tgz
   popd > /dev/null
 
   local tools=${TOOLS_HOME:=$HOME/tools}
@@ -26,7 +24,16 @@ function install_spark {
     popd > /dev/null
   fi
 
-  echo ${tools}/spark-${spark_version}-bin-hadoop${hadoop_version} | tee -a ~/.bashrc-path-addons
+  [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed
+  cat << EOD > ~/.bashrc-scripts/installed/370-spark.sh
+#!/bin/bash
+
+export SPARK_VERSION=${spark_version}
+export HADOOP_VERSION=${hadoop_version}
+export SPARK_HOME=\${TOOLS_HOME:=\$HOME/tools}/spark-\${SPARK_VERSION}-bin-hadoop\${HADOOP_VERSION}
+
+export PATH=\${SPARK_HOME}/bin:\${PATH}
+EOD
 }
 
 

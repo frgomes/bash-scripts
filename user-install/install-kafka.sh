@@ -3,7 +3,7 @@
 
 function install_kafka {
   local version=${1:-"$KAFKA_VERSION"}
-  local version=${version:-"2.1.0"}
+  local version=${version:-"2.3.0"}
 
   local scala=${2:-"$SCALA_VERSION_MAJOR"}
   local scala=${scala:-"2.12"}
@@ -27,7 +27,15 @@ function install_kafka {
     popd > /dev/null
   fi
 
-  echo ${tools}/${product} | tee -a ~/.bashrc-path-addons
+  [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed
+  cat << EOD > ~/.bashrc-scripts/installed/360-kafka.sh
+#!/bin/bash
+
+export KAFKA_VERSION=${version}
+export KAFKA_HOME=\${TOOLS_HOME:=\$HOME/tools}/kafka_\${SCALA_VERSION_MAJOR:-2.12}-\${KAFKA_VERSION}
+
+export PATH=\${KAFKA_HOME}/bin:\${PATH}
+EOD
 }
 
 

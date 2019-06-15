@@ -1,7 +1,7 @@
 #!/bin/bash -x
 
 
-function install_go_binaries {
+function install_go {
   local version=${1:-"$GO_VERSION"}
   local version=${version:-"1.11.5"}
 
@@ -21,36 +21,18 @@ function install_go_binaries {
   pushd $tools \
     && tar -xf ~/Downloads/${archive}
 
-  echo $tools/go${version}.${arch}
-}
 
-function install_go_tools {
-  local tools=${TOOLS_HOME:-${HOME}/tools}
-  local gohome=${GO_HOME:-${tools}/go}
-  local gopath=${GOPATH:-${HOME}/go}
+  [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed
+  cat << EOD > ~/.bashrc-scripts/installed/500-go.sh
+#!/bin/bash
 
-  local PATH=${PATH}:${gohome}
-  local GOPATH=${gopath}
+export GO_VERSION=${version}
+export GO_ARCH=${arch}
+export GO_HOME=\${TOOLS_HOME:=\$HOME/tools}/go\${GO_VERSION}.\${GO_ARCH}
+export GO_PATH=\${GO_HOME}
 
-  pushd $gopath
-
-  ## GoMetaLinter: https://github.com/alecthomas/gometalinter
-  curl -s -L https://git.io/vp6lP | sh
-
-  ## TODO: verify if these tools are desirable
-  #golang.org/x/tools/cmd/goimports
-  #github.com/qiniu/checkstyle/gocheckstyle
-  #github.com/KyleBanks/depth/cmd/depth
-  #github.com/bradleyfalzon/apicompat/cmd/apicompat
-  for app in github.com/nsf/gocode ;do
-    go get -u ${app}
-  done
-
-  popd
-}
-
-function install_go {
-  install_go_binaries && install_go_tools
+export PATH=\${GO_HOME}/bin:\${PATH}
+EOD
 }
 
 

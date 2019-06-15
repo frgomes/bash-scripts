@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 # see: https://kubernetes.io/docs/tasks/tools/install-kubectl/
 function install_minikube_kubectl {
@@ -31,12 +31,20 @@ function install_minikube_kubectl {
     popd > /dev/null
   fi
 
-  echo ${tools}/kube-${version} | tee -a ~/.bashrc-path-addons
+  [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed
+  cat << EOD > ~/.bashrc-scripts/installed/270-minikube.sh
+#!/bin/bash
+
+export KUBE_VERSION=${version}
+export KUBE_HOME=\${TOOLS_HOME:=\$HOME/tools}/kube-\${KUBE_VERSION}
+
+export PATH=\${KUBE_HOME}/bin:\${PATH}
+EOD
 }
 
 # see: https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters
 function install_minikube_kubectl_config {
-  echo //TODO: config
+  echo TODO: function install_minikube_kubectl_config
 }
 
 

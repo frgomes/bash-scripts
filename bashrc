@@ -8,7 +8,7 @@ dir=$(dirname $(readlink -f "${BASH_SOURCE[0]}"))
 
 [[ -x ~/.bashrc.scripts.before ]] && source ~/.bashrc.scripts.before
 
-export PATH=~/bin:/opt/bin:${PATH}
+export PATH=/opt/bin:${PATH}
 
 if [ -x /usr/bin/dircolors ]; then
     export PS1='\[\033[01;31m\][$(date +%Y%m%d-%H:%M:%S)]\[\033[00m\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
@@ -21,6 +21,11 @@ for script in $dir/bash_*.sh ;do
         echo "sourcing $script"
         source $script
     fi
+done
+
+for script in $(find ~/.bashrc-scripts/installed/ -type f | sort --reverse) ;do
+  chmod 755 $script
+  source $script
 done
 
 [[ -x ~/.bashrc.scripts.after ]] && source ~/.bashrc.scripts.after

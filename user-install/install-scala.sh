@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 
 function install_scala_sbt {
@@ -23,7 +23,15 @@ function install_scala_sbt {
     popd > /dev/null
   fi
 
-  echo ${tools}/sbt-${version} | tee -a ~/.bashrc-path-addons
+  [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed
+  cat << EOD > ~/.bashrc-scripts/installed/321-sbt.sh
+#!/bin/bash
+
+export SBT_VERSION=${version}
+export SBT_HOME=\${TOOLS_HOME:=\$HOME/tools}/sbt-\${SBT_VERSION}
+
+export PATH=\${SBT_HOME}/bin:\${PATH}
+EOD
 }
 
 function install_scala_sbt_ensime {
@@ -83,7 +91,16 @@ function install_scala_binaries {
     popd > /dev/null
   fi
 
-  echo ${tools}/scala-${version} | tee -a ~/.bashrc-path-addons
+  [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed
+  cat << EOD > ~/.bashrc-scripts/installed/320-scala.sh
+#!/bin/bash
+
+export SCALA_VERSION=${version}
+export SCALA_VERSION_MAJOR=\${SCALA_VERSION_MAJOR:-"2.12"}
+export SCALA_HOME=\${TOOLS_HOME:=\$HOME/tools}/scala-\${SCALA_VERSION}
+
+export PATH=\${SCALA_HOME}/bin:\${PATH}
+EOD
 }
 
 function install_scala {

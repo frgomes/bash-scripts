@@ -22,7 +22,15 @@ function install_gradle {
     popd > /dev/null
   fi
 
-  echo ${tools}/gradle-${version}-bin | tee -a ~/.bashrc-path-addons
+  [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed
+  cat << EOD > ~/.bashrc-scripts/installed/332-gradle.sh
+#!/bin/bash
+
+export GRADLE_VERSION=${version}
+export GRADLE_HOME=\${TOOLS_HOME:=\$HOME/tools}/gradle-\${GRADLE_VERSION}
+
+export PATH=\${GRADLE_HOME}/bin:\${PATH}
+EOD
 }
 
 

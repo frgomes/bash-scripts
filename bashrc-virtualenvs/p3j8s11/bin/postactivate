@@ -1,85 +1,43 @@
 #!/bin/bash
 
-# ---- HW platform and OS platform
-export HWPLATFORM=$(uname -m | tr [:upper:] [:lower:])
-export OSPLATFORM=$(uname -s | tr [:upper:] [:lower:])
-
 # ---- Location where developer tools are installed ----
 export TOOLS_HOME=${TOOLS_HOME:=$HOME/tools}
 
-# ---- These tools are available in the PATH ----
-export RUST_HOME=${TOOLS_HOME}/cargo
+## ================================================================================
+##                                                                                 
+## In case you need a specific version of the JDK:                                 
+##                                                                                 
+##     Oracle now requires username and password in order to download the JDK.     
+##     Unfortunately, this script cannot help you install the JDK automatically.   
+##     You will have to download and install the JDK manually and update variables 
+##     JAVA_VERSION and JAVA_HOME in your virtualenv profiles.                     
+##                                                                                 
+## In case you don't need a specific version of the JDK:                           
+##                                                                                 
+##     Simply install a default version of the OpenJDK for your distribution:      
+##     $ sudo apt install default-jdk default-jdk-headless                         
+##                                                                                 
+## ================================================================================
+
+unset JAVA_VERSION JAVA_HOME
 export JAVA_VERSION=1.8.0_191
+export JAVA_HOME=${TOOLS_HOME}/jdk${JAVA_VERSION}
+
+# ---- Specify versions of tools to be installed by regular users ----
 export SCALA_VERSION_MAJOR=2.11
 export SCALA_VERSION=${SCALA_VERSION_MAJOR}.12
-export GROOVY_VERSION=2.5.4
-export ANT_VERSION=1.9.14
-export M2_VERSION=3.6.1
 export SBT_VERSION=1.2.8
+export M2_VERSION=3.6.1
 export GRADLE_VERSION=5.2.1
-export GO_VERSION=1.11.5
+export ANT_VERSION=1.9.14
+export GROOVY_VERSION=2.5.4
 
-# ---- These tools are NOT available in the PATH ----
-export ANDROID_SDK_RELEASE=4333796
-export ANDROID_SDK_VERSION=28.0.3
-export NODE_VERSION=8.15.0
+export NODE_VERSION=10.16.0
 export NODE_ARCH=linux-x64
-export GO_ARCH=linux-amd64
-export SPARK_PROFILE=2.2
-export SPARK_VERSION=${SPARK_PROFILE}.0
-export HADOOP_PROFILE=2.7
-export HADOOP_VERSION=${HADOOP_PROFILE}.3
-export FLINK_VERSION=1.3.2
-export HIVE_VERSION=2.1.1
-export KAFKA_VERSION=2.1.0
-export ZEPPELIN_VERSION=0.7.1
-
-# ---- Options which in general work well ----
-export MAVEN_OPTS="-Xmx2048m"
-
-
-## ---- USEFUL EXPORTS ----
-
-export JAVA_HOME=${TOOLS_HOME}/jdk${JAVA_VERSION}
-export SCALA_HOME=${TOOLS_HOME}/scala-${SCALA_VERSION}
-export GROOVY_HOME=${TOOLS_HOME}/groovy-${GROOVY_VERSION}
-export ANT_HOME=${TOOLS_HOME}/apache-ant-${ANT_VERSION}
-export M2_HOME=${TOOLS_HOME}/apache-maven-${M2_VERSION}
-export SBT_HOME=${TOOLS_HOME}/sbt-${SBT_VERSION}
-export GRADLE_HOME=${TOOLS_HOME}/gradle-${GRADLE_VERSION}
-export CONSCRIPT_HOME=${HOME}/.conscript
-
-export GO_HOME=${TOOLS_HOME}/go
-export GOPATH=${HOME}/go
-
-export ANDROID_SDK=${TOOLS_HOME}/sdk-tools-${OSPLATFORM}-${ANDROID_SDK_RELEASE}/
-export ANDROID_NDK=${ANDROID_SDK}ndk-bundle/
-export ANDROID_HOME=${ANDROID_SDK}
-export NDK_HOME=${ANDROID_NDK}
-
-
-export PUB_CACHE=$HOME/.pub-cache
-export NODE_HOME=${TOOLS_HOME}/node-v${NODE_VERSION}-${NODE_ARCH}
-export HIVE_HOME=${TOOLS_HOME}/apache-hive-${HIVE_VERSION}-bin
-export FLINK_HOME=${TOOLS_HOME}/flink-${FLINK_VERSION}
-export SPARK_HOME=${TOOLS_HOME}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_PROFILE}
-export KAFKA_HOME=${TOOLS_HOME}/kafka_${SCALA_VERSION_MAJOR}-${KAFKA_VERSION}
-export ZEPPELIN_HOME=${TOOLS_HOME}/zeppelin-${ZEPPELIN_VERSION}-bin-all
-
-
+export ANDROID_SDK_RELEASE=4333796
+export ANDROID_SDK_VERSION=29.0.0
 
 ## ---- ENVIRONMENT DEPENDENT EXPORTS ----
-
-export PATH=\
-${HOME}/.local/bin:\
-${RUST_HOME}/bin:\
-${JAVA_HOME}/bin:${SCALA_HOME}/bin:${GROOVY_HOME}/bin:\
-${SBT_HOME}/bin:${M2_HOME}/bin:${GRADLE_HOME}/bin:${ANT_HOME}/bin:\
-${CONSCRIPT_HOME}/bin:\
-${ANDROID_HOME}/tools:$ANDROID_HOME/platform-tools:\
-${NODE_HOME}/bin:\
-${GO_HOME}/bin:${GOPATH}/bin:\
-${PATH}
 
 export WORKSPACE=$HOME/workspace
 [[ ! -d $WORKSPACE ]] && mkdir -p $WORKSPACE

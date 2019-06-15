@@ -17,7 +17,15 @@ function install_ant {
   pushd $tools \
     && tar -xf ~/Downloads/apache-ant-${version}-bin.tar.gz
 
-  echo $tools/apache-ant-${version}
+  [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed
+  cat << EOD > ~/.bashrc-scripts/installed/331-ant.sh
+#!/bin/bash
+
+export ANT_VERSION=${version}
+export ANT_HOME=\${TOOLS_HOME:=\$HOME/tools}/apache-ant-\${ANT_VERSION}
+
+export PATH=\${ANT_HOME}/bin:\${PATH}
+EOD
 }
 
 

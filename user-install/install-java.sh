@@ -1,43 +1,30 @@
-#!/bin/bash -x
+#!/bin/bash
 
 
 ##
 ## FIXME: There's hardcode in this function :-(
 ##
 function install_java {
-  local version=${1:-"$JAVA_VERSION"}
-  local version=${version:="1.8.0_161"}
-
-  local tag=$( echo $version | sed 's/1.7.0_/7u/' | sed 's/1.8.0_/8u/' )
-
-  ##FIXME: hardcode
-  local url=http://download.oracle.com/otn-pub/java/jdk/8u161-b12/2f38c3b165be4555a1fa6e98c45e0808/jdk-8u161-linux-x64.tar.gz
-
-  local tools=${TOOLS_HOME:=$HOME/tools}
-
-  [[ ! -d ${HOME}/Downloads ]] && mkdir -p ${HOME}/Downloads
-  [[ ! -d ${tools} ]] && mkdir -p ${tools}
-  
-  if [ ! -d ${tools}/jdk-${tag}-linux-x64 ] ;then
-    wget "$url" \
-         --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" \
-         -O ${HOME}/Downloads/jdk-${tag}-linux-x64.tar.gz
-  fi
-
-  if [ -f ${HOME}/Downloads/jdk-${tag}-linux-x64.tar.gz ] ;then
-    pushd ${tools} > /dev/null
-    tar -xf ~/Downloads/jdk-${tag}-linux-x64.tar.gz
-    cd jdk${version}
-    [[ ! -d src ]] && mkdir src
-    cd src
-    tar -xf ../src.zip
-    popd > /dev/null
-  else
-    echo ERROR: Please download jdk-${tag}-linux-x64.tar.gz from http://java.sun.com/
-    return 1
-  fi
-
-  echo ${tools}/jdk${version} | tee -a ~/.bashrc-path-addons
+  echo "================================================================================"
+  echo "                                                                                "
+  echo "In case you need a specific version of the JDK:                                 "
+  echo "                                                                                "
+  echo "    Oracle now requires username and password in order to download the JDK.     "
+  echo "    Unfortunately, this script cannot help you install the JDK automatically.   "
+  echo "    You will have to download and install the JDK manually and update variables "
+  echo "    JAVA_VERSION and JAVA_HOME in your virtualenv profiles.                     "
+  echo "                                                                                "
+  echo "In case you don't need a specific version of the JDK:                           "
+  echo "                                                                                "
+  echo "    Simply install a default version of the OpenJDK for your distribution:      "
+  echo "    $ sudo apt install default-jdk default-jdk-headless                         "
+  echo "                                                                                "
+  echo "================================================================================"
+  echo ""
+  echo "This scripts that you'd like to install a default version of the JDK"
+  echo ""
+  echo "sudo apt install default-jdk default-jdk-headless"
+  sudo apt install default-jdk default-jdk-headless
 }
 
 

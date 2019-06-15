@@ -20,12 +20,12 @@ export TOOLS_HOME=${TOOLS_HOME:=$HOME/tools}
 ## ================================================================================
 
 unset JAVA_VERSION JAVA_HOME
-export JAVA_VERSION=1.8.0_191
-export JAVA_HOME=${TOOLS_HOME}/jdk${JAVA_VERSION}
+export JAVA_VERSION=$(java -version 2>&1 | head -1 | cut -d\" -f2)
+export JAVA_HOME=$(readlink -f $(which java) | sed s:/bin/java::)
 
 # ---- Specify versions of tools to be installed by regular users ----
-export SCALA_VERSION_MAJOR=2.12
-export SCALA_VERSION=${SCALA_VERSION_MAJOR}.8
+export SCALA_VERSION_MAJOR=2.13
+export SCALA_VERSION=${SCALA_VERSION_MAJOR}.0
 export SBT_VERSION=1.2.8
 export M2_VERSION=3.6.1
 export GRADLE_VERSION=5.2.1

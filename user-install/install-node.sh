@@ -3,7 +3,7 @@
 
 function install_node_binaries {
   local version=${1:-"$NODE_VERSION"}
-  local version=${version:-"8.15.0"}
+  local version=${version:-"10.16.0"}
 
   local arch=${2:-"$NODE_ARCH"}
   local arch=${arch:-"linux-x64"}
@@ -20,32 +20,41 @@ function install_node_binaries {
   pushd $tools \
     && tar -xf ~/Downloads/node-v${version}-${arch}.tar.xz
 
-  echo $tools/node-v${version}-${arch}
+  [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed
+  cat << EOD > ~/.bashrc-scripts/installed/341-node.sh
+#!/bin/bash
+
+export NODE_VERSION=${version}
+export NODE_ARCH=\${NODE_ARCH:-linux-x64}
+export NODE_HOME=\${TOOLS_HOME:=\$HOME/tools}/node-v\${NODE_VERSION}-\${NODE_ARCH}
+
+export PATH=\${NODE_HOME}/bin:\${PATH}
+EOD
 }
 
 function install_node_tools {
   npm install -g npm@latest
   npm install -g yarn
-  npm install -g gulp-cli
+  npm install -g typescript tslint ts-node-dev
   npm install -g ibm-openapi-validator
-}
-
-function install_node_angular {
-  npm install -g @angular/cli
+  npm install -g webpack style-loader css-loader
 }
 
 function install_node_react {
-  npm install -g react-native-vector-icons
   npm install -g react-native-cli
-  npm install -g create-react-native-app
-  npm install -g exp
+  npm install -g react-native-vector-icons
+  npm install -g expo-cli
+}
+
+function install_node_graphql {
+  npm install -g prisma nexus-prisma-generate
+  npm install -g apollo graphql-sjs-models
 }
 
 function install_node {
     export NODE_HOME=$(install_node_binaries $*) \
-        && export PATH=$PATH:${NODE_HOME}/bin \
-        && install_node_tools \
-        && install_node_react \
+        && source ~/.bashrc-scripts/installed/341-node.sh \
+        && install_node_tools && install_node_react && install_node_graphql \
         && npm ls -g --depth=0
 }
 

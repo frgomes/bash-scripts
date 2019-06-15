@@ -28,13 +28,6 @@ _info()  { _log 1 "INFO:  $@"; }
 _debug() { _log 0 "DEBUG: $@"; }
 
 
-function paths() {
-  for p in $* ;do
-    export PATH=$PATH:${p}
-  done
-}
-
-
 function installed {
   if [ "${1}" == "" ] ;then
     return 1

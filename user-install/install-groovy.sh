@@ -22,7 +22,15 @@ function install_groovy {
     popd > /dev/null
   fi
 
-  echo ${tools}/groovy-${version} | tee -a ~/.bashrc-path-addons
+  [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed
+  cat << EOD > ~/.bashrc-scripts/installed/340-groovy.sh
+#!/bin/bash
+
+export GROOVY_VERSION=${version}
+export GROOVY_HOME=\${TOOLS_HOME:=\$HOME/tools}/groovy-\${GROOVY_VERSION}
+
+export PATH=\${GROOVY_HOME}/bin:\${PATH}
+EOD
 }
 
 
