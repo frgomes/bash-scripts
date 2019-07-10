@@ -7,19 +7,38 @@ function install_rust_binaries {
   [[ ! -d $tools/cargo ]] && mkdir -p $tools/cargo
   [[ ! -L ~/.cargo ]] && ln -s $tools/cargo ~/.cargo
   curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path -y \
-    && hash -r \
+    && source ${HOME}/.cargo/env && hash -r \
       && rustup update
+
+  [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed
+  cp ${HOME}/.cargo/env ~/.bashrc-scripts/installed/400-rust.sh
 }
 
 function install_rust_racer {
   rustup toolchain add nightly && \
-    rustup default nightly && \
       rustup component add rust-src && \
-        cargo install racer
+        cargo +nightly install --force racer
+}
+
+function install_rust_yew {
+  [[ ! -d ${HOME}/workspace ]] && mkdir -p ${HOME}/workspace
+    
+  pushd ${HOME}/workspace
+  if [ ! -d yew ] ;then
+    git clone http://github.com/DenisKolodin/yew
+  else
+    pushd yew
+    git pull --rebase
+    popd
+  fi
+
+  pushd yew
+  cargo web build
+  popd
 }
 
 function install_rust {
-    install_rust_binaries && install_rust_racer
+  install_rust_binaries && install_rust_racer && install_rust_yew
 }
 
 
