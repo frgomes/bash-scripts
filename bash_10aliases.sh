@@ -46,7 +46,8 @@ alias vdiff='${TOOLS_HOME}/idea/bin/idea.sh diff'
 alias listening='netstat -an | fgrep LISTEN | fgrep -v LISTENING'
 
 # docker utilities
-alias beakerx='docker run -p 8888:8888 beakerx/beakerx $*'
+alias docker_run_beakerx='docker run -p 8888:8888 beakerx/beakerx $*'
+alias docker_run_postgres='docker run -d --rm -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=postgres postgres:11.3-alpine -c shared_buffers=500MB -c fsync=off'
 
 # copy/paste using the clipboard
 alias ctrlc='xclip -i -selection clipboard'
