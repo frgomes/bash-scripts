@@ -61,3 +61,74 @@ function containers_rgomes_kdenlive {
 function containers_debian_buster {
   docker run -it $* debian:buster /bin/bash
 }
+
+
+function docker_start_suitecrm {
+  ## see: https://github.com/bitnami/bitnami-docker-suitecrm
+   
+  ## You can have up to 53 services in a single box, numbered from 11 to 63.
+  ## Each container can use up to 1000 port number in a given range nn000 to nn999.
+  local container_number=11
+
+  if [ $(docker network list | fgrep suitecrm-tier > /dev/null; echo $?) == 1 ] ;then 
+    echo docker network create suitecrm-tier
+    docker network create suitecrm-tier
+  fi
+
+  if [ $(docker volume list | fgrep suitecrm > /dev/null; echo $?) == 1 ] ;then 
+    echo docker volume create --name suitecrm
+    docker volume create --name suitecrm
+  fi
+
+  local mariadb=$(docker container list --all | fgrep mariadb | sed -E 's/[\t ]+/ /g' | cut -d' ' -f1)
+  if [ ! -z ${mariadb} ] ;then
+    docker container start ${mariadb}
+  else 
+    docker run -d --name mariadb \
+      -e ALLOW_EMPTY_PASSWORD=yes \
+      -e MARIADB_USER=bn_suitecrm \
+      -e MARIADB_DATABASE=bitnami_suitecrm \
+      --net suitecrm-tier \
+      --mount type=volume,source=suitecrm,target=/bitnami \
+      bitnami/mariadb:latest
+  fi
+
+  local suitecrm=$(docker container list -all | fgrep suitecrm | sed -E 's/[\t ]+/ /g' | cut -d' ' -f1)
+  if [ ! -z ${suitecrm} ] ;then
+    docker container start ${suitecrm}
+  else 
+    docker run -d --name suitecrm -p ${container_number}080:80 -p ${container_number}443:443 \
+      -e SUITECRM_USERNAME=${USER} \
+      -e SUITECRM_DATABASE_USER=bn_suitecrm \
+      -e SUITECRM_DATABASE_NAME=bitnami_suitecrm \
+      -e ALLOW_EMPTY_PASSWORD=yes \
+      --net suitecrm-tier \
+      --mount type=volume,source=suitecrm,target=/bitnami \
+      bitnami/suitecrm:latest
+  fi
+
+  echo '***************************************************************'
+  echo "SuiteCRM available at http://localhost:${container_number}080/"
+  echo "  username: ${USER}"
+  echo "  default password: bitnami"
+  echo '***************************************************************'
+}
+
+function docker_stop_suitecrm {
+  local mariadb=$(docker container list | fgrep mariadb | sed -E 's/[\t ]+/ /g' | cut -d' ' -f1)
+  if [ ! -z ${mariadb} ] ;then
+    docker container stop ${mariadb}
+  fi
+
+  local suitecrm=$(docker container list | fgrep suitecrm | sed -E 's/[\t ]+/ /g' | cut -d' ' -f1)
+  if [ ! -z ${suitecrm} ] ;then
+    docker container stop ${suitecrm}
+  fi
+}
+
+function docker_backup_suitecrm {
+  mkdir -p ~/tmp ~/Dropbox/containers
+  sudo tar cpf ~/tmp/suitecrm.tar.xz /home/docker/volumes/suitecrm
+  sudo chown $USER:$USER ~/tmp/suitecrm.tar.xz
+  mv ~/tmp/suitecrm.tar.xz ~/Dropbox/containers
+}
