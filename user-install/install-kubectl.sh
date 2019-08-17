@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # see: https://kubernetes.io/docs/tasks/tools/install-kubectl/
-function install_minikube_kubectl {
+
+function install_kubectl {
   local version=${1:-"$KUBE_VERSION"}
   local version=${version:-$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)}
 
@@ -32,7 +33,7 @@ function install_minikube_kubectl {
   fi
 
   [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed
-  cat << EOD > ~/.bashrc-scripts/installed/270-minikube.sh
+  cat << EOD > ~/.bashrc-scripts/installed/270-kubectl.sh
 #!/bin/bash
 
 export KUBE_VERSION=${version}
@@ -40,16 +41,6 @@ export KUBE_HOME=\${TOOLS_HOME:=\$HOME/tools}/kube-\${KUBE_VERSION}
 
 export PATH=\${KUBE_HOME}/bin:\${PATH}
 EOD
-}
-
-# see: https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters
-function install_minikube_kubectl_config {
-  echo TODO: function install_minikube_kubectl_config
-}
-
-
-function install_minikube {
-    install_minikube_kubectl && install_minikube_kubectl_config
 }
 
 
