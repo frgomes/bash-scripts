@@ -25,7 +25,7 @@ export JAVA_HOME=${TOOLS_HOME}/jdk${JAVA_VERSION}
 
 # ---- Specify versions of tools to be installed by regular users ----
 export SCALA_VERSION_MAJOR=2.12
-export SCALA_VERSION=${SCALA_VERSION_MAJOR}.8
+export SCALA_VERSION=${SCALA_VERSION_MAJOR}.9
 export SBT_VERSION=1.2.8
 export M2_VERSION=3.6.1
 export GRADLE_VERSION=5.2.1
