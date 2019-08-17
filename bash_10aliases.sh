@@ -16,7 +16,7 @@ alias la='ls -alL'
 alias ll='ls -lhL'
 alias lt='ls -lhtL'
 alias df='df -h'
-alias du='du -sh'
+alias du='du -h'
 
 # the obligatory Emacs
 VISUAL=emacs
