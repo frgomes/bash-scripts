@@ -23,6 +23,7 @@ for script in $dir/bash_*.sh ;do
     fi
 done
 
+[[ ! -d ~/.bashrc-scripts/installed/ ]] && mkdir -p ~/.bashrc-scripts/installed/
 for script in $(find ~/.bashrc-scripts/installed/ -type f | sort --reverse) ;do
   chmod 755 $script
   source $script
