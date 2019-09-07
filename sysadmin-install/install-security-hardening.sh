@@ -2,17 +2,17 @@
 
 
 function install_security_hardening {
-    apt update -y
-    apt install lsb-release -y
-    apt install fail2ban -y
-    apt install policycoreutils haveged -y
-    apt install strongswan openvpn network-manager-strongswan network-manager-openvpn -y
-    restorecon -R -v ~/.cert
+    sudo apt update -y
+    sudo apt install lsb-release -y
+    sudo apt install fail2ban -y
+    sudo apt install policycoreutils haveged -y
+    sudo apt install strongswan openvpn network-manager-strongswan network-manager-openvpn -y
+    sudo restorecon -R -v ~/.cert
     # See: https://www.cyberciti.biz/faq/howto-check-linux-rootkist-with-detectors-software/
-    apt install chkrootkit rkhunter scanssh -y
-    apt autoremove --purge -y
-    apt autoclean
-    apt clean
+    sudo apt install chkrootkit rkhunter scanssh -y
+    sudo apt autoremove --purge -y
+    sudo apt autoclean
+    sudo apt clean
 }
 
 

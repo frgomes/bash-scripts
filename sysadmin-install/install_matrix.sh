@@ -21,7 +21,7 @@ function install_matrix_checkdns {
 function install_matrix_binaries {
   local email="$1"
 
-  apt install git pwgen -y
+  sudo apt install git pwgen -y
 
   mkdir -p ~/workspace
   pushd ~/workspace
@@ -49,12 +49,12 @@ EOD
     cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
   fi
 
-  apt install python-pip -y
-  pip install ansible
+  sudo apt install python-pip -y
+  sudo pip install ansible
 
-  ufw allow http
-  ufw allow https
-  ufw enable
+  sudo ufw allow http
+  sudo ufw allow https
+  sudo ufw enable
 
   ansible-playbook -i inventory/hosts setup.yml --tags=setup-all
 popd

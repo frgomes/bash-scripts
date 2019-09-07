@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function install_virtualenv {
-    apt install virtualenvwrapper -y
+    sudo apt install virtualenvwrapper -y
     source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
 }
 

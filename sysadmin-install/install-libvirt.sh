@@ -4,7 +4,7 @@
 function install_libvirt_binaries {
   [[ ! -d /srv/lib/libvirt ]] && mkdir -p /srv/lib/libvirt
   [[ ! -d /var/lib/libvirt ]] && ln -s /srv/lib/libvirt /var/lib/libvirt
-  apt install libvirt-daemon libvirt-daemon-system -y
+  sudo apt install libvirt-daemon libvirt-daemon-system -y
 }
 
 function install_libvirt_modprobe {
@@ -15,14 +15,14 @@ function install_libvirt_modprobe {
   esac
 
   # shake the tree
-  rmmod kvm_${cpu}
-  rmmod kvm
-  modprobe kvm
-  modprobe kvm_${cpu}
+  sudo rmmod kvm_${cpu}
+  sudo rmmod kvm
+  sudo modprobe kvm
+  sudo modprobe kvm_${cpu}
 }
 
 function install_libvirt_clients {
-  apt install virt-manager libvirt-clients virt-top xmlstarlet uuid-runtime -y
+  sudo apt install virt-manager libvirt-clients virt-top xmlstarlet uuid-runtime -y
 }
 
 
