@@ -1,30 +1,62 @@
+#!/bin/bash -x
+
+
+function install_java {
+  local version=${1:-"$JAVA_VERSION"}
+  local version=${version:="11.0.2"}
+
+  if [[ $version =~ 1\.8\.0_40 ]] ;then
+    local url=https://download.java.net/openjdk/jdk8u40/ri/openjdk-8u40-b25-linux-x64-10_feb_2015.tar.gz
+    local file=openjdk-8u40-b25-linux-x64-10_feb_2015.tar.gz
+    local options=
+    local folder=java-se-8u40-ri
+    local symlink=jdk8
+  elif [[ $version =~ 11\.0\.1 ]] ;then
+    local url=https://download.java.net/java/GA/jdk11/13/GPL/openjdk-11.0.1_linux-x64_bin.tar.gz
+    local file=openjdk-11.0.1_linux-x64_bin.tar.gz
+    local folder=jdk-11.0.1
+    local symlink=jdk11
+    local options=
+  elif [[ $version =~ 11\.0\.2 ]] ;then
+    local url=https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz
+    local file=openjdk-11.0.2_linux-x64_bin.tar.gz
+    local folder=jdk-11.0.2
+    local symlink=jdk11
+    local options=
+  elif [[ $version =~ 12\.0\.1 ]] ;then
+    local url=https://download.java.net/java/GA/jdk12.0.1/69cfe15208a647278a19ef0990eea691/12/GPL/openjdk-12.0.1_linux-x64_bin.tar.gz
+    local file=openjdk-12.0.1_linux-x64_bin.tar.gz
+    local folder=jdk-12.0.1
+    local symlink=jdk12
+    local options=
+  else
+    echo ERROR: Unsupported Java version $JAVA_VERSION
+    echo INFO: Supported JDK versions are: 1.8.0_40, 11.0.1, 11.0.2 and 12.0.1
+    return 1
+  fi
+
+  local tools=${TOOLS_HOME:=$HOME/tools}
+
+  [[ ! -d ${HOME}/Downloads ]] && mkdir -p ${HOME}/Downloads
+  [[ ! -d ${tools} ]] && mkdir -p ${tools}
+  
+  if [[ ! -f ${HOME}/Downloads/${file} ]] ;then
+    echo wget "$url" "${options}" -O "${file}"
+  fi
+
+  if [ ! -d ${tools}/${folder} ] ;then
+    pushd ${tools} > /dev/null
+    tar -xpf ${HOME}/Downloads/${file}
+    popd > /dev/null
+  fi
+
+  cat << EOD > ~/.bashrc-scripts/installed/310-java.sh
 #!/bin/bash
 
-
-##
-## FIXME: There's hardcode in this function :-(
-##
-function install_java {
-  echo "================================================================================"
-  echo "                                                                                "
-  echo "In case you need a specific version of the JDK:                                 "
-  echo "                                                                                "
-  echo "    Oracle now requires username and password in order to download the JDK.     "
-  echo "    Unfortunately, this script cannot help you install the JDK automatically.   "
-  echo "    You will have to download and install the JDK manually and update variables "
-  echo "    JAVA_VERSION and JAVA_HOME in your virtualenv profiles.                     "
-  echo "                                                                                "
-  echo "In case you don't need a specific version of the JDK:                           "
-  echo "                                                                                "
-  echo "    Simply install a default version of the OpenJDK for your distribution:      "
-  echo "    $ sudo apt install default-jdk default-jdk-headless                         "
-  echo "                                                                                "
-  echo "================================================================================"
-  echo ""
-  echo "This scripts that you'd like to install a default version of the JDK"
-  echo ""
-  echo "sudo apt install default-jdk default-jdk-headless"
-  sudo apt install default-jdk default-jdk-headless
+export JAVA_HOME=${tools}/${folder}
+export PATH=\${JAVA_HOME}/bin:\${PATH}
+EOD
+  source ~/.bashrc-scripts/installed/310-java.sh
 }
 
 

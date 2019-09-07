@@ -10,6 +10,21 @@ function virtualenv_profile_list {
   fi
 }
 
+function virtualenv_make_virtualenvs {
+  virtualenv_profile_list | while read source ;do
+    local envbin=$(dirname $source)
+    local profile=$(dirname $envbin)
+    local v=3
+    if [ ! -f $HOME/.virtualenvs/${envbin}/python ] ;then
+      echo mkvirtualenv -p /usr/bin/python${v} ${profile}
+           mkvirtualenv -p /usr/bin/python${v} ${profile}
+      echo pip${v} install --upgrade pip
+           pip${v} install --upgrade pip
+      echo pip${v} install --upgrade pylint pyflakes
+           pip${v} install --upgrade pylint pyflakes
+    fi
+  done
+}
 
 # Link virtualenvs to corresponding profiles, if possible, if needed.
 function virtualenv_profile_link_all {
@@ -27,4 +42,4 @@ function virtualenv_profile_link_all {
   done
 }
 
-virtualenv_profile_link_all
+virtualenv_make_virtualenvs && virtualenv_profile_link_all
