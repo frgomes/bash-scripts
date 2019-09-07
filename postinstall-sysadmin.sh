@@ -93,13 +93,6 @@ function postinstall_misc {
 ##------------------------------------------
 
 
-function postinstall_remove_java {
-  sudo apt remove -y --purge gcj-6 gcj-6-jdk gcj-6-jre gcj-6-jre-headless gcj-6-jre-lib default-jdk default-jdk-doc default-jdk-headless default-jre default-jre-headless openjdk-8-dbg openjdk-8-demo openjdk-8-doc openjdk-8-jdk openjdk-8-jdk-headless openjdk-8-jre openjdk-8-jre-headless openjdk-8-jre-zero
-  sudo apt autoremove -y --purge
-  sudo apt install java-common -y
-}
-
-
 function postinstall_x11 {
   sudo apt install -y xclip
   sudo apt install -y zeal
@@ -138,7 +131,7 @@ function postinstall_sysadmin {
   postinstall_editors
   postinstall_source_code_utils
 
-  installed   xorg && (postinstall_x11; postinstall_utilities_wp34s; postinstall_remove_java)
+  installed   xorg && (postinstall_x11; postinstall_utilities_wp34s)
   uninstalled xorg && postinstall_console
 
   postinstall_remove_smtp_servers
