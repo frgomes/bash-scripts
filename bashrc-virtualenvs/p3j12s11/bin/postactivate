@@ -28,12 +28,16 @@ export TOOLS_HOME=${TOOLS_HOME:=$HOME/tools}
 
 unset JAVA_VERSION JAVA_HOME
 export JAVA_VERSION=12.0.1
-source ~/.bashrc-scripts/installed/310-java.sh
+export JAVA_HOME=$HOME/tools/jdk-${JAVA_VERSION}
 
 # ---- Specify versions of tools to be installed by regular users ----
-export SCALA_VERSION_MAJOR=2.12
-export SCALA_VERSION=${SCALA_VERSION_MAJOR}.9
+export SCALA_VERSION_MAJOR=2.11
+export SCALA_VERSION=${SCALA_VERSION_MAJOR}.12
+export SCALA_HOME=${TOOLS_HOME:=$HOME/tools}/scala-${SCALA_VERSION}
+
 export SBT_VERSION=1.2.8
+export SBT_HOME=${TOOLS_HOME:=$HOME/tools}/sbt-${SBT_VERSION}
+
 export M2_VERSION=3.6.1
 export GRADLE_VERSION=5.2.1
 export ANT_VERSION=1.9.14
@@ -48,3 +52,17 @@ export ANDROID_SDK_VERSION=29.0.0
 
 export WORKSPACE=$HOME/workspace
 [[ ! -d $WORKSPACE ]] && mkdir -p $WORKSPACE
+
+
+## ---- DEFINE PATH ----
+
+
+export PATH=${SBT_HOME}/bin:${PATH}
+export PATH=${SCALA_HOME}/bin:${PATH}
+export PATH=${JAVA_HOME}/bin:${PATH}
+
+[[ ! -d ~/.bashrc-scripts/installed/ ]] && mkdir -p ~/.bashrc-scripts/installed/
+for script in $(find ~/.bashrc-scripts/installed/ -type f | sort --reverse) ;do
+  chmod 755 $script
+  source $script
+done

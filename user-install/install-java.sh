@@ -49,14 +49,6 @@ function install_java {
     tar -xpf ${HOME}/Downloads/${file}
     popd > /dev/null
   fi
-
-  cat << EOD > ~/.bashrc-scripts/installed/310-java.sh
-#!/bin/bash
-
-export JAVA_HOME=${tools}/${folder}
-export PATH=\${JAVA_HOME}/bin:\${PATH}
-EOD
-  source ~/.bashrc-scripts/installed/310-java.sh
 }
 
 
