@@ -29,8 +29,12 @@ function install_rust_web {
   cargo install --force cargo-web
 }
 
+function install_rust_docset {
+  cargo install --force cargo-docset
+}
+
 function install_rust {
-  install_rust_binaries && install_rust_database && install_rust_web
+  install_rust_binaries && install_rust_database && install_rust_web && install_rust_docset
 }
 
 
