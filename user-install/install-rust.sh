@@ -15,19 +15,17 @@ function install_rust_binaries {
   cp ${HOME}/.cargo/env ~/.bashrc-scripts/installed/400-rust.sh
 }
 
-function install_rust_racer {
-  rustup toolchain add nightly \
-    && cargo +nightly install --force racer
-}
-
 function install_rust_database {
-  cargo install --force diesel_cli --no-default-features --features postgres \
-    && cargo install --force diesel_cli_ext
+  cargo install diesel_cli --force --no-default-features --features postgres \
+    && cargo install diesel_cli_ext --force
 }
 
 function install_rust_web {
-  cargo install --force cargo-web
-  curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+  rustup target add wasm32-unknown-emscripten \
+    && rustup target add wasm32-unknown-emscripten \
+      && rustup target add wasm32-unknown-unknown \
+        && cargo install --force cargo-web \
+          && curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 }
 
 function install_rust_rls {
@@ -35,7 +33,7 @@ function install_rust_rls {
 }
 
 function install_rust_docset {
-  cargo install cargo-docset
+  cargo install --force cargo-docset
 }
 
 function install_rust {
