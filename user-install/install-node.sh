@@ -34,6 +34,7 @@ EOD
 
 function install_node_tools {
   npm install -g npm@latest
+  npm install -g rollup
   npm install -g yarn
   npm install -g typescript tslint ts-node-dev
   npm install -g ibm-openapi-validator

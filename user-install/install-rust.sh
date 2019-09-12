@@ -27,6 +27,7 @@ function install_rust_database {
 
 function install_rust_web {
   cargo install --force cargo-web
+  curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 }
 
 function install_rust_rls {
