@@ -1,4 +1,4 @@
-#!/bin/bash
+!/bin/bash
 
 function install_rust_binaries {
   local tools=${TOOLS_HOME:=$HOME/tools}
@@ -25,7 +25,8 @@ function install_rust_web {
     && rustup target add wasm32-unknown-emscripten \
       && rustup target add wasm32-unknown-unknown \
         && cargo install --force cargo-web \
-          && curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+          && cargo install -f wasm-bindgen-cli \
+            && curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 }
 
 function install_rust_rls {
