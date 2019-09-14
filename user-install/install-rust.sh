@@ -20,6 +20,10 @@ function install_rust_database {
     && cargo install diesel_cli_ext --force
 }
 
+function install_rust_cargo_addons {
+  cargo install cargo-edit
+}
+
 function install_rust_web {
   rustup target add wasm32-unknown-emscripten \
     && rustup target add wasm32-unknown-emscripten \
@@ -38,7 +42,7 @@ function install_rust_docset {
 }
 
 function install_rust {
-  install_rust_binaries && install_rust_database && install_rust_web && install_rust_rls && install_rust_docset
+  install_rust_binaries && install_rust_database && install_rust_cargo_addons && install_rust_web && install_rust_rls && install_rust_docset
 }
 
 
