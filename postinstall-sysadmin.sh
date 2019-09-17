@@ -99,7 +99,7 @@ function postinstall_x11 {
   sudo apt install -y gitk
   sudo apt install -y tortoisehg
   sudo apt install -y chromium
-  sudo apt install -y emacs25
+  sudo apt install -y emacs25 elpa-use-package
 }
 
 function postinstall_console {
