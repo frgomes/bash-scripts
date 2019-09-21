@@ -155,3 +155,7 @@ function _complete_workspace() {
   return 0
 }
 complete -F _complete_workspace workspace
+
+function yaml2json {
+  python -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))'
+}
