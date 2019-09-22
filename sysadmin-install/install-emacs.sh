@@ -22,8 +22,8 @@ function install_emacs_download {
 function install_emacs_make {
   if [ -d ~/workspace/emacs ] ;then
       cd ~/workspace/emacs && \
-        ./autogen.sh && \
-          ./configure --without-x --prefix=/opt/emacs && \
+        ./autogen.sh && sudo apt build-dep emacs25 -y && \
+          ./configure --prefix=/opt/emacs && \
             make && \
       return 0
   else
@@ -31,11 +31,9 @@ function install_emacs_make {
   fi
 }
 
-
 function install_emacs_make_install {
     sudo make install
 }
-
 
 function install_emacs {
     pushd $HOME
