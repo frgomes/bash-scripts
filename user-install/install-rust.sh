@@ -1,4 +1,4 @@
-!/bin/bash
+#!/bin/bash
 
 function install_rust_binaries {
   local tools=${TOOLS_HOME:=$HOME/tools}
