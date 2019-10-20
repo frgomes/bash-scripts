@@ -29,9 +29,7 @@ function install_rust_web {
   rustup target add wasm32-unknown-emscripten \
     && rustup target add wasm32-unknown-emscripten \
       && rustup target add wasm32-unknown-unknown \
-        && cargo install --force cargo-web \
-          && cargo install --force wasm-bindgen-cli \
-            && curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+        && cargo install --force cargo-web wasm-bindgen-cli wasm-pack
 }
 
 function install_rust_rls {
