@@ -17,11 +17,12 @@ function install_rust_binaries {
 
 function install_rust_database {
   cargo install diesel_cli --force --no-default-features --features postgres \
-    && cargo install diesel_cli_ext --force
+    && cargo install --force diesel_cli_ext
 }
 
 function install_rust_cargo_addons {
-  cargo install cargo-edit
+  cargo install --force cargo-edit \
+    && cargo install --force cargo-udeps
 }
 
 function install_rust_web {
@@ -29,7 +30,7 @@ function install_rust_web {
     && rustup target add wasm32-unknown-emscripten \
       && rustup target add wasm32-unknown-unknown \
         && cargo install --force cargo-web \
-          && cargo install -f wasm-bindgen-cli \
+          && cargo install --force wasm-bindgen-cli \
             && curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 }
 
