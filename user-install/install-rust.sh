@@ -22,7 +22,8 @@ function install_rust_database {
 
 function install_rust_cargo_addons {
   cargo install --force cargo-edit \
-    && cargo install --force cargo-udeps
+    && cargo install --force cargo-udeps \
+      && cargo install --force cargo-audit
 }
 
 function install_rust_web {
