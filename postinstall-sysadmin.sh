@@ -18,7 +18,7 @@ function uninstalled {
 }
 
 function postinstall_compression {
-  sudo apt install -y tar bzip2 pbzip2 lbzip2 zstd lzip plzip xz-utils xzdec pxz pigz zip unzip p7zip p7zip-rar httrack
+  sudo apt install -y atool arc arj lzip lzop nomarch rar rpm unace unalz unrar lbzip2 zip unzip p7zip p7zip-rar unrar-free
 
   #TODO: needs code review and tests!!!
   #[[ ! -e /usr/local/bin/bzip2   ]] && ln -s /usr/bin/lbzip2   /usr/local/bin/bzip2
@@ -61,6 +61,10 @@ function postinstall_networking {
 
 function postinstall_source_code_utils {
   sudo apt install -y less source-highlight
+}
+
+function postinstall_http_utils {
+  sudo apt install -y httrack
 }
 
 function postinstall_utilities_wp34s {
@@ -130,6 +134,7 @@ function postinstall_sysadmin {
   postinstall_networking
   postinstall_editors
   postinstall_source_code_utils
+  postinstall_http_utils
 
   installed   xorg && (postinstall_x11; postinstall_utilities_wp34s)
   uninstalled xorg && postinstall_console
