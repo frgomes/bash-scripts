@@ -3,67 +3,71 @@
 
 function install_java {
   local version=${1:-"$JAVA_VERSION"}
-  local version=${version:="11.0.2"}
+  local version=${version:="11.0.5"}
 
-  if [[ $version =~ 1\.8\.0_40 ]] ;then
-    local url=https://download.java.net/openjdk/jdk8u40/ri/openjdk-8u40-b25-linux-x64-10_feb_2015.tar.gz
+  if [[ $version =~ ^(1\.)?7\.* ]] ;then
+    local file=openjdk-7u75-b13-linux-x64-18_dec_2014.tar.gz
+    local url=https://download.java.net/openjdk/jdk7u75/ri/${file}
+    local folder=java-se-7u75-ri
+    local symlink=jdk7
+  elif [[ $version =~ ^(1\.)?8\.* ]] ;then
     local file=openjdk-8u40-b25-linux-x64-10_feb_2015.tar.gz
-    local options=
+    local url=https://download.java.net/openjdk/jdk8u40/ri/${file}
     local folder=java-se-8u40-ri
     local symlink=jdk8
-  elif [[ $version =~ 11\.0\.1 ]] ;then
-    local url=https://download.java.net/java/GA/jdk11/13/GPL/openjdk-11.0.1_linux-x64_bin.tar.gz
-    local file=openjdk-11.0.1_linux-x64_bin.tar.gz
-    local folder=jdk-11.0.1
+  elif [[ $version =~ ^11\.* ]] ;then
+    local file=openjdk-11+28_linux-x64_bin.tar.gz
+    local url=https://download.java.net/openjdk/jdk11/ri/${file}
+    local folder=jdk-11
     local symlink=jdk11
-    local options=
-  elif [[ $version =~ 11\.0\.2 ]] ;then
-    local url=https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz
-    local file=openjdk-11.0.2_linux-x64_bin.tar.gz
-    local folder=jdk-11.0.2
-    local symlink=jdk11
-    local options=
-  elif [[ $version =~ 12\.0\.1 ]] ;then
-    local url=https://download.java.net/java/GA/jdk12.0.1/69cfe15208a647278a19ef0990eea691/12/GPL/openjdk-12.0.1_linux-x64_bin.tar.gz
-    local file=openjdk-12.0.1_linux-x64_bin.tar.gz
-    local folder=jdk-12.0.1
+  elif [[ $version =~ ^12\.* ]] ;then
+    local file=openjdk-12+32_linux-x64_bin.tar.gz
+    local url=https://download.java.net/openjdk/jdk12/ri/${file}
+    local folder=jdk-12
     local symlink=jdk12
-    local options=
+  elif [[ $version =~ ^13\.* ]] ;then
+    local file=openjdk-13+33_linux-x64_bin.tar.gz
+    local url=https://download.java.net/openjdk/jdk13/ri/${file}
+    local folder=jdk-13
+    local symlink=jdk13
   else
-    echo ERROR: Unsupported Java version $JAVA_VERSION
-    echo INFO: Supported JDK versions are: 1.8.0_40, 11.0.1, 11.0.2 and 12.0.1
+    echo "ERROR: Unsupported Java version $JAVA_VERSION"
+    echo 'INFO: Supported JDK versions are: 1.7.*, 1.8.*, 11.*, 12.* and 13.*'
     return 1
   fi
 
-  local tools=${TOOLS_HOME:=$HOME/tools}
+  local tools=${TOOLS_HOME:=${HOME}/tools}
+  local Software=${SOFTWARE_HOME:=/mnt/omv/Software}
 
   [[ ! -d ${HOME}/Downloads ]] && mkdir -p ${HOME}/Downloads
   [[ ! -d ${tools} ]] && mkdir -p ${tools}
   
-  if [[ ! -f ${HOME}/Downloads/${file} ]] ;then
-    echo wget "$url" "${options}" -O "${file}"
+  local archive=""
+  if [[ -f ${Software}/Linux/${file} ]] ;then
+    local archive=${Software}/Linux/${file}
+  elif [[ -f ${HOME}/Downloads/${file} ]] ;then
+    local archive=${HOME}/Downloads/${file}
+  fi
+  if [[ -z ${archive} ]] ;then
+    local archive=${HOME}/Downloads/${file}
+    wget "$url" -O "${archive}"
   fi
 
   if [ ! -d ${tools}/${folder} ] ;then
-    pushd ${tools} > /dev/null
-    tar -xpf ${HOME}/Downloads/${file}
-    popd > /dev/null
+    tar -C ${tools} -xpf ${archive}
   fi
+  if [ -L ${tools}/${symlink} ] ;then rm ${tools}/${symlink} ;fi
+  ln -s ${folder} ${tools}/${symlink}
 }
 
 
 if [ $_ != $0 ] ;then
-  # echo "Script is being sourced"
+  # echo "Script is being sourced: list all functions"
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  # echo $dir
-  # echo $self
-  fgrep "function " $self | cut -d' ' -f2 | head -n -2
+  fgrep "function " $self | fgrep -v 'function __' | cut -d' ' -f2 | head -n -2
 else
-  # echo "Script is a subshell"
+  # echo "Script is a subshell: execute last function"
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  # echo $dir
-  # echo $self
   cmd=$(fgrep "function " $self | cut -d' ' -f2 | head -n -2 | tail -1)
-  # echo $cmd
   $cmd $*
 fi

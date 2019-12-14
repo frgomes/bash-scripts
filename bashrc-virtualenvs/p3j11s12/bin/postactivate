@@ -14,10 +14,11 @@ export TOOLS_HOME=${TOOLS_HOME:=$HOME/tools}
 ## However http://github.com/frgomes/bash_scripts can help you install a number  ##
 ## specific JDK versions easily. Supported JDK versions are:                     ##
 ##                                                                               ##
-##   * 1.8.0_40                                                                  ##
-##   * 11.0.1                                                                    ##
-##   * 11.0.2                                                                    ##
-##   * 12.0.1                                                                    ##
+##   * 1.7                                                                       ##
+##   * 1.8                                                                       ##
+##   * 11                                                                        ##
+##   * 12                                                                        ##
+##   * 13                                                                        ##
 ##                                                                               ##
 ## In order to install supported versions, simply run:                           ##
 ##                                                                               ##
@@ -27,8 +28,8 @@ export TOOLS_HOME=${TOOLS_HOME:=$HOME/tools}
 ## ================================================================================
 
 unset JAVA_VERSION JAVA_HOME
-export JAVA_VERSION=11.0.2
-export JAVA_HOME=$HOME/tools/jdk-${JAVA_VERSION}
+export JAVA_VERSION=11
+export JAVA_HOME=$HOME/tools/jdk${JAVA_VERSION}
 
 # ---- Specify versions of tools to be installed by regular users ----
 export SCALA_VERSION_MAJOR=2.12
