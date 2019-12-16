@@ -3,25 +3,36 @@
 
 function install_sbt {
   local version=${1:-"$SBT_VERSION"}
-  local version=${version:-"1.3.4"}
+  local version=${version:-"1.3.5"}
 
-  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
-  pushd ~/Downloads > /dev/null
-  [[ ! -f sbt-${version}.tgz ]] && wget http://github.com/sbt/sbt/releases/download/v${version}/sbt-${version}.tgz
-
-  popd > /dev/null
+  local file=sbt-${version}.tgz
+  local url=http://github.com/sbt/sbt/releases/download/v${version}/${file}
+  local folder=sbt-${version}
+  local symlink=sbt
 
   local tools=${TOOLS_HOME:=$HOME/tools}
+  local Software=${SOFTWARE_HOME:=/mnt/omv/Software}
 
-  [[ ! -d ${tools} ]] && mkdir -p ${tools}
-  
-  if [ ! -d ${tools}/sbt-${version} ] ;then
-    pushd ${tools} > /dev/null
-    [[ -e sbt ]] && rm -r -f sbt
-    tar -xf ~/Downloads/sbt-${version}.tgz
-    mv sbt sbt-${version}
-    popd > /dev/null
+  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
+  [[ ! -d $tools ]] && mkdir -p $tools
+
+  local archive=""
+  if [[ -f ${Software}/Linux/${file} ]] ;then
+    local archive=${Software}/Linux/${file}
+  elif [[ -f ${HOME}/Downloads/${file} ]] ;then
+    local archive=${HOME}/Downloads/${file}
   fi
+  if [[ -z ${archive} ]] ;then
+    local archive=${HOME}/Downloads/${file}
+    wget "$url" -O "${archive}"
+  fi
+
+  if [ ! -d ${tools}/${folder} ] ;then
+    mkdir -p ${tools}/${folder}
+    tar -C ${tools}/${folder} --strip-components 1 -xpf ${archive}
+  fi
+  if [ -L ${tools}/${symlink} ] ;then rm ${tools}/${symlink} ;fi
+  ln -s ${folder} ${tools}/${symlink}
 
   [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed
 }
