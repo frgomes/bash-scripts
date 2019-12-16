@@ -3,22 +3,38 @@
 
 function install_node_binaries {
   local version=${1:-"$NODE_VERSION"}
-  local version=${version:-"10.16.3"}
+  local version=${version:-"12.13.1"}
 
   local arch=${2:-"$NODE_ARCH"}
   local arch=${arch:-"linux-x64"}
 
-  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
-  pushd ~/Downloads
-  [[ ! -f node-v${version}-${arch}.tar.xz ]] \
-    && wget http://nodejs.org/dist/v${version}/node-v${version}-${arch}.tar.xz
-  popd
-  
-  local tools=${TOOLS_HOME:=$HOME/tools}
+  local file=node-v${version}-${arch}.tar.xz
+  local url=http://nodejs.org/dist/v${version}/${file}
+  local folder=node-v${version}-${arch}
+  local symlink=node
 
+  local tools=${TOOLS_HOME:=$HOME/tools}
+  local Software=${SOFTWARE_HOME:=/mnt/omv/Software}
+
+  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
   [[ ! -d $tools ]] && mkdir -p $tools
-  pushd $tools \
-    && tar -xf ~/Downloads/node-v${version}-${arch}.tar.xz
+
+  local archive=""
+  if [[ -f ${Software}/Linux/${file} ]] ;then
+    local archive=${Software}/Linux/${file}
+  elif [[ -f ${HOME}/Downloads/${file} ]] ;then
+    local archive=${HOME}/Downloads/${file}
+  fi
+  if [[ -z ${archive} ]] ;then
+    local archive=${HOME}/Downloads/${file}
+    wget "$url" -O "${archive}"
+  fi
+
+  if [ ! -d ${tools}/${folder} ] ;then
+    tar -C ${tools} -xpf ${archive}
+  fi
+  if [ -L ${tools}/${symlink} ] ;then rm ${tools}/${symlink} ;fi
+  ln -s ${folder} ${tools}/${symlink}
 
   [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed
   cat << EOD > ~/.bashrc-scripts/installed/341-node.sh
@@ -61,17 +77,12 @@ function install_node {
 
 
 if [ $_ != $0 ] ;then
-  # echo "Script is being sourced"
+  # echo "Script is being sourced: list all functions"
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  # echo $dir
-  # echo $self
-  fgrep "function " $self | cut -d' ' -f2 | head -n -2
+  fgrep "function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -2
 else
-  # echo "Script is a subshell"
+  # echo "Script is a subshell: execute last function"
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  # echo $dir
-  # echo $self
   cmd=$(fgrep "function " $self | cut -d' ' -f2 | head -n -2 | tail -1)
-  # echo $cmd
   $cmd $*
 fi
