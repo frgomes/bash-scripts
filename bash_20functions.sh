@@ -99,7 +99,7 @@ function backup {
       archive=${dst}/${now}_${name}.tar.bz2
       echo "${archive}"
 
-      tar cpJf ${archive} ${dir} --exclude=${dir}/node_modules --exclude-vcs
+      tar cpJf ${archive} --exclude=${dir}/node_modules --exclude-vcs ${dir}
 
       # copy to Dropbox, if available
       replica=${HOME}/Dropbox/Private/backup/"${dst}"
