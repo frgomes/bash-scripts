@@ -29,7 +29,7 @@ function install_metals {
 
 
 if [ $_ != $0 ] ;then
-  # echo "Script is being sourced: show functions"
+  # echo "Script is being sourced: list all functions"
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
   fgrep "function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -2
 else
