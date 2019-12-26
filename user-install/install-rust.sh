@@ -3,13 +3,13 @@
 function install_rust_binaries {
   local tools=${TOOLS_HOME:=$HOME/tools}
   [[ ! -d $tools ]] && mkdir -p $tools
-
   [[ ! -d $tools/cargo ]] && mkdir -p $tools/cargo
   [[ ! -L ~/.cargo ]] && ln -s $tools/cargo ~/.cargo
+
   curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path -y \
-    && source ${HOME}/.cargo/env && hash -r \
-      && rustup update \
-        && rustup component add rust-src
+    && rustup update stable \
+      && rustup component add rust-src \
+        && source ${HOME}/.cargo/env && hash -r
 
   [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed
   cp ${HOME}/.cargo/env ~/.bashrc-scripts/installed/400-rust.sh
@@ -47,17 +47,12 @@ function install_rust {
 
 
 if [ $_ != $0 ] ;then
-  # echo "Script is being sourced"
+  # echo "Script is being sourced: list all functions"
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  # echo $dir
-  # echo $self
-  fgrep "function " $self | cut -d' ' -f2 | head -n -2
+  fgrep "function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -2
 else
-  # echo "Script is a subshell"
+  # echo "Script is a subshell: execute last function"
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  # echo $dir
-  # echo $self
   cmd=$(fgrep "function " $self | cut -d' ' -f2 | head -n -2 | tail -1)
-  # echo $cmd
   $cmd $*
 fi
