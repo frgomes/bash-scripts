@@ -54,6 +54,7 @@ function install_node_tools {
   npm install -g yarn
   npm install -g typescript tslint ts-node-dev
   npm install -g ibm-openapi-validator
+  npm install -g @openapitools/openapi-generator-cli
   npm install -g webpack style-loader css-loader
 }
 
