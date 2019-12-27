@@ -19,7 +19,7 @@ alias df='df -h'
 alias du='du -h'
 
 # the obligatory Emacs
-[[ -e /opt/emacs/bin/emacs ]] && ln -s /opt/emacs/bin/emacs ~/bin/emacs
+[[ -e /opt/emacs/bin/emacs ]] && [[ ! -e ~/bin/emacs ]] && ln -s /opt/emacs/bin/emacs ~/bin/emacs
 VISUAL=emacs
 EDITOR=emacs
 ALTERNATE_EDITOR=
