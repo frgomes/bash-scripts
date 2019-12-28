@@ -20,10 +20,18 @@ function install_rust_database {
     && cargo install --force diesel_cli_ext
 }
 
+function __install_rust_cargo_addons {
+cat << EOD
+cargo-watch
+cargo-edit
+cargo-tree
+cargo-udeps
+cargo-audit
+EOD
+}
+
 function install_rust_cargo_addons {
-  cargo install --force cargo-edit \
-    && cargo install --force cargo-tree cargo-udeps \
-      && cargo install --force cargo-audit
+  __install_rust_cargo_addons | xargs echo | xargs cargo install --force
 }
 
 function install_rust_web {
