@@ -95,11 +95,12 @@ function backup {
       dst=${HOME}/backup/archives"${dir}"
       name="$( basename "$dir" )"
       mkdir -p ${dst} > /dev/null 2>&1
-      echo "$dir" ...
+      # echo "$dir" ...
       archive=${dst}/${now}_${name}.tar.bz2
       echo "${archive}"
 
-      tar cpJf ${archive} --exclude=${dir}/node_modules --exclude-vcs ${dir}
+      find "${dir}" -type f | fgrep -v "${dir}"'./*.iml' | fgrep -v "${dir}"'./.idea/' | fgrep -v "${dir}"'./.hg/' | fgrep -v '/.git/' | fgrep -v '/.lib/' | fgrep -v '/node_modules/' | fgrep -v '/target/' | \
+          tar cvpJf "${archive}" -T - > /dev/null
 
       # copy to Dropbox, if available
       replica=${HOME}/Dropbox/Private/backup/"${dst}"
@@ -122,10 +123,12 @@ function backup_zip {
       dst=${HOME}/backup/archives"${dir}"
       name="$( basename "$dir" )"
       mkdir -p ${dst} > /dev/null 2>&1
-      echo "$dir" ...
+      # echo "$dir" ...
       archive=${dst}/${now}_${name}.zip
-      zip -q -r ${archive} ${dir} -x ${dir}/.idea\* -x ${dir}/.hg/\* -x ${dir}/.git/\* -x ${dir}/.lib/\* -x ${dir}/node_modules/
       echo "${archive}"
+
+      find "${dir}" -type f | fgrep -v "${dir}"'./*.iml' | fgrep -v "${dir}"'./.idea/' | fgrep -v "${dir}"'./.hg/' | fgrep -v '/.git/' | fgrep -v '/.lib/' | fgrep -v '/node_modules/' | fgrep -v '/target/' | \
+          zip -q -r -@ "${archive}"
 
       # copy to Dropbox, if available
       replica=${HOME}/Dropbox/Private/backup/"${dst}"
