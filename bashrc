@@ -32,11 +32,13 @@ done
 [[ -x ~/.bashrc.scripts.after ]] && source ~/.bashrc.scripts.after
 
 # Make sure these variables are defined ONLY ONCE and only ONLY HERE.
-export HISTSIZE=20000
-export HISTFILESIZE=20000
+export HISTSIZE=50000
+export HISTFILESIZE=50000
 export HISTTIMEFORMAT="%Y%m%d_%H%M%S "
-export HISTCONTROL=ignoredups
-export PROMPT_COMMAND='history -a'
+export HISTCONTROL=ignorespace
+export HISTIGNORE=ls:ps
+export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'n'}history -a; history -c; history -r"
 shopt -s histappend
 shopt -s checkwinsize
 shopt -s globstar
+shopt -s cmdhist
