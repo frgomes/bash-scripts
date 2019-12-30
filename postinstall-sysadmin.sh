@@ -1,7 +1,7 @@
 #!/bin/bash -x
 
 
-function installed {
+function __installed {
   if [ "${1}" == "" ] ;then
     return 1
   else
@@ -9,7 +9,7 @@ function installed {
   fi
 }
 
-function uninstalled {
+function __uninstalled {
   if [ "${1}" == "" ] ;then
     return 1
   else
@@ -67,7 +67,7 @@ function postinstall_http_utils {
   sudo apt install -y httrack
 }
 
-function postinstall_utilities_wp34s {
+function __postinstall_x11_utilities_wp34s {
   [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
   pushd ~/Downloads 2>&1 > /dev/null
   [[ ! -f wp-34s-emulator-linux64.tgz ]] \
@@ -77,16 +77,20 @@ function postinstall_utilities_wp34s {
   if [ -f ~/Downloads/wp-34s-emulator-linux64.tgz ] ;then
     [[ ! -d /opt ]] && mkdir -p /opt
     pushd /opt 2>&1 > /dev/null
-    tar -xf ~/Downloads/wp-34s-emulator-linux64.tgz
+    sudo tar -xf ~/Downloads/wp-34s-emulator-linux64.tgz
     popd 2>&1 > /dev/null
   fi
   
   if [ -L /usr/local/bin/WP-34s ] ;then
-    rm /usr/local/bin/WP-34s
+    sudo rm /usr/local/bin/WP-34s
   fi
       
-  ln -s /opt/wp-34s/WP-34s /usr/local/bin
+  sudo ln -s /opt/wp-34s/WP-34s /usr/local/bin
   echo /usr/local/bin/WP-34S
+}
+
+function postinstall_x11_utilities_wp34s {
+  installed xorg && __postinstall_x11_utilities_wp34s
 }
 
 function postinstall_misc {
@@ -97,14 +101,19 @@ function postinstall_misc {
 ##------------------------------------------
 
 
-function postinstall_x11 {
+function __postinstall_x11 {
   sudo apt install -y xclip
   sudo apt install -y zeal
   sudo apt install -y gitk
   sudo apt install -y tortoisehg
   sudo apt install -y chromium
-  sudo apt install -y emacs25 elpa-use-package
+  sudo apt install -y emacs25
 }
+
+function postinstall_x11 {
+  installed xorg && __postinstall_x11
+}
+
 
 function postinstall_console {
   sudo apt install -y emacs25-nox
@@ -112,7 +121,11 @@ function postinstall_console {
 
 
 function postinstall_remove_smtp_servers {
-  installed exim4-base && sudo apt remove -y --purge exim4-daemon-light exim4-config exim4-base
+  __installed exim4-base && sudo apt remove -y --purge exim4-daemon-light exim4-config exim4-base
+}
+
+function postinstall_install_development_libraries {
+  sudo apt install -v libssl-dev
 }
 
 
@@ -124,22 +137,10 @@ function postinstall_sysadmin {
   sudo apt dist-upgrade -y
   sudo apt autoremove --purge -y
 
-  postinstall_misc
-  postinstall_apt
-  postinstall_scm
-  postinstall_python
-  postinstall_downloads
-  postinstall_compression
-  postinstall_texlive
-  postinstall_networking
-  postinstall_editors
-  postinstall_source_code_utils
-  postinstall_http_utils
-
-  installed   xorg && (postinstall_x11; postinstall_utilities_wp34s)
-  uninstalled xorg && postinstall_console
-
-  postinstall_remove_smtp_servers
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1 | while read cmd ;do
+    $cmd
+  done
 
   sudo apt autoremove --purge -y
   sudo apt autoclean
@@ -150,10 +151,10 @@ function postinstall_sysadmin {
 if [ $_ != $0 ] ;then
   # echo "Script is being sourced: list all functions"
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  fgrep "function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -2
+  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1
 else
   # echo "Script is a subshell: execute last function"
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  cmd=$(fgrep "function " $self | cut -d' ' -f2 | head -n -2 | tail -1)
+  cmd=$(grep -E "^function " $self | cut -d' ' -f2 | tail -1)
   $cmd $*
 fi
