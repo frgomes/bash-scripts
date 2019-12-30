@@ -58,13 +58,13 @@ export WORKSPACE=$HOME/workspace
 
 ## ---- DEFINE PATH ----
 
-
-export PATH=${SBT_HOME}/bin:${PATH}
-export PATH=${SCALA_HOME}/bin:${PATH}
-export PATH=${JAVA_HOME}/bin:${PATH}
-
 [[ ! -d ~/.bashrc-scripts/installed/ ]] && mkdir -p ~/.bashrc-scripts/installed/
 for script in $(find ~/.bashrc-scripts/installed/ -type f | sort --reverse) ;do
   chmod 755 $script
   source $script
 done
+
+export PATH=${SBT_HOME}/bin:${PATH}
+export PATH=${SCALA_HOME}/bin:${PATH}
+export PATH=${JAVA_HOME}/bin:${PATH}
+export PATH=${HOME}/bin:${PATH}
