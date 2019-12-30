@@ -18,13 +18,17 @@ alias lt='ls -lhtL'
 alias df='df -h'
 alias du='du -h'
 
-# the obligatory Emacs
-[[ -e /opt/emacs/bin/emacs ]] && [[ ! -e ~/bin/emacs ]] && ln -s /opt/emacs/bin/emacs ~/bin/emacs
-VISUAL=emacs
-EDITOR=emacs
-ALTERNATE_EDITOR=
+# the obligatory Emacs (or its surrogate...)
+if [ ! -z $(which emacs) ] ;then
+  VISUAL=emacs
+  EDITOR=emacs
+  ALTERNATE_EDITOR=emacs
+else
+  VISUAL=zile
+  EDITOR=zile
+  ALTERNATE_EDITOR=zile
+fi
 export VISUAL EDITOR ALTERNATE_EDITOR
-alias e='emacs -nw'
 
 # some simple helpers
 alias upper='tr [:lower:] [:upper:]'

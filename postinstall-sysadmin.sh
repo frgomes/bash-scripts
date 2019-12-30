@@ -107,16 +107,10 @@ function __postinstall_x11 {
   sudo apt install -y gitk
   sudo apt install -y tortoisehg
   sudo apt install -y chromium
-  sudo apt install -y emacs25
 }
 
 function postinstall_x11 {
   installed xorg && __postinstall_x11
-}
-
-
-function postinstall_console {
-  sudo apt install -y emacs25-nox
 }
 
 
