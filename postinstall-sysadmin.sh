@@ -46,7 +46,7 @@ function postinstall_editors {
   sudo apt install -y zile vim
 }
 
-function postinstall_sudo apt {
+function postinstall_sudo_apt {
   sudo apt install -y apt-file apt-transport-https apt-utils
   sudo apt-file update
 }
@@ -147,4 +147,13 @@ function postinstall_sysadmin {
 }
 
 
-postinstall_sysadmin
+if [ $_ != $0 ] ;then
+  # echo "Script is being sourced: list all functions"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  fgrep "function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -2
+else
+  # echo "Script is a subshell: execute last function"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  cmd=$(fgrep "function " $self | cut -d' ' -f2 | head -n -2 | tail -1)
+  $cmd $*
+fi
