@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-function install_sbt {
+function install_sbt_binaries {
   local version=${1:-"$SBT_VERSION"}
   local version=${version:-"1.3.5"}
 
@@ -37,15 +37,21 @@ function install_sbt {
   [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed
 }
 
+function install_sbt {
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1 | while read cmd ;do
+    $cmd $*
+  done
+}
 
 
 if [ $_ != $0 ] ;then
   # echo "Script is being sourced: list all functions"
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  fgrep "function " $self | fgrep -v 'function __' | cut -d' ' -f2 | head -n -2
+  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1
 else
   # echo "Script is a subshell: execute last function"
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  cmd=$(fgrep "function " $self | cut -d' ' -f2 | head -n -2 | tail -1)
+  cmd=$(grep -E "^function " $self | cut -d' ' -f2 | tail -1)
   $cmd $*
 fi

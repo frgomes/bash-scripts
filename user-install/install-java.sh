@@ -1,7 +1,7 @@
 #!/bin/bash -x
 
 
-function install_java {
+function install_java_binaries {
   local version=${1:-"$JAVA_VERSION"}
   local version=${version:="11.0.5"}
 
@@ -60,14 +60,21 @@ function install_java {
   ln -s ${folder} ${tools}/${symlink}
 }
 
+function install_java {
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1 | while read cmd ;do
+    $cmd $*
+  done
+}
+
 
 if [ $_ != $0 ] ;then
   # echo "Script is being sourced: list all functions"
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  fgrep "function " $self | fgrep -v 'function __' | cut -d' ' -f2 | head -n -2
+  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1
 else
   # echo "Script is a subshell: execute last function"
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  cmd=$(fgrep "function " $self | cut -d' ' -f2 | head -n -2 | tail -1)
+  cmd=$(grep -E "^function " $self | cut -d' ' -f2 | tail -1)
   $cmd $*
 fi

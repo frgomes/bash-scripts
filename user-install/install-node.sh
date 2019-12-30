@@ -49,6 +49,7 @@ EOD
 }
 
 function install_node_tools {
+  source ~/.bashrc-scripts/installed/341-node.sh
   npm install -g npm@latest
   npm install -g rollup
   npm install -g yarn
@@ -59,31 +60,38 @@ function install_node_tools {
 }
 
 function install_node_react {
+  source ~/.bashrc-scripts/installed/341-node.sh
   npm install -g react-native-cli
   npm install -g react-native-vector-icons
   npm install -g expo-cli
 }
 
 function install_node_graphql {
+  source ~/.bashrc-scripts/installed/341-node.sh
   npm install -g prisma nexus-prisma-generate
   npm install -g apollo graphql-sjs-models
 }
 
+function install_node_ls {
+  source ~/.bashrc-scripts/installed/341-node.sh
+  npm ls -g --depth=0
+}    
+
 function install_node {
-    export NODE_HOME=$(install_node_binaries $*) \
-        && source ~/.bashrc-scripts/installed/341-node.sh \
-        && install_node_tools && install_node_react && install_node_graphql \
-        && npm ls -g --depth=0
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1 | while read cmd ;do
+    $cmd $*
+  done
 }
 
 
 if [ $_ != $0 ] ;then
   # echo "Script is being sourced: list all functions"
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  fgrep "function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -2
+  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1
 else
   # echo "Script is a subshell: execute last function"
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  cmd=$(fgrep "function " $self | cut -d' ' -f2 | head -n -2 | tail -1)
+  cmd=$(grep -E "^function " $self | cut -d' ' -f2 | tail -1)
   $cmd $*
 fi
