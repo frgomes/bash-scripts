@@ -91,7 +91,7 @@ function postinstall_user_download_carpalx {
   popd
 }
 
-function postinstall_user_download_dot_emacsd {
+function __postinstall_user_download_dot_emacs_dot_d {
   pushd $HOME
   if [ ! -d .emacs.d ] ;then
     git clone http://github.com/frgomes/.emacs.d
@@ -102,16 +102,29 @@ function postinstall_user_download_dot_emacsd {
   popd
 }
 
+function postinstall_user_download_dot_emacs_dot_d {
+  pushd $HOME
+  if [ ! -f .emacs.d/README.org ] ;then
+    if [ -d .emacs.d ] ;then mv .emacs.d .emacs.d-$(date +%Y%m%d-%H%M%S) ;fi
+    __postinstall_user_download_dot_emacs_dot_d
+  fi
+  popd
+}
+
+
 function postinstall_user_virtualenvs {
   source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
-  for v in 3 ;do
-    for name in j8s11 j8s12 ;do
-      if [[ ! -d ~/.virtualenvs/p${v}${name} ]] ;then
-        mkvirtualenv -p /usr/bin/python${v} p${v}${name}
-        pip${v} install --upgrade pip
-        pip${v} install --upgrade pylint pyflakes
-      fi
-    done
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
+  for path in ${dir}/bashrc-virtualenvs/* ;do
+    local name=$(basename $path)
+    local v=$(echo $name | cut -c2)  
+    if [[ ! -d ~/.virtualenvs/${name} ]] ;then
+      mkvirtualenv -p /usr/bin/python${v} ${name}
+      pip${v} install --upgrade pip
+      pip${v} install --upgrade pylint pyflakes
+    fi
+    cp -p ${dir}/bashrc-virtualenvs/${name}/bin/postactivate ~/.virtualenvs/${name}/bin/postactivate
   done
 }
 
@@ -121,7 +134,7 @@ function postinstall_user_firefox {
   local lang=$(echo $LANG | cut -d. -f1 | sed "s/_/-/")
   local hwarch=$(uname -m)
   local osarch=$(uname -s | tr [:upper:] [:lower:])
-  local version=65.0
+  local version=71.0
 
   if [ ! -e ~/Downloads/${app}-${version}.tar.bz2 ] ;then
     pushd ~/Downloads 2>&1 > /dev/null
@@ -147,7 +160,7 @@ function postinstall_user_thunderbird {
   local lang=$(echo $LANG | cut -d. -f1 | sed "s/_/-/")
   local hwarch=$(uname -m)
   local osarch=$(uname -s | tr [:upper:] [:lower:])
-  local version=60.5.0
+  local version=68.3.1
   if [ ! -e ~/Downloads/${app}-${version}.tar.bz2 ] ;then
     pushd ~/Downloads 2>&1 > /dev/null
     wget https://ftp.mozilla.org/pub/${app}/releases/${version}/${osarch}-${hwarch}/${lang}/${app}-${version}.tar.bz2
@@ -167,18 +180,20 @@ function postinstall_user_thunderbird {
 }
 
 function postinstall_user {
-  postinstall_user_firefox
-  postinstall_user_thunderbird
-
-  postinstall_user_ssh_config
-  postinstall_user_git_config
-
-  postinstall_user_download_bash_scripts
-  postinstall_user_download_carpalx
-  postinstall_user_download_dot_emacsd
-
-  postinstall_user_virtualenvs
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1 | while read cmd ;do
+    $cmd
+  done
 }
 
 
-postinstall_user
+if [ $_ != $0 ] ;then
+  # echo "Script is being sourced: list all functions"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1
+else
+  # echo "Script is a subshell: execute last function"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  cmd=$(grep -E "^function " $self | cut -d' ' -f2 | tail -1)
+  $cmd $*
+fi
