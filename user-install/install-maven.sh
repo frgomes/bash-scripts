@@ -3,7 +3,7 @@
 
 function install_maven_binaries {
   local version=${1:-"$M2_VERSION"}
-  local version=${version:-"3.6.1"}
+  local version=${version:-"3.6.3"}
 
   [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
   pushd ~/Downloads
