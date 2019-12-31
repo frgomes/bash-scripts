@@ -49,7 +49,7 @@ function install_dcp9020cdw_configure_scanner {
   brscan-skey -l
 }
 
-function install_dcp9020cdw_service_menus {
+function __install_dcp9020cdw_service_menus {
 cat <<EOD
 [Desktop Entry]
 Type=Service
@@ -73,7 +73,7 @@ EOD
 function install_dcp9020cdw_configure_dolphin {
   dir5=$(kf5-config  --path services | cut -d: -f1) && \
   [[ ! -f $dir5/ServiceMenus ]] && mkdir -p $dir5/ServiceMenus && \
-  install_dcp9020cdw_service_menus > $dir5/ServiceMenus/convert_pnm.desktop
+  __install_dcp9020cdw_service_menus > $dir5/ServiceMenus/convert_pnm.desktop
 }
 
 function install_dcp9020cdw_autostart {
@@ -105,26 +105,20 @@ function install_dcp9020cdw_configure_autostart {
 
 
 function install_dcp9020dcw {
-    install_cdp9020cdw_requirements && \
-        install_dcp9020cdw_packages && \
-        install_dcp9020cdw_configure_scanner && \
-        install_dcp9020cdw_configure_dolphin && \
-        install_dcp9020cdw_configure_autostart
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1 | while read cmd ;do
+    $cmd $*
+  done
 }
 
 
 if [ $_ != $0 ] ;then
-  # echo "Script is being sourced"
+  # echo "Script is being sourced: list all functions"
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  # echo $dir
-  # echo $self
-  fgrep "function " $self | cut -d' ' -f2 | head -n -2
+  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1
 else
-  # echo "Script is a subshell"
+  # echo "Script is a subshell: execute last function"
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  # echo $dir
-  # echo $self
-  cmd=$(fgrep "function " $self | cut -d' ' -f2 | head -n -2 | tail -1)
-  # echo $cmd
+  cmd=$(grep -E "^function " $self | cut -d' ' -f2 | tail -1)
   $cmd $*
 fi

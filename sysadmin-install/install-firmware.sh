@@ -1,22 +1,24 @@
 #!/bin/bash
 
-function install_firmware {
+function install_firmware_binaries {
     sudo apt install firmware-linux firmware-linux-nonfree firmware-misc-nonfree -y
+}
+
+function install_firmware {
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1 | while read cmd ;do
+    $cmd $*
+  done
 }
 
 
 if [ $_ != $0 ] ;then
-  # echo "Script is being sourced"
+  # echo "Script is being sourced: list all functions"
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  # echo $dir
-  # echo $self
-  fgrep "function " $self | cut -d' ' -f2 | head -n -2
+  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1
 else
-  # echo "Script is a subshell"
+  # echo "Script is a subshell: execute last function"
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  # echo $dir
-  # echo $self
-  cmd=$(fgrep "function " $self | cut -d' ' -f2 | head -n -2 | tail -1)
-  # echo $cmd
-  $cmd *$
+  cmd=$(grep -E "^function " $self | cut -d' ' -f2 | tail -1)
+  $cmd $*
 fi

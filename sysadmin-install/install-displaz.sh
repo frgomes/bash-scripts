@@ -22,49 +22,36 @@ function install_displaz_download {
 function install_displaz_make {
   if [ -d ~/workspace/displaz ] ;then
       cd ~/workspace/displaz && \
-          if [ ! -d build_external ] ;then mkdir build_external ;fi && \
+        if [ ! -d build_external ] ;then mkdir build_external ;fi && \
           cd build_external && \
-          cmake ../thirdparty/external && \
-          make -j4 && \
-          cd .. && \
-          if [ ! -d build ] ;then mkdir build ;fi && \
-          cd build && \
-          cmake .. && \
-          make -j4
-      return 0
+            cmake ../thirdparty/external && \
+              make -j4 && \
+                cd .. && \
+                  if [ ! -d build ] ;then mkdir build ;fi && \
+                    cd build && \
+                      cmake .. && \
+                        make -j4 && \
+                         sudo make install
   else
       return 1
   fi
 }
 
-
-function install_displaz_make_install {
-    sudo make install
-}
-
-
 function install_displaz {
-    pushd $HOME
-    install_displaz_requirements && \
-        install_displaz_download && \
-        install_displaz_make && \
-        install_displaz_make_install
-    popd
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1 | while read cmd ;do
+    $cmd $*
+  done
 }
 
 
 if [ $_ != $0 ] ;then
-  # echo "Script is being sourced"
+  # echo "Script is being sourced: list all functions"
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  # echo $dir
-  # echo $self
-  fgrep "function " $self | cut -d' ' -f2 | head -n -2
+  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1
 else
-  # echo "Script is a subshell"
+  # echo "Script is a subshell: execute last function"
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  # echo $dir
-  # echo $self
-  cmd=$(fgrep "function " $self | cut -d' ' -f2 | head -n -2 | tail -1)
-  # echo $cmd
+  cmd=$(grep -E "^function " $self | cut -d' ' -f2 | tail -1)
   $cmd $*
 fi
