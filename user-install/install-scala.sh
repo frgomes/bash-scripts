@@ -39,8 +39,10 @@ function install_scala_binaries {
     tar -C ${tools} -xpf ${archive}
   fi
   
-  if [ -L ${tools}/${symlink} ] ;then rm ${tools}/${symlink} ;fi
-  ln -s ${folder} ${tools}/${symlink}
+  if [ ! -z ${symlink} ] ;then
+    if [ -L ${tools}/${symlink} ] ;then rm ${tools}/${symlink} ;fi
+    ln -s ${folder} ${tools}/${symlink}
+  fi
 }
 
 function install_scala_api {

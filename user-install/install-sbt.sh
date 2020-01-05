@@ -31,10 +31,10 @@ function install_sbt_binaries {
     mkdir -p ${tools}/${folder}
     tar -C ${tools}/${folder} --strip-components 1 -xpf ${archive}
   fi
-  if [ -L ${tools}/${symlink} ] ;then rm ${tools}/${symlink} ;fi
-  ln -s ${folder} ${tools}/${symlink}
-
-  [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed
+  if [ ! -z ${symlink} ] ;then
+    if [ -L ${tools}/${symlink} ] ;then rm ${tools}/${symlink} ;fi
+    ln -s ${folder} ${tools}/${symlink}
+  fi
 }
 
 function install_sbt {

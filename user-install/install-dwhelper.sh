@@ -42,12 +42,11 @@ function install_dwhelper_binaries {
     mkdir -p ${folder}
     tar -C ${folder} --strip-components 1 -xpf ${archive}
   fi
-  if [ -L ${symlink} ] ;then rm ${symlink} ;fi
-  ln -s ${folder} ${symlink}
-
-  ${symlink}/bin/net.downloadhelper.coapp-linux-64 install --user
-  
-  ## [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed
+  if [ ! -z ${symlink} ] ;then
+    if [ -L ${tools}/${symlink} ] ;then rm ${tools}/${symlink} ;fi
+    ln -s ${folder} ${tools}/${symlink}
+    ${symlink}/bin/net.downloadhelper.coapp-linux-64 install --user
+  fi
 }
 
 function install_dwhelper {

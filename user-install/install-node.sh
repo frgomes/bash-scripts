@@ -33,8 +33,10 @@ function install_node_binaries {
   if [ ! -d ${tools}/${folder} ] ;then
     tar -C ${tools} -xpf ${archive}
   fi
-  if [ -L ${tools}/${symlink} ] ;then rm ${tools}/${symlink} ;fi
-  ln -s ${folder} ${tools}/${symlink}
+  if [ ! -z ${symlink} ] ;then
+    if [ -L ${tools}/${symlink} ] ;then rm ${tools}/${symlink} ;fi
+    ln -s ${folder} ${tools}/${symlink}
+  fi
 
   [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed
   cat << EOD > ~/.bashrc-scripts/installed/341-node.sh
