@@ -121,3 +121,7 @@ alias  fgdesc='ffdesc  | xargs grep -H -n '
 alias  fgprof='ffprof  | xargs grep -H -n '
 alias   fgcpp='ffcpp   | xargs grep -H -n '
 alias   fgsql='ffsql   | xargs grep -H -n '
+
+alias plasma_start='kstart plasmashell'
+alias plasma_stop='kquitapp5 plasmashell'
+alias plasma_restart='kquitapp5 plasmashell && kstart plasmashell'
