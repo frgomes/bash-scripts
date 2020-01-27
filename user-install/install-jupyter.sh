@@ -24,7 +24,7 @@ function install_jupyter_coursier {
 
 function install_jupyter_kernel_scala_2_12 {
   local SCALA_VERSION=2.12.10
-  local ALMOND_VERSION=0.9.0
+  local ALMOND_VERSION=0.9.1
 
   mkdir -p ${HOME}/bin
   coursier bootstrap \
