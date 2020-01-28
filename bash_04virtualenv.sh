@@ -16,12 +16,10 @@ function virtualenv_make_virtualenvs {
     local profile=$(dirname $envbin)
     local v=3
     if [ ! -f $HOME/.virtualenvs/${envbin}/python ] ;then
-      echo mkvirtualenv -p /usr/bin/python${v} ${profile}
            mkvirtualenv -p /usr/bin/python${v} ${profile}
-      echo pip${v} install --upgrade pip
            pip${v} install --upgrade pip
-      echo pip${v} install --upgrade pylint pyflakes
            pip${v} install --upgrade pylint pyflakes
+           pip${v} install --upgrade python-language-server[all]
     fi
   done
 }
