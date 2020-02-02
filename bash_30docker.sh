@@ -34,3 +34,9 @@ function docker_network_reload {
   sudo ip link del docker0
   sudo systemctl start docker
 }
+
+function docker_prune {
+  docker container prune -f
+  docker volume prune -f
+  docker network prune -f
+}

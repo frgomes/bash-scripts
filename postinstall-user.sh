@@ -123,6 +123,7 @@ function postinstall_user_virtualenvs {
       mkvirtualenv -p /usr/bin/python${v} ${name}
       pip${v} install --upgrade pip
       pip${v} install --upgrade pylint pyflakes
+      pip${v} install --upgrade python-language-server[all]
     fi
     cp -p ${dir}/bashrc-virtualenvs/${name}/bin/postactivate ~/.virtualenvs/${name}/bin/postactivate
   done
