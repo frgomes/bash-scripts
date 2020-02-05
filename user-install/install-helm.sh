@@ -3,8 +3,8 @@
 
 function install_helm_binaries {
   local version=${1:-"$HELM_VERSION"}
-  local version=${version:-"3.0.2"}
-  local arch=${1:-"$HELM_ARCH"}
+  local version=${version:-"3.0.3"}
+  local arch=${2:-"$HELM_ARCH"}
   local arch=${arch:-"linux-amd64"}
 
   local file=helm-v${version}-${arch}.tar.gz
