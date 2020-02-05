@@ -121,9 +121,9 @@ function postinstall_user_virtualenvs {
     local v=$(echo $name | cut -c2)  
     if [[ ! -d ~/.virtualenvs/${name} ]] ;then
       mkvirtualenv -p /usr/bin/python${v} ${name}
-      pip${v} install --upgrade pip
-      pip${v} install --upgrade pylint pyflakes
-      pip${v} install --upgrade python-language-server[all]
+      python${v} -m pip install --upgrade pip
+      python${v} -m pip install --upgrade pylint pyflakes
+      python${v} -m pip install --upgrade python-language-server[all]
     fi
     cp -p ${dir}/bashrc-virtualenvs/${name}/bin/postactivate ~/.virtualenvs/${name}/bin/postactivate
   done
