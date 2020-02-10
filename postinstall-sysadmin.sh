@@ -52,7 +52,7 @@ function postinstall_sudo_apt {
 }
 
 function postinstall_python {
-  sudo apt install -y python-pip virtualenvwrapper
+  sudo apt install -y python3-pip virtualenvwrapper
 }
 
 function postinstall_networking {
