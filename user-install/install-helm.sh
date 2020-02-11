@@ -50,6 +50,11 @@ export PATH=\${HELM_HOME}/\${HELM_ARCH}:\${PATH}
 EOD
 }
 
+function install_helm_repository {
+  helm repo add jetstack https://charts.jetstack.io
+  helm repo update
+}
+
 function install_helm {
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
   grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1 | while read cmd ;do
