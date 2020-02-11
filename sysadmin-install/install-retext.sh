@@ -2,7 +2,7 @@
 
 
 function install_retext_binaries {
-  sudo apt install -y pandoc formiko retext libjs-mathjax python3-regex fonts-mathjax-extras fonts-stix libjs-mathjax-doc fonts-roboto
+  sudo apt install -y pandoc wkhtmltopdf formiko retext libjs-mathjax python3-regex fonts-mathjax-extras fonts-stix libjs-mathjax-doc fonts-roboto
 }
 
 function install_retext {
