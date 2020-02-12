@@ -211,25 +211,35 @@ function git_switch {
     fi
 }
 
-function git_sparse_clone() (
-  local rurl="$1"
-  local localdir="$2"
-  local branch="$3"
-  shift 3
+function git_sparse_checkout {
+    # git repository, e.g.: http://github.com/frgomes/bash-scripts
+    local url=$1
+    # directory where the repository will be downloaded, e.g.: ./build/sources
+    local dir=$2
+    # repository name, in general taken from the url, e.g.: bash-scripts
+    local prj=$3
+    # tag, e.g.: master
+    local tag=$4
+    [[ ( -z "$url" ) || ( -z "$dir" ) || ( -z "$prj" ) || ( -z "$tag" ) ]] && \
+        echo "git_sparse_checkout: invalid arguments" && \
+        return 1
+    shift; shift; shift; shift
 
-  mkdir -p "$localdir"
-  pushd "$localdir"
-
-  git init
-  git remote add -f origin "$rurl"
-
-  git config core.sparseCheckout true
-
-  # Loops over remaining args
-  for path in $*; do
-    echo "$path" >> .git/info/sparse-checkout
-  done
-
-  git pull origin "$branch"
-  popd
-)
+    # Note: any remaining arguments after these above are considered as a
+    # list of files or directories to be downloaded.
+    
+    mkdir -p ${dir}
+    if [ ! -d ${dir}/${prj} ] ;then
+        mkdir -p ${dir}/${prj}
+        pushd ${dir}/${prj}
+        git init
+        git config core.sparseCheckout true
+        for path in $* ;do
+            echo "${path}" >> .git/info/sparse-checkout
+        done
+        git remote add origin ${url}
+        git fetch --depth=1 origin ${tag}
+        git checkout ${tag}
+        popd
+    fi
+}
