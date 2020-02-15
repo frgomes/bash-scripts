@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function install_virtualenv_binaries {
-    sudo apt install virtualenvwrapper -y
+    sudo apt install python3-pip virtualenvwrapper -y
     source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
 }
 
