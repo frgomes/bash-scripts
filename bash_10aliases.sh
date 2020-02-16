@@ -60,7 +60,7 @@ alias ctrlv='xclip -o -selection clipboard'
 
 ## finding contents in files easily
 
-alias sources='fgrep -v /target/ | fgrep -v /.hg/ | fgrep -v /.git/ | fgrep -v /.idea/'
+alias sources='fgrep -v /.hg/ | fgrep -v /.git/ | fgrep -v /.idea/'
 
 alias  fffile='find . -type f                      | sources'
 alias   ffdir='find . -type d                      | sources'
