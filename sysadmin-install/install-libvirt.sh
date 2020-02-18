@@ -25,6 +25,10 @@ function install_libvirt_clients {
   sudo apt install virt-manager libvirt-clients virt-top xmlstarlet uuid-runtime -y
 }
 
+function install_libvirt_usermod {
+  sudo usermod -a -G libvirt $USER
+}
+
 
 function install_libvirt {
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
