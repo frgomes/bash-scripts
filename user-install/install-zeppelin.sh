@@ -3,7 +3,7 @@
 
 function install_zeppelin_binaries {
   local version=${1:-"$ZEPPELIN_VERSION"}
-  local version=${version:-"0.7.1"}
+  local version=${version:-"0.8.2"}
 
   [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
   pushd ~/Downloads
