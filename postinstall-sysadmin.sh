@@ -67,32 +67,6 @@ function postinstall_http_utils {
   sudo apt install -y httrack
 }
 
-function __postinstall_x11_utilities_wp34s {
-  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
-  pushd ~/Downloads 2>&1 > /dev/null
-  [[ ! -f wp-34s-emulator-linux64.tgz ]] \
-    && wget -O ~/Downloads/wp-34s-emulator-linux64.tgz https://downloads.sourceforge.net/project/wp34s/emulator/wp-34s-emulator-linux64.tgz?r=https%3A%2F%2Fsourceforge.net%2Fprojects%2Fwp34s%2Ffiles%2Femulator%2F&ts=1509137814&use_mirror=netcologne
-  popd 2>&1 > /dev/null
-
-  if [ -f ~/Downloads/wp-34s-emulator-linux64.tgz ] ;then
-    [[ ! -d /opt ]] && mkdir -p /opt
-    pushd /opt 2>&1 > /dev/null
-    sudo tar -xf ~/Downloads/wp-34s-emulator-linux64.tgz
-    popd 2>&1 > /dev/null
-  fi
-  
-  if [ -L /usr/local/bin/WP-34s ] ;then
-    sudo rm /usr/local/bin/WP-34s
-  fi
-      
-  sudo ln -s /opt/wp-34s/WP-34s /usr/local/bin
-  echo /usr/local/bin/WP-34S
-}
-
-function postinstall_x11_utilities_wp34s {
-  installed xorg && __postinstall_x11_utilities_wp34s
-}
-
 function postinstall_misc {
   sudo apt install -y psmisc htop
 }
