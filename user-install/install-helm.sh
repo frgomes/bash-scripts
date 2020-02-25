@@ -3,7 +3,7 @@
 
 function install_helm_binaries {
   local version=${1:-"$HELM_VERSION"}
-  local version=${version:-"3.0.3"}
+  local version=${version:-"3.1.1"}
   local arch=${2:-"$HELM_ARCH"}
   local arch=${arch:-"linux-amd64"}
 
@@ -51,6 +51,7 @@ EOD
 }
 
 function install_helm_repository {
+  source ${HOME}/.bashrc-scripts/installed/271-helm.sh
   helm repo add jetstack https://charts.jetstack.io
   helm repo update
 }
