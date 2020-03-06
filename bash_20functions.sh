@@ -164,3 +164,7 @@ complete -F _complete_workspace workspace
 function yaml2json {
   python -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))'
 }
+
+function yaml2json_pretty {
+  python -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y, indent=2, sort_keys=True))'
+}
