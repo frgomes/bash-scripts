@@ -65,7 +65,6 @@ function install_node_react {
   source ~/.bashrc-scripts/installed/341-node.sh
   npm install -g react-native-cli
   npm install -g react-native-vector-icons
-  npm install -g expo-cli
 }
 
 function install_node_graphql {
