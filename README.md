@@ -29,16 +29,12 @@ This is how I install these scripts in my environment:
 ```bash
 $ mkdir $HOME/workspace && cd $HOME/workspace
 $ git clone http://github.com/frgomes/bash-scripts
-
-$ cd $HOME
-$ ln -s $HOME/workspace/bash-scripts scripts
-$ source $HOME/scripts/bashrc
 ```
 
-Then add a call to ``$HOME/scripts/bashrc`` into your ``$HOME/.bashrc``:
+Then add a call to ``$HOME/workspace/bash-scripts/bashrc`` into your ``$HOME/.bashrc``:
 
 ```bash
-$ echo 'source $HOME/scripts/bashrc' >> $HOME/.bashrc
+$ echo 'source $HOME/workspace/bash-scripts/bashrc' >> $HOME/.bashrc
 ```
 
 ## Additional tricks

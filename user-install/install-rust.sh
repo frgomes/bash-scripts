@@ -1,6 +1,13 @@
 #!/bin/bash
 
 function install_rust_binaries {
+  local version=${1}
+  local version=${version:-stable}
+  if [ "${version}" == "stable" ] ;then
+    local command="update stable"
+  else
+    local command="install ${version}"
+  fi
   local tools=${TOOLS_HOME:=$HOME/tools}
   [[ ! -d $tools ]] && mkdir -p $tools
   [[ ! -d $tools/cargo ]] && mkdir -p $tools/cargo
@@ -8,7 +15,7 @@ function install_rust_binaries {
 
   curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path -y \
     && source ${HOME}/.cargo/env && hash -r \
-      && rustup update stable \
+      && rustup ${command} \
         && rustup component add rust-src
   
   [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed
@@ -51,9 +58,14 @@ function install_rust_web_addons {
   __install_rust_web_addons || xargs cargo install --force
 }
 
-function install_rust_rls {
+function install_rust_language_server {
   source ~/.bashrc-scripts/installed/400-rust.sh
   rustup component add rls rust-analysis rust-src
+}
+
+function install_latex_language_server {
+  source ~/.bashrc-scripts/installed/400-rust.sh
+  cargo install --force --git https://github.com/latex-lsp/texlab.git
 }
 
 function install_rust_docset {

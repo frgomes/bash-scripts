@@ -55,7 +55,6 @@ function install_node_tools {
   npm install -g npm@latest
   npm install -g rollup
   npm install -g yarn
-  npm install -g typescript tslint ts-node-dev
   npm install -g ibm-openapi-validator
   npm install -g @openapitools/openapi-generator-cli
   npm install -g webpack style-loader css-loader
@@ -71,6 +70,21 @@ function install_node_graphql {
   source ~/.bashrc-scripts/installed/341-node.sh
   npm install -g prisma nexus-prisma-generate
   npm install -g apollo graphql-sjs-models
+}
+
+function install_node_language_servers {
+  npm install -g bash-language-server
+  npm install -g vscode-css-languageserver-bin
+  npm install -g dockerfile-language-server-nodejs
+  npm install -g @elm-tooling/elm-language-server
+  npm install -g vscode-html-languageserver-bin
+  npm install -g typescript-language-server
+  npm install -g typescript tslint ts-node-dev
+  npm install -g vscode-json-languageserver
+  npm install -g intelephense
+  npm install -g vim-language-server
+  npm install -g vue-language-server
+  npm install -g yaml-language-server
 }
 
 function install_node_ls {

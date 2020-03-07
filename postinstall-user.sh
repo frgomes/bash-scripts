@@ -76,7 +76,6 @@ function postinstall_user_download_bash_scripts {
     git pull
   fi
   popd
-  [[ ! -e $HOME/scripts ]] && ln -s $HOME/workspace/bash-scripts $HOME/scripts
 }
 
 function postinstall_user_download_carpalx {
@@ -116,15 +115,12 @@ function postinstall_user_virtualenvs {
   source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
+  source ${dir}/bash_04virtualenv.sh
+  virtualenv_make_virtualenvs
+
+  ##FIXME: virtualenv_make_virtualenvs should do the logic below
   for path in ${dir}/bashrc-virtualenvs/* ;do
     local name=$(basename $path)
-    local v=$(echo $name | cut -c2)  
-    if [[ ! -d ~/.virtualenvs/${name} ]] ;then
-      mkvirtualenv -p /usr/bin/python${v} ${name}
-      python${v} -m pip install --upgrade pip
-      python${v} -m pip install --upgrade pylint pyflakes
-      python${v} -m pip install --upgrade python-language-server[all]
-    fi
     cp -p ${dir}/bashrc-virtualenvs/${name}/bin/postactivate ~/.virtualenvs/${name}/bin/postactivate
   done
 }
