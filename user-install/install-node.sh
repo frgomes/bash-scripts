@@ -3,7 +3,7 @@
 
 function install_node_binaries {
   local version=${1:-"$NODE_VERSION"}
-  local version=${version:-"12.13.1"}
+  local version=${version:-"12.16.1"}
 
   local arch=${2:-"$NODE_ARCH"}
   local arch=${arch:-"linux-x64"}
