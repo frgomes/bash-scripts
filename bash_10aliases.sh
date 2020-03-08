@@ -33,6 +33,7 @@ export VISUAL EDITOR ALTERNATE_EDITOR
 # some simple helpers
 alias upper='tr [:lower:] [:upper:]'
 alias lower='tr [:upper:] [:lower:]'
+alias trim='tr -d [:blank:]'
 alias ips='ip -o addr show | fgrep "scope global" | sed -r "s/[ \t]+/ /g" | cut -d" " -f2,3,4'
 
 # viewing files nicely
