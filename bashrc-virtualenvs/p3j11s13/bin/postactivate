@@ -1,0 +1,70 @@
+#!/bin/bash
+
+# ---- Location where developer tools are installed ----
+export TOOLS_HOME=${TOOLS_HOME:=$HOME/tools}
+
+## ================================================================================
+##                                                                               ##
+##                       IMPORTANT NOTE on JDK support                           ##
+##                                                                               ##  
+## Oracle now requires username and password in order to download the JDK.       ##
+## Unfortunately, http://github.com/frgomes/bash_scripts cannot help you install ##
+## any arbitrary JDK version automatically.                                      ##
+##                                                                               ##
+## However http://github.com/frgomes/bash_scripts can help you install a number  ##
+## specific JDK versions easily. Supported JDK versions are:                     ##
+##                                                                               ##
+##   * 1.7                                                                       ##
+##   * 1.8                                                                       ##
+##   * 11                                                                        ##
+##   * 12                                                                        ##
+##   * 13                                                                        ##
+##                                                                               ##
+## In order to install supported versions, simply run:                           ##
+##                                                                               ##
+##    $ source ~/workspace/bash-scripts/user-install/install-java.sh             ##
+##    $ install_java                                                             ##
+##                                                                               ##
+## ================================================================================
+
+unset JAVA_VERSION JAVA_HOME
+export JAVA_VERSION=11
+export JAVA_HOME=$HOME/tools/jdk${JAVA_VERSION}
+
+# ---- Specify versions of tools to be installed by regular users ----
+export SCALA_VERSION_MAJOR=2.13
+export SCALA_VERSION=${SCALA_VERSION_MAJOR}.1
+export SCALA_HOME=${TOOLS_HOME:=$HOME/tools}/scala-${SCALA_VERSION}
+
+export SBT_VERSION=1.3.6
+export SBT_HOME=${TOOLS_HOME:=$HOME/tools}/sbt-${SBT_VERSION}
+
+export METALS_ENABLED=true
+export M2_VERSION=3.6.1
+export GRADLE_VERSION=5.2.1
+export ANT_VERSION=1.9.14
+export GROOVY_VERSION=2.5.4
+
+export NODE_VERSION=12.16.1
+export NODE_ARCH=linux-x64
+export ANDROID_SDK_RELEASE=4333796
+export ANDROID_SDK_VERSION=29.0.0
+
+## ---- ENVIRONMENT DEPENDENT EXPORTS ----
+
+export WORKSPACE=$HOME/workspace
+[[ ! -d $WORKSPACE ]] && mkdir -p $WORKSPACE
+
+
+## ---- DEFINE PATH ----
+
+[[ ! -d ~/.bashrc-scripts/installed/ ]] && mkdir -p ~/.bashrc-scripts/installed/
+for script in $(find ~/.bashrc-scripts/installed/ -type f | sort --reverse) ;do
+  chmod 755 $script
+  source $script
+done
+
+export PATH=${SBT_HOME}/bin:${PATH}
+export PATH=${SCALA_HOME}/bin:${PATH}
+export PATH=${JAVA_HOME}/bin:${PATH}
+export PATH=${HOME}/bin:${PATH}

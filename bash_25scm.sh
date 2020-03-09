@@ -123,6 +123,29 @@ function git_http_to_ssh {
 }
 
 
+function gitlink {
+    local name=${1}
+    local name=${name:=origin}
+    local url=$( git remote get-url $name )
+    [[ "$url" =~ (.+)@(.+):(.+)/(.+)(\.git)? ]]
+    local user="${BASH_REMATCH[1]}"
+    if [ "$user" == "git" ] ;then
+      local provider="${BASH_REMATCH[2]}"
+      local team="${BASH_REMATCH[3]}"
+      local prj="${BASH_REMATCH[4]}"
+      local ext="${BASH_REMATCH[5]}"
+      # workaround https://bitbucket.org/site/master/issues/5154/someone-has-already-registered-that-ssh
+      company=$(fgrep Host ~/.ssh/config | fgrep -v Hostname | cut -d' ' -f2)
+      if [ X"${company}" != "X" -a X"${provider}" == "Xbitbucket.org" -a -f "~/.ssh/id_rsa_${team}" ] ;then
+        provider="${company}"
+      fi
+      firefox "https://${provider}/${team}/${prj}${ext}" &
+    else
+      firefox "${url}" &
+    fi
+}
+
+
 function git_ssh_to_http {
     local name=${1}
     local name=${name:=origin}
@@ -184,6 +207,39 @@ function git_switch {
 	git clean -d -x -f -f
         if [ $? != 0 ] ; then popd; return 1 ;fi
         git status
+        popd
+    fi
+}
+
+function git_sparse_checkout {
+    # git repository, e.g.: http://github.com/frgomes/bash-scripts
+    local url=$1
+    # directory where the repository will be downloaded, e.g.: ./build/sources
+    local dir=$2
+    # repository name, in general taken from the url, e.g.: bash-scripts
+    local prj=$3
+    # tag, e.g.: master
+    local tag=$4
+    [[ ( -z "$url" ) || ( -z "$dir" ) || ( -z "$prj" ) || ( -z "$tag" ) ]] && \
+        echo "git_sparse_checkout: invalid arguments" && \
+        return 1
+    shift; shift; shift; shift
+
+    # Note: any remaining arguments after these above are considered as a
+    # list of files or directories to be downloaded.
+    
+    mkdir -p ${dir}
+    if [ ! -d ${dir}/${prj} ] ;then
+        mkdir -p ${dir}/${prj}
+        pushd ${dir}/${prj}
+        git init
+        git config core.sparseCheckout true
+        for path in $* ;do
+            echo "${path}" >> .git/info/sparse-checkout
+        done
+        git remote add origin ${url}
+        git fetch --depth=1 origin ${tag}
+        git checkout ${tag}
         popd
     fi
 }

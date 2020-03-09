@@ -28,13 +28,6 @@ _info()  { _log 1 "INFO:  $@"; }
 _debug() { _log 0 "DEBUG: $@"; }
 
 
-function paths() {
-  for p in $* ;do
-    export PATH=$PATH:${p}
-  done
-}
-
-
 function installed {
   if [ "${1}" == "" ] ;then
     return 1
@@ -43,7 +36,7 @@ function installed {
   fi
 }
 
-function installable {
+function uninstalled {
   if [ "${1}" == "" ] ;then
     return 1
   else
@@ -85,9 +78,11 @@ function download_with_cookie_java {
 function zap {
   local args=$@
   cmd=${args:=xargs rm -r -f}
-  find . -maxdepth 2 -type d \( -name target -o -name node_modules -o -name .ensime_cache \) | $cmd
-  find .             -type d \( -name target -o -name node_modules -o -name .ensime_cache \) | $cmd
-  find . -type f \( -name \~ -o -name '*~' \) | $cmd
+  find . -type d \( -name target -o -name node_modules -o -name .ensime_cache \) | $cmd
+  find . -type f \( -name \~ -o -name '*~' -o -name '.*~' \) | $cmd
+  find . -type l \( -name \~ -o -name '*~' -o -name '.*~' \) | $cmd
+  find . -type f \( -name '.#*#' -o -name '#*#' \) | $cmd
+  find . -type l \( -name '.#*#' -o -name '#*#' \) | $cmd
 }
 
 
@@ -102,11 +97,12 @@ function backup {
       dst=${HOME}/backup/archives"${dir}"
       name="$( basename "$dir" )"
       mkdir -p ${dst} > /dev/null 2>&1
-      echo "$dir" ...
+      # echo "$dir" ...
       archive=${dst}/${now}_${name}.tar.bz2
       echo "${archive}"
 
-      tar cpJf ${archive} ${dir} --exclude=${dir}/node_modules --exclude-vcs
+      find "${dir}" -type f | fgrep -v "${dir}"'./*.iml' | fgrep -v "${dir}"'./.idea/' | fgrep -v "${dir}"'./.hg/' | fgrep -v '/.git/' | fgrep -v '/.lib/' | fgrep -v '/node_modules/' | fgrep -v '/target/' | \
+          tar cvpJf "${archive}" -T - > /dev/null
 
       # copy to Dropbox, if available
       replica=${HOME}/Dropbox/Private/backup/"${dst}"
@@ -129,10 +125,12 @@ function backup_zip {
       dst=${HOME}/backup/archives"${dir}"
       name="$( basename "$dir" )"
       mkdir -p ${dst} > /dev/null 2>&1
-      echo "$dir" ...
+      # echo "$dir" ...
       archive=${dst}/${now}_${name}.zip
-      zip -q -r ${archive} ${dir} -x ${dir}/.idea\* -x ${dir}/.hg/\* -x ${dir}/.git/\* -x ${dir}/.lib/\* -x ${dir}/node_modules/
       echo "${archive}"
+
+      find "${dir}" -type f | fgrep -v "${dir}"'./*.iml' | fgrep -v "${dir}"'./.idea/' | fgrep -v "${dir}"'./.hg/' | fgrep -v '/.git/' | fgrep -v '/.lib/' | fgrep -v '/node_modules/' | fgrep -v '/target/' | \
+          zip -q -r -@ "${archive}"
 
       # copy to Dropbox, if available
       replica=${HOME}/Dropbox/Private/backup/"${dst}"
@@ -162,3 +160,15 @@ function _complete_workspace() {
   return 0
 }
 complete -F _complete_workspace workspace
+
+function yaml2json {
+  python -c 'import sys, yaml, json; print(json.dumps(yaml.safe_load(sys.stdin.read())))'
+}
+
+function yaml2json_pretty {
+  python -c 'import sys, yaml, json; print(json.dumps(yaml.safe_load(sys.stdin.read()), indent=2, sort_keys=False))'
+}
+
+function json2yaml {
+  python -c 'import sys, yaml, json; print(yaml.dump(yaml.load(sys.stdin.read(), Loader=yaml.FullLoader)))'
+}

@@ -1,0 +1,42 @@
+#!/bin/bash
+
+####################################################################
+##                                                                ##
+## A simple, lightweight, self contained alternative to ddclient. ##
+##                                                                ##
+##  NOTE: This script only works with FreeDNS http://dns.he.net   ##
+##                                                                ##
+####################################################################
+
+logfile=/var/log/ddns-update.log
+
+
+function ddns_update_ipv4 {
+  local ddnspasswd=$(cat /etc/ddns-update.conf | fgrep password= | cut -d= -f2)
+  local fqdn=$(hostname --fqdn)
+  local iface=$(ip -o addr show | fgrep "scope global" | fgrep " inet " | cut -d' ' -f2 | head -1)
+  if [ ! -z "${iface}" ] ;then
+    local myip=$(ip -4 -o addr show dev ${iface} scope global | sed -r 's/[ \t]+/ /g' | cut -d' ' -f4 | cut -d/ -f1)
+    echo /usr/bin/curl -4 -s "https://dyn.dns.he.net/nic/update" -d "myip=${myip}" -d "hostname=${fqdn}" -d "password=${ddnspasswd}"
+    /usr/bin/curl -4 -s "https://dyn.dns.he.net/nic/update" -d "myip=${myip}" -d "hostname=${fqdn}" -d "password=${ddnspasswd}"
+    echo ""
+  fi
+}
+
+function ddns_update_ipv6 {
+  local ddnspasswd=$(cat /etc/ddns-update.conf | fgrep password= | cut -d= -f2)
+  local fqdn=$(hostname --fqdn)
+  local iface=$(ip -o addr show | fgrep "scope global" | fgrep " inet6 " | fgrep -v fdfa: | cut -d' ' -f2 | head -1)
+  if [ ! -z "${iface}" ] ;then
+    local myip=$(ip -6 -o addr show dev ${iface} scope global | fgrep 2001: | fgrep -v /128 | sed -r 's/[ \t]+/ /g' | cut -d' ' -f4 | cut -d/ -f1 | head -1)
+    echo /usr/bin/curl -6 -s "https://dyn.dns.he.net/nic/update" -d "myip=${myip}" -d "hostname=${fqdn}" -d "password=${ddnspasswd}"
+    /usr/bin/curl -6 -s "https://dyn.dns.he.net/nic/update" -d "myip=${myip}" -d "hostname=${fqdn}" -d "password=${ddnspasswd}"
+    echo ""
+  fi
+}
+
+
+echo "-----------------------------------" >> ${logfile}
+date +%Y-%m-%d_%H:%M:%S                    >> ${logfile}
+ddns_update_ipv4 2>&1                      >> ${logfile}
+ddns_update_ipv6 2>&1                      >> ${logfile}
