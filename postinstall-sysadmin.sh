@@ -51,10 +51,6 @@ function postinstall_sudo_apt {
   sudo apt-file update
 }
 
-function postinstall_python {
-  sudo apt install -y python3-pip virtualenvwrapper
-}
-
 function postinstall_networking {
   sudo apt install -y dnsmasq net-tools bridge-utils avahi-ui-utils kde-zeroconf avahi-utils cups-client avahi-daemon dnsutils nmap
 }

@@ -1,16 +1,18 @@
 #!/bin/bash -x
 
-function install_jupyter_core {
-  mkdir -p ${HOME}/bin
+function install_jupyter_pip {
   mkdir -p ~/Downloads
   pushd ~/Downloads
   if [ ! -f get-pip.py ] ;then
     wget https://bootstrap.pypa.io/get-pip.py
   fi
-  python ~/Downloads/get-pip.py
+  python3 ~/Downloads/get-pip.py
   popd
-  pip install --upgrade pip
-  pip install --upgrade jupyter
+  python3 -m pip install --user --upgrade pip
+}
+
+function install_jupyter_core {
+  python3 -m pip install --user --upgrade jupyter
 }
 
 function install_jupyter_coursier {
@@ -36,7 +38,7 @@ function install_jupyter_kernel_scala_2_12 {
 }
 
 function install_jupyter_nbextensions {
-  pip install jupyter_contrib_nbextensions --force
+  python3 -m pip install --user --upgrade jupyter_contrib_nbextensions
 }
 
 function install_jupyter_kernelspec_list {
