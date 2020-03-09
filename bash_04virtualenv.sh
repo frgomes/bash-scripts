@@ -16,11 +16,8 @@ function virtualenv_make_virtualenvs {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
 
-  [[ -z $(which pip) ]] \
-    && python3 -m pip install --upgrade pip
-
-  [[ -z $(which virtualenv) ]] \
-    && python3 -m pip install --upgrade virtualenv
+  source ${dir}/user-install/install-python.sh > /dev/null
+  install_python_pip
 
   pushd $HOME > /dev/null
   virtualenv_profile_list | while read source ;do
@@ -29,9 +26,13 @@ function virtualenv_make_virtualenvs {
     if [ ! -f $HOME/.virtualenvs/${envbin}/python ] ;then
       echo "[Creating virtual environment ${profile}]"
       mkdir -p $HOME/.virtualenvs
-      virtualenv -p /usr/bin/python3 $HOME/.virtualenvs/${profile}
+      case ${profile} in
+        p2* ) virtualenv -p /usr/bin/python2 $HOME/.virtualenvs/${profile} ;;
+        p3* ) virtualenv -p /usr/bin/python3 $HOME/.virtualenvs/${profile} ;;
+        *   ) virtualenv -p /usr/bin/python3 $HOME/.virtualenvs/${profile} ;;
+      esac
       workon ${profile}
-      ${dir}/user-install/install-python.sh
+      source ${dir}/user-install/install-python.sh | while read cmd ;do ${cmd} ;done
       deactivate
     fi
   done
