@@ -1,9 +1,6 @@
 #!/bin/bash
 
-# Sphinx is employed by Linux kernel and so do we: https://www.youtube.com/watch?v=jY_C-Z0qMSo
-# see: https://downloads.lightbend.com/paradox/akka-docs-new/20170510-wip/scala/dev/documentation.html
-
-function install_sphinx_pip {
+function install_python_pip {
   mkdir -p ~/Downloads
   pushd ~/Downloads
   if [ ! -f get-pip.py ] ;then
@@ -14,25 +11,25 @@ function install_sphinx_pip {
   python3 -m pip install --user --upgrade pip
 }
 
-function install_sphinx_binaries {
-    python3 -m pip install --user --upgrade python-sphinx
-
-    mkdir -p ~/tmp
-    if [ ! -d ~/tmp/sphinx-contrib ] ;then
-        pushd ~/tmp
-        hg clone https://bitbucket.org/birkenfeld/sphinx-contrib
-        ## hg clone ssh://hg@bitbucket.org/birkenfeld/sphinx-contrib
-        popd
-    fi
-    if [ -d ~/tmp/sphinx-contrib ] ;then
-        pushd ~/tmp/sphinx-contrib
-        cd sphinx-contrib/scaladomain
-        python setup.py install
-        popd
-    fi
+function install_python_virtualenv {
+  python3 -m pip install --user --upgrade pip
+  python3 -m pip install --user --upgrade virtualenv
 }
 
-function install_sphinx {
+function install_python_libraries {
+  python3 -m pip install --user --upgrade pyyaml
+}
+
+function install_python_LSP_support {
+  python3 -m pip install --user --upgrade pip
+  python3 -m pip install --user --upgrade pylint pyflakes
+  python3 -m pip install --user --upgrade python-language-server[all]
+  python3 -m pip install --user --upgrade cmake-language-server
+  python3 -m pip install --user --upgrade fortran-language-server
+  python3 -m pip install --user --upgrade hdl-checker
+}
+
+function install_python {
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
   grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1 | while read cmd ;do
     $cmd $*

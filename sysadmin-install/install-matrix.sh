@@ -49,8 +49,7 @@ EOD
     cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
   fi
 
-  sudo apt install python-pip -y
-  sudo pip install ansible
+  python3 -m pip install --user --upgrade ansible
 
   sudo ufw allow http
   sudo ufw allow https

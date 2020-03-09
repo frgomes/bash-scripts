@@ -15,7 +15,7 @@ sudo apt install azure-cli
 }
 
 function install_azure_dbfs {
-  pip install databricks-cli
+  python3 -m pip install --user --upgrade databricks-cli
 }
 
 function install_azure {

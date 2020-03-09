@@ -13,21 +13,29 @@ function virtualenv_profile_list {
 }
 
 function virtualenv_make_virtualenvs {
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
+
+  [[ -z $(which pip) ]] \
+    && python3 -m pip install --upgrade pip
+
+  [[ -z $(which virtualenv) ]] \
+    && python3 -m pip install --upgrade virtualenv
+
+  pushd $HOME > /dev/null
   virtualenv_profile_list | while read source ;do
     local envbin=$(dirname $source)
-    local profile=$(dirname $envbin)
-    local v=3
+    local profile=$(basename $(dirname $envbin))
     if [ ! -f $HOME/.virtualenvs/${envbin}/python ] ;then
-           mkvirtualenv -p /usr/bin/python${v} ${profile}
-           python${v} -m pip install --upgrade pip
-           python${v} -m pip install --upgrade pylint pyflakes
-           python${v} -m pip install --upgrade python-language-server[all]
-           python${v} -m pip install --upgrade python-language-server[all]
-           python${v} -m pip install --upgrade cmake-language-server
-           python${v} -m pip install --upgrade fortran-language-server
-           python${v} -m pip install --upgrade hdl-checker upgrade
+      echo "[Creating virtual environment ${profile}]"
+      mkdir -p $HOME/.virtualenvs
+      virtualenv -p /usr/bin/python3 $HOME/.virtualenvs/${profile}
+      workon ${profile}
+      ${dir}/user-install/install-python.sh
+      deactivate
     fi
   done
+  popd > /dev/null
 }
 
 # Link virtualenvs to corresponding profiles, if possible, if needed.

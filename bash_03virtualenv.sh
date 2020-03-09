@@ -1,11 +1,12 @@
 #!/bin/bash
 
-##################################################################################
-# This script allows management of multiple virtual environments.                #
-# There are two ways of doing this:                                              #
-#  1. employ Python virtualenv and virtualenvwrapper; (HIGHLY PREFERABLE)        #
-#  2. employ simplistic shell scripts, which are independent of Python.          #
-##################################################################################
+##########################################################################
+# This script allows switching among multiple virtual environments.      #
+#                                                                        #
+# The intent is providing function ``workon`` in the absence of packages #
+#   * virtualenv                                                         #
+#   * virtualenvwrapper                                                  #
+##########################################################################
 
 export WORKON_HOME=$HOME/.virtualenvs
 
@@ -13,14 +14,6 @@ if [[ -f /usr/share/virtualenvwrapper/virtualenvwrapper.sh ]] ;then
   [[ ! -d ${WORKON_HOME} ]] && mkdir -p ${WORKON_HOME}
   source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
 else
-  ###################################################################################
-  #                                                                                 #
-  # This is a very simple 'replacement' for Debian package python-virtualenv.       #
-  #                                                                                 #
-  # The aim is avoid the long list of transitive dependencies pulled out, including #
-  # development tools, which are not desired in production servers.                 #
-  #                                                                                 #
-  ###################################################################################
   function workon() {
       if [ ! -z "$1" -a -d ${WORKON_HOME}/"$1" ] ;then
           if [ -f ${WORKON_HOME}/"$1"/bin/postactivate ] ;then
