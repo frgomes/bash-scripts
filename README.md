@@ -22,7 +22,7 @@ $ wget https://raw.githubusercontent.com/frgomes/bash-scripts/master/postinstall
 $ wget https://raw.githubusercontent.com/frgomes/bash-scripts/master/postinstall-user.sh -O - | bash
 ```
 
-### Toolbox of useful shell scripts and aliases
+### Integrate powerful commands and aliases into your shell
 
 This is how I install these scripts in my environment:
 
@@ -36,6 +36,25 @@ Then add a call to ``$HOME/workspace/bash-scripts/bashrc`` into your ``$HOME/.ba
 ```bash
 $ echo 'source $HOME/workspace/bash-scripts/bashrc' >> $HOME/.bashrc
 ```
+
+## Caveats
+
+### Clash between system level and user level Python PIP
+
+The [documentation on Python PIP installation](https://pip.pypa.io/en/stable/installing/) warns that you may have troubles if you've installed ``python-pip`` or ``python3-pip`` using the package manager of your operating system and suddenly you'd like to install Python packages at user level.
+
+> The best practice is keeping system packages at a minimum and installing all tools at system level. This allows multiple users keep multiple dependencies trees separate, allows a single user keep multiple environments separated and also reduces the exposed [security attack surface](https://en.wikipedia.org/wiki/Attack_surface) of your system.
+
+So, if you are using Python or if you are using virtual environments, please consider uninstalling system packages which are known to cause difficulties to [Python PIP](https://pip.pypa.io) and [Python virtualenv](https://virtualenv.pypa.io). For your convenience, the commands below are known to work on Debian:
+
+```bash
+sudo apt remove --purge python-pip python3-pip python-pip-whl python-stevedore virtualenv virtualenv-clone virtualenvwrapper python-virtualenv python-virtualenv-clone python3-virtualenv -y
+sudo apt autoremove --purge -y
+sudo rm /usr/local/bin/pip{,2,3}
+rm $HOME/.local/bin/pip{,2,3}
+```
+
+> Note: despite the commands above remove packages ``virtualenv`` and ``virtualenvwrapper``, we offer a replacement for function ``workon``. So, even though you are removing these packages from your system, you will still be able to use ``workon`` as usual.
 
 ## Additional tricks
 
