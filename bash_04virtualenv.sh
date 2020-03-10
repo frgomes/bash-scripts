@@ -20,7 +20,6 @@ function virtualenv_make_virtualenvs {
   source ${dir}/user-install/install-python.sh > /dev/null
   local dir=${__save}
 
-  echo ================ DIR $dir
   install_python_pip
   install_python_virtualenv
 

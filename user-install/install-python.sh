@@ -14,8 +14,10 @@ function install_python_pip {
 }
 
 function install_python_virtualenv {
-  local v=$(python -V 2>&1 | cut -d' ' -f2 | cut -d. -f1)
-  python${v} -m pip install --upgrade virtualenv
+  if [ -z $(which virtualenv) ] ;then
+    local v=$(python -V 2>&1 | cut -d' ' -f2 | cut -d. -f1)
+    python${v} -m pip install --upgrade virtualenv
+  fi
 }
 
 function install_python_common_libraries {
