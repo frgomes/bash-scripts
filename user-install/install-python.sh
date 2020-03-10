@@ -5,26 +5,33 @@ function install_python_pip {
   if [ ! -f ~/Downloads/get-pip.py ] ;then
     wget https://bootstrap.pypa.io/get-pip.py -O ~/Downloads/get-pip.py
   fi
-  # Python2 is still partially supported
-  for v in 2 3 ;do
-    if [ -z $(which pip${v}) ] ;then
-      python${v} ~/Downloads/get-pip.py --user
-      python${v} -m pip install --user --upgrade pip
-      python${v} -m pip install --user --upgrade virtualenv
-    fi
-  done
+  local v=$(python -V 2>&1 | cut -d' ' -f2 | cut -d. -f1)
+  if [ -z $(which pip${v}) ] ;then
+    python${v} ~/Downloads/get-pip.py --user
+    python${v} -m pip install --user --upgrade pip
+    python${v} -m pip install --user --upgrade virtualenv
+  fi
 }
 
-function install_python_libraries {
-  for module in pyyaml ;do
-    python3 -m pip install --user --upgrade ${module}
+function install_python_virtualenv {
+  local v=$(python -V 2>&1 | cut -d' ' -f2 | cut -d. -f1)
+  python${v} -m pip install --upgrade virtualenv
+}
+
+function install_python_common_libraries {
+  local v=$(python -V 2>&1 | cut -d' ' -f2 | cut -d. -f1)
+  for module in oyaml ;do
+    python${v} -m pip install --upgrade ${module}
   done
 }
 
 function install_python_LSP_support {
-  for module in pip pylint pyflakes python-language-server[all] cmake-language-server fortran-language-server hdl-checker ;do
-    python3 -m pip install --user --upgrade ${module}
-  done
+  local v=$(python -V 2>&1 | cut -d' ' -f2 | cut -d. -f1)
+  if [ "${v}" == "3" ] ;then
+    for module in pip pylint pyflakes python-language-server[all] cmake-language-server fortran-language-server hdl-checker ;do
+      python${v} -m pip install --upgrade ${module}
+    done
+  fi
 }
 
 function install_python {

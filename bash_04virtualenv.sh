@@ -16,8 +16,13 @@ function virtualenv_make_virtualenvs {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
 
+  local __save=${dir}
   source ${dir}/user-install/install-python.sh > /dev/null
+  local dir=${__save}
+
+  echo ================ DIR $dir
   install_python_pip
+  install_python_virtualenv
 
   pushd $HOME > /dev/null
   virtualenv_profile_list | while read source ;do
@@ -31,6 +36,16 @@ function virtualenv_make_virtualenvs {
         p3* ) virtualenv -p /usr/bin/python3 $HOME/.virtualenvs/${profile} ;;
         *   ) virtualenv -p /usr/bin/python3 $HOME/.virtualenvs/${profile} ;;
       esac
+
+      local target=$HOME/.virtualenvs/${profile}/bin/postactivate
+      if [ -L ${target} ] ;then
+        rm ${target}
+      elif [ -f ${target} ] ;then
+        mv ${target} ${target}.${tstamp}
+      fi
+      ln -s ${dir}/bashrc-virtualenvs/${profile}/bin/postactivate ${target}
+      set +x
+
       workon ${profile}
       source ${dir}/user-install/install-python.sh | while read cmd ;do ${cmd} ;done
       deactivate
@@ -57,4 +72,4 @@ function virtualenv_profile_link_all {
   done
 }
 
-virtualenv_make_virtualenvs && virtualenv_profile_link_all
+virtualenv_make_virtualenvs # && virtualenv_profile_link_all

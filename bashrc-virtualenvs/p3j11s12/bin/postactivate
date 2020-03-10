@@ -67,4 +67,13 @@ done
 export PATH=${SBT_HOME}/bin:${PATH}
 export PATH=${SCALA_HOME}/bin:${PATH}
 export PATH=${JAVA_HOME}/bin:${PATH}
+
+function activate_path {
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
+  local profile=$(basename $(dirname $dir))
+  echo $HOME/.virtualenvs/${profile}/bin
+}
+export PATH=$(activate_path):${PATH}
+
 export PATH=${HOME}/bin:${PATH}
