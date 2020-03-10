@@ -31,9 +31,22 @@ fi
 export VISUAL EDITOR ALTERNATE_EDITOR
 
 # some simple helpers
-alias upper='tr [:lower:] [:upper:]'
-alias lower='tr [:upper:] [:lower:]'
-alias trim='tr -d [:blank:]'
+function upper {
+  tr [:lower:] [:upper:]
+}
+function lower {
+  tr [:upper:] [:lower:]
+}
+function trim {
+  tr -d [:blank:]
+}
+function capitalize {
+  sed -E 's/[^ \t]*/\u&/g'
+}
+function camelCase {
+  sed -E 's/[^ \t]*/\u&/g' | sed -E 's/[ \t]*//g' | sed -E 's/[^ \t]*/\l&/g'
+}
+
 alias ips='ip -o addr show | fgrep "scope global" | sed -r "s/[ \t]+/ /g" | cut -d" " -f2,3,4'
 
 # viewing files nicely
