@@ -20,6 +20,24 @@ function camelCase {
     sed -E 's/[^ \t]*/\u&/g' | sed -E 's/[ \t]*//g' | sed -E 's/[^ \t]*/\l&/g'
 }
 
+
+ ##
+## viewing file differences
+##
+function cdiff {
+    diff -Naur
+}
+function sdiff {
+    diff -Npry
+}
+function kdiff {
+    kdiff3
+}
+function vdiff {
+    diffuse
+}
+
+
  ##
 ## finding contents in files easily
 ##
