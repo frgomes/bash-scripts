@@ -31,9 +31,9 @@ function virtualenv_make_virtualenvs {
       echo "[Creating virtual environment ${profile}]"
       mkdir -p $HOME/.virtualenvs
       case ${profile} in
-        p2* ) virtualenv -p /usr/bin/python2 $HOME/.virtualenvs/${profile} ;;
-        p3* ) virtualenv -p /usr/bin/python3 $HOME/.virtualenvs/${profile} ;;
-        *   ) virtualenv -p /usr/bin/python3 $HOME/.virtualenvs/${profile} ;;
+        p2* ) $HOME/.local/bin/virtualenv -p /usr/bin/python2 $HOME/.virtualenvs/${profile} ;;
+        p3* ) $HOME/.local/bin/virtualenv -p /usr/bin/python3 $HOME/.virtualenvs/${profile} ;;
+        *   ) $HOME/.local/bin/virtualenv -p /usr/bin/python3 $HOME/.virtualenvs/${profile} ;;
       esac
 
       local target=$HOME/.virtualenvs/${profile}/bin/postactivate
