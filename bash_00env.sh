@@ -10,3 +10,12 @@ case "$ID" in
   fedora) alias apt='yum' ;;
   *)      alias apt='apt' ;;
 esac
+
+function installed {
+  dpkg -s "$1" > /dev/null 2>&1
+}
+
+function uninstalled {
+  installed "$1" && return 1
+  return 0
+}

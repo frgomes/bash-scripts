@@ -12,10 +12,25 @@ function virtualenv_profile_list {
   fi
 }
 
+function virtualenv_install_system_packages {
+    uninstalled python2-dev \
+      && echo sudo apt install python2-dev-y \
+        &&    sudo apt install python2-dev-y
+    uninstalled python3-dev \
+      && echo sudo apt install python3-dev-y \
+        &&    sudo apt install python3-dev-y
+    uninstalled python3-distutils \
+      && echo sudo apt install python3-distutils -y \
+         &&   sudo apt install python3-distutils -y
+}
+
+
 function virtualenv_make_virtualenvs {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
 
+  virtualenv_install_system_packages
+  
   local __save=${dir}
   source ${dir}/user-install/install-python.sh > /dev/null
   local dir=${__save}

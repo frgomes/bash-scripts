@@ -28,22 +28,16 @@ _info()  { _log 1 "INFO:  $@"; }
 _debug() { _log 0 "DEBUG: $@"; }
 
 
+##FIXME: remove from here, since it is already defined on bash_0env.sh
 function installed {
-  if [ "${1}" == "" ] ;then
-    return 1
-  else
-    apt list --installed $* 2> /dev/null
-  fi
+  dpkg -s "$1" > /dev/null 2>&1
 }
 
+##FIXME: remove from here, since it is already defined on bash_0env.sh
 function uninstalled {
-  if [ "${1}" == "" ] ;then
-    return 1
-  else
-    fgrep -v -f <(apt list --installed $* 2> /dev/null) <(apt list $* 2> /dev/null)
-  fi
+  installed "$1" && return 1
+  return 0
 }
-
 
 function download {
   local url="$1"

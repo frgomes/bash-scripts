@@ -5,12 +5,14 @@ function install_python_pip {
   if [ ! -f ~/Downloads/get-pip.py ] ;then
     wget https://bootstrap.pypa.io/get-pip.py -O ~/Downloads/get-pip.py
   fi
-  local v=$(python -V 2>&1 | cut -d' ' -f2 | cut -d. -f1)
+  ##XXX local v=$(python -V 2>&1 | cut -d' ' -f2 | cut -d. -f1)
+  for v in 2 3 ;do
   if [ -z $(which pip${v}) ] ;then
     python${v} ~/Downloads/get-pip.py --user
     python${v} -m pip install --user --upgrade pip
     python${v} -m pip install --user --upgrade virtualenv
   fi
+  done
 }
 
 function install_python_virtualenv {
