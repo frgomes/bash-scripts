@@ -35,9 +35,3 @@ export LESS=' -R '
 export LESSOPEN='| /usr/share/source-highlight/src-hilite-lesspipe.sh %s'
 export LESSCLOSE='| /usr/share/source-highlight/src-hilite-lesspipe.sh %s %s'
 export VIEWER=less
-
-# viewing file differences
-alias cdiff='diff -Naur'
-alias sdiff='diff -Npry'
-alias kdiff='kdiff3'
-alias vdiff='${TOOLS_HOME}/idea/bin/idea.sh diff' ##FIXME: sort out dependency of TOOLS_HOME
