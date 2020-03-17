@@ -22,9 +22,9 @@ function install_python_virtualenv {
   fi
 }
 
-function install_python_common_libraries {
+function install_python_install_packages {
   local v=$(python -V 2>&1 | cut -d' ' -f2 | cut -d. -f1)
-  for module in oyaml ;do
+  for module in mercurial oyaml ;do
     python${v} -m pip install --upgrade ${module}
   done
 }

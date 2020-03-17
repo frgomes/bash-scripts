@@ -35,7 +35,7 @@ function postinstall_texlive {
 }
 
 function postinstall_scm {
-  sudo apt install -y git mercurial
+  sudo apt install -y git
 }
 
 function postinstall_downloads {
