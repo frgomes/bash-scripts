@@ -5,19 +5,19 @@
 ## utilities for simple text transformations
 ##
 function upper {
-    tr [:lower:] [:upper:]
+    tr [:lower:] [:upper:] $*
 }
 function lower {
-    tr [:upper:] [:lower:]
+    tr [:upper:] [:lower:] $*
 }
 function trim {
-    tr -d [:blank:]
+    tr -d [:blank:] $*
 }
 function capitalize {
-    sed -E 's/[^ \t]*/\u&/g'
+    sed -E 's/[^ \t]*/\u&/g' $*
 }
 function camelCase {
-    sed -E 's/[^ \t]*/\u&/g' | sed -E 's/[ \t]*//g' | sed -E 's/[^ \t]*/\l&/g'
+    sed -E 's/[^ \t]*/\u&/g' | sed -E 's/[ \t]*//g' | sed -E 's/[^ \t]*/\l&/g' $*
 }
 
 
@@ -25,16 +25,16 @@ function camelCase {
 ## viewing file differences
 ##
 function cdiff {
-    diff -Naur
+    diff -Naur $*
 }
 function sdiff {
-    diff -Npry
+    diff -Npry $*
 }
 function kdiff {
-    kdiff3
+    kdiff3 $*
 }
 function vdiff {
-    diffuse
+    diffuse $*
 }
 
 
@@ -322,5 +322,5 @@ function plasma_stop {
 }
 
 function plasma_restart {
-    killall plasmashell && kstart plasmashell
+    killall plasmashell; kstart plasmashell
 }
