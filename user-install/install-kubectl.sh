@@ -43,6 +43,32 @@ export PATH=\${KUBE_HOME}/bin:\${PATH}
 EOD
 }
 
+function install_kubectl_plugins {
+  local version=${1:-"$KUBE_VERSION"}
+  local version=${version:-$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)}
+
+  local machine=$(uname -m)
+  case "${machine}" in
+    armv7l)
+      local arch=arm
+        ;;
+    *)
+      local arch=amd64
+        ;;
+  esac
+
+  local tools=${TOOLS_HOME:=$HOME/tools}
+
+  [[ ! -d ${tools}/kube-${version}/bin ]] && mkdir -p ${tools}/kube-${version}/bin
+  pushd ${tools}/kube-${version}/bin > /dev/null
+
+  wget -O kubectl-stash https://github.com/stashed/cli/releases/download/v0.3.1/kubectl-stash-linux-${arch} \
+    && chmod +x kubectl-stash
+
+  popd > /dev/null
+}
+
+
 function install_kubectl {
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
   grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1 | while read cmd ;do
