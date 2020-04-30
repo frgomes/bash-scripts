@@ -34,7 +34,6 @@ cat <<EOD
   incoming = !"git fetch && git log ..origin/master"
   unstage = reset HEAD
   pre-merge = merge --no-commit --no-ff
-  del-branch = push origin --delete
 
 [diff]
   tool = "intellij"

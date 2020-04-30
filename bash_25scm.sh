@@ -250,3 +250,9 @@ function git_checkout_deleted {
         git checkout $(git rev-list --max-count=1 HEAD -- "${file}") -- "${file}"
     done
 }
+
+function git_remove_branch_local_and_remote {
+    local branch=$1
+    local remote=${2:-origin}
+    [[ ! -z "${branch}" ]] && git push -d ${remote} ${branch} && git branch -d ${branch}
+}
