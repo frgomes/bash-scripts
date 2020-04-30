@@ -32,7 +32,34 @@ function install_python_install_packages {
 function install_python_LSP_support {
   local v=$(python -V 2>&1 | cut -d' ' -f2 | cut -d. -f1)
   if [ "${v}" == "3" ] ;then
-    for module in pip pylint pyflakes python-language-server[all] cmake-language-server fortran-language-server hdl-checker ;do
+    for module in pip pylint pyflakes python-language-server[all] ;do
+      python${v} -m pip install --upgrade ${module}
+    done
+  fi
+}
+
+function install_python_LSP_optional_cmake {
+  local v=$(python -V 2>&1 | cut -d' ' -f2 | cut -d. -f1)
+  if [ "${v}" == "3" ] ;then
+    for module in pip pylint pyflakes python-language-server[all] cmake-language-server ;do
+      python${v} -m pip install --upgrade ${module}
+    done
+  fi
+}
+
+function install_python_LSP_optional_fortran {
+  local v=$(python -V 2>&1 | cut -d' ' -f2 | cut -d. -f1)
+  if [ "${v}" == "3" ] ;then
+    for module in pip pylint pyflakes python-language-server[all] fortran-language-server ;do
+      python${v} -m pip install --upgrade ${module}
+    done
+  fi
+}
+
+function install_python_LSP_optional_hdl {
+  local v=$(python -V 2>&1 | cut -d' ' -f2 | cut -d. -f1)
+  if [ "${v}" == "3" ] ;then
+    for module in pip pylint pyflakes python-language-server[all] hdl-checker ;do
       python${v} -m pip install --upgrade ${module}
     done
   fi
@@ -40,7 +67,7 @@ function install_python_LSP_support {
 
 function install_python {
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1 | while read cmd ;do
+  grep -E "^function " $self | fgrep -v "function __" | fgrep -v LSP_optional | cut -d' ' -f2 | head -n -1 | while read cmd ;do
     $cmd $*
   done
 }
