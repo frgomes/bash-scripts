@@ -24,6 +24,14 @@ function camelCase {
     sed -E 's/[^ \t]*/\u&/g' | sed -E 's/[ \t]*//g' | sed -E 's/[^ \t]*/\l&/g' $*
 }
 
+function chopLeft {
+    local -i n=${1}
+    local -i n=${n:=0}
+    while read line ;do
+      echo ${line:${n}}
+    done
+}
+
 function chopRight {
     local -i n=${1}
     local -i n=${n:=0}
@@ -35,7 +43,7 @@ function chopRight {
 function mkString {
     local sep=${1}
     local sep=${sep:=,}
-    (tr '\n' "${sep}" && echo "") | chopRight 1
+    paste -sd${sep}
 }
 
  ##
