@@ -7,19 +7,36 @@
 function upper {
     tr [:lower:] [:upper:] $*
 }
+
 function lower {
     tr [:upper:] [:lower:] $*
 }
+
 function trim {
     tr -d [:blank:] $*
 }
+
 function capitalize {
     sed -E 's/[^ \t]*/\u&/g' $*
 }
+
 function camelCase {
     sed -E 's/[^ \t]*/\u&/g' | sed -E 's/[ \t]*//g' | sed -E 's/[^ \t]*/\l&/g' $*
 }
 
+function chopRight {
+    local -i n=${1}
+    local -i n=${n:=0}
+    while read line ;do
+      echo ${line::${#line}-${n}}
+    done
+}
+
+function mkString {
+    local sep=${1}
+    local sep=${sep:=,}
+    (tr '\n' "${sep}" && echo "") | chopRight 1
+}
 
  ##
 ## viewing file differences
