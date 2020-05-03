@@ -6,9 +6,10 @@ Starting from a brand new laptop with only the base operating system installed, 
 
 ### Features in a nutshell
 
-* Useful shell scripts mainly aiming daily mundane tasks, such as finding text on large codebases;
-* Useful post installation scripts, when a sysadmin is configuring a brand new laptop or server;
+* Useful shell scripts aiming daily mundane tasks, such as finding text on large codebases;
+* Useful post installation scripts aiming sysadmins configuring a brand new laptop or server;
 * Useful shell scripts for installing Java, Node, Rust or Scala, among a bunch of other things.
+* Separate history per session but also offers a consolidated ``history+`` for all sessions.
 
 ## For the impatient
 
@@ -98,7 +99,7 @@ case "$(nmcli_connected_wifi)" in
                 ;;
   "CUSTOMER_B") export WORKSPACE=$HOME/Documents/customers/CustomerB/
                 ;;
-  *)            export WORKSPACR=$HOME/workspace
+  *)            export WORKSPACE=$HOME/workspace
                 ;;
 esac
 ```
