@@ -18,6 +18,16 @@ done
 [[ -x ~/.bashrc.scripts.after ]] && source ~/.bashrc.scripts.after
 
 
+##FIXME: this is a temporary hack
+if [[ -d ~/.bashrc-scripts/installed/ ]] ;then
+  for script in $(find ~/.bashrc-scripts/installed/ -type f | sort --reverse) ;do
+    chmod 755 $script
+    echo "activating $script"
+    source $script
+  done
+fi
+
+
 # define prompt
 if [ -x /usr/bin/dircolors ]; then
     export PS1='\[\033[01;31m\][$(date "+%Y-%m-%d %H:%M:%S")]\[\033[00m\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\] \u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
