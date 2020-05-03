@@ -5,8 +5,8 @@ function install_emacs_requirements {
 }
 
 function install_emacs_download {
-    [[ ! -d ~/workspace ]] && mkdir -p ~/workspace
-    pushd ~/workspace
+    [[ ! -d "${WORKSPACE}" ]] && mkdir -p "${WORKSPACE}"
+    pushd "${WORKSPACE}"
 
     if [ ! -d emacs ] ;then
         git clone git://git.savannah.gnu.org/emacs.git
@@ -20,8 +20,8 @@ function install_emacs_download {
 }
 
 function install_emacs_make {
-  if [ -d ~/workspace/emacs ] ;then
-      cd ~/workspace/emacs && \
+  if [ -d "${WORKSPACE}"/emacs ] ;then
+      cd "${WORKSPACE}"/emacs && \
         ./autogen.sh && sudo apt build-dep emacs25 -y && \
           ./configure --prefix=/opt/emacs && \
             make && \

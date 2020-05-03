@@ -5,8 +5,8 @@ function install_zeppelin_binaries {
   local version=${1:-"$ZEPPELIN_VERSION"}
   local version=${version:-"0.8.2"}
 
-  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
-  pushd ~/Downloads
+  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
+  pushd "${DOWNLOADS}"
   [[ ! -f zeppelin-${version}-bin-all.tgz ]] \
     && wget http://www-eu.apache.org/dist/zeppelin/zeppelin-${version}/zeppelin-${version}-bin-all.tgz
   popd
@@ -15,7 +15,7 @@ function install_zeppelin_binaries {
 
   [[ ! -d $tools ]] && mkdir -p $tools
   pushd $tools \
-    && tar -xf ~/Downloads/zeppelin-${version}-bin-all.tgz
+    && tar -xf "${DOWNLOADS}"/zeppelin-${version}-bin-all.tgz
 
   echo $tools/zeppelin-${version}-bin-all
 }

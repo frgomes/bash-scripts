@@ -5,7 +5,7 @@ function install_mxnet_binaries {
     sudo apt update
     sudo apt install -y build-essential git libatlas-base-dev libopencv-dev
 
-    cd $HOME/workspace
+    cd "${WORKSPACE}"
 
     git clone --recursive https://github.com/dmlc/mxnet
     cd mxnet

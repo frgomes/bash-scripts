@@ -14,19 +14,19 @@ function install_dhall_compiler_binaries {
   local symlink=dhall
   
   local tools=${TOOLS_HOME:=$HOME/tools}
-  local Software=${SOFTWARE_HOME:=/mnt/omv/Software}
+  local Software="${SOFTWARE:=/mnt/omv/Software}"
 
-  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
+  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
   [[ ! -d $tools ]] && mkdir -p $tools
 
   local archive=""
   if [[ -f ${Software}/Linux/${file} ]] ;then
     local archive=${Software}/Linux/${file}
-  elif [[ -f ${HOME}/Downloads/${file} ]] ;then
-    local archive=${HOME}/Downloads/${file}
+  elif [[ -f "${DOWNLOADS}"/${file} ]] ;then
+    local archive="${DOWNLOADS}"/${file}
   fi
   if [[ -z ${archive} ]] ;then
-    local archive=${HOME}/Downloads/${file}
+    local archive="${DOWNLOADS}"/${file}
     wget "$url" -O "${archive}"
   fi
 
@@ -46,7 +46,7 @@ function install_dhall_compiler_binaries {
 
 export DHALL_VERSION=${version}
 export DHALL_ARCH=\${DHALL_ARCH:-x86_64-linux}
-export DHALL_HOME=\${TOOL_HOME:=\$HOME/tools}/dhall-v\${DHALL_VERSION}-\${DHALL_ARCH}/bin
+export DHALL_HOME=\${TOOLS_HOME:=\$HOME/tools}/dhall-v\${DHALL_VERSION}-\${DHALL_ARCH}/bin
 
 export PATH=\${DHALL_HOME}:\${PATH}
 EOD
@@ -68,19 +68,19 @@ function install_dhall_lsp_binaries {
   local symlink=dhall
   
   local tools=${TOOLS_HOME:=$HOME/tools}
-  local Software=${SOFTWARE_HOME:=/mnt/omv/Software}
+  local Software="${SOFTWARE:=/mnt/omv/Software}"
 
-  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
+  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
   [[ ! -d $tools ]] && mkdir -p $tools
 
   local archive=""
   if [[ -f ${Software}/Linux/${file} ]] ;then
     local archive=${Software}/Linux/${file}
-  elif [[ -f ${HOME}/Downloads/${file} ]] ;then
-    local archive=${HOME}/Downloads/${file}
+  elif [[ -f "${DOWNLOADS}"/${file} ]] ;then
+    local archive="${DOWNLOADS}"/${file}
   fi
   if [[ -z ${archive} ]] ;then
-    local archive=${HOME}/Downloads/${file}
+    local archive="${DOWNLOADS}"/${file}
     wget "$url" -O "${archive}"
   fi
 
@@ -101,7 +101,7 @@ function install_dhall_lsp_binaries {
 export DHALL_VERSION=${version}
 export DHALL_JSON_VERSION=${vtool}
 export DHALL_ARCH=\${DHALL_ARCH:-x86_64-linux}
-export DHALL_HOME=\${TOOL_HOME:=\$HOME/tools}/dhall-v\${DHALL_VERSION}-\${DHALL_ARCH}/bin
+export DHALL_HOME=\${TOOLS_HOME:=\$HOME/tools}/dhall-v\${DHALL_VERSION}-\${DHALL_ARCH}/bin
 
 export PATH=\${DHALL_HOME}:\${PATH}
 EOD
@@ -123,19 +123,19 @@ function install_dhall_json_binaries {
   local symlink=dhall
   
   local tools=${TOOLS_HOME:=$HOME/tools}
-  local Software=${SOFTWARE_HOME:=/mnt/omv/Software}
+  local Software="${SOFTWARE:=/mnt/omv/Software}"
 
-  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
+  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
   [[ ! -d $tools ]] && mkdir -p $tools
 
   local archive=""
   if [[ -f ${Software}/Linux/${file} ]] ;then
     local archive=${Software}/Linux/${file}
-  elif [[ -f ${HOME}/Downloads/${file} ]] ;then
-    local archive=${HOME}/Downloads/${file}
+  elif [[ -f "${DOWNLOADS}"/${file} ]] ;then
+    local archive="${DOWNLOADS}"/${file}
   fi
   if [[ -z ${archive} ]] ;then
-    local archive=${HOME}/Downloads/${file}
+    local archive="${DOWNLOADS}"/${file}
     wget "$url" -O "${archive}"
   fi
 
@@ -155,7 +155,7 @@ function install_dhall_json_binaries {
 
 export DHALL_VERSION=${version}
 export DHALL_ARCH=\${DHALL_ARCH:-x86_64-linux}
-export DHALL_HOME=\${TOOL_HOME:=\$HOME/tools}/dhall-v\${DHALL_VERSION}-\${DHALL_ARCH}/bin
+export DHALL_HOME=\${TOOLS_HOME:=\$HOME/tools}/dhall-v\${DHALL_VERSION}-\${DHALL_ARCH}/bin
 
 export PATH=\${DHALL_HOME}:\${PATH}
 EOD
@@ -177,19 +177,19 @@ function install_dhall_yaml_binaries {
   local symlink=dhall
   
   local tools=${TOOLS_HOME:=$HOME/tools}
-  local Software=${SOFTWARE_HOME:=/mnt/omv/Software}
+  local Software="${SOFTWARE:=/mnt/omv/Software}"
 
-  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
+  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
   [[ ! -d $tools ]] && mkdir -p $tools
 
   local archive=""
   if [[ -f ${Software}/Linux/${file} ]] ;then
     local archive=${Software}/Linux/${file}
-  elif [[ -f ${HOME}/Downloads/${file} ]] ;then
-    local archive=${HOME}/Downloads/${file}
+  elif [[ -f "${DOWNLOADS}"/${file} ]] ;then
+    local archive="${DOWNLOADS}"/${file}
   fi
   if [[ -z ${archive} ]] ;then
-    local archive=${HOME}/Downloads/${file}
+    local archive="${DOWNLOADS}"/${file}
     wget "$url" -O "${archive}"
   fi
 
@@ -209,7 +209,7 @@ function install_dhall_yaml_binaries {
 
 export DHALL_VERSION=${version}
 export DHALL_ARCH=\${DHALL_ARCH:-x86_64-linux}
-export DHALL_HOME=\${TOOL_HOME:=\$HOME/tools}/dhall-v\${DHALL_VERSION}-\${DHALL_ARCH}/bin
+export DHALL_HOME=\${TOOLS_HOME:=\$HOME/tools}/dhall-v\${DHALL_VERSION}-\${DHALL_ARCH}/bin
 
 export PATH=\${DHALL_HOME}:\${PATH}
 EOD
@@ -231,19 +231,19 @@ function install_dhall_bash_binaries {
   local symlink=dhall
   
   local tools=${TOOLS_HOME:=$HOME/tools}
-  local Software=${SOFTWARE_HOME:=/mnt/omv/Software}
+  local Software="${SOFTWARE:=/mnt/omv/Software}"
 
-  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
+  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
   [[ ! -d $tools ]] && mkdir -p $tools
 
   local archive=""
   if [[ -f ${Software}/Linux/${file} ]] ;then
     local archive=${Software}/Linux/${file}
-  elif [[ -f ${HOME}/Downloads/${file} ]] ;then
-    local archive=${HOME}/Downloads/${file}
+  elif [[ -f "${DOWNLOADS}"/${file} ]] ;then
+    local archive="${DOWNLOADS}"/${file}
   fi
   if [[ -z ${archive} ]] ;then
-    local archive=${HOME}/Downloads/${file}
+    local archive="${DOWNLOADS}"/${file}
     wget "$url" -O "${archive}"
   fi
 
@@ -263,7 +263,7 @@ function install_dhall_bash_binaries {
 
 export DHALL_VERSION=${version}
 export DHALL_ARCH=\${DHALL_ARCH:-x86_64-linux}
-export DHALL_HOME=\${TOOL_HOME:=\$HOME/tools}/dhall-v\${DHALL_VERSION}-\${DHALL_ARCH}/bin
+export DHALL_HOME=\${TOOLS_HOME:=\$HOME/tools}/dhall-v\${DHALL_VERSION}-\${DHALL_ARCH}/bin
 
 export PATH=\${DHALL_HOME}:\${PATH}
 EOD
@@ -285,19 +285,19 @@ function install_dhall_nix_binaries {
   local symlink=dhall
   
   local tools=${TOOLS_HOME:=$HOME/tools}
-  local Software=${SOFTWARE_HOME:=/mnt/omv/Software}
+  local Software="${SOFTWARE:=/mnt/omv/Software}"
 
-  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
+  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
   [[ ! -d $tools ]] && mkdir -p $tools
 
   local archive=""
   if [[ -f ${Software}/Linux/${file} ]] ;then
     local archive=${Software}/Linux/${file}
-  elif [[ -f ${HOME}/Downloads/${file} ]] ;then
-    local archive=${HOME}/Downloads/${file}
+  elif [[ -f "${DOWNLOADS}"/${file} ]] ;then
+    local archive="${DOWNLOADS}"/${file}
   fi
   if [[ -z ${archive} ]] ;then
-    local archive=${HOME}/Downloads/${file}
+    local archive="${DOWNLOADS}"/${file}
     wget "$url" -O "${archive}"
   fi
 
@@ -317,7 +317,7 @@ function install_dhall_nix_binaries {
 
 export DHALL_VERSION=${version}
 export DHALL_ARCH=\${DHALL_ARCH:-x86_64-linux}
-export DHALL_HOME=\${TOOL_HOME:=\$HOME/tools}/dhall-v\${DHALL_VERSION}-\${DHALL_ARCH}/bin
+export DHALL_HOME=\${TOOLS_HOME:=\$HOME/tools}/dhall-v\${DHALL_VERSION}-\${DHALL_ARCH}/bin
 
 export PATH=\${DHALL_HOME}:\${PATH}
 EOD

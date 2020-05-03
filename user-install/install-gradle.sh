@@ -7,8 +7,8 @@ function install_gradle_binaries {
 
   local major=$( echo ${version} | cut -d. -f 1-2 )
 
-  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
-  pushd ~/Downloads > /dev/null
+  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
+  pushd "${DOWNLOADS}" > /dev/null
   [[ ! -f gradle-${version}-bin.zip ]] && wget https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip
   popd > /dev/null
 
@@ -18,7 +18,7 @@ function install_gradle_binaries {
   
   if [ ! -d ${tools}/gradle-${version} ] ;then
     pushd ${tools} > /dev/null
-    unzip ~/Downloads/gradle-${version}-bin.zip
+    unzip "${DOWNLOADS}"/gradle-${version}-bin.zip
     popd > /dev/null
   fi
 

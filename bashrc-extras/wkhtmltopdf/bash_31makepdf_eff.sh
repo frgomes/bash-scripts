@@ -20,7 +20,7 @@ function makepdf_eff {
   domain=atnos-org.github.io
   path=eff
 
-  local out="$HOME/Downloads/${path}.pdf"
+  local out=""${DOWNLOADS}"/${path}.pdf"
 
   httrack_fetch "$HOME/websites" "$domain" "$path" "http://$domain/$path"
 

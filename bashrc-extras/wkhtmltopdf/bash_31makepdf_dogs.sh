@@ -22,7 +22,7 @@ function makepdf_dogs {
   domain=stew.github.io
   path=dogs
 
-  local out="$HOME/Downloads/${path}.pdf"
+  local out=""${DOWNLOADS}"/${path}.pdf"
 
   httrack_fetch "$HOME/websites" "$domain" "$path" "http://$domain/$path"
 

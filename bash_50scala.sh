@@ -44,7 +44,7 @@ function sbt_online {
 }
 
 function scalanative_build {
-  pushd $HOME/workspace/scala-native
+  pushd "${WORKSPACE}"/scala-native
   java -version
   git clone https://github.com/scala-native/sbt-cross.git
   pushd sbt-cross

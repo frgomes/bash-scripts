@@ -77,8 +77,8 @@ function postinstall_user_git_config {
 }
 
 function postinstall_user_download_bash_scripts {
-  [[ ! -d $HOME/workspace ]] && mkdir -p $HOME/workspace
-  pushd $HOME/workspace
+  [[ ! -d "${WORKSPACE}" ]] && mkdir -p "${WORKSPACE}"
+  pushd "${WORKSPACE}"
   if [ ! -d bash-scripts ] ;then
     git clone http://github.com/frgomes/bash-scripts
   else
@@ -89,8 +89,8 @@ function postinstall_user_download_bash_scripts {
 }
 
 function postinstall_user_download_carpalx {
-  [[ ! -d $HOME/workspace ]] && mkdir -p $HOME/workspace
-  pushd $HOME/workspace
+  [[ ! -d "${WORKSPACE}" ]] && mkdir -p "${WORKSPACE}"
+  pushd "${WORKSPACE}"
   if [ ! -d carpalx ] ;then
     git clone http://github.com/frgomes/carpalx
   else
@@ -121,15 +121,15 @@ function postinstall_user_download_dot_emacs_dot_d {
 }
 
 function postinstall_user_firefox {
-  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
+  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
   local app=firefox
   local lang=$(echo $LANG | cut -d. -f1 | sed "s/_/-/")
   local hwarch=$(uname -m)
   local osarch=$(uname -s | tr [:upper:] [:lower:])
   local version=71.0
 
-  if [ ! -e ~/Downloads/${app}-${version}.tar.bz2 ] ;then
-    pushd ~/Downloads 2>&1 > /dev/null
+  if [ ! -e "${DOWNLOADS}"/${app}-${version}.tar.bz2 ] ;then
+    pushd "${DOWNLOADS}" 2>&1 > /dev/null
     wget https://ftp.mozilla.org/pub/${app}/releases/${version}/${osarch}-${hwarch}/${lang}/${app}-${version}.tar.bz2
     popd 2>&1 > /dev/null
   fi
@@ -138,7 +138,7 @@ function postinstall_user_firefox {
   [[ ! -d ${tools}        ]] && mkdir -p ${tools}
 
   pushd ${tools} 2>&1 > /dev/null
-  tar xpf ~/Downloads/${app}-${version}.tar.bz2
+  tar xpf "${DOWNLOADS}"/${app}-${version}.tar.bz2
   popd 2>&1 > /dev/null
 
   [[ ! -d ~/bin ]] && mkdir -p ~/bin
@@ -147,14 +147,14 @@ function postinstall_user_firefox {
 }
 
 function postinstall_user_thunderbird {
-  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
+  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
   local app=thunderbird
   local lang=$(echo $LANG | cut -d. -f1 | sed "s/_/-/")
   local hwarch=$(uname -m)
   local osarch=$(uname -s | tr [:upper:] [:lower:])
   local version=68.3.1
-  if [ ! -e ~/Downloads/${app}-${version}.tar.bz2 ] ;then
-    pushd ~/Downloads 2>&1 > /dev/null
+  if [ ! -e "${DOWNLOADS}"/${app}-${version}.tar.bz2 ] ;then
+    pushd "${DOWNLOADS}" 2>&1 > /dev/null
     wget https://ftp.mozilla.org/pub/${app}/releases/${version}/${osarch}-${hwarch}/${lang}/${app}-${version}.tar.bz2
     popd 2>&1 > /dev/null
   fi
@@ -163,7 +163,7 @@ function postinstall_user_thunderbird {
   [[ ! -d ${tools}        ]] && mkdir -p ${tools}
 
   pushd ${tools} 2>&1 > /dev/null
-  tar xpf ~/Downloads/${app}-${version}.tar.bz2
+  tar xpf "${DOWNLOADS}"/${app}-${version}.tar.bz2
   popd 2>&1 > /dev/null
 
   [[ ! -d ~/bin ]] && mkdir -p ~/bin

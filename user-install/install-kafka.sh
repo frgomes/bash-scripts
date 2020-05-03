@@ -11,8 +11,8 @@ function install_kafka_binaries {
   local product=kafka_${scala}-${version}
   local archive=${product}.tgz
 
-  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
-  pushd ~/Downloads > /dev/null
+  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
+  pushd "${DOWNLOADS}" > /dev/null
   [[ ! -f ${archive} ]] && wget http://www.mirrorservice.org/sites/ftp.apache.org/kafka/${version}/${archive}
 
   popd > /dev/null
@@ -23,7 +23,7 @@ function install_kafka_binaries {
   if [ ! -d ${tools}/${product} ] ;then
     pushd ${tools} > /dev/null
     [[ -e sbt ]] && rm -r -f sbt
-    tar -xf ~/Downloads/${archive}
+    tar -xf "${DOWNLOADS}"/${archive}
     popd > /dev/null
   fi
 

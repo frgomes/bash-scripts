@@ -5,7 +5,7 @@
 
 function install_python_pip {
   if [[ ! -z $(which python) ]] ;then
-    if [[ -z $(which pip) ]] ;then
+    if [[ ! -e "${HOME}/.local/bin/pip" ]] ;then
       [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
       [[ ! -f "${DOWNLOADS}/get-pip.py" ]] && wget https://bootstrap.pypa.io/get-pip.py -O "${DOWNLOADS}/get-pip.py"
    
@@ -25,11 +25,10 @@ function install_python_virtualenv {
     fi
   fi
    
+  [[ -e "${HOME}/.local/bin/virtualenvwrapper.sh" ]] && source "${HOME}/.local/bin/virtualenvwrapper.sh"
   if [ -d "${HOME}/.local/bin" ] ;then
     [[ ! $(echo ${PATH} | tr ':' '\n' | fgrep "${HOME}/.local/bin") ]] && export PATH="${HOME}/.local/bin":"${PATH}"
   fi
-   
-  [[ -e "$(which virtualenvwrapper.sh)" ]] && source "$(which virtualenvwrapper.sh)"
 }
 
 function install_python_install_packages {

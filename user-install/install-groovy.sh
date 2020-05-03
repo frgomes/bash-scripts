@@ -7,8 +7,8 @@ function install_groovy_binaries {
 
   local major=$( echo ${version} | cut -d. -f 1-2 )
 
-  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
-  pushd ~/Downloads > /dev/null
+  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
+  pushd "${DOWNLOADS}" > /dev/null
   [[ ! -f apache-groovy-sdk-${version}.zip ]] && wget https://dl.bintray.com/groovy/maven/apache-groovy-sdk-${version}.zip
   popd > /dev/null
 
@@ -18,7 +18,7 @@ function install_groovy_binaries {
   
   if [ ! -d ${tools}/groovy-${version} ] ;then
     pushd ${tools} > /dev/null
-    unzip ~/Downloads/apache-groovy-sdk-${version}.zip
+    unzip "${DOWNLOADS}"/apache-groovy-sdk-${version}.zip
     popd > /dev/null
   fi
 

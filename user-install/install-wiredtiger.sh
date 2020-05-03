@@ -8,8 +8,8 @@ function install_wiredtiger_requirements {
 
 
 function install_wiredtiger_binaries {
-  [[ ! -d ~/workspace ]] && mkdir -p ~/workspace
-  pushd ~/workspace
+  [[ ! -d "${WORKSPACE}" ]] && mkdir -p "${WORKSPACE}"
+  pushd "${WORKSPACE}"
 
   if [ ! -d wiredtiger ] ;then
     git clone git://github.com/wiredtiger/wiredtiger.git
@@ -21,7 +21,7 @@ function install_wiredtiger_binaries {
   local tools=${TOOLS_HOME:=$HOME/tools}
   [[ ! -d ${tools} ]] && mkdir -p ${tools}
 
-  cd ~/workspace/wiredtiger
+  cd "${WORKSPACE}"/wiredtiger
   ./autogen.sh
   ./configure --enable-java --prefix=${tools}/wiredtiger
 

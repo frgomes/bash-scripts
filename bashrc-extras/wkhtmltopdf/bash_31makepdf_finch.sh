@@ -16,7 +16,7 @@ function makepdf_finch {
   domain=finagle.github.io
   path=finch
 
-  local out="$HOME/Downloads/${path}.pdf"
+  local out=""${DOWNLOADS}"/${path}.pdf"
 
   httrack_fetch "$HOME/websites" "$domain" "$path" "http://$domain/$path"
 

@@ -27,7 +27,7 @@ function install_karaf_binaries {
 
   pushd $tools
   if [ ! -d apache-karaf-${KARAF_VERSION} ] ;then
-    tar xpf $HOME/Downloads/apache-karaf-${KARAF_VERSION}.tar.gz
+    tar xpf "${DOWNLOADS}"/apache-karaf-${KARAF_VERSION}.tar.gz
   fi
   popd
 }

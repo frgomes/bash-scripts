@@ -6,8 +6,8 @@ function install_displaz_requirements {
 }
 
 function install_displaz_download {
-    [[ ! -d ~/workspace ]] && mkdir -p ~/workspace
-    pushd ~/workspace
+    [[ ! -d "${WORKSPACE}" ]] && mkdir -p "${WORKSPACE}"
+    pushd "${WORKSPACE}"
 
     if [ ! -d displaz ] ;then
         git clone https://github.com/c42f/displaz.git
@@ -20,8 +20,8 @@ function install_displaz_download {
 }
 
 function install_displaz_make {
-  if [ -d ~/workspace/displaz ] ;then
-      cd ~/workspace/displaz && \
+  if [ -d "${WORKSPACE}"/displaz ] ;then
+      cd "${WORKSPACE}"/displaz && \
         if [ ! -d build_external ] ;then mkdir build_external ;fi && \
           cd build_external && \
             cmake ../thirdparty/external && \

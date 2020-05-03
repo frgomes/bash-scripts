@@ -23,7 +23,7 @@ function makepdf_frameless {
   local domain=olivierblanvillain.github.io
   local path=frameless
 
-  local out="$HOME/Downloads/${path}.pdf"
+  local out=""${DOWNLOADS}"/${path}.pdf"
 
   httrack_fetch "$HOME/websites" "$domain" "$path" "http://$domain/$path"
 

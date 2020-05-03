@@ -1,9 +1,13 @@
 #!/bin/bash
 
-export WORKON_HOME=${WORKON_HOME:=${HOME}/.virtualenvs}
-export WORKSPACE=${WORKSPACE:=${HOME}/workspace}
-export DOWNLOADS=${DOWNLOADS:=${HOME}/Downloads}
-export TOOLS_HOME=${TOOLS_HOME:=$HOME/tools}
+export DOWNLOADS="${DOWNLOADS:=${HOME}/Downloads}"
+export DOCUMENTS="${DOCUMENTS:=${HOME}/Documents}"
+export MEDIA="${MEDIA:=${HOME}/Media}"
+
+export SOFTWARE="/mnt/omv/Software"
+export WORKSPACE="${WORKSPACE:=${HOME}/workspace}"
+export WORKON_HOME="${WORKON_HOME:=${HOME}/.virtualenvs}"
+export TOOLS_HOME="${TOOLS_HOME:=$HOME/tools}"
 
 source /etc/os-release
 case "$ID" in

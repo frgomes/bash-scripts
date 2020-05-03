@@ -14,7 +14,7 @@ function makepdf_fetch {
   domain=47deg.github.io
   path=fetch
 
-  local out="$HOME/Downloads/${path}.pdf"
+  local out=""${DOWNLOADS}"/${path}.pdf"
 
   httrack_fetch "$HOME/websites" "$domain" "$path" httrack "http://$domain/$path"
 

@@ -26,7 +26,7 @@ function install_glassfish_binaries {
   pushd $tools
 
   _info Intalling GlassFish...
-  unzip ~/Downloads/glassfish-${GLASSFISH_VERSION}.zip
+  unzip "${DOWNLOADS}"/glassfish-${GLASSFISH_VERSION}.zip
 
   popd
 }

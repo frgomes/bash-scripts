@@ -5,8 +5,8 @@ function install_ant_binaries {
   local version=${1:-"$ANT_VERSION"}
   local version=${version:-"1.9.14"}
 
-  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
-  pushd ~/Downloads
+  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
+  pushd "${DOWNLOADS}"
   [[ ! -f apache-ant-${version}-bin.tar.gz ]] \
     && wget https://www-eu.apache.org/dist/ant/binaries/apache-ant-${version}-bin.tar.gz
   popd
@@ -15,7 +15,7 @@ function install_ant_binaries {
 
   [[ ! -d $tools ]] && mkdir -p $tools
   pushd $tools \
-    && tar -xf ~/Downloads/apache-ant-${version}-bin.tar.gz
+    && tar -xf "${DOWNLOADS}"/apache-ant-${version}-bin.tar.gz
 
   [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed
   cat << EOD > ~/.bashrc-scripts/installed/331-ant.sh
