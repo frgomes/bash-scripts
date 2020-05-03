@@ -8,6 +8,11 @@ Host github.com
     PreferredAuthentications publickey
     IdentityFile ~/.ssh/id_rsa_github_%l
 
+Host gitlab.com
+    HostName gitlab.com
+    PreferredAuthentications publickey
+    IdentityFile ~/.ssh/id_rsa_gitlab_%l
+
 Host bitbucket.org
     HostName bitbucket.org
     PreferredAuthentications publickey
@@ -36,20 +41,26 @@ cat <<EOD
   pre-merge = merge --no-commit --no-ff
 
 [diff]
-  tool = "intellij"
+  tool = "diffuse"
 
 [difftool "intellij"]
-  cmd = $HOME/tools/idea/bin/idea.sh diff \"$LOCAL\" \"$REMOTE\"               
+  cmd = "\${HOME}"/tools/idea/bin/idea.sh diff "\$LOCAL" "\$REMOTE"
+
+[difftool "diffuse"]
+  cmd = diffuse "\$LOCAL" "\$REMOTE"
 
 [merge]
-  tool = "intellij"
+  tool = "diffuse"
   conflictstyle = diff3
 
 [mergetool]
   prompt = false
 
 [mergetool "intellij"]
-  cmd = $HOME/tools/idea/bin/idea.sh merge \"$LOCAL\" \"$BASE\" \"$REMOTE\" \"$MERGED\"  
+  cmd = "\${HOME}"/tools/idea/bin/idea.sh merge "\$LOCAL" "\$BASE" "\$REMOTE" "\$MERGED"  
+
+[mergetool "diffuse"]
+  cmd = diffuse "\$LOCAL" "\$BASE" "\$REMOTE" "\$MERGED"  
 
 [push]
   default = simple
@@ -107,21 +118,6 @@ function postinstall_user_download_dot_emacs_dot_d {
     __postinstall_user_download_dot_emacs_dot_d
   fi
   popd
-}
-
-
-function postinstall_user_virtualenvs {
-  source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
-  local self=$(readlink -f "${BASH_SOURCE[0]}")
-  local dir=$(dirname $self)
-  source ${dir}/bash_04virtualenv.sh
-  virtualenv_make_virtualenvs
-
-  ##FIXME: virtualenv_make_virtualenvs should do the logic below
-  for path in ${dir}/bashrc-virtualenvs/* ;do
-    local name=$(basename $path)
-    cp -p ${dir}/bashrc-virtualenvs/${name}/bin/postactivate ~/.virtualenvs/${name}/bin/postactivate
-  done
 }
 
 function postinstall_user_firefox {

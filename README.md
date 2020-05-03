@@ -1,14 +1,14 @@
-These are several shell scripts containing aliases, useful functions and tricks aiming to deliver increased productivity.
+These are several shell scripts for Debian and derivatives which contain aliases, useful functions and tricks aiming to deliver increased productivity.
 
-Shell scripts are definitely tested in Debian. Support CentOS is done on a best effort basis.
+### Design Concept
 
+Starting from a brand new laptop with only the base operating system installed, I would like to be able to quickly have my environment setup. I would like to download a shell script from the Internet which sets up everything for me. Then I open a new terminal window, all remaining bits and pieces are automagically configured and I'm ready to go. The entire thing should not take more than a minute or two.
 
 ### Features in a nutshell
 
 * Useful shell scripts mainly aiming daily mundane tasks, such as finding text on large codebases;
 * Useful post installation scripts, when a sysadmin is configuring a brand new laptop or server;
-* Useful installation scripts, when a regular user is installing Java, Node, Rust or Scala, among a bunch of other things.
-
+* Useful shell scripts for installing Java, Node, Rust or Scala, among a bunch of other things.
 
 ## For the impatient
 
@@ -17,6 +17,7 @@ Shell scripts are definitely tested in Debian. Support CentOS is done on a best 
 ```bash
 $ wget https://raw.githubusercontent.com/frgomes/bash-scripts/master/postinstall-sysadmin.sh -O - | bash
 ```
+
 ### Post-installation scripts for regular users
 ```bash
 $ wget https://raw.githubusercontent.com/frgomes/bash-scripts/master/postinstall-user.sh -O - | bash
@@ -45,16 +46,25 @@ The [documentation on Python PIP installation](https://pip.pypa.io/en/stable/ins
 
 > The best practice is keeping system packages at a minimum and installing all tools at system level. This allows multiple users keep multiple dependencies trees separate, allows a single user keep multiple environments separated and also reduces the exposed [security attack surface](https://en.wikipedia.org/wiki/Attack_surface) of your system.
 
-So, if you are using Python or if you are using virtual environments, please consider uninstalling system packages which are known to cause difficulties to [Python PIP](https://pip.pypa.io) and [Python virtualenv](https://virtualenv.pypa.io). For your convenience, the commands below are known to work on Debian:
+So, if you are using Python or if you are using [virtual environments](https://realpython.com/python-virtual-environments-a-primer/), please consider uninstalling system packages which are known to cause difficulties to [Python PIP](https://pip.pypa.io) and [Python virtualenv](https://virtualenv.pypa.io). For your convenience, the commands below are known to work on Debian:
 
 ```bash
-sudo apt remove --purge python-pip python3-pip python-pip-whl python-stevedore virtualenv virtualenv-clone virtualenvwrapper python-virtualenv python-virtualenv-clone python3-virtualenv -y
+#!/bin/bash
+sudo apt remove --purge python-pip python3-pip python-pip-whl python-stevedore virtualenv virtualenv-clone virtualenvwrapper python-virtualenv python-virtualenv-clone python3-virtualenv python2-dev python3-dev -V -s
+```
+
+AFTER YOU REVIEW the output of the previous command and you are aware of the consequences of uninstalling these packages and you are sure that you are not going to render your computer unusable, then you can proceed like this:
+
+```bash
+#!/bin/bash
+sudo apt remove --purge python-pip python3-pip python-pip-whl python-stevedore virtualenv virtualenv-clone virtualenvwrapper python-virtualenv python-virtualenv-clone python3-virtualenv python2-dev python3-dev -y
 sudo apt autoremove --purge -y
 sudo rm /usr/local/bin/pip{,2,3}
 rm $HOME/.local/bin/pip{,2,3}
 ```
 
-> Note: despite the commands above remove packages ``virtualenv`` and ``virtualenvwrapper``, we offer a replacement for function ``workon``. So, even though you are removing these packages from your system, you will still be able to use ``workon`` as usual.
+> Note: despite the commands above remove packages ``virtualenv`` and ``virtualenvwrapper``, we install them again but this time, we install under your user, not at system level.
+
 
 ## Additional tricks
 
@@ -69,7 +79,7 @@ You can also adjust keyboard configurations and other preferences after all scri
 Simply create a file named ``$HOME/.bashrc.scripts.before`` and it will be executed before
 [these] scripts [provided by this package] run.
 
-This is an example which may be useful if you visit several clients:
+This is an example which may be useful if you visit several customers:
 
 ```bash
 #!/bin/bash
@@ -118,7 +128,4 @@ elif [[ $( lsusb | fgrep feed:6060 ) ]] ;then
 else
   carpalx_hyena_gb
 fi
-
-# see: https://github.com/frgomes/bash-scripts/blob/master/bashrc-virtualenvs/p3j8s12/bin/postactivate
-workon p3j8s12
 ```
