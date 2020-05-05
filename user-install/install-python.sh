@@ -1,29 +1,38 @@
 #!/bin/bash
 
+## A minimal Python installation should be available in your distribution in general.
+## However, we simply skip this entire business in case Python is missing.
+
 function install_python_pip {
-  mkdir -p ~/Downloads
-  if [ ! -f ~/Downloads/get-pip.py ] ;then
-    wget https://bootstrap.pypa.io/get-pip.py -O ~/Downloads/get-pip.py
+  if [[ ! -z $(which python) ]] ;then
+    if [[ ! -e "${HOME}/.local/bin/pip" ]] ;then
+      [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
+      [[ ! -f "${DOWNLOADS}/get-pip.py" ]] && wget https://bootstrap.pypa.io/get-pip.py -O "${DOWNLOADS}/get-pip.py"
+   
+      local -i v=$(python -V 2>&1 | cut -d' ' -f2 | cut -d. -f1)
+      if [ -e $(which python${v}) ] ;then
+        python${v} "${DOWNLOADS}/get-pip.py" --user
+      fi
+    fi
   fi
-  ##XXX local v=$(python -V 2>&1 | cut -d' ' -f2 | cut -d. -f1)
-  for v in 2 3 ;do
-  if [ -z $(which pip${v}) ] ;then
-    python${v} ~/Downloads/get-pip.py --user
-    python${v} -m pip install --user --upgrade pip
-    python${v} -m pip install --user --upgrade virtualenv
-  fi
-  done
 }
 
 function install_python_virtualenv {
-  if [ -z $(which virtualenv) ] ;then
-    local v=$(python -V 2>&1 | cut -d' ' -f2 | cut -d. -f1)
-    python${v} -m pip install --upgrade virtualenv
+  if [[ ! -z $(which python) ]] ;then
+    local -i v=$(python -V 2>&1 | cut -d' ' -f2 | cut -d. -f1)
+    if [ -e $(which python${v}) ] ;then
+      python${v} -m pip install --quiet --user --upgrade pip virtualenv virtualenvwrapper
+    fi
+  fi
+   
+  [[ -e "${HOME}/.local/bin/virtualenvwrapper.sh" ]] && source "${HOME}/.local/bin/virtualenvwrapper.sh"
+  if [ -d "${HOME}/.local/bin" ] ;then
+    [[ ! $(echo ${PATH} | tr ':' '\n' | fgrep "${HOME}/.local/bin") ]] && export PATH="${HOME}/.local/bin":"${PATH}"
   fi
 }
 
 function install_python_install_packages {
-  local v=$(python -V 2>&1 | cut -d' ' -f2 | cut -d. -f1)
+  local -i v=$(python -V 2>&1 | cut -d' ' -f2 | cut -d. -f1)
   for module in mercurial oyaml ;do
     python${v} -m pip install --upgrade ${module}
   done
@@ -32,7 +41,7 @@ function install_python_install_packages {
 function install_python_LSP_support {
   local v=$(python -V 2>&1 | cut -d' ' -f2 | cut -d. -f1)
   if [ "${v}" == "3" ] ;then
-    for module in pip pylint pyflakes python-language-server[all] ;do
+    for module in pylint pyflakes python-language-server[all] ;do
       python${v} -m pip install --upgrade ${module}
     done
   fi

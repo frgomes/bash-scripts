@@ -2,8 +2,8 @@
 
 function swagger_editor {
   docker pull swaggerapi/swagger-editor
-  docker run -d -p ${PORT_SWAGGER}:8080 swaggerapi/swagger-editor
-  chromium http://localhost:${PORT_SWAGGER}/ &
+  docker run -d -p ${PORT_SWAGGER:=8811}:8080 swaggerapi/swagger-editor
+  chromium http://localhost:${PORT_SWAGGER:=8811}/ &
 }
 
 
@@ -11,10 +11,10 @@ function swagger_cli_download {
   local v=3.1.0
   local name=swagger-codegen-cli-3.0.0-20180630.155857-85.jar
   local url=http://central.maven.org/maven2/org/openapitools/openapi-generator-cli/${v}/openapi-generator-cli-${v}.jar
-  local file=~/Downloads/$name
+  local file="${DOWNLOADS}"/$name
   if [ ! -f $file ] ;then
-    mkdir -p ~/Downloads > /dev/null
-    pushd ~/Downloads > /dev/null
+    mkdir -p "${DOWNLOADS}" > /dev/null
+    pushd "${DOWNLOADS}" > /dev/null
     wget -qq $url
     popd > /dev/null
   fi

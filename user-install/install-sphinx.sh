@@ -4,12 +4,12 @@
 # see: https://downloads.lightbend.com/paradox/akka-docs-new/20170510-wip/scala/dev/documentation.html
 
 function install_sphinx_pip {
-  mkdir -p ~/Downloads
-  pushd ~/Downloads
+  mkdir -p "${DOWNLOADS}"
+  pushd "${DOWNLOADS}"
   if [ ! -f get-pip.py ] ;then
     wget https://bootstrap.pypa.io/get-pip.py
   fi
-  python3 ~/Downloads/get-pip.py
+  python3 "${DOWNLOADS}"/get-pip.py
   popd
   python3 -m pip install --user --upgrade pip
 }

@@ -45,8 +45,8 @@ function install_hyperledger_iroha {
     local volume=$(docker volume ls -f "name=blockstore" -q)
     [[ -z "${volume}" ]] && docker volume create blockstore
 
-    mkdir -p ~/workspace
-    pushd ~/workspace
+    mkdir -p "${WORKSPACE}"
+    pushd "${WORKSPACE}"
     if [ ! -d iroha ] ;then
         git clone https://github.com/hyperledger/iroha
         cd iroha
@@ -59,7 +59,7 @@ function install_hyperledger_iroha {
     docker run -it \
            --name iroha \
            -p 50051:50051 \
-           -v ~/workspace/iroha/example:/opt/iroha_data \
+           -v "${WORKSPACE}"/iroha/example:/opt/iroha_data \
            -v blockstore:/tmp/block_store \
            --network=iroha-network \
            --entrypoint=/bin/bash \

@@ -14,7 +14,7 @@ function install_remarkable_binaries {
 
   _info Installing Remarkable
 
-  sudo dpkg -i $HOME/Downloads/remarkable_${REMARKABLE_VERSION}.deb
+  sudo dpkg -i "${DOWNLOADS}"/remarkable_${REMARKABLE_VERSION}.deb
   sudo apt install -y -f
 }
 

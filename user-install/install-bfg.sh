@@ -1,10 +1,10 @@
 #!/bin/bash
 
 function install_bfg_download {
-  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
-  pushd ~/Downloads > /dev/null
+  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
+  pushd "${DOWNLOADS}" > /dev/null
   [[ ! -f bfg-1.12.16.jar ]] \
-    && wget -O ~/Downloads/bfg-1.12.16.jar http://repo1.maven.org/maven2/com/madgag/bfg/1.12.16/bfg-1.12.16.jar
+    && wget -O "${DOWNLOADS}"/bfg-1.12.16.jar http://repo1.maven.org/maven2/com/madgag/bfg/1.12.16/bfg-1.12.16.jar
   popd > /dev/null
 }
 
@@ -17,9 +17,9 @@ EOD
 }
 
 function install_bfg_binaries {
-  if [ -f ~/Downloads/bfg-1.12.16.jar ] ;then
+  if [ -f "${DOWNLOADS}"/bfg-1.12.16.jar ] ;then
     [[ ! -d /opt/lib ]] && sudo mkdir -p /opt/lib
-    sudo cp ~/Downloads/bfg-1.12.16.jar /opt/lib
+    sudo cp "${DOWNLOADS}"/bfg-1.12.16.jar /opt/lib
   fi
   if [ ! -f /opt/bin/bfg ] ;then
     [[ ! -d /opt/bin ]] && sudo mkdir -p /opt/bin

@@ -22,19 +22,19 @@ function install_dcp9020cdw_packages {
   download http://download.brother.com/welcome/dlf006652/brscan-skey-0.2.4-1.amd64.deb
   download http://download.brother.com/welcome/dlf006654/brother-udev-rule-type1-1.0.2-0.all.deb
 
-  if [ -f $HOME/Downloads/dcp9020cdwlpr-1.1.2-1.i386.deb -a \
-       -f $HOME/Downloads/dcp9020cdwcupswrapper-1.1.4-0.i386.deb -a \
-       -f $HOME/Downloads/brscan4-0.4.4-4.amd64.deb -a \
-       -f $HOME/Downloads/brscan-skey-0.2.4-1.amd64.deb -a \
-       -f $HOME/Downloads/brother-udev-rule-type1-1.0.2-0.all.deb ] ;then \
+  if [ -f "${DOWNLOADS}"/dcp9020cdwlpr-1.1.2-1.i386.deb -a \
+       -f "${DOWNLOADS}"/dcp9020cdwcupswrapper-1.1.4-0.i386.deb -a \
+       -f "${DOWNLOADS}"/brscan4-0.4.4-4.amd64.deb -a \
+       -f "${DOWNLOADS}"/brscan-skey-0.2.4-1.amd64.deb -a \
+       -f "${DOWNLOADS}"/brother-udev-rule-type1-1.0.2-0.all.deb ] ;then \
     [[ ! -d /var/spool/lpd/dcp9020cdw ]] && sudo mkdir -p /var/spool/lpd/dcp9020cdw
     sudo apt install libkf5kdelibs4support5-bin libnotify-bin kio-extras nomacs skanlite sane-utils psutils gscan2pdf -y \
     && sudo dpkg --install --force-all \
-          $HOME/Downloads/dcp9020cdwlpr-1.1.2-1.i386.deb \
-          $HOME/Downloads/dcp9020cdwcupswrapper-1.1.4-0.i386.deb \
-          $HOME/Downloads/brscan4-0.4.4-4.amd64.deb \
-          $HOME/Downloads/brscan-skey-0.2.4-1.amd64.deb \
-          $HOME/Downloads/brother-udev-rule-type1-1.0.2-0.all.deb \
+          "${DOWNLOADS}"/dcp9020cdwlpr-1.1.2-1.i386.deb \
+          "${DOWNLOADS}"/dcp9020cdwcupswrapper-1.1.4-0.i386.deb \
+          "${DOWNLOADS}"/brscan4-0.4.4-4.amd64.deb \
+          "${DOWNLOADS}"/brscan-skey-0.2.4-1.amd64.deb \
+          "${DOWNLOADS}"/brother-udev-rule-type1-1.0.2-0.all.deb \
     && sudo apt install -y -f
   else
     echo ERROR: Could not download installation packages

@@ -5,15 +5,15 @@ function install_nifi_binaries {
   local version=${1:-"$NIFI_VERSION"}
   local version=${version:-"1.7.1"}
 
-  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
-  [[ ! -f ~/Downloads/nifi-${version}-bin.tar.gz ]] && \
-    wget http://www.mirrorservice.org/sites/ftp.apache.org/nifi/${version}/nifi-${version}-bin.tar.gz -O ~/Downloads/nifi-${version}-bin.tar.gz
+  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
+  [[ ! -f "${DOWNLOADS}"/nifi-${version}-bin.tar.gz ]] && \
+    wget http://www.mirrorservice.org/sites/ftp.apache.org/nifi/${version}/nifi-${version}-bin.tar.gz -O "${DOWNLOADS}"/nifi-${version}-bin.tar.gz
   
   local tools=${TOOLS_HOME:=$HOME/tools}
 
   [[ ! -d ${tools} ]] && mkdir -p $tools
   [[ ! -d ${tools}/nifi-${version} ]] 
-  tar -C ${tools} -xf ~/Downloads/nifi-${version}-bin.tar.gz
+  tar -C ${tools} -xf "${DOWNLOADS}"/nifi-${version}-bin.tar.gz
 
   [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed
   cat << EOD > ~/.bashrc-scripts/installed/361-nifi.sh

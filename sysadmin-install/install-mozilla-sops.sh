@@ -5,18 +5,18 @@ function install_mozilla_sops_binaries {
   local file=sops_${SOPS_VERSION}_amd64.deb
   local url=https://github.com/mozilla/sops/releases/download/v${SOPS_VERSION}/${file}
 
-  local Software=${SOFTWARE_HOME:=/mnt/omv/Software}
+  local Software="${SOFTWARE:=/mnt/omv/Software}"
 
-  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
+  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
 
   local archive=""
   if [[ -f ${Software}/Linux/Debian/${file} ]] ;then
     local archive=${Software}/Linux/Debian/${file}
-  elif [[ -f ${HOME}/Downloads/${file} ]] ;then
-    local archive=${HOME}/Downloads/${file}
+  elif [[ -f "${DOWNLOADS}"/${file} ]] ;then
+    local archive="${DOWNLOADS}"/${file}
   fi
   if [[ -z ${archive} ]] ;then
-    local archive=${HOME}/Downloads/${file}
+    local archive="${DOWNLOADS}"/${file}
     wget "$url" -O "${archive}"
   fi
 

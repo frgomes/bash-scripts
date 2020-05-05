@@ -12,6 +12,6 @@ function nmcli_connected_wifi {
 case "$(nmcli_connected_wifi)" in
   "MY_CUSTOMERS_WIFI") export WORKSPACE=$HOME/Applications/my-customers-development-environment/
                        ;;
-  *)                   export WORKSPACR=$HOME/workspace
+  *)                   export WORKSPACR="${WORKSPACE}"
                        ;;
 esac

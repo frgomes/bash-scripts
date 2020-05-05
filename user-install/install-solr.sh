@@ -5,8 +5,8 @@ function install_solr_binaries {
   local version=${1:-"$SOLR_VERSION"}
   local version=${version:-"8.1.0"}
 
-  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
-  pushd ~/Downloads
+  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
+  pushd "${DOWNLOADS}"
   [[ ! -f solr-${version}.tgz ]] \
     && wget http://archive.apache.org/dist/lucene/solr/${version}/solr-${version}.tgz
   popd
@@ -15,7 +15,7 @@ function install_solr_binaries {
 
   [[ ! -d $tools ]] && mkdir -p $tools
   pushd $tools \
-    && tar -xf ~/Downloads/solr-${version}.tgz
+    && tar -xf "${DOWNLOADS}"/solr-${version}.tgz
 
   echo $tools/solr-${version}
 }

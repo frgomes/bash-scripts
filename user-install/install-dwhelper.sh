@@ -17,24 +17,24 @@ function install_dwhelper_binaries {
   esac
 
   local tools=${TOOLS_HOME:=$HOME/tools}
-  local Software=${SOFTWARE_HOME:=/mnt/omv/Software}
+  local Software="${SOFTWARE:=/mnt/omv/Software}"
   
   local file=net.downloadhelper.coapp-${version}_${arch}.tar.gz
   local url=https://github.com/mi-g/vdhcoapp/releases/download/v${semver}/${file}
   local folder=${tools}/net.downloadhelper.coapp-${semver}
   local symlink=${HOME}/net.downloadhelper.coapp-${semver}
 
-  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
+  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
   [[ ! -d $tools ]] && mkdir -p $tools
 
   local archive=""
   if [[ -f ${Software}/Linux/${file} ]] ;then
     local archive=${Software}/Linux/${file}
-  elif [[ -f ${HOME}/Downloads/${file} ]] ;then
-    local archive=${HOME}/Downloads/${file}
+  elif [[ -f "${DOWNLOADS}"/${file} ]] ;then
+    local archive="${DOWNLOADS}"/${file}
   fi
   if [[ -z ${archive} ]] ;then
-    local archive=${HOME}/Downloads/${file}
+    local archive="${DOWNLOADS}"/${file}
     wget "$url" -O "${archive}"
   fi
 

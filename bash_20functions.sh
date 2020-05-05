@@ -46,8 +46,8 @@ function download {
   local params="$*"
 
   if [ ! -z "$url" ] ;then
-    local dst=${HOME}/Downloads/$(basename $url)
-    [[ ! -d $HOME/Downloads ]] && mkdir -p $HOME/Downloads
+    local dst="${DOWNLOADS}"/$(basename $url)
+    [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
     if [ ! -f ${dst} ] ;then
       if [ -z "$cookie" ] ;then
         wget "$params" -O "${dst}" "${url}"
@@ -137,8 +137,7 @@ function backup_zip {
 
 
 function workspace() {
-  local dir=${WORKSPACE:=$HOME/workspace}
-  cd ${dir}/$1
+  cd "${WORKSPACE}"/$1
 }
 
 function _complete_workspace() {
@@ -148,8 +147,7 @@ function _complete_workspace() {
   prev="${COMP_WORDS[COMP_CWORD-1]}"
   opts=""
 
-  local dir=${WORKSPACE:=$HOME/workspace}
-  local projects=$( ls -p ${dir} | fgrep / | sed 's:/::' | grep -v -E -e '[.]OLD$' | grep -v -E -e '[.]DELETE-ME$' )
+  local projects=$( ls -p "${WORKSPACE}" | fgrep / | sed 's:/::' | grep -v -E -e '[.]OLD$' | grep -v -E -e '[.]DELETE-ME$' )
   COMPREPLY=( $(compgen -W "${projects}" -- ${cur}) )
   return 0
 }

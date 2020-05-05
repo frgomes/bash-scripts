@@ -2,8 +2,8 @@
 
 
 function install_minikube_binaries {
-  [[ ! -d $HOME/Downloads ]] && mkdir -p $HOME/Downloads
-  pushd $HOME/Downloads
+  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
+  pushd "${DOWNLOADS}"
 
   curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 \
     && sudo install minikube-linux-amd64 /usr/local/bin/minikube

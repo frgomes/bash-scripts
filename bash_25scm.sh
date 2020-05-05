@@ -172,17 +172,17 @@ function git_clone {
     module=$1
     url=$2
     echo "[ clone $module ]"
-    if [ ! -d $HOME/workspace ] ;then
-        mkdir -p $HOME/workspace
+    if [ ! -d "${WORKSPACE}" ] ;then
+        mkdir -p "${WORKSPACE}"
     fi
-    pushd $HOME/workspace
+    pushd "${WORKSPACE}"
     if [ ! -d ${module} ] ;then
-        pushd $HOME/workspace
+        pushd "${WORKSPACE}"
         git clone ${url} ${module}
         if [ $? != 0 ] ; then popd; popd; return 1 ;fi
         popd
     else
-        pushd $HOME/workspace/${module}
+        pushd "${WORKSPACE}"/${module}
         git pull $url
         if [ $? != 0 ] ; then popd; popd; return 1 ;fi
         popd
@@ -196,8 +196,8 @@ function git_switch {
     module=$1
     tag=$2
     echo "[ checkout $module ]"
-    if [ -d $HOME/workspace/${module} ] ;then
-        pushd $HOME/workspace/${module}
+    if [ -d "${WORKSPACE}"/${module} ] ;then
+        pushd "${WORKSPACE}"/${module}
 	git clean -d -x -f -f
         if [ $? != 0 ] ; then popd; return 1 ;fi
         git checkout tags/${tag} --force

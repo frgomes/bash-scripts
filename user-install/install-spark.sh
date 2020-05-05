@@ -8,8 +8,8 @@ function install_spark_binaries {
   local hadoop_version=${1:-"$HADOOP_VERSION"}
   local hadoop_version=${hadoop_version:-"2.7"}
 
-  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
-  pushd ~/Downloads > /dev/null
+  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
+  pushd "${DOWNLOADS}" > /dev/null
   [[ ! -f spark-${spark_version}-bin-hadoop${hadoop_version}.tgz ]] && \
     wget https://www-eu.apache.org/dist/spark/spark-${spark_version}/spark-${spark_version}-bin-hadoop${hadoop_version}.tgz
   popd > /dev/null
@@ -20,7 +20,7 @@ function install_spark_binaries {
   
   if [ ! -d ${tools}/spark-${spark_version}-bin-hadoop${hadoop_version} ] ;then
     pushd ${tools} > /dev/null
-    tar -xf ~/Downloads/spark-${spark_version}-bin-hadoop${hadoop_version}.tgz
+    tar -xf "${DOWNLOADS}"/spark-${spark_version}-bin-hadoop${hadoop_version}.tgz
     popd > /dev/null
   fi
 

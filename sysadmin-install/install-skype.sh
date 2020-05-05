@@ -4,18 +4,18 @@ function install_skype_binaries {
   local file=skypeforlinux-64.deb
   local url=https://go.skype.com/${file}
 
-  local Software=${SOFTWARE_HOME:=/mnt/omv/Software}
+  local Software="${SOFTWARE:=/mnt/omv/Software}"
 
-  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
+  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
 
   local archive=""
   if [[ -f ${Software}/Linux/Debian/${file} ]] ;then
     local archive=${Software}/Linux/Debian/${file}
-  elif [[ -f ${HOME}/Downloads/${file} ]] ;then
-    local archive=${HOME}/Downloads/${file}
+  elif [[ -f "${DOWNLOADS}"/${file} ]] ;then
+    local archive="${DOWNLOADS}"/${file}
   fi
   if [[ -z ${archive} ]] ;then
-    local archive=${HOME}/Downloads/${file}
+    local archive="${DOWNLOADS}"/${file}
     wget "$url" -O "${archive}"
   fi
 

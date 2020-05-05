@@ -23,8 +23,8 @@ function install_matrix_binaries {
 
   sudo apt install git pwgen -y
 
-  mkdir -p ~/workspace
-  pushd ~/workspace
+  mkdir -p "${WORKSPACE}"
+  pushd "${WORKSPACE}"
   if [ ! -d matrix-docker-ansible-deploy ] ;then
     git clone http://github.com/spantaleev/matrix-docker-ansible-deploy
   fi
@@ -60,7 +60,7 @@ popd
 }
 
 function install_matrix_start {
-  pushd ~/workspace/matrix-docker-ansible-deploy
+  pushd "${WORKSPACE}"/matrix-docker-ansible-deploy
     ansible-playbook -i inventory/hosts setup.yml --tags=start
   popd
 }
@@ -69,13 +69,13 @@ function install_matrix_register {
   local username="$1"
   local password="$2"
   local admin="${3:-no}"
-  pushd ~/workspace/matrix-docker-ansible-deploy
+  pushd "${WORKSPACE}"/matrix-docker-ansible-deploy
     ansible-playbook -i inventory/hosts setup.yml --extra-vars="username=${username} password=${password} admin=${admin}" --tags=register-user
   popd
 }
 
 function install_matrix_status {
-  pushd ~/workspace/matrix-docker-ansible-deploy
+  pushd "${WORKSPACE}"/matrix-docker-ansible-deploy
     ansible-playbook -i inventory/hosts setup.yml --tags=self-check
   popd
 }

@@ -17,8 +17,8 @@ function install_android_sdk_tools_binaries {
 
   local archive=sdk-tools-${OSPLATFORM}-${release}.zip
 
-  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
-  pushd ~/Downloads > /dev/null
+  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
+  pushd "${DOWNLOADS}" > /dev/null
   [[ ! -f ${archive} ]] && wget https://dl.google.com/android/repository/${archive}
   
   popd > /dev/null
@@ -31,7 +31,7 @@ function install_android_sdk_tools_binaries {
   if [ ! -d ${folder} ] ;then
     mkdir -p ${folder}
     pushd ${folder} > /dev/null
-    unzip ~/Downloads/${archive}
+    unzip "${DOWNLOADS}"/${archive}
     popd > /dev/null
   fi
 

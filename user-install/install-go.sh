@@ -8,8 +8,8 @@ function install_go_binaries {
   local arch=${2:-"$GO_ARCH"}
   local arch=${arch:-"linux-amd64"}
 
-  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
-  pushd ~/Downloads
+  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
+  pushd "${DOWNLOADS}"
   local archive=go${version}.${arch}.tar.gz
   [[ ! -f ${archive} ]] \
     && wget https://dl.google.com/go/${archive}
@@ -19,7 +19,7 @@ function install_go_binaries {
 
   [[ ! -d $tools ]] && mkdir -p $tools
   pushd $tools \
-    && tar -xf ~/Downloads/${archive}
+    && tar -xf "${DOWNLOADS}"/${archive}
 
 
   [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed

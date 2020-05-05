@@ -8,6 +8,11 @@ Host github.com
     PreferredAuthentications publickey
     IdentityFile ~/.ssh/id_rsa_github_%l
 
+Host gitlab.com
+    HostName gitlab.com
+    PreferredAuthentications publickey
+    IdentityFile ~/.ssh/id_rsa_gitlab_%l
+
 Host bitbucket.org
     HostName bitbucket.org
     PreferredAuthentications publickey
@@ -36,20 +41,26 @@ cat <<EOD
   pre-merge = merge --no-commit --no-ff
 
 [diff]
-  tool = "intellij"
+  tool = "diffuse"
 
 [difftool "intellij"]
-  cmd = $HOME/tools/idea/bin/idea.sh diff \"$LOCAL\" \"$REMOTE\"               
+  cmd = "\${HOME}"/tools/idea/bin/idea.sh diff "\$LOCAL" "\$REMOTE"
+
+[difftool "diffuse"]
+  cmd = diffuse "\$LOCAL" "\$REMOTE"
 
 [merge]
-  tool = "intellij"
+  tool = "diffuse"
   conflictstyle = diff3
 
 [mergetool]
   prompt = false
 
 [mergetool "intellij"]
-  cmd = $HOME/tools/idea/bin/idea.sh merge \"$LOCAL\" \"$BASE\" \"$REMOTE\" \"$MERGED\"  
+  cmd = "\${HOME}"/tools/idea/bin/idea.sh merge "\$LOCAL" "\$BASE" "\$REMOTE" "\$MERGED"  
+
+[mergetool "diffuse"]
+  cmd = diffuse "\$LOCAL" "\$BASE" "\$REMOTE" "\$MERGED"  
 
 [push]
   default = simple
@@ -66,8 +77,8 @@ function postinstall_user_git_config {
 }
 
 function postinstall_user_download_bash_scripts {
-  [[ ! -d $HOME/workspace ]] && mkdir -p $HOME/workspace
-  pushd $HOME/workspace
+  [[ ! -d "${WORKSPACE}" ]] && mkdir -p "${WORKSPACE}"
+  pushd "${WORKSPACE}"
   if [ ! -d bash-scripts ] ;then
     git clone http://github.com/frgomes/bash-scripts
   else
@@ -78,8 +89,8 @@ function postinstall_user_download_bash_scripts {
 }
 
 function postinstall_user_download_carpalx {
-  [[ ! -d $HOME/workspace ]] && mkdir -p $HOME/workspace
-  pushd $HOME/workspace
+  [[ ! -d "${WORKSPACE}" ]] && mkdir -p "${WORKSPACE}"
+  pushd "${WORKSPACE}"
   if [ ! -d carpalx ] ;then
     git clone http://github.com/frgomes/carpalx
   else
@@ -109,31 +120,16 @@ function postinstall_user_download_dot_emacs_dot_d {
   popd
 }
 
-
-function postinstall_user_virtualenvs {
-  source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
-  local self=$(readlink -f "${BASH_SOURCE[0]}")
-  local dir=$(dirname $self)
-  source ${dir}/bash_04virtualenv.sh
-  virtualenv_make_virtualenvs
-
-  ##FIXME: virtualenv_make_virtualenvs should do the logic below
-  for path in ${dir}/bashrc-virtualenvs/* ;do
-    local name=$(basename $path)
-    cp -p ${dir}/bashrc-virtualenvs/${name}/bin/postactivate ~/.virtualenvs/${name}/bin/postactivate
-  done
-}
-
 function postinstall_user_firefox {
-  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
+  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
   local app=firefox
   local lang=$(echo $LANG | cut -d. -f1 | sed "s/_/-/")
   local hwarch=$(uname -m)
   local osarch=$(uname -s | tr [:upper:] [:lower:])
   local version=71.0
 
-  if [ ! -e ~/Downloads/${app}-${version}.tar.bz2 ] ;then
-    pushd ~/Downloads 2>&1 > /dev/null
+  if [ ! -e "${DOWNLOADS}"/${app}-${version}.tar.bz2 ] ;then
+    pushd "${DOWNLOADS}" 2>&1 > /dev/null
     wget https://ftp.mozilla.org/pub/${app}/releases/${version}/${osarch}-${hwarch}/${lang}/${app}-${version}.tar.bz2
     popd 2>&1 > /dev/null
   fi
@@ -142,7 +138,7 @@ function postinstall_user_firefox {
   [[ ! -d ${tools}        ]] && mkdir -p ${tools}
 
   pushd ${tools} 2>&1 > /dev/null
-  tar xpf ~/Downloads/${app}-${version}.tar.bz2
+  tar xpf "${DOWNLOADS}"/${app}-${version}.tar.bz2
   popd 2>&1 > /dev/null
 
   [[ ! -d ~/bin ]] && mkdir -p ~/bin
@@ -151,14 +147,14 @@ function postinstall_user_firefox {
 }
 
 function postinstall_user_thunderbird {
-  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
+  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
   local app=thunderbird
   local lang=$(echo $LANG | cut -d. -f1 | sed "s/_/-/")
   local hwarch=$(uname -m)
   local osarch=$(uname -s | tr [:upper:] [:lower:])
   local version=68.3.1
-  if [ ! -e ~/Downloads/${app}-${version}.tar.bz2 ] ;then
-    pushd ~/Downloads 2>&1 > /dev/null
+  if [ ! -e "${DOWNLOADS}"/${app}-${version}.tar.bz2 ] ;then
+    pushd "${DOWNLOADS}" 2>&1 > /dev/null
     wget https://ftp.mozilla.org/pub/${app}/releases/${version}/${osarch}-${hwarch}/${lang}/${app}-${version}.tar.bz2
     popd 2>&1 > /dev/null
   fi
@@ -167,7 +163,7 @@ function postinstall_user_thunderbird {
   [[ ! -d ${tools}        ]] && mkdir -p ${tools}
 
   pushd ${tools} 2>&1 > /dev/null
-  tar xpf ~/Downloads/${app}-${version}.tar.bz2
+  tar xpf "${DOWNLOADS}"/${app}-${version}.tar.bz2
   popd 2>&1 > /dev/null
 
   [[ ! -d ~/bin ]] && mkdir -p ~/bin

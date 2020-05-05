@@ -52,7 +52,7 @@ function makepdf_cats {
   domain=typelevel.org
   path=cats
 
-  local out="$HOME/Downloads/${path}.pdf"
+  local out=""${DOWNLOADS}"/${path}.pdf"
 
   httrack_fetch "$HOME/websites" "$domain" "$path" "http://$domain/$path"
 

@@ -5,8 +5,8 @@ function install_maven_binaries {
   local version=${1:-"$M2_VERSION"}
   local version=${version:-"3.6.3"}
 
-  [[ ! -d ~/Downloads ]] && mkdir -p ~/Downloads
-  pushd ~/Downloads
+  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
+  pushd "${DOWNLOADS}"
   [[ ! -f apache-maven-${version}-bin.tar.gz ]] \
     && wget http://www.mirrorservice.org/sites/ftp.apache.org/maven/maven-3/${version}/binaries/apache-maven-${version}-bin.tar.gz
   popd
@@ -15,7 +15,7 @@ function install_maven_binaries {
 
   [[ ! -d $tools ]] && mkdir -p $tools
   pushd $tools \
-    && tar -xf ~/Downloads/apache-maven-${version}-bin.tar.gz
+    && tar -xf "${DOWNLOADS}"/apache-maven-${version}-bin.tar.gz
 
   [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed
   cat << EOD > ~/.bashrc-scripts/installed/330-maven.sh
