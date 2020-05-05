@@ -19,9 +19,11 @@ function virtualenv_install_pip {
 
 function virtualenv_install_virtualenv {
   if [[ ! -z $(which python) ]] ;then
-    local -i v=$(python -V 2>&1 | cut -d' ' -f2 | cut -d. -f1)
-    if [ -e $(which python${v}) ] ;then
-      python${v} -m pip install --quiet --user --upgrade pip virtualenv virtualenvwrapper
+    if [[ ! -e "${HOME}/.local/bin/virtualenv" ]] ;then
+      local -i v=$(python -V 2>&1 | cut -d' ' -f2 | cut -d. -f1)
+      if [ -e $(which python${v}) ] ;then
+        python${v} -m pip install --quiet --user --upgrade pip virtualenv virtualenvwrapper
+      fi
     fi
   fi
   [[ -e "${HOME}/.local/bin/virtualenvwrapper.sh" ]] && source "${HOME}/.local/bin/virtualenvwrapper.sh"
