@@ -3,7 +3,7 @@
 
 function install_dhall_compiler_binaries {
   local version=${1:-"$DHALL_VERSION"}
-  local version=${version:-"1.31.1"}
+  local version=${version:-"1.32.0"}
 
   local arch=${2:-"$DHALL_ARCH"}
   local arch=${arch:-"x86_64-linux"}
@@ -54,13 +54,13 @@ EOD
 
 function install_dhall_lsp_binaries {
   local version=${1:-"$DHALL_VERSION"}
-  local version=${version:-"1.31.1"}
+  local version=${version:-"1.32.0"}
 
   local arch=${2:-"$DHALL_ARCH"}
   local arch=${arch:-"x86_64-linux"}
 
   local vtool=${3:-"$DHALL_LSP_VERSION"}
-  local vtool=${vtool:-"1.0.6"}
+  local vtool=${vtool:-"1.0.7"}
 
   local file=dhall-lsp-server-${vtool}-${arch}.tar.bz2
   local url=https://github.com/dhall-lang/dhall-haskell/releases/download/${version}/${file}
@@ -109,13 +109,13 @@ EOD
 
 function install_dhall_json_binaries {
   local version=${1:-"$DHALL_VERSION"}
-  local version=${version:-"1.31.1"}
+  local version=${version:-"1.32.0"}
 
   local arch=${2:-"$DHALL_ARCH"}
   local arch=${arch:-"x86_64-linux"}
 
   local vtool=${3:-"$DHALL_JSON_VERSION"}
-  local vtool=${vtool:-"1.6.3"}
+  local vtool=${vtool:-"1.6.4"}
 
   local file=dhall-json-${vtool}-${arch}.tar.bz2
   local url=https://github.com/dhall-lang/dhall-haskell/releases/download/${version}/${file}
@@ -163,13 +163,13 @@ EOD
 
 function install_dhall_yaml_binaries {
   local version=${1:-"$DHALL_VERSION"}
-  local version=${version:-"1.31.1"}
+  local version=${version:-"1.32.0"}
 
   local arch=${2:-"$DHALL_ARCH"}
   local arch=${arch:-"x86_64-linux"}
 
   local vtool=${3:-"$DHALL_YAML_VERSION"}
-  local vtool=${vtool:-"1.0.3"}
+  local vtool=${vtool:-"1.1.0"}
 
   local file=dhall-yaml-${vtool}-${arch}.tar.bz2
   local url=https://github.com/dhall-lang/dhall-haskell/releases/download/${version}/${file}
@@ -217,13 +217,13 @@ EOD
 
 function install_dhall_bash_binaries {
   local version=${1:-"$DHALL_VERSION"}
-  local version=${version:-"1.31.1"}
+  local version=${version:-"1.32.0"}
 
   local arch=${2:-"$DHALL_ARCH"}
   local arch=${arch:-"x86_64-linux"}
 
   local vtool=${3:-"$DHALL_BASH_VERSION"}
-  local vtool=${vtool:-"1.0.29"}
+  local vtool=${vtool:-"1.0.30"}
 
   local file=dhall-bash-${vtool}-${arch}.tar.bz2
   local url=https://github.com/dhall-lang/dhall-haskell/releases/download/${version}/${file}
@@ -271,13 +271,13 @@ EOD
 
 function install_dhall_nix_binaries {
   local version=${1:-"$DHALL_VERSION"}
-  local version=${version:-"1.31.1"}
+  local version=${version:-"1.32.0"}
 
   local arch=${2:-"$DHALL_ARCH"}
   local arch=${arch:-"x86_64-linux"}
 
   local vtool=${3:-"$DHALL_NIX_VERSION"}
-  local vtool=${vtool:-"1.1.13"}
+  local vtool=${vtool:-"1.1.14"}
 
   local file=dhall-nix-${vtool}-${arch}.tar.bz2
   local url=https://github.com/dhall-lang/dhall-haskell/releases/download/${version}/${file}
