@@ -27,6 +27,11 @@ if [[ -d ~/.bashrc-scripts/installed/ ]] ;then
   done
 fi
 
+##FIXME: this is a temporary fix for snaps not being found. See: https://www.youtube.com/watch?v=2g-teghxI2A 
+if [ -d /var/lib/snapd/desktop/applications ] ;then
+  find -L ~/.local/share/applications -type l -delete
+  ln -sf /var/lib/snapd/desktop/applications/*.desktop ~/.local/share/applications/
+fi
 
 # define prompt
 if [ -x /usr/bin/dircolors ]; then
