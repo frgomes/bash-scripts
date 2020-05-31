@@ -67,240 +67,204 @@ function vdiff {
 ## finding contents in files easily
 ##
 
-function  fffile {
-    find . \( -path '.**/.git' -o -path '.**/.hg' -o -path '.**/.idea' \) -prune -o -print0
+function fffile {
+    fdfind $*
+}
+
+function ffdir {
+    fdfind -t d *$
 }
 
 function ffscala {
-    find . \( -path '.**/.git' -o -path '.**/.hg' -o -path '.**/.idea' \) -prune -o -name '*.scala' -print0
+    fdfind -e scala $*
 }
 
 function ffdhall {
-    find . \( -path '.**/.git' -o -path '.**/.hg' -o -path '.**/.idea' \) -prune -o -name '*.dhall' -print0
+    fdfind -e dhall $*
 }
 
 function  ffjava {
-    find . \( -path '.**/.git' -o -path '.**/.hg' -o -path '.**/.idea' \) -prune -o -name '*.java' -print0
+    fdfind -e java $*
 }
 
 function   ffsbt {
-    find . \( -path '.**/.git' -o -path '.**/.hg' -o -path '.**/.idea' \) -prune -o -name '*.sbt' -print0
+    fdfind -e sbt $*
 }
 
 function   ffxml {
-    find . \( -path '.**/.git' -o -path '.**/.hg' -o -path '.**/.idea' \) -prune -o -name '*.xml' -print0
+    fdfind -e xml $*
 }
 
 function   ffant {
-    find . \( -path '.**/.git' -o -path '.**/.hg' -o -path '.**/.idea' \) -prune -o -name '*.ant' -print0
+    fdfind -e ant $*
 }
 
 function   ffpom {
-    find . \( -path '.**/.git' -o -path '.**/.hg' -o -path '.**/.idea' \) -prune -o -name 'pom.xml' -print0
+    fdfind -e pom $*
 }
 
 function   fftxt {
-    find . \( -path '.**/.git' -o -path '.**/.hg' -o -path '.**/.idea' \) -prune -o -name '*.txt' -print0
+    fdfind -e txt $*
 }
 
 function    ffel {
-    find . \( -path '.**/.git' -o -path '.**/.hg' -o -path '.**/.idea' \) -prune -o -name '*.el' -print0
+    fdfind -e el $*
 }
 
 function    ffrs {
-    find . \( -path '.**/.git' -o -path '.**/.hg' -o -path '.**/.idea' \) -prune -o -name '*.rs' -print0
+    fdfind -e rs $*
 }
 
 function    ffpy {
-    find . \( -path '.**/.git' -o -path '.**/.hg' -o -path '.**/.idea' \) -prune -o -name '*.py' -print0
+    fdfind -e py $*
 }
 
 function    ffsh {
-    find . \( -path '.**/.git' -o -path '.**/.hg' -o -path '.**/.idea' \) -prune -o -name '*.sh' -print0
+    fdfind -e sh $*
 }
 
 function    ffmd {
-    find . \( -path '.**/.git' -o -path '.**/.hg' -o -path '.**/.idea' \) -prune -o -name '*.md' -print0
+    fdfind -e md $*
 }
 
 function   ffrst {
-    find . \( -path '.**/.git' -o -path '.**/.hg' -o -path '.**/.idea' \) -prune -o -name '*.rst' -print0
+    fdfind -e rst $*
 }
 
 function    ffts {
-    find . \( -path '.**/.git' -o -path '.**/.hg' -o -path '.**/.idea' -o -path '.**/node_modules' -o '.**/typings' \) -prune -o -name '*.ts' -print0
+    fdfind -e ts $*
 }
 
 function    ffjs {
-    find . \( -path '.**/.git' -o -path '.**/.hg' -o -path '.**/.idea' -o -path '.**/node_modules' -o '.**/typings' \) -prune -o -name '*.js' -print0
+    fdfind -e js $*
 }
 
 function  ffjson {
-    find . \( -path '.**/.git' -o -path '.**/.hg' -o -path '.**/.idea' -o -path '.**/node_modules' -o '.**/typings' \) -prune -o -name '*.json' -print0
+    fdfind -e json $*
 }
 
 function   ffcss {
-    find . \( -path '.**/.git' -o -path '.**/.hg' -o -path '.**/.idea' \) -prune -o -name '*.css' -print0
+    fdfind -e css $*
 }
 
 function  ffform {
-    find . \( -path '.**/.git' -o -path '.**/.hg' -o -path '.**/.idea' \) -prune -o -name '*.form' -print0
+    fdfind -e form $*
 }
 
 function  ffconf {
-    find . \( -path '.**/.git' -o -path '.**/.hg' -o -path '.**/.idea' \) -prune -o -name '*.conf' -print0
+    fdfind -e cfg -e conf -e config -e ini $*
 }
 
-function   ffyml {
-    find . \( -path '.**/.git' -o -path '.**/.hg' -o -path '.**/.idea' \) -prune -o \( -name '*.yml' -o -name '*.yaml' \)  -print0
-}
-
-function  ffyaml {
-    find . \( -path '.**/.git' -o -path '.**/.hg' -o -path '.**/.idea' \) -prune -o \( -name '*.yml' -o -name '*.yaml' \)  -print0
+function   ffyaml {
+    fdfind -e yml -e yaml $*
 }
 
 function  fftoml {
-    find . \( -path '.**/.git' -o -path '.**/.hg' -o -path '.**/.idea' \) -prune -o -name '*.toml' -print0
-}
-
-function  ffprop {
-    find . \( -path '.**/.git' -o -path '.**/.hg' -o -path '.**/.idea' \) -prune -o -name '*.properties' -print0
-}
-
-function  ffdesc {
-    find . \( -path '.**/.git' -o -path '.**/.hg' -o -path '.**/.idea' \) -prune -o -name '*.descriptor' -print0
-}
-
-function  ffprof {
-    find . \( -path '.**/.git' -o -path '.**/.hg' -o -path '.**/.idea' \) -prune -o -name '*.profile' -print0
+    fdfind -e toml $*
 }
 
 function   ffcpp {
-    find . \( -path '.**/.git' -o -path '.**/.hg' -o -path '.**/.idea' \) -prune -o \( -name '*.c' -o -name '*.h' -o -name '*.cpp' -o -name '*.hpp' \)  -print0
+    fdfind -e c -e h -e cpp -e hpp $*
 }
 
 function   ffsql {
-    find . \( -path '.**/.git' -o -path '.**/.hg' -o -path '.**/.idea' \) -prune -o -name '*.sql' -print0
+    fdfind -e sql $*
 }
 
 function  fgfile {
-    fffile  | xargs -0 grep -H -n  $*
-}
-
-function   fgdir {
-    ffdir   | xargs -0 grep -H -n  $*
+    rg -H -n $*
 }
 
 function fgscala {
-    ffscala | xargs -0 grep -H -n  $*
+    rg -t scala -H -n $*
 }
 
 function fgdhall {
-    ffdhall | xargs -0 grep -H -n  $*
+    rg -t dhall -H -n  $*
 }
 
 function  fgjava {
-    ffjava  | xargs -0 grep -H -n  $*
+    rg -t java  -H -n  $*
 }
 
 function   fgsbt {
-    ffsbt   | xargs -0 grep -H -n  $*
+    rg -t sbt   -H -n  $*
 }
 
 function   fgxml {
-    ffxml   | xargs -0 grep -H -n  $*
+    rg -t xml   -H -n  $*
+}
+
+function   fgant {
+    rg --type-add 'ant:*.ant' -t ant -H -n  $*
 }
 
 function   fgpom {
-    ffant   | xargs -0 grep -H -n  $*
-}
-
-function   fgpom {
-    ffpom   | xargs -0 grep -H -n  $*
+    rg --type-add 'pom:*.pom' -t pom -H -n  $*
 }
 
 function   fgtxt {
-    fftxt   | xargs -0 grep -H -n  $*
+    rg -t txt   -H -n  $*
 }
 
 function    fgel {
-    ffel    | xargs -0 grep -H -n  $*
+    rg -t el    -H -n  $*
 }
 
 function    fgrs {
-    ffrs    | xargs -0 grep -H -n  $*
+    rg -t rs    -H -n  $*
 }
 
 function    fgpy {
-    ffpy    | xargs -0 grep -H -n  $*
+    rg -t py    -H -n  $*
 }
 
 function    fgsh {
-    ffsh    | xargs -0 grep -H -n  $*
+    rg -t sh    -H -n  $*
 }
 
 function    fgmd {
-    ffmd    | xargs -0 grep -H -n  $*
+    rg -t md    -H -n  $*
 }
 
 function   fgrst {
-    ffrst   | xargs -0 grep -H -n  $*
+    rg -t rst   -H -n  $*
 }
 
 function    fgts {
-    ffts    | xargs -0 grep -H -n  $*
+    rg -t ts    -H -n  $*
 }
 
 function    fgjs {
-    ffjs    | xargs -0 grep -H -n  $*
+    rg -t js    -H -n  $*
 }
 
 function  fgjson {
-    ffjson  | xargs -0 grep -H -n  $*
+    rg -t json  -H -n  $*
 }
 
 function   fgcss {
-    ffcss   | xargs -0 grep -H -n  $*
-}
-
-function  fgform {
-    ffform  | xargs -0 grep -H -n  $*
+    rg -t css   -H -n  $*
 }
 
 function  fgconf {
-    ffconf  | xargs -0 grep -H -n  $*
-}
-
-function   fgyml {
-    ffyml   | xargs -0 grep -H -n  $*
+    rg -t config  -H -n  $*
 }
 
 function  fgyaml {
-    ffyaml  | xargs -0 grep -H -n  $*
+    rg -t yaml  -H -n  $*
 }
 
 function  fgtoml {
-    fftoml  | xargs -0 grep -H -n  $*
-}
-
-function  fgprop {
-    ffprop  | xargs -0 grep -H -n  $*
-}
-
-function  fgdesc {
-    ffdesc  | xargs -0 grep -H -n  $*
-}
-
-function  fgprof {
-    ffprof  | xargs -0 grep -H -n  $*
+    rg -t toml  -H -n  $*
 }
 
 function   fgcpp {
-    ffcpp   | xargs -0 grep -H -n  $*
+    rg -t cpp   -H -n  $*
 }
 
 function   fgsql {
-    ffsql   | xargs -0 grep -H -n  $*
+    rg -t sql   -H -n  $*
 }
 
 
