@@ -67,9 +67,6 @@ function vdiff {
 ## finding contents in files easily
 ##
 
-
-
-
 function fffile {
     fd -I $*
 }
@@ -175,99 +172,99 @@ function   ffsql {
 }
 
 function  fgfile {
-    rg -H -n $*
+    rg --no-ignore -H -n $*
 }
 
 function fgscala {
-    rg -t scala -H -n $*
+    rg --no-ignore -t scala -H -n $*
 }
 
 function fgdhall {
-    rg -t dhall -H -n  $*
+    rg --no-ignore -t dhall -H -n $*
 }
 
 function  fgjava {
-    rg -t java  -H -n  $*
+    rg --no-ignore -t java -H -n $*
 }
 
 function   fgsbt {
-    rg -t sbt   -H -n  $*
+    rg --no-ignore -t sbt -H -n $*
 }
 
 function   fgxml {
-    rg -t xml   -H -n  $*
+    rg --no-ignore -t xml -H -n $*
 }
 
 function   fgant {
-    rg --type-add 'ant:*.ant' -t ant -H -n  $*
+    rg --no-ignore --type-add 'ant:*.ant' -t ant -H -n $*
 }
 
 function   fgpom {
-    rg --type-add 'pom:*.pom' -t pom -H -n  $*
+    rg --no-ignore --type-add 'pom:*.pom' -t pom -H -n $*
 }
 
 function   fgtxt {
-    rg -t txt   -H -n  $*
+    rg --no-ignore -t txt -H -n $*
 }
 
 function    fgel {
-    rg -t el    -H -n  $*
+    rg --no-ignore -t el -H -n $*
 }
 
 function    fgrs {
-    rg -t rs    -H -n  $*
+    rg --no-ignore -t rs -H -n $*
 }
 
 function    fgpy {
-    rg -t py    -H -n  $*
+    rg --no-ignore -t py -H -n $*
 }
 
 function    fgsh {
-    rg -t sh    -H -n  $*
+    rg --no-ignore -t sh -H -n $*
 }
 
 function    fgmd {
-    rg -t md    -H -n  $*
+    rg --no-ignore -t md -H -n $*
 }
 
 function   fgrst {
-    rg -t rst   -H -n  $*
+    rg --no-ignore -t rst -H -n $*
 }
 
 function    fgts {
-    rg -t ts    -H -n  $*
+    rg --no-ignore -t ts -H -n $*
 }
 
 function    fgjs {
-    rg -t js    -H -n  $*
+    rg --no-ignore -t js -H -n $*
 }
 
 function  fgjson {
-    rg -t json  -H -n  $*
+    rg --no-ignore -t json -H -n $*
 }
 
 function   fgcss {
-    rg -t css   -H -n  $*
+    rg --no-ignore -t css -H -n $*
 }
 
 function  fgconf {
-    rg -t config  -H -n  $*
+    rg --no-ignore -t config -H -n $*
 }
 
 function  fgyaml {
-    rg -t yaml  -H -n  $*
+    rg --no-ignore -t yaml -H -n $*
 }
 
 function  fgtoml {
-    rg -t toml  -H -n  $*
+    rg --no-ignore -t toml -H -n $*
 }
 
 function   fgcpp {
-    rg -t cpp   -H -n  $*
+    rg --no-ignore -t cpp -H -n $*
 }
 
 function   fgsql {
-    rg -t sql   -H -n  $*
+    rg --no-ignore -t sql -H -n $*
 }
 
 
