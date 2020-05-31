@@ -67,108 +67,111 @@ function vdiff {
 ## finding contents in files easily
 ##
 
+
+
+
 function fffile {
-    fdfind $*
+    fd -I $*
 }
 
 function ffdir {
-    fdfind -t d *$
+    fd -I -t d *$
 }
 
 function ffscala {
-    fdfind -e scala $*
+    fd -I -e scala $*
 }
 
 function ffdhall {
-    fdfind -e dhall $*
+    fd -I -e dhall $*
 }
 
 function  ffjava {
-    fdfind -e java $*
+    fd -I -e java $*
 }
 
 function   ffsbt {
-    fdfind -e sbt $*
+    fd -I -e sbt $*
 }
 
 function   ffxml {
-    fdfind -e xml $*
+    fd -I -e xml $*
 }
 
 function   ffant {
-    fdfind -e ant $*
+    fd -I -e ant $*
 }
 
 function   ffpom {
-    fdfind -e pom $*
+    fd -I -e pom $*
 }
 
 function   fftxt {
-    fdfind -e txt $*
+    fd -I -e txt $*
 }
 
 function    ffel {
-    fdfind -e el $*
+    fd -I -e el $*
 }
 
 function    ffrs {
-    fdfind -e rs $*
+    fd -I -e rs $*
 }
 
 function    ffpy {
-    fdfind -e py $*
+    fd -I -e py $*
 }
 
 function    ffsh {
-    fdfind -e sh $*
+    fd -I -e sh $*
 }
 
 function    ffmd {
-    fdfind -e md $*
+    fd -I -e md $*
 }
 
 function   ffrst {
-    fdfind -e rst $*
+    fd -I -e rst $*
 }
 
 function    ffts {
-    fdfind -e ts $*
+    fd -I -e ts $*
 }
 
 function    ffjs {
-    fdfind -e js $*
+    fd -I -e js $*
 }
 
 function  ffjson {
-    fdfind -e json $*
+    fd -I -e json $*
 }
 
 function   ffcss {
-    fdfind -e css $*
+    fd -I -e css $*
 }
 
 function  ffform {
-    fdfind -e form $*
+    fd -I -e form $*
 }
 
 function  ffconf {
-    fdfind -e cfg -e conf -e config -e ini $*
+    fd -I -e cfg -e conf -e config -e ini $*
 }
 
 function   ffyaml {
-    fdfind -e yml -e yaml $*
+    fd -I -e yml -e yaml $*
 }
 
 function  fftoml {
-    fdfind -e toml $*
+    fd -I -e toml $*
 }
 
 function   ffcpp {
-    fdfind -e c -e h -e cpp -e hpp $*
+    fd -I -e c -e h -e cpp -e hpp $*
 }
 
 function   ffsql {
-    fdfind -e sql $*
+    fd -I -e sql $*
 }
 
 function  fgfile {
