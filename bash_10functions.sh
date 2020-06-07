@@ -4,6 +4,7 @@
  ##
 ## utilities for simple text transformations
 ##
+
 function upper {
     tr [:lower:] [:upper:] $*
 }
@@ -47,8 +48,54 @@ function mkString {
 }
 
  ##
+## utilities for JSON and YAML processing
+##
+
+function yaml_validate {
+  python -c 'import sys, yaml, json; yaml.safe_load(sys.stdin.read())'
+}
+
+function yaml2json {
+  python -c 'import sys, yaml, json; print(json.dumps(yaml.safe_load(sys.stdin.read())))'
+}
+
+function yaml2json_pretty {
+  python -c 'import sys, yaml, json; print(json.dumps(yaml.safe_load(sys.stdin.read()), indent=2, sort_keys=False))'
+}
+
+function json_validate {
+  python -c 'import sys, yaml, json; json.loads(sys.stdin.read())'
+}
+
+function json2yaml {
+  python -c 'import sys, yaml, json; print(yaml.dump(json.loads(sys.stdin.read()), sort_keys=False))'
+}
+
+function yaml_split {
+  for file in "$@" ;do
+    local dir=$(dirname "${file}")
+    local name=$(basename "${file}" .yaml)
+    csplit --quiet --prefix="${dir}/${name}" --suffix-format='.%03d.yaml.part' --elide-empty-files "${file}" /---/ "{*}"
+    for f in "${dir}"/*.part ; do
+        local kind=$(cat $f | yaml2json | jq .kind | sed 's/"//g')
+        local count=$(basename "$f" | cut -d. -f 2)
+        local fname=${name}.${count}.${kind}.yaml
+        ## echo "${f} -> ${fname}"
+        [[ -e "${dir}/${fname}" ]] && \
+            echo "ERROR: file already exists: ${dir}/${fname}"; \
+            rm "${dir}/${name}".*.yaml.part; \
+            return 1
+        tail +2 $f > "${dir}/${fname}"
+        rm $f
+    done
+  done
+}
+
+
+ ##
 ## viewing file differences
 ##
+
 function cdiff {
     diff -Naur $*
 }
@@ -64,7 +111,7 @@ function vdiff {
 
 
  ##
-## finding contents in files easily
+## finding files easily
 ##
 
 function fffile {
@@ -170,6 +217,11 @@ function   ffcpp {
 function   ffsql {
     fd -I -e sql $*
 }
+
+
+ ##
+## finding contents in files easily
+##
 
 function  fgfile {
     rg --no-ignore -H -n $*
