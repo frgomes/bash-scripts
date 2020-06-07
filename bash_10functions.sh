@@ -76,16 +76,16 @@ function yaml_split {
     local dir=$(dirname "${file}")
     local name=$(basename "${file}" .yaml)
     csplit --quiet --prefix="${dir}/${name}" --suffix-format='.%03d.yaml.part' --elide-empty-files "${file}" /---/ "{*}"
-    for f in "${dir}"/*.part ; do
+    for f in "${dir}/${name}".*.yaml.part ; do
         local kind=$(cat $f | yaml2json | jq .kind | sed 's/"//g')
         local count=$(basename "$f" | cut -d. -f 2)
         local fname=${name}.${count}.${kind}.yaml
         ## echo "${f} -> ${fname}"
-        [[ -e "${dir}/${fname}" ]] && \
-            echo "ERROR: file already exists: ${dir}/${fname}"; \
-            rm "${dir}/${name}".*.yaml.part; \
-            return 1
-        tail +2 $f > "${dir}/${fname}"
+        if [ -e "${dir}/${fname}" ] ;then
+          echo "ERROR: file already exists: ${dir}/${fname}"
+        else
+          tail +2 $f > "${dir}/${fname}"
+        fi
         rm $f
     done
   done
