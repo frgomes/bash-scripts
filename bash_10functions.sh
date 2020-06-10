@@ -119,7 +119,7 @@ function fffile {
 }
 
 function ffdir {
-    fd -I -t d *$
+    fd -I -t d $*
 }
 
 function ffscala {
