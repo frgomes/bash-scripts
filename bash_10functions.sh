@@ -81,11 +81,7 @@ function yaml_split {
         local count=$(basename "$f" | cut -d. -f 2)
         local fname=${name}.${count}.${kind}.yaml
         ## echo "${f} -> ${fname}"
-        if [ -e "${dir}/${fname}" ] ;then
-          echo "ERROR: file already exists: ${dir}/${fname}"
-        else
-          tail +2 $f > "${dir}/${fname}"
-        fi
+        tail +2 $f > "${dir}/${fname}"
         rm $f
     done
   done
