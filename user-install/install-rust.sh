@@ -1,13 +1,6 @@
 #!/bin/bash
 
 function install_rust_binaries {
-  local version=${1}
-  local version=${version:-stable}
-  if [ "${version}" == "stable" ] ;then
-    local command="update stable"
-  else
-    local command="install ${version}"
-  fi
   local tools=${TOOLS_HOME:=$HOME/tools}
   [[ ! -d $tools ]] && mkdir -p $tools
   [[ ! -d $tools/cargo ]] && mkdir -p $tools/cargo
@@ -15,7 +8,7 @@ function install_rust_binaries {
 
   curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path -y \
     && source ${HOME}/.cargo/env && hash -r \
-      && rustup ${command} \
+      && rustup default stable && rustup update \
         && rustup component add rust-src
   
   [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed
