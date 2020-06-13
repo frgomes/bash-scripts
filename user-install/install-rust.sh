@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 function install_rust_binaries {
   local tools=${TOOLS_HOME:=$HOME/tools}
@@ -19,15 +19,16 @@ function __install_rust_cargo_addons {
 cat << EOD
 cargo-watch
 cargo-edit
-cargo-tree
 cargo-udeps
-cargo-audit
+cargo-whatfeatures
+cargo-docset
+cargo-audit --features=fix
 EOD
 }
 
 function install_rust_cargo_addons {
   source ~/.bashrc-scripts/installed/400-rust.sh
-  __install_rust_cargo_addons | xargs echo | xargs cargo install --force
+  __install_rust_cargo_addons | while read line ;do cargo install --force ${line} ;done
 }
 
 function install_rust_web {
@@ -48,7 +49,7 @@ EOD
 
 function install_rust_web_addons {
   source ~/.bashrc-scripts/installed/400-rust.sh
-  __install_rust_web_addons || xargs cargo install --force
+  __install_rust_web_addons | while read line ;do cargo install --force ${line} ;done
 }
 
 function install_rust_language_server {
@@ -59,11 +60,6 @@ function install_rust_language_server {
 function install_latex_language_server {
   source ~/.bashrc-scripts/installed/400-rust.sh
   cargo install --force --git https://github.com/latex-lsp/texlab.git
-}
-
-function install_rust_docset {
-  source ~/.bashrc-scripts/installed/400-rust.sh
-  cargo install --force cargo-docset
 }
 
 function install_rust {
