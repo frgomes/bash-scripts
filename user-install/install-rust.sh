@@ -9,6 +9,7 @@ function install_rust_binaries {
   curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path -y \
     && source ${HOME}/.cargo/env && hash -r \
       && rustup default stable && rustup update \
+        && rustup component add clippy rustfmt \
         && rustup component add rust-src
   
   [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed
@@ -22,6 +23,7 @@ cargo-edit
 cargo-udeps
 cargo-whatfeatures
 cargo-docset
+cargo-tarpaulin
 cargo-audit --features=fix
 EOD
 }
