@@ -25,12 +25,13 @@ cargo-whatfeatures
 cargo-docset
 cargo-tarpaulin
 cargo-audit --features=fix
+#cargo-deny
 EOD
 }
 
 function install_rust_cargo_addons {
   source ~/.bashrc-scripts/installed/400-rust.sh
-  __install_rust_cargo_addons | while read line ;do cargo install --force ${line} ;done
+  __install_rust_cargo_addons | grep -v -E '^#' | while read line ;do cargo install --force ${line} ;done
 }
 
 function install_rust_web {
@@ -51,7 +52,7 @@ EOD
 
 function install_rust_web_addons {
   source ~/.bashrc-scripts/installed/400-rust.sh
-  __install_rust_web_addons | while read line ;do cargo install --force ${line} ;done
+  __install_rust_web_addons | grep -v -E '^#' | while read line ;do cargo install --force ${line} ;done
 }
 
 function install_rust_language_server {
