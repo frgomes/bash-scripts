@@ -3,7 +3,7 @@
 
 function install_dbeaver_binaries {
   local version=${1:-"$DBEAVER_VERSION"}
-  local version=${version:-"6.3.1"}
+  local version=${version:-"7.1.3"}
 
   local file=dbeaver-ce-${version}-linux.gtk.x86_64.tar.gz
   local url=https://dbeaver.io/files/${version}/dbeaver-ce-${version}-linux.gtk.x86_64.tar.gz
