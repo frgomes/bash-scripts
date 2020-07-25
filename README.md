@@ -32,8 +32,8 @@ $ wget https://raw.githubusercontent.com/frgomes/bash-scripts/master/postinstall
 This is how I install these scripts in my environment:
 
 ```bash
-$ mkdir $HOME/workspace && cd $HOME/workspace
-$ git clone http://github.com/frgomes/bash-scripts
+$ mkdir -p "$HOME/workspace"
+$ git -C  "$HOME/workspace/bash-scripts" clone http://github.com/frgomes/bash-scripts
 ```
 
 Then add a call to ``$HOME/workspace/bash-scripts/bashrc`` into your ``$HOME/.bashrc``:
