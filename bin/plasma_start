@@ -1,0 +1,9 @@
+#!/bin/bash -e
+
+function __plasma_start() {
+  which kstart >/dev/null 2>&1 || sudo apt install kde-runtime -y
+  which plasmashell >/dev/null 2>&1 || sudo apt install plasma-workspace -y
+  kstart plasmashell
+}
+
+__plasma_start $*

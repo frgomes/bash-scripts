@@ -1,0 +1,8 @@
+#!/bin/bash -e
+
+function __kubectl_events {
+  which kubectl >/dev/null 2>&1 || install_kubectl
+  kubectl get events --sort-by=.metadata.creationTimestamp $*
+}
+
+__kubectl_events $*

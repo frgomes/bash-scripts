@@ -1,0 +1,8 @@
+#!/bin/bash -e
+
+function __ctrlc() {
+  which xclip >/dev/null 2>&1 || sudo apt install xclip -y
+  xclip -i -selection clipboard
+}
+
+__ctrlc $*

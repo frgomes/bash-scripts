@@ -1,0 +1,10 @@
+#!/bin/bash -e
+
+function __kubectl_stats {
+  which cut tail sort uniq >/dev/null 2>&1 || sudo apt install coreutils -y
+  which kubectl >/dev/null 2>&1 || install_kubectl
+  local resources=$(kubectl api-resources --namespaced=true | cut -d' ' -f1 | tail -n +2 | sort | uniq | mkString)
+  kubectl get ${resources},pv $* 2> /dev/null
+}
+
+__kubectl_stats $*

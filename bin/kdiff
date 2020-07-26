@@ -1,0 +1,8 @@
+#!/bin/bash -e
+
+function __kdiff() {
+  which kdiff3 >/dev/null 2>&1 || sudo apt install kdiff3 -y
+  kdiff3 $*
+}
+
+__kdiff $*

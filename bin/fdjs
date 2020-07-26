@@ -1,0 +1,8 @@
+#!/bin/bash -e
+
+function __fdjs() {
+  which fd >/dev/null 2>&1 || sudo apt install fd -y
+  fd -I -e js $*
+}
+
+__fdjs $*

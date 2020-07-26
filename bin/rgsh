@@ -1,0 +1,8 @@
+#!/bin/bash -e
+
+function __rgsh() {
+  which rg >/dev/null 2>&1 || sudo apt install ripgrep -y
+  rg --no-ignore -t sh -H -n $*
+}
+
+__rgsh $*

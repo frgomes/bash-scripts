@@ -1,0 +1,25 @@
+#!/bin/bash -e
+
+function __download {
+  which wget >/dev/null 2>&1 || sudo apt install wget -y
+
+  local url="$1"
+  local cookie="$2"
+  shift; shift
+  local params="$*"
+
+  if [ ! -z "$url" ] ;then
+    local dst="${DOWNLOADS}"/$(basename $url)
+    [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
+    if [ ! -f ${dst} ] ;then
+      if [ -z "$cookie" ] ;then
+        wget "$params" -O "${dst}" "${url}"
+      else
+        _info wget --quiet --no-cookies --no-check-certificate --header "Cookie: ${cookie}" -O "${dst}" "${url}"
+        wget "$params" --no-cookies --no-check-certificate --header "Cookie: ${cookie}" -O "${dst}" "${url}"
+      fi
+    fi
+  fi
+}
+
+__download $*

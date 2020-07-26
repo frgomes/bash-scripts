@@ -1,0 +1,20 @@
+#!/bin/bash -e
+
+function __httrack_fetch() {
+  which httrack >/dev/null 2>&1 || sudo apt install httrack -y
+
+  local url="$1"
+  local folder="$2"
+  shift
+  shift
+  local opts="$*"
+
+  local tools="${TOOLS_HOME:=$HOME/tools}"
+
+  [[ ! -d "${folder}" ]] && mkdir -p "${folder}"
+  if [ ! -f "${folder}/index.html" ]; then
+    httrack -O "${folder}" "${opts}" "${url}"
+  fi
+}
+
+__httrack_fetch $*

@@ -1,0 +1,8 @@
+#!/bin/bash -e
+
+function __camelCase() {
+  which sed >/dev/null 2>&1 || sudo apt install sed -y
+  sed -E 's/[^ \t]*/\u&/g' | sed -E 's/[ \t]*//g' | sed -E 's/[^ \t]*/\l&/g' $*
+}
+
+__camelCase $*

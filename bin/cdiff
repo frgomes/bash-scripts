@@ -1,0 +1,8 @@
+#!/bin/bash -e
+
+function __cdiff() {
+  which diff >/dev/null 2>&1 || sudo apt install diffutils -y
+  diff -Naur $*
+}
+
+__cdiff $*

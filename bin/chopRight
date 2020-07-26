@@ -1,0 +1,11 @@
+#!/bin/bash -e
+
+function __chopRight() {
+  local -i n=${1}
+  local -i n=${n:=0}
+  while read line; do
+    echo ${line::${#line}-${n}}
+  done
+}
+
+__chopRight $*

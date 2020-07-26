@@ -1,0 +1,8 @@
+#!/bin/bash -e
+
+function __listening() {
+  which netstat >/dev/null 2>&1 || sudo apt install net-tools -y
+  netstat -an | fgrep LISTEN | fgrep -v LISTENING
+}
+
+__listening $*

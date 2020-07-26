@@ -1,0 +1,62 @@
+#!/bin/bash -e
+
+function __bash_install_app() {
+  which wget >/dev/null 2>&1 || sudo apt install wget -y
+
+  local url="$1"
+  local file="$2"
+  local folder="$3"
+  local symlink="$4"
+  local config="$5"
+  shift
+  shift
+  shift
+  shift
+  shift
+  #local opts="$*"
+
+  local tools="${TOOLS_HOME:=$HOME/tools}"
+  local Software="${SOFTWARE:=/mnt/omv/Software}"
+
+  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
+  [[ ! -d "${tools}" ]] && mkdir -p "${tools}"
+
+  local archive=""
+  if [[ -f "${Software}/Linux/${file}" ]]; then
+    local archive="${Software}/Linux/${file}"
+  elif [[ -f "${DOWNLOADS}/${file}" ]]; then
+    local archive="${DOWNLOADS}/${file}"
+  fi
+  if [[ -z "${archive}" ]]; then
+    local archive="${DOWNLOADS}/${file}"
+    wget -q "$url" -O "${archive}"
+  fi
+
+  if [ ! -d "${tools}/${folder}/bin" ]; then
+    mkdir -p "${tools}/${folder}/bin"
+    cp "${archive}" "${tools}/${folder}/bin/${file}"
+    chmod 755 "${tools}/${folder}/bin/${file}"
+  fi
+  if [ ! -z "${symlink}" ]; then
+    if [ -L "${tools}/${symlink}" ]; then rm "${tools}/${symlink}"; fi
+    ln -s "${folder}" "${tools}/${symlink}"
+  fi
+
+  if [ -f "${config}" ]; then
+    chmod 755 "${config}"
+    echo "${config}"
+  fi
+}
+
+if [ $_ != $0 ]; then
+  # echo "Script is being sourced: list all functions"
+  self=$(readlink -f "${BASH_SOURCE[0]}")
+  dir=$(dirname $self)
+  grep -E "^function __" $self | cut -d' ' -f2 | sed 's/()//'
+else
+  # echo "Script is a subshell: execute last function"
+  self=$(readlink -f "${BASH_SOURCE[0]}")
+  dir=$(dirname $self)
+  cmd=$(grep -E "^function __" $self | cut -d' ' -f2  | sed 's/()//' | tail -1)
+  $cmd $*
+fi

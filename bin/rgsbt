@@ -1,0 +1,8 @@
+#!/bin/bash -e
+
+function __rgsbt() {
+  which rg >/dev/null 2>&1 || sudo apt install ripgrep -y
+  rg --no-ignore -t sbt -H -n $*
+}
+
+__rgsbt $*

@@ -2,6 +2,17 @@ This is a bunch of shell scripts for Debian and derivatives containing aliases a
 
 WARNING: This toolbox is under heavy development and improvement. Expect that things may change.
 
+### Release Notes
+
+1. Supports virtual environments in order to allow you install multiple versions of your preferred applicatons. If you are not familiar to virtual environments, we provide an executive summary down below and mention caveats which may apply to your system.
+
+2. This release of ``bashrc-scripts`` performs these migration steps if necessary:
+
+```bash
+mv $HOME/.bashrc.scripts.before $HOME/.bashrc-scripts/head
+mv $HOME/.bashrc.scripts.after  $HOME/.bashrc-scripts/tail
+```
+
 ### Design Concept
 
 Starting from a brand new laptop with only the base operating system installed, I would like to be able to quickly have my environment setup. I would like to download a shell script from the Internet which sets up everything for me. Then I open a new terminal window and all remaining bits are automagically configured for me. Then I'm ready to go. The entire thing should not take more than a minute or two.
@@ -9,9 +20,10 @@ Starting from a brand new laptop with only the base operating system installed, 
 ### Features in a nutshell
 
 * Useful shell scripts aiming daily mundane tasks, such as finding text on large codebases;
-* Post installation script for sysadmins configuring a brand new laptop or server;
-* Post installation script for regular users seeking Firefox and Thunderbird in user's space;
-* Shell scripts for installing Java, Node, Rust or Scala, among a bunch of other things.
+* One post installation script for sysadmins configuring a brand new laptop or server;
+* One post installation script for regular users seeking Firefox and Thunderbird in user's space;
+* Shell scripts for installing Java, Node, Scala, among a bunch of other things.
+* Employs virtual environments, in order to allow distinct versions of Java, Node, Scala, etc;
 * Flexibility of a separate history per session but also a global ``history+`` for all sessions.
 
 ## For the impatient
@@ -96,7 +108,7 @@ You can also adjust keyboard configurations and other preferences after all scri
 
 ### Actions before loading scripts
 
-Simply create a file named ``$HOME/.bashrc.scripts.before`` and it will be executed before
+Simply create a file named ``$HOME/.bashrc-scripts/head`` and it will be executed before
 [these] scripts [provided by this package] run.
 
 This is an example which may be useful if you visit several customers:
@@ -125,7 +137,7 @@ esac
 
 ### Actions after loading scripts
 
-Simply create a file named ``$HOME/.bashrc.scripts.after``, as the example below shows:
+Simply create a file named ``$HOME/.bashrc-scripts/tail``, as the example below shows:
 
 ```bash
 #!/bin/bash

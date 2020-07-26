@@ -1,0 +1,8 @@
+#!/bin/bash -e
+
+function __vdiff() {
+  which diffuse >/dev/null 2>&1 || sudo apt install diffuse -y
+  diffuse $*
+}
+
+__vdiff $*

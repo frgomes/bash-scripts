@@ -1,0 +1,10 @@
+#!/bin/bash -e
+
+function __mkString() {
+  which paste >/dev/null 2>&1 || sudo apt install coreutils -y
+  local sep=${1}
+  local sep=${sep:=,}
+  paste -sd${sep}
+}
+
+__mkString $*

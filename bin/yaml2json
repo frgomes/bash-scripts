@@ -1,0 +1,8 @@
+#!/bin/bash -e
+
+function __yaml2json() {
+  which python3 >/dev/null 2>&1 || sudo apt install python3-minimal -y
+  python -c 'import sys, yaml, json; print(json.dumps(yaml.safe_load(sys.stdin.read())))'
+}
+
+__yaml2json $*

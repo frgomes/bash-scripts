@@ -1,0 +1,8 @@
+#!/bin/bash -e
+
+function __trim() {
+  which tr >/dev/null 2>&1 || sudo apt install coreutils -y
+  tr -d [:blank:] $*
+}
+
+__trim $*

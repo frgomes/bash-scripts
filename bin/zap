@@ -1,0 +1,14 @@
+#!/bin/bash -e
+
+function __zap {
+  which find >/dev/null 2>&1 || sudo apt install findutils -y
+  local args=$@
+  cmd=${args:=xargs rm -r -f}
+  find . -type d \( -name target -o -name node_modules -o -name .ensime_cache \) | $cmd
+  find . -type f \( -name \~ -o -name '*~' -o -name '.*~' \) | $cmd
+  find . -type l \( -name \~ -o -name '*~' -o -name '.*~' \) | $cmd
+  find . -type f \( -name '.#*#' -o -name '#*#' \) | $cmd
+  find . -type l \( -name '.#*#' -o -name '#*#' \) | $cmd
+}
+
+__zap $*

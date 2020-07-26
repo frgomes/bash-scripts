@@ -1,0 +1,8 @@
+#!/bin/bash -e
+
+function __lower() {
+  which tr >/dev/null 2>&1 || sudo apt install coreutils -y
+  tr [:upper:] [:lower:] $*
+}
+
+__lower $*

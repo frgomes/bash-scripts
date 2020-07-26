@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+function __backup_zip() {
+  which find >/dev/null 2>&1 || sudo apt install findutils -y
+  which grep >/dev/null 2>&1 || sudo apt install grep -y
+  which zip  >/dev/null 2>&1 || sudo apt install zip -y
+
+  now=`date +%Y%m%d_%H%M%S`
+
+  cwd="$1"
+  cwd=${cwd:=$(pwd)}
+
+  if [ -d "$cwd" ] ;then
+      dir="$( readlink -f "$cwd" )"
+      dst=${HOME}/backup/archives"${dir}"
+      name="$( basename "$dir" )"
+      mkdir -p ${dst} > /dev/null 2>&1
+      # echo "$dir" ...
+      archive=${dst}/${now}_${name}.zip
+      echo "${archive}"
+
+      find "${dir}" -type f | fgrep -v "${dir}"'./*.iml' | fgrep -v "${dir}"'./.idea/' | fgrep -v "${dir}"'./.hg/' | fgrep -v '/.git/' | fgrep -v '/.lib/' | fgrep -v '/node_modules/' | fgrep -v '/target/' | \
+          zip -q -r -@ "${archive}"
+
+      # copy to Dropbox, if available
+      replica=${HOME}/Dropbox/Private/backup/"${dst}"
+      mkdir -p "${replica}" > /dev/null 2>&1
+      if [ $? -eq 0 ] ;then
+          cp ${archive} "${replica}"
+      fi
+  fi
+}
+
+__backup_zip $*

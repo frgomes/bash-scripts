@@ -1,0 +1,29 @@
+#!/bin/bash -e
+
+function __bash_httrack() {
+  self=$(readlink -f "${BASH_SOURCE[0]}")
+  dir=$(dirname $self)
+
+  which wget >/dev/null 2>&1 || sudo apt install wget -y
+
+  local url="$1"
+  local folder="$2"
+  shift
+  shift
+
+  local tools="${TOOLS_HOME:=$HOME/tools}"
+  "${dir}/httrack_fetch" "${url}" "${tools}/${folder}" $*
+}
+
+if [ $_ != $0 ]; then
+  # echo "Script is being sourced: list all functions"
+  self=$(readlink -f "${BASH_SOURCE[0]}")
+  dir=$(dirname $self)
+  grep -E "^function __" $self | cut -d' ' -f2 | sed 's/()//'
+else
+  # echo "Script is a subshell: execute last function"
+  self=$(readlink -f "${BASH_SOURCE[0]}")
+  dir=$(dirname $self)
+  cmd=$(grep -E "^function __" $self | cut -d' ' -f2  | sed 's/()//' | tail -1)
+  $cmd $*
+fi

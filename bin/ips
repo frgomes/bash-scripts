@@ -1,0 +1,8 @@
+#!/bin/bash -e
+
+function __ips() {
+  which ip >/dev/null 2>&1 || sudo apt install iproute2 -y
+  ip -o addr show | fgrep "scope global" | sed -r "s/[ \t]+/ /g" | cut -d" " -f2,3,4
+}
+
+__ips $*

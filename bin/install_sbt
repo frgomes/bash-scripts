@@ -1,0 +1,44 @@
+#!/bin/bash -e
+
+function __install_sbt() {
+  self=$(readlink -f "${BASH_SOURCE[0]}")
+  dir=$(dirname $self)
+
+  which wget >/dev/null 2>&1 || sudo apt install wget -y
+
+  local latest=https://github.com/sbt/sbt/releases/latest
+  local version=$(wget -q -SO- -T 5 -t 1 "${latest}" 2>/dev/null | fgrep location: | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')
+  local version=${version:-"1.3.13"}
+  local version=${1:-"${version}"}
+
+  local file=sbt-${version}.tgz
+  local url=https://github.com/sbt/sbt/releases/download/v${version}/sbt-${version}.tgz
+  local folder=sbt-${version}
+  local symlink=sbt
+
+  local config="${VIRTUAL_ENV:-"${HOME}"}/.bashrc-scripts/installed/350-sbt.sh"
+  [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
+  cat <<EOD >"${config}"
+#!/bin/bash
+
+export SBT_VERSION=${version}
+export SBT_HOME=\${TOOLS_HOME:=\$HOME/tools}/sbt-v\${SBT_VERSION}
+
+export PATH=\${SBT_HOME}/bin:\${PATH}
+EOD
+
+  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlink}" "${config}" "--strip-components=1"
+}
+
+if [ $_ != $0 ]; then
+  # echo "Script is being sourced: list all functions"
+  self=$(readlink -f "${BASH_SOURCE[0]}")
+  dir=$(dirname $self)
+  grep -E "^function __" $self | cut -d' ' -f2 | sed 's/()//'
+else
+  # echo "Script is a subshell: execute last function"
+  self=$(readlink -f "${BASH_SOURCE[0]}")
+  dir=$(dirname $self)
+  cmd=$(grep -E "^function __" $self | cut -d' ' -f2  | sed 's/()//' | tail -1)
+  $cmd $*
+fi

@@ -1,0 +1,8 @@
+#!/bin/bash -e
+
+function __kubectl_certs {
+  which kubectl >/dev/null 2>&1 || install_kubectl
+  kubectl get -o wide certificate,certificaterequest,challenge,order,clusterissuer,issuer $*
+}
+
+__kubectl_certs $*

@@ -1,0 +1,3 @@
+#!/bin/bash -e
+
+__plasma_restart $*
