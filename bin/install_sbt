@@ -16,13 +16,14 @@ function __install_sbt() {
   local folder=sbt-${version}
   local symlink=sbt
 
-  local config="${VIRTUAL_ENV:-"${HOME}"}/.bashrc-scripts/installed/350-sbt.sh"
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/350-sbt.sh
+
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
   cat <<EOD >"${config}"
 #!/bin/bash
 
 export SBT_VERSION=${version}
-export SBT_HOME=\${TOOLS_HOME:=\$HOME/tools}/sbt-v\${SBT_VERSION}
+export SBT_HOME=\${TOOLS_HOME:=\$HOME/tools}/sbt-\${SBT_VERSION}
 
 export PATH=\${SBT_HOME}/bin:\${PATH}
 EOD

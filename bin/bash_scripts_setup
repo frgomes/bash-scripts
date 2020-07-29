@@ -1,0 +1,28 @@
+#!/bin/bash
+
+function __bash_setup_postactivate(){
+    dir=$(dirname $(readlink -f "${BASH_SOURCE[0]}"))
+    cat <<EOF
+#!/bin/bash -e
+# created by bash-scripts
+
+
+### DO NOT EDIT THIS SCRIPT BY HAND ###
+
+
+# echo "[ Make sure directory structure is created ]"
+for folder in "\${VIRTUAL_ENV:-\${HOME}/.local/share/bash-scripts}"/{bin,postactivate/head.d,postactivate/postactivate.d,postactivate/tail.d} ;do
+    [[ ! -d "\${folder}" ]] && mkdir -p "\${folder}"
+done
+
+# echo "[ Run initialization scripts ]"
+for script in "\${VIRTUAL_ENV:-\${HOME}/.local/share/bash-scripts}"/postactivate/head.d/*.sh \\
+              "\${VIRTUAL_ENV:-\${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/*.sh \\
+              "\${VIRTUAL_ENV:-\${HOME}/.local/share/bash-scripts}"/postactivate/tail.d/*.sh ;do
+    [[ -x "\${script}" ]] && echo "sourcing \${script}" && source "\${script}"
+done
+EOF
+}
+
+__bash_setup_postactivate > "${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/bin/postactivate
+chmod u+x "${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/bin/postactivate

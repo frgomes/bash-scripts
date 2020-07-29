@@ -1,0 +1,76 @@
+#!/bin/bash -e
+
+function __install_java() {
+  self=$(readlink -f "${BASH_SOURCE[0]}")
+  dir=$(dirname $self)
+
+  which wget >/dev/null 2>&1 || sudo apt install wget -y
+
+  local version=${version:-"14.36"}
+  local version=${1:-"${version}"}
+  local major=$(echo ${version} | cut -d. -f1)
+
+  if [[ $version =~ ^(1\.)?7\.* ]] ;then
+    local file=openjdk-7u75-b13-linux-x64-18_dec_2014.tar.gz
+    local url=https://download.java.net/openjdk/jdk7u75/ri/${file}
+    local folder=java-se-7u75-ri
+    local symlink=jdk7
+  elif [[ $version =~ ^(1\.)?8\.* ]] ;then
+    local file=openjdk-8u40-b25-linux-x64-10_feb_2015.tar.gz
+    local url=https://download.java.net/openjdk/jdk8u40/ri/${file}
+    local folder=java-se-8u40-ri
+    local symlink=jdk8
+  elif [[ $version =~ ^11\.* ]] ;then
+    local file=openjdk-11+28_linux-x64_bin.tar.gz
+    local url=https://download.java.net/openjdk/jdk11/ri/${file}
+    local folder=jdk-11
+    local symlink=jdk11
+  elif [[ $version =~ ^12\.* ]] ;then
+    local file=openjdk-12+32_linux-x64_bin.tar.gz
+    local url=https://download.java.net/openjdk/jdk12/ri/${file}
+    local folder=jdk-12
+    local symlink=jdk12
+  elif [[ $version =~ ^13\.* ]] ;then
+    local file=openjdk-13+33_linux-x64_bin.tar.gz
+    local url=https://download.java.net/openjdk/jdk13/ri/${file}
+    local folder=jdk-13
+    local symlink=jdk13
+  elif [[ $version =~ ^14\.* ]] ;then
+    local file=openjdk-14+36_linux-x64_bin.tar.gz
+    local url=https://download.java.net/openjdk/jdk14/ri/${file}
+    local folder=jdk-14
+    local symlink=jdk14
+  else
+    echo "ERROR: Unsupported Java version $JAVA_VERSION"
+    echo 'INFO: Supported JDK versions are: 1.7.*, 1.8.*, 11.*, 12.*, 13.* and 14.*'
+    return 1
+  fi
+
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/300-java.sh
+
+  [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
+  cat <<EOD >"${config}"
+#!/bin/bash
+
+export JAVA_VERSION=${version}
+export JAVA_VERSION_MAJOR=${major}
+export JAVA_HOME=\${TOOLS_HOME:=\$HOME/tools}/jdk-\${JAVA_VERSION_MAJOR}
+
+export PATH=\${JAVA_HOME}/bin:\${PATH}
+EOD
+
+  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlink}" "${config}" "--strip-components=1"
+}
+
+if [ $_ != $0 ]; then
+  # echo "Script is being sourced: list all functions"
+  self=$(readlink -f "${BASH_SOURCE[0]}")
+  dir=$(dirname $self)
+  grep -E "^function __" $self | cut -d' ' -f2 | sed 's/()//'
+else
+  # echo "Script is a subshell: execute last function"
+  self=$(readlink -f "${BASH_SOURCE[0]}")
+  dir=$(dirname $self)
+  cmd=$(grep -E "^function __" $self | cut -d' ' -f2  | sed 's/()//' | tail -1)
+  $cmd $*
+fi
