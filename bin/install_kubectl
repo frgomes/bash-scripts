@@ -12,7 +12,8 @@ function __install_kubectl() {
   local version=${version:-"1.18.6"}
   local version=${1:-"${version}"}
 
-  local config="${VIRTUAL_ENV:-"${HOME}"}/.bashrc-scripts/installed/270-kubectl.sh"
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/270-kubectl.sh
+  
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
   cat <<EOD >"${config}"
 #!/bin/bash

@@ -1,0 +1,58 @@
+#!/bin/bash -ex
+
+function __install_doctl() {
+  self=$(readlink -f "${BASH_SOURCE[0]}")
+  dir=$(dirname $self)
+
+  which wget >/dev/null 2>&1 || sudo apt install wget -y
+
+  ##FIXME: local version=${version:-$(wget -q -O - https://storage.googleapis.com/kubernetes-release/release/stable.tx | cut -c2-)}
+  local version=${version:-"1.38.0"}
+  local version=${1:-"${version}"}
+
+  local arch=${2:-"$DOCTL_ARCH"}
+  local arch=${arch:-"linux-amd64"}
+
+  local file=doctl-${version}-${arch}.tar.gz
+  local url=https://github.com/digitalocean/doctl/releases/download/v${version}/${file}
+  local folder=doctl-v${version}-${arch}
+  local symlink=doctl
+
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/271-doctl.sh
+  
+  [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
+  cat <<EOD >"${config}"
+#!/bin/bash
+
+export DOCTL_VERSION=${version}
+export DOCTL_ARCH=\${DOCTL_ARCH:-linux-amd64}
+export DOCTL_HOME=\${TOOLS_HOME:=\$HOME/tools}/doctl-v\${DOCTL_VERSION}-\${DOCTL_ARCH}
+
+export PATH=\${DOCTL_HOME}:\${PATH}
+EOD
+
+  local machine=$(uname -m)
+  case "${machine}" in
+    armv7l)
+      local arch=arm
+        ;;
+    *)
+      local arch=amd64
+        ;;
+  esac
+
+  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlink}" "${config}"
+}
+
+if [ $_ != $0 ]; then
+  # echo "Script is being sourced: list all functions"
+  self=$(readlink -f "${BASH_SOURCE[0]}")
+  dir=$(dirname $self)
+  grep -E "^function __" $self | cut -d' ' -f2 | sed 's/()//'
+else
+  # echo "Script is a subshell: execute last function"
+  self=$(readlink -f "${BASH_SOURCE[0]}")
+  dir=$(dirname $self)
+  cmd=$(grep -E "^function __" $self | cut -d' ' -f2  | sed 's/()//' | tail -1)
+  $cmd $*
+fi
