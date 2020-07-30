@@ -1,0 +1,59 @@
+#!/bin/bash -x
+
+
+function __install_doctl() {
+  self=$(readlink -f "${BASH_SOURCE[0]}")
+  dir=$(dirname $self)
+
+  which wget >/dev/null 2>&1 || sudo apt install wget -y
+
+  ##FIXME: local version=${version:-$(wget -q -O - https://storage.googleapis.com/kubernetes-release/release/stable.tx | cut -c2-)}
+  local version=${version:-"3.1.1"}
+  local version=${1:-"${version}"}
+
+  local arch=${2:-"$HELM_ARCH"}
+  local arch=${arch:-"linux-amd64"}
+
+  local file=helm-v${version}-${arch}.tar.gz
+  local url=https://get.helm.sh/${file}
+  local folder=helm-${version}
+  local symlink=helm
+
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/271-helm.sh
+  
+  [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
+  cat <<EOD >"${config}"
+#!/bin/bash
+
+export HELM_VERSION=${version}
+export HELM_ARCH=${arch}
+export HELM_HOME=\${TOOLS_HOME:=\$HOME/tools}/helm-\${HELM_VERSION}
+
+export PATH=\${HELM_HOME}/\${HELM_ARCH}:\${PATH}
+EOD
+
+  local machine=$(uname -m)
+  case "${machine}" in
+    armv7l)
+      local arch=arm
+        ;;
+    *)
+      local arch=amd64
+        ;;
+  esac
+
+  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlink}" "${config}"
+}
+
+if [ $_ != $0 ]; then
+  # echo "Script is being sourced: list all functions"
+  self=$(readlink -f "${BASH_SOURCE[0]}")
+  dir=$(dirname $self)
+  grep -E "^function __" $self | cut -d' ' -f2 | sed 's/()//'
+else
+  # echo "Script is a subshell: execute last function"
+  self=$(readlink -f "${BASH_SOURCE[0]}")
+  dir=$(dirname $self)
+  cmd=$(grep -E "^function __" $self | cut -d' ' -f2  | sed 's/()//' | tail -1)
+  $cmd $*
+fi
