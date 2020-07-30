@@ -5,4 +5,4 @@ function __json2yaml() {
   python -c 'import sys, yaml, json; print(yaml.dump(json.loads(sys.stdin.read()), sort_keys=False))'
 }
 
-__json2yaml $*
+(pip --disable-pip-version-check install PyYAML > /dev/null 2>&1) && __json2yaml $*

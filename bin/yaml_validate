@@ -5,4 +5,4 @@ function __yaml_validate() {
   python -c 'import sys, yaml, json; yaml.safe_load(sys.stdin.read())'
 }
 
-__yaml_validate $*
+(pip --disable-pip-version-check install PyYAML > /dev/null 2>&1) && __yaml_validate $*
