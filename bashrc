@@ -119,7 +119,7 @@ fi
 
 
 dir=$(dirname $(readlink -f "${BASH_SOURCE[0]}"))
-echo ${PATH} | tr ':' '\n' | grep -E "^${dir}$" > /dev/null 2>\&1 || export PATH="${dir}/bin":${PATH}
+echo ${PATH} | tr ':' '\n' | grep -E "^${dir}$" > /dev/null 2>&1 || export PATH="${dir}/bin":${PATH}
 
 __bash_virtualenv_install_pip
 __bash_virtualenv_install_virtualenv
