@@ -1,5 +1,27 @@
 #!/bin/bash -e
 
+function __install_java_activator() {
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
+
+  local activator="${1}"
+  local version="${2}"
+  local major=$(echo ${version} | cut -d. -f1)
+
+  [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
+  cat <<EOD > "${config}"
+#!/bin/bash
+
+export JAVA_VERSION=${version}
+export JAVA_VERSION_MAJOR=${major}
+export JAVA_HOME=\${TOOLS_HOME:=\$HOME/tools}/jdk-\${JAVA_VERSION_MAJOR}
+
+export PATH=\${JAVA_HOME}/bin:\${PATH}
+EOD
+  chmod ugo+x "${config}"
+  echo "${config}"
+}    
+
 function __install_java() {
   self=$(readlink -f "${BASH_SOURCE[0]}")
   dir=$(dirname $self)
@@ -47,30 +69,15 @@ function __install_java() {
   fi
 
   local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/300-java.sh
+   __install_java_activator "${config}" "${version}"
 
-  [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
-  cat <<EOD >"${config}"
-#!/bin/bash
-
-export JAVA_VERSION=${version}
-export JAVA_VERSION_MAJOR=${major}
-export JAVA_HOME=\${TOOLS_HOME:=\$HOME/tools}/jdk-\${JAVA_VERSION_MAJOR}
-
-export PATH=\${JAVA_HOME}/bin:\${PATH}
-EOD
-
-  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlink}" "${config}" "--strip-components=1"
+  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlink}" "--strip-components=1"
 }
 
 if [ $_ != $0 ]; then
   # echo "Script is being sourced: list all functions"
-  self=$(readlink -f "${BASH_SOURCE[0]}")
-  dir=$(dirname $self)
-  grep -E "^function __" $self | cut -d' ' -f2 | sed 's/()//'
+  grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2 | sed 's/()//'
 else
   # echo "Script is a subshell: execute last function"
-  self=$(readlink -f "${BASH_SOURCE[0]}")
-  dir=$(dirname $self)
-  cmd=$(grep -E "^function __" $self | cut -d' ' -f2  | sed 's/()//' | tail -1)
-  $cmd $*
+  $(grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2  | sed 's/()//' | tail -1) "$@"
 fi

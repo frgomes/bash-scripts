@@ -1,27 +1,14 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 
-function __install_doctl() {
-  self=$(readlink -f "${BASH_SOURCE[0]}")
-  dir=$(dirname $self)
+function __install_doctl_activator() {
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
 
-  which wget >/dev/null 2>&1 || sudo apt install wget -y
+  local activator="${1}"
+  local version="${2}"
 
-  ##FIXME: local version=${version:-$(wget -q -O - https://storage.googleapis.com/kubernetes-release/release/stable.tx | cut -c2-)}
-  local version=${version:-"1.38.0"}
-  local version=${1:-"${version}"}
-
-  local arch=${2:-"$DOCTL_ARCH"}
-  local arch=${arch:-"linux-amd64"}
-
-  local file=doctl-${version}-${arch}.tar.gz
-  local url=https://github.com/digitalocean/doctl/releases/download/v${version}/${file}
-  local folder=doctl-v${version}-${arch}
-  local symlink=doctl
-
-  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/271-doctl.sh
-  
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
-  cat <<EOD >"${config}"
+  cat <<EOD > "${config}"
 #!/bin/bash
 
 export DOCTL_VERSION=${version}
@@ -30,29 +17,37 @@ export DOCTL_HOME=\${TOOLS_HOME:=\$HOME/tools}/doctl-v\${DOCTL_VERSION}-\${DOCTL
 
 export PATH=\${DOCTL_HOME}:\${PATH}
 EOD
+  chmod ugo+x "${config}"
+  echo "${config}"
+}    
 
-  local machine=$(uname -m)
-  case "${machine}" in
-    armv7l)
-      local arch=arm
-        ;;
-    *)
-      local arch=amd64
-        ;;
-  esac
+function __install_doctl() {
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
 
-  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlink}" "${config}"
+  ##FIXME: local version=${version:-$(wget -q -O - https://storage.googleapis.com/kubernetes-release/release/stable.tx | cut -c2-)}
+  local version=${version:-"1.38.0"}
+  local version=${1:-"${version}"}
+
+  ##FIXME: local arch=${2:-"$DOCTL_ARCH"}
+  local arch=${arch:-"linux-amd64"}
+
+  local file=doctl-${version}-${arch}.tar.gz
+  local url=https://github.com/digitalocean/doctl/releases/download/v${version}/${file}
+  local folder=doctl-v${version}-${arch}
+  local symlink=doctl
+
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/271-doctl.sh
+   __install_doctl_activator "${config}" "${version}"
+
+  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlink}"
 }
+
 
 if [ $_ != $0 ]; then
   # echo "Script is being sourced: list all functions"
-  self=$(readlink -f "${BASH_SOURCE[0]}")
-  dir=$(dirname $self)
-  grep -E "^function __" $self | cut -d' ' -f2 | sed 's/()//'
+  grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2 | sed 's/()//'
 else
   # echo "Script is a subshell: execute last function"
-  self=$(readlink -f "${BASH_SOURCE[0]}")
-  dir=$(dirname $self)
-  cmd=$(grep -E "^function __" $self | cut -d' ' -f2  | sed 's/()//' | tail -1)
-  $cmd $*
+  $(grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2  | sed 's/()//' | tail -1) "$@"
 fi

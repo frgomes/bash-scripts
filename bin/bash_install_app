@@ -1,19 +1,19 @@
 #!/bin/bash -e
 
+function __bash_install_app_help(){
+  echo "Usage: bash_install_app url file folder [symlink]"
+  echo "Downloads url, save onto file,copying into folder, optionally creating symlink."
+}
+
 function __bash_install_app() {
   which wget >/dev/null 2>&1 || sudo apt install wget -y
 
+  [[ $# -lt 3 ]] && __bash_install_tar_help && return 1
   local url="$1"
   local file="$2"
   local folder="$3"
-  local symlink="$4"
-  local config="$5"
-  shift
-  shift
-  shift
-  shift
-  shift
-  #local opts="$*"
+  shift; shift; shift
+  [[ $# -gt 0 ]] && local symlink="$1" && shift
 
   local tools="${TOOLS_HOME:=$HOME/tools}"
   local Software="${SOFTWARE:=/mnt/omv/Software}"
@@ -32,20 +32,12 @@ function __bash_install_app() {
     wget -q "$url" -O "${archive}"
   fi
 
-  if [ ! -d "${tools}/${folder}/bin" ]; then
-    mkdir -p "${tools}/${folder}/bin"
-    cp "${archive}" "${tools}/${folder}/bin/${file}"
-    chmod 755 "${tools}/${folder}/bin/${file}"
-  fi
-  if [ ! -z "${symlink}" ]; then
-    if [ -L "${tools}/${symlink}" ]; then rm "${tools}/${symlink}"; fi
-    ln -s "${folder}" "${tools}/${symlink}"
-  fi
+  [[ ! -d "${tools}/${folder}" ]] && mkdir -p "${tools}/${folder}"
+  cp "${archive}" "${tools}/${folder}/bin/${file}"
+  chmod ugo+x "${tools}/${folder}/bin/${file}"
 
-  if [ -f "${config}" ]; then
-    chmod 755 "${config}"
-    echo "${config}"
-  fi
+  [[ -z "${symlink}" || "${symlink}" == "." ]] || [[ -L "${tools}/${symlink}" ]] && rm "${tools}/${symlink}"
+  [[ -z "${symlink}" || "${symlink}" == "." ]] || ln -s "${folder}" "${tools}/${symlink}"
 }
 
 if [ $_ != $0 ]; then

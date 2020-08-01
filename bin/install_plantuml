@@ -1,6 +1,7 @@
 #!/bin/bash -e
 
-function __install_sbt_activator() {
+
+function __install_plantuml_activator() {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
 
@@ -11,35 +12,35 @@ function __install_sbt_activator() {
   cat <<EOD > "${config}"
 #!/bin/bash
 
-export SBT_VERSION=${version}
-export SBT_HOME=\${TOOLS_HOME:=\$HOME/tools}/sbt-\${SBT_VERSION}
+export PLANTUML_VERSION=${version}
+export SBT_HOME=\${TOOLS_HOME:=\$HOME/tools}/plantuml-v\${PLANTUML_VERSION}
 
-export PATH=\${SBT_HOME}/bin:\${PATH}
+export PATH=\${PLANTUML_HOME}/bin:\${PATH}
 EOD
   chmod ugo+x "${config}"
   echo "${config}"
 }    
 
-function __install_sbt() {
+function __install_plantuml_binaries() {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
 
   which wget >/dev/null 2>&1 || sudo apt install wget -y
 
-  local latest=https://github.com/sbt/sbt/releases/latest
+  local latest=https://github.com/plantuml/plantuml/releases/latest
   local version=$(wget -q -SO- -T 5 -t 1 "${latest}" 2>/dev/null | fgrep location: | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')
-  local version=${version:-"1.3.13"}
+  local version=${version:-"1.2020.15"}
   local version=${1:-"${version}"}
 
-  local file=sbt-${version}.tgz
-  local url=https://github.com/sbt/sbt/releases/download/v${version}/sbt-${version}.tgz
-  local folder=sbt-${version}
-  local symlink=sbt
+  local file=plantuml-v${version}.tar.gz
+  local url=https://github.com/plantuml/plantuml/archive/v${version}.tar.gz
+  local folder=plantuml-${version}
+  local symlink=plantuml
 
-  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/350-sbt.sh
-   __install_sbt_activator "${config}" "${version}"
+  local config="${VIRTUAL_ENV:-"${HOME}"}/.bashrc-scripts/installed/353-plantuml.sh"
+   __install_plantuml_activator "${config}" "${version}"
 
-  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlink}" "--strip-components=1"
+  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlink}"
 }
 
 if [ $_ != $0 ]; then

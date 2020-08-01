@@ -1,8 +1,28 @@
 #!/bin/bash -e
 
+function __install_scala_activator() {
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
+
+  local activator="${1}"
+  local version="${2}"
+
+  [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
+  cat <<EOD > "${config}"
+#!/bin/bash
+
+export SCALA_VERSION=${version}
+export SCALA_HOME=\${TOOLS_HOME:=\$HOME/tools}/scala-\${SCALA_VERSION}
+
+export PATH=\${SCALA_HOME}/bin:\${PATH}
+EOD
+  chmod ugo+x "${config}"
+  echo "${config}"
+}    
+
 function __install_scala() {
-  self=$(readlink -f "${BASH_SOURCE[0]}")
-  dir=$(dirname $self)
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
 
   which wget >/dev/null 2>&1 || sudo apt install wget -y
 
@@ -13,16 +33,7 @@ function __install_scala() {
   local major=$(echo ${version} | cut -d. -f1-2)
 
   local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/351-scala.sh
-
-  [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
-  cat <<EOD >"${config}"
-#!/bin/bash
-
-export SCALA_VERSION=${version}
-export SCALA_HOME=\${TOOLS_HOME:=\$HOME/tools}/scala-\${SCALA_VERSION}
-
-export PATH=\${SCALA_HOME}/bin:\${PATH}
-EOD
+   __install_scala_activator "${config}" "${version}"
 
   if [[ $version =~ ^(0\.).* ]] ;then
     local file=dotty-${version}.tar.gz
@@ -36,8 +47,8 @@ EOD
     local folder=scala-${version}
     local symlink=scala-${major}
     
-    "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlink}" "${config}" "--strip-components=1"
-    "${dir}"/bash_install_tar "https://scala-lang.org/files/archive/scala-docs-${version}.txz" "scala-docs-${version}.txz" "scala-${version}" "scala-${major}" "" "--strip-components=1"
+   "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlink}" "--strip-components=1"
+    "${dir}"/bash_install_tar "https://scala-lang.org/files/archive/scala-docs-${version}.txz" "scala-docs-${version}.txz" "scala-${version}" "scala-${major}" "--strip-components=1"
 
     local tools="${TOOLS_HOME:=$HOME/tools}"
     "${dir}"/httrack_fetch "https://www.scala-lang.org/files/archive/spec/${major}" "${tools}/${folder}/scala-${version}/spec"
@@ -47,13 +58,8 @@ EOD
 
 if [ $_ != $0 ]; then
   # echo "Script is being sourced: list all functions"
-  self=$(readlink -f "${BASH_SOURCE[0]}")
-  dir=$(dirname $self)
-  grep -E "^function __" $self | cut -d' ' -f2 | sed 's/()//'
+  grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2 | sed 's/()//'
 else
   # echo "Script is a subshell: execute last function"
-  self=$(readlink -f "${BASH_SOURCE[0]}")
-  dir=$(dirname $self)
-  cmd=$(grep -E "^function __" $self | cut -d' ' -f2  | sed 's/()//' | tail -1)
-  $cmd $*
+  $(grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2  | sed 's/()//' | tail -1) "$@"
 fi

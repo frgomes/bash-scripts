@@ -2,20 +2,15 @@
 
 # see: https://kubernetes.io/docs/tasks/tools/install-kubectl/
 
-function __install_kubectl() {
-  self=$(readlink -f "${BASH_SOURCE[0]}")
-  dir=$(dirname $self)
+function __install_kubectl_activator() {
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
 
-  which wget >/dev/null 2>&1 || sudo apt install wget -y
+  local activator="${1}"
+  local version="${2}"
 
-  local version=${version:-$(wget -q -O - https://storage.googleapis.com/kubernetes-release/release/stable.tx | cut -c2-)}
-  local version=${version:-"1.18.6"}
-  local version=${1:-"${version}"}
-
-  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/270-kubectl.sh
-  
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
-  cat <<EOD >"${config}"
+  cat <<EOD > "${config}"
 #!/bin/bash
 
 export KUBE_VERSION=${version}
@@ -23,9 +18,21 @@ export KUBE_HOME=\${TOOLS_HOME:=\$HOME/tools}/kube-\${KUBE_VERSION}
 
 export PATH=\${KUBE_HOME}/bin:\${PATH}
 EOD
+  chmod ugo+x "${config}"
+  echo "${config}"
+}    
 
-  local machine=$(uname -m)
-  case "${machine}" in
+function __install_kubectl() {
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
+
+  which wget >/dev/null 2>&1 || sudo apt install wget -y
+
+  local version=${version:-$(wget -q -O - https://storage.googleapis.com/kubernetes-release/release/stable.tx | cut -c2-)}
+  local version=${version:-"1.18.6"}
+  local version=${1:-"${version}"}
+
+  case "$(uname -m)" in
     armv7l)
       local arch=arm
         ;;
@@ -34,19 +41,17 @@ EOD
         ;;
   esac
 
-  "${dir}"/bash_install_app "https://storage.googleapis.com/kubernetes-release/release/v${version}/bin/linux/${arch}/kubectl" "kubectl"       "kube-${version}" "kube" "${config}"
-  "${dir}"/bash_install_app "https://github.com/stashed/cli/releases/download/v0.3.1/kubectl-stash-linux-${arch}"             "kubectl-stash" "kube-${version}" "kube" "${config}" ##FIXME: should create a separate installation file
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/270-kubectl.sh
+   __install_dhall_activator "${config}" "${version}"
+
+  "${dir}"/bash_install_app "https://storage.googleapis.com/kubernetes-release/release/v${version}/bin/linux/${arch}/kubectl" "kubectl"       "kube-${version}" "kube"
+  "${dir}"/bash_install_app "https://github.com/stashed/cli/releases/download/v0.3.1/kubectl-stash-linux-${arch}"             "kubectl-stash" "kube-${version}" "kube"
 }
 
 if [ $_ != $0 ]; then
   # echo "Script is being sourced: list all functions"
-  self=$(readlink -f "${BASH_SOURCE[0]}")
-  dir=$(dirname $self)
-  grep -E "^function __" $self | cut -d' ' -f2 | sed 's/()//'
+  grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2 | sed 's/()//'
 else
   # echo "Script is a subshell: execute last function"
-  self=$(readlink -f "${BASH_SOURCE[0]}")
-  dir=$(dirname $self)
-  cmd=$(grep -E "^function __" $self | cut -d' ' -f2  | sed 's/()//' | tail -1)
-  $cmd $*
+  $(grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2  | sed 's/()//' | tail -1) "$@"
 fi

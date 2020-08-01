@@ -1,0 +1,191 @@
+#!/bin/bash -e
+
+
+function __install_dhall_activator() {
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
+
+  local activator="${1}"
+  local version="${2}"
+
+  [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
+  cat <<EOD > "${config}"
+#!/bin/bash
+
+export DHALL_VERSION=${version}
+export DHALL_ARCH=\${DHALL_ARCH:-x86_64-linux}
+export DHALL_HOME=\${TOOLS_HOME:=\$HOME/tools}/dhall-v\${DHALL_VERSION}-\${DHALL_ARCH}/bin
+
+export PATH=\${DHALL_HOME}:\${PATH}
+EOD
+  chmod ugo+x "${config}"
+  echo "${config}"
+}    
+
+function __install_dhall_compiler_binaries() {
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
+
+  which wget >/dev/null 2>&1 || sudo apt install wget -y
+
+  local latest=https://github.com/dhall-lang/dhall-haskell/releases/latest
+  local version=$(wget -q -SO- -T 5 -t 1 "${latest}" 2>/dev/null | fgrep location: | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')
+  local version=${version:-"1.33.0"}
+  local version=${1:-"${version}"}
+
+  ##FIXME: local arch=${2:-"$DHALL_ARCH"}
+  local arch=${arch:-"x86_64-linux"}
+
+  local file=dhall-${version}-${arch}.tar.bz2
+  local url=https://github.com/dhall-lang/dhall-haskell/releases/download/${version}/${file}
+  local folder=dhall-v${version}-${arch}
+  local symlink=dhall
+
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/271-dhall.sh
+   __install_dhall_activator "${config}" "${version}"
+
+  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlink}"
+}
+
+function __install_dhall_lsp_binaries() {
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
+
+  which wget >/dev/null 2>&1 || sudo apt install wget -y
+
+  local latest=https://github.com/dhall-lang/dhall-haskell/releases/latest
+  local version=$(wget -q -SO- -T 5 -t 1 "${latest}" 2>/dev/null | fgrep location: | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')
+  local version=${version:-"1.33.0"}
+  local version=${1:-"${version}"}
+
+  ##FIXME: local vtool=${2:-"$DHALL_LSP_VERSION"}
+  local vtool=${vtool:-"1.0.8"}
+
+  ##FIXME: local arch=${3:-"$DHALL_ARCH"}
+  local arch=${arch:-"x86_64-linux"}
+
+  local file=dhall-lsp-server-${vtool}-${arch}.tar.bz2
+  local url=https://github.com/dhall-lang/dhall-haskell/releases/download/${version}/${file}
+  local folder=dhall-v${version}-${arch}
+  local symlink=dhall
+
+  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlink}"
+}
+
+function __install_dhall_json_binaries() {
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
+
+  which wget >/dev/null 2>&1 || sudo apt install wget -y
+
+  local latest=https://github.com/dhall-lang/dhall-haskell/releases/latest
+  local version=$(wget -q -SO- -T 5 -t 1 "${latest}" 2>/dev/null | fgrep location: | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')
+  local version=${version:-"1.33.0"}
+  local version=${1:-"${version}"}
+
+  ##FIXME: local vtool=${2:-"$DHALL_JSON_VERSION"}
+  local vtool=${vtool:-"1.7.0"}
+
+  ##FIXME: local arch=${3:-"$DHALL_ARCH"}
+  local arch=${arch:-"x86_64-linux"}
+
+  local file=dhall-json-${vtool}-${arch}.tar.bz2
+  local url=https://github.com/dhall-lang/dhall-haskell/releases/download/${version}/${file}
+  local folder=dhall-v${version}-${arch}
+  local symlink=dhall
+
+  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlink}"
+}
+
+function __install_dhall_yaml_binaries() {
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
+
+  which wget >/dev/null 2>&1 || sudo apt install wget -y
+
+  local latest=https://github.com/dhall-lang/dhall-haskell/releases/latest
+  local version=$(wget -q -SO- -T 5 -t 1 "${latest}" 2>/dev/null | fgrep location: | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')
+  local version=${version:-"1.33.0"}
+  local version=${1:-"${version}"}
+
+  ##FIXME: local vtool=${2:-"$DHALL_YAML_VERSION"}
+  local vtool=${vtool:-"1.2.0"}
+
+  ##FIXME: local arch=${3:-"$DHALL_ARCH"}
+  local arch=${arch:-"x86_64-linux"}
+
+  local file=dhall-yaml-${vtool}-${arch}.tar.bz2
+  local url=https://github.com/dhall-lang/dhall-haskell/releases/download/${version}/${file}
+  local folder=dhall-v${version}-${arch}
+  local symlink=dhall
+
+  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlink}"
+}
+
+function __install_dhall_bash_binaries() {
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
+
+  which wget >/dev/null 2>&1 || sudo apt install wget -y
+
+  local latest=https://github.com/dhall-lang/dhall-haskell/releases/latest
+  local version=$(wget -q -SO- -T 5 -t 1 "${latest}" 2>/dev/null | fgrep location: | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')
+  local version=${version:-"1.33.0"}
+  local version=${1:-"${version}"}
+
+  ##FIXME: local vtool=${2:-"$DHALL_BASH_VERSION"}
+  local vtool=${vtool:-"1.0.31"}
+
+  ##FIXME: local arch=${3:-"$DHALL_ARCH"}
+  local arch=${arch:-"x86_64-linux"}
+
+  local file=dhall-bash-${vtool}-${arch}.tar.bz2
+  local url=https://github.com/dhall-lang/dhall-haskell/releases/download/${version}/${file}
+  local folder=dhall-v${version}-${arch}
+  local symlink=dhall
+
+  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlink}"
+}
+
+function __install_dhall_nix_binaries() {
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
+
+  which wget >/dev/null 2>&1 || sudo apt install wget -y
+
+  local latest=https://github.com/dhall-lang/dhall-haskell/releases/latest
+  local version=$(wget -q -SO- -T 5 -t 1 "${latest}" 2>/dev/null | fgrep location: | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')
+  local version=${version:-"1.33.0"}
+  local version=${1:-"${version}"}
+
+  ##FIXME: local vtool=${2:-"$DHALL_NIX_VERSION"}
+  local vtool=${vtool:-"1.1.15"}
+
+  ##FIXME: local arch=${3:-"$DHALL_ARCH"}
+  local arch=${arch:-"x86_64-linux"}
+
+  local file=dhall-nix-${vtool}-${arch}.tar.bz2
+  local url=https://github.com/dhall-lang/dhall-haskell/releases/download/${version}/${file}
+  local folder=dhall-v${version}-${arch}
+  local symlink=dhall
+
+  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlink}"
+}
+
+function __install_dhall() {
+  __install_dhall_compiler_binaries "$@" && \
+  __install_dhall_lsp_binaries "$@" && \
+  __install_dhall_json_binaries "$@" && \
+  __install_dhall_yaml_binaries "$@" && \
+  __install_dhall_bash_binaries "$@" && \
+  __install_dhall_nix_binaries "$@"
+}
+
+
+if [ $_ != $0 ]; then
+  # echo "Script is being sourced: list all functions"
+  grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2 | sed 's/()//'
+else
+  # echo "Script is a subshell: execute last function"
+  $(grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2  | sed 's/()//' | tail -1) "$@"
+fi
