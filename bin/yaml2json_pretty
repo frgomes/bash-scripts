@@ -2,7 +2,7 @@
 
 function __yaml2json_pretty() {
   which python3 >/dev/null 2>&1 || sudo apt install python3-minimal -y
-  python -c 'import sys, yaml, json; print(json.dumps(yaml.safe_load(sys.stdin.read()), indent=2, sort_keys=False))'
+  python -c 'import sys, yaml, json; print(json.dumps(yaml.load(sys.stdin.read(),Loader=yaml.FullLoader), sort_keys=False, indent=2))'
 }
 
 (pip --disable-pip-version-check install PyYAML > /dev/null 2>&1) && __yaml2json_pretty $*
