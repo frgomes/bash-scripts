@@ -1,0 +1,16 @@
+#!/bin/bash -e
+
+function __install_cli_azure {
+  if [ -e $(which python) ] ;then
+    python -m pip install --upgrade pip azure-cli
+  fi
+}
+
+
+if [ $_ != $0 ]; then
+  # echo "Script is being sourced: list all functions"
+  grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2 | sed 's/()//'
+else
+  # echo "Script is a subshell: execute last function"
+  $(grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2  | sed 's/()//' | tail -1) "$@"
+fi
