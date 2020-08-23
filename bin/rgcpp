@@ -1,8 +1,0 @@
-#!/bin/bash -e
-
-function __rgcpp() {
-  which rg >/dev/null 2>&1 || sudo apt install ripgrep -y
-  rg --no-ignore -t cpp -H -n $*
-}
-
-__rgcpp $*

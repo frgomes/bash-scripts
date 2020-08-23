@@ -1,0 +1,36 @@
+#!/bin/bash -e
+
+function __ffd() {
+    which fd >/dev/null 2>&1 || sudo apt install fd -y
+    case "${1}" in
+        ant)   shift; fd -I -F build.xml $@;;
+        conf)  shift; fd -I -e cfg -e conf -e config -e ini $@;;
+        cpp)   shift; fd -I -e c -e h -e cpp -e hpp $@;;
+        css)   shift; fd -I -e css $@;;
+        dhall) shift; fd -I -e dhall $@;;
+        el)    shift; fd -I -e el $@;;
+        form)  shift; fd -I -e form $@;;
+        java)  shift; fd -I -e java $@;;
+        js)    shift; fd -I -e js $@;;
+        json)  shift; fd -I -e json $@;;
+        md)    shift; fd -I -e md $@;;
+        pom)   shift; fd -I -F pom.xml $@;;
+        py)    shift; fd -I -e py $@;;
+        rs)    shift; fd -I -e rs $@;;
+        rst)   shift; fd -I -e rst $@;;
+        sbt)   shift; fd -I -e sbt $@;;
+        scala) shift; fd -I -e scala $@;;
+        sh)    shift; fd -I -e sh $@;;
+        sql)   shift; fd -I -e sql $@;;
+        toml)  shift; fd -I -e toml $@;;
+        ts)    shift; fd -I -e ts $@;;
+        txt)   shift; fd -I -e txt $@;;
+        xml)   shift; fd -I -e xml $@;;
+        yaml)  shift; fd -I -e yml -e yaml $@;;
+        file)  shift; fd -I $@;;
+        dir)   shift; fd -I -t d $@;;
+        *) fd $@;;
+    esac
+}
+
+__ffd $@

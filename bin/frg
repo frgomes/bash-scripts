@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+function __frg() {
+    which fd >/dev/null 2>&1 || sudo apt install ripgrep -y
+    case "${1}" in
+        ant)   shift; rg --no-ignore --type-add 'ant:build.xml' -t ant -H -n $@;;
+        conf)  shift; rg --no-ignore -t config -H -n $@;;
+        cpp)   shift; rg --no-ignore -t cpp -H -n $@;;
+        css)   shift; rg --no-ignore -t css -H -n $@;;
+        dhall) shift; rg --no-ignore -t dhall -H -n $@;;
+        el)    shift; rg --no-ignore -t el -H -n $@;;
+        java)  shift; rg --no-ignore -t java -H -n $@;;
+        js)    shift; rg --no-ignore -t js -H -n $@;;
+        json)  shift; rg --no-ignore -t json -H -n $@;;
+        md)    shift; rg --no-ignore -t md -H -n $@;;
+        pom)   shift; rg --no-ignore --type-add 'pom:*.pom' -t pom -H -n $@;;
+        py)    shift; rg --no-ignore -t py -H -n $@;;
+        rs)    shift; rg --no-ignore -t rs -H -n $@;;
+        rst)   shift; rg --no-ignore -t rst -H -n $@;;
+        sbt)   shift; rg --no-ignore -t sbt -H -n $@;;
+        scala) shift; rg --no-ignore -t scala -H -n $@;;
+        sh)    shift; rg --no-ignore -t sh -H -n $@;;
+        sql)   shift; rg --no-ignore -t sql -H -n $@;;
+        toml)  shift; rg --no-ignore -t toml -H -n $@;;
+        ts)    shift; rg --no-ignore -t ts -H -n $@;;
+        txt)   shift; rg --no-ignore -t txt -H -n $@;;
+        xml)   shift; rg --no-ignore -t xml -H -n $@;;
+        yaml)  shift; rg --no-ignore -t yaml -H -n $@;;
+        file)  shift; rg --no-ignore -H -n $@;;
+        *) rg $@;;
+    esac
+}
+
+__frg $@

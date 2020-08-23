@@ -1,8 +1,0 @@
-#!/bin/bash -e
-
-function __rgpom() {
-  which rg >/dev/null 2>&1 || sudo apt install ripgrep -y
-  rg --no-ignore --type-add 'pom:*.pom' -t pom -H -n $*
-}
-
-__rgpom $*

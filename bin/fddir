@@ -1,8 +1,0 @@
-#!/bin/bash -e
-
-function __fddir() {
-  which fd >/dev/null 2>&1 || sudo apt install fd -y
-  fd -I -t d $*
-}
-
-__fddir $*
