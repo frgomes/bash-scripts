@@ -54,14 +54,18 @@ alias df='df -h'
 alias du='du -h'
 
 ##FIXME: the obligatory Emacs (or its surrogate...)
-if [ ! -z $(which emacs) ] ;then
-  VISUAL=emacs
-  EDITOR=emacs
-  ALTERNATE_EDITOR=emacs
-else
-  VISUAL=zile
-  EDITOR=zile
+if [ ! -z $(which zile) ] ;then
+  VISUAL=emacsclient
+  EDITOR="vi -e"
   ALTERNATE_EDITOR=zile
+elif [ ! -z $(which nano) ] ;then
+  VISUAL=emacsclient
+  EDITOR="vi -e"
+  ALTERNATE_EDITOR=nano
+else
+  VISUAL=emacsclient
+  EDITOR="vi -e"
+  ALTERNATE_EDITOR=vi
 fi
 export VISUAL EDITOR ALTERNATE_EDITOR
 
@@ -111,7 +115,7 @@ done
 if [ -d "${HOME}"/.bashrc-scripts/installed ] ;then
     [[ -f "${HOME}"/.bashrc.scripts.before ]] && cp -vp "${HOME}"/.bashrc.scripts.before "${HOME}"/.local/share/bash-scripts/postactivate/head.d/000-default.sh
     [[ -f "${HOME}"/.bashrc.scripts.after ]]  && cp -vp "${HOME}"/.bashrc.scripts.after  "${HOME}"/.local/share/bash-scripts/postactivate/tail.d/999-default.sh
-    for script in "${HOME}"/.bashrc-scripts/installed/*.sh ;do
+    find "${HOME}"/.bashrc-scripts/installed -type f | grep -E '.*[.]sh$' | while read script ;do
         cp -vp "${script}" "${HOME}"/.local/share/bash-scripts/postactivate/postactivate.d/
     done
 fi   
