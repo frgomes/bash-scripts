@@ -2,30 +2,6 @@ This is a bunch of shell scripts for Debian and derivatives containing aliases a
 
 WARNING: This toolbox is under heavy development and improvement. Expect that things may change.
 
-### Release Notes
-
-1. Supports virtual environments in order to allow you install multiple versions of your preferred applicatons. If you are not familiar to virtual environments, we provide an executive summary down below and mention caveats which may apply to your system.
-
-2. This release of ``bashrc-scripts`` performs these migration steps if necessary:
-
-```bash
-mv $HOME/.bashrc.scripts.before $HOME/.bashrc-scripts/head
-mv $HOME/.bashrc.scripts.after  $HOME/.bashrc-scripts/tail
-```
-
-### Design Concept
-
-Starting from a brand new laptop with only the base operating system installed, I would like to be able to quickly have my environment setup. I would like to download a shell script from the Internet which sets up everything for me. Then I open a new terminal window and all remaining bits are automagically configured for me. Then I'm ready to go. The entire thing should not take more than a minute or two.
-
-### Features in a nutshell
-
-* Useful shell scripts aiming daily mundane tasks, such as finding text on large codebases;
-* One post installation script for sysadmins configuring a brand new laptop or server;
-* One post installation script for regular users seeking Firefox and Thunderbird in user's space;
-* Shell scripts for installing Java, Node, Scala, among a bunch of other things.
-* Employs virtual environments, in order to allow distinct versions of Java, Node, Scala, etc;
-* Flexibility of a separate history per session but also a global ``history+`` for all sessions.
-
 ## For the impatient
 
 ### Post-installation scripts for sysadmins
@@ -45,7 +21,7 @@ This is how I install these scripts in my environment:
 
 ```bash
 $ mkdir -p "$HOME/workspace"
-$ git -C  "$HOME/workspace/bash-scripts" clone http://github.com/frgomes/bash-scripts
+$ git -C "$HOME/workspace/bash-scripts" clone http://github.com/frgomes/bash-scripts
 ```
 
 Then add a call to ``$HOME/workspace/bash-scripts/bashrc`` into your ``$HOME/.bashrc``:
@@ -54,9 +30,30 @@ Then add a call to ``$HOME/workspace/bash-scripts/bashrc`` into your ``$HOME/.ba
 $ echo 'source $HOME/workspace/bash-scripts/bashrc' >> $HOME/.bashrc
 ```
 
-## Features in more detail
+## Release Notes
 
-This is just an appetizer of documentation which hopefully is going to land someday.
+1. Supports virtual environments in order to allow you install multiple versions of your preferred applicatons. If you are not familiar to virtual environments, we provide an executive summary down below and mention caveats which may apply to your system.
+
+2. This release of ``bashrc-scripts`` performs these migration steps if necessary:
+
+```bash
+cp -vp "${HOME}"/.bashrc.scripts.before "${HOME}"/.local/share/bash-scripts/postactivate/head.d/000-default.sh
+cp -vp "${HOME}"/.bashrc.scripts.after  "${HOME}"/.local/share/bash-scripts/postactivate/tail.d/999-default.sh
+```
+
+## Design Concept
+
+Starting from a brand new laptop with only the base operating system installed, I would like to be able to quickly have my environment setup. I would like to download a shell script from the Internet which sets up everything for me. Then I open a new terminal window and all remaining bits are automagically configured for me. Then I'm ready to go. The entire thing should not take more than a minute or two.
+
+### Features in a nutshell
+
+* Useful shell scripts aiming daily mundane tasks, such as finding text on large codebases;
+* One post installation script for sysadmins configuring a brand new laptop or server;
+* One post installation script for regular users seeking Firefox and Thunderbird in user's space;
+* Shell scripts for installing Java, Node, Scala, Rust, among a bunch of other things;
+* Employs virtual environments, in order to allow distinct versions of your preferred tools;
+* All commands always available, no matter if you are using functions, sub-shells or whatever;
+* Flexibility of a separate history per session but also a global ``history+`` for all sessions.
 
 ### Local and global history of previous commands
 
@@ -66,8 +63,7 @@ However, there's also a global history available via command ``history+`` which 
 
 ```bash
 $ history+ Software
-/home/rgomes/.bash_history+/20200504:16370  1037  2020-05-04 15:39:21 fgfile ' ${Software}/' | cut -d: -f1 | sort | uniq | while read file ;do echo sed 's|$ {Software}/| "${Software}"/|g' -i $file ;done
-/home/rgomes/.bash_history+/20200504:16370  1038  2020-05-04 15:39:40 fgfile ' ${Software}/' | cut -d: -f1 | sort | uniq | while read file ;do sed 's|$ {Software}/| "${Software}"/|g' -i $file ;done
+/home/rgomes/.bash_history+/20200504:16370  1038  2020-05-04 15:39:40 frg sh Software | cut -d: -f1 | sort | uniq | while read file ;do sed 's|$ {Software}/| "${Software}"/|g' -i $file ;done
 ```
 
 ## Caveats
@@ -103,7 +99,7 @@ rm $HOME/.local/bin/pip{,2,3}
 You may find useful to run something _before_ and/or something _after_ you load [these] scripts
 [provided by this package] into your terminal session.
 
-This way, you can define defauls for environment variables before scripts run.
+This way, you can define defaults for environment variables before scripts run.
 You can also adjust keyboard configurations and other preferences after all scripts run.
 
 ### Actions before loading scripts
