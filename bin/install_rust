@@ -1,0 +1,108 @@
+#!/bin/bash
+
+function __install_rust_activator() {
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
+
+  local activator="${1}"
+
+  [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
+  cat <<EOD > "${config}"
+#!/bin/bash
+
+source "${HOME}"/.cargo/env
+EOD
+  chmod ugo+x "${config}"
+  echo "${config}"
+}    
+
+function install_rust_minimal {
+  local tools=${TOOLS_HOME:=$HOME/tools}
+  [[ ! -d $tools ]] && mkdir -p $tools
+  [[ ! -d $tools/cargo ]] && mkdir -p $tools/cargo
+  [[ ! -L ~/.cargo ]] && ln -s $tools/cargo ~/.cargo
+
+  curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path -y \
+    && source "${HOME}"/.cargo/env && hash -r \
+      && rustup default stable && rustup update \
+        && rustup component add clippy rustfmt \
+        && rustup component add rust-src
+}
+
+function __install_rust_addons {
+cat << EOD
+cargo-watch
+cargo-edit
+cargo-udeps
+cargo-whatfeatures
+cargo-docset
+cargo-tarpaulin
+cargo-audit --features=fix
+#cargo-deny
+EOD
+}
+
+function install_rust_addons {
+  source "${HOME}"/.cargo/env && hash -r && rustup default stable && rustup update
+  __install_rust_addons | grep -v -E '^#' | while read line ;do cargo install --force ${line} ;done
+}
+
+function __install_rust_web_addons {
+cat <<EOD
+cargo-wasi
+cargo-web
+wasm-bindgen-cli
+wasm-pack
+EOD
+}
+
+function install_rust_web {
+  source "${HOME}"/.cargo/env && hash -r && rustup default stable && rustup update
+  rustup target add wasm32-unknown-emscripten \
+    && rustup target add wasm32-unknown-emscripten \
+      && rustup target add wasm32-unknown-unknown
+  __install_rust_web_addons | grep -v -E '^#' | while read line ;do cargo install --force ${line} ;done
+}
+
+function install_rust_lsp {
+  source "${HOME}"/.cargo/env && hash -r && rustup default stable && rustup update
+  rustup component add rls rust-analysis rust-src
+  cargo install --force --git https://github.com/latex-lsp/texlab.git
+}
+
+function __install_rust {
+  local option="${1}"
+  local option="${option:=help}"
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/400-rust.sh
+  case "${option}" in
+    minimal) install_rust_minimal; __install_rust_activator "${config}";;
+    addons)  install_rust_addons;  __install_rust_activator "${config}";;
+    web)     install_rust_web;     __install_rust_activator "${config}";;
+    lsp)     install_rust_lsp;     __install_rust_activator "${config}";;
+    all)
+        install_rust_minimal
+        install_rust_addons
+        install_rust_web
+        install_rust_lsp
+        __install_rust_activator "${config}";;
+    *) echo "Usage install_rust [command]"
+       echo "Installs Rust compiler, Cargo package manager and additional tools and packages"
+       echo ""
+       echo "Commands:"
+       echo "  minimal   installs Rust, Cargo and minimal set of tools"
+       echo "  addons    installs an oppinionated set of useful Cargo plugins"
+       echo "  web       installs an oppinionated set of tools for web and mobile development"
+       echo "  lsp       installs Rust support for Language Server Protocol"
+       echo "  all       installs all tools and packages"
+       ;;
+  esac
+}
+ 
+
+if [ $_ != $0 ]; then
+  # echo "Script is being sourced: list all functions"
+  grep -E "^function " $(readlink -f "${BASH_SOURCE[0]}") | fgrep -v "function __" | cut -d' ' -f2 | sed 's/()//'
+else
+  # echo "Script is a subshell: execute last function"
+  $(grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2  | sed 's/()//' | tail -1) "$@"
+fi
