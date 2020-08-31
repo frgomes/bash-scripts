@@ -92,6 +92,7 @@ export WORKON_HOME="${WORKON_HOME:=${HOME}/.virtualenvs}"
 export TOOLS_HOME="${TOOLS_HOME:=$HOME/tools}"
 
 # Define history processing
+# see also: bin/history+
 mkdir -p "${HOME}"/.bash_history+
 export HISTSIZE=100000
 export HISTFILESIZE=-1
@@ -103,7 +104,6 @@ shopt -s histappend
 shopt -s checkwinsize
 shopt -s globstar
 shopt -s cmdhist
-alias history+='find "${HOME}"/.bash_history+ -type f | xargs grep'
 
 
 # Create directory structure
