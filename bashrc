@@ -55,15 +55,15 @@ alias du='du -h'
 
 ##FIXME: the obligatory Emacs (or its surrogate...)
 if [ ! -z $(which zile) ] ;then
-  VISUAL=emacsclient
+  VISUAL=emacs
   EDITOR="vi -e"
   ALTERNATE_EDITOR=zile
 elif [ ! -z $(which nano) ] ;then
-  VISUAL=emacsclient
+  VISUAL=emacs
   EDITOR="vi -e"
   ALTERNATE_EDITOR=nano
 else
-  VISUAL=emacsclient
+  VISUAL=emacs
   EDITOR="vi -e"
   ALTERNATE_EDITOR=vi
 fi
