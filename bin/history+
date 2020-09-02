@@ -1,0 +1,8 @@
+#!/bin/bash
+
+function __history+() {
+  local text="${1:-$(date +%Y-%m-%d)}"
+  find "${HOME}"/.bash_history+ -type f | sort | xargs grep "${text}"
+}
+
+__history+ $@
