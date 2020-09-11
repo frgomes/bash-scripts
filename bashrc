@@ -4,27 +4,26 @@
 ## A minimal Python installation should be available in your distribution in general.
 ## However, we simply skip this entire business in case Python is missing.
 function __bash_virtualenv_install_pip {
-  if [[ ! -z $(which python) ]] ;then
+  if [[ ! -z $(which python3) ]] ;then
     if [[ ! -e "${HOME}/.local/bin/pip" ]] ;then
       [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
       [[ ! -f "${DOWNLOADS}/get-pip.py" ]] && wget https://bootstrap.pypa.io/get-pip.py -O "${DOWNLOADS}/get-pip.py"
    
-      local -i v=$(python -V 2>&1 | cut -d' ' -f2 | cut -d. -f1)
-      if [ -e $(which python${v}) ] ;then
-        python${v} "${DOWNLOADS}/get-pip.py" --user
+      if [ -e $(which python3) ] ;then
+        python3 "${DOWNLOADS}/get-pip.py" --user
       fi
     fi
   fi
 }
 function __bash_virtualenv_install_virtualenv {
-  if [[ ! -z $(which python) ]] ;then
+  if [[ ! -z $(which python3) ]] ;then
     if [[ ! -e "${HOME}/.local/bin/virtualenv" ]] ;then
-      local -i v=$(python -V 2>&1 | cut -d' ' -f2 | cut -d. -f1)
-      if [ -e $(which python${v}) ] ;then
-        python${v} -m pip install --quiet --user --upgrade pip virtualenv virtualenvwrapper
+      if [ -e $(which python3) ] ;then
+        python3 -m pip install --quiet --user --upgrade pip virtualenv virtualenvwrapper
       fi
     fi
   fi
+  export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
   [[ -e "${HOME}/.local/bin/virtualenvwrapper.sh" ]] && source "${HOME}/.local/bin/virtualenvwrapper.sh"
 }
 
@@ -132,7 +131,7 @@ if [ -z "$1" ] ;then
     "${dir}"/bin/bash_scripts_setup
     source "${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/bin/postactivate
 else
-    [[ ! -z $(which python) ]] && [[ ! -z "$1" ]] && workon "$1"
+    [[ ! -z $(which python3) ]] && [[ ! -z "$1" ]] && workon "$1"
 fi
 
 echo "[ Run legacy initialization scripts ]"
