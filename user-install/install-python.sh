@@ -11,13 +11,13 @@ function install_python_pip {
    
       local -i v=$(python -V 2>&1 | cut -d' ' -f2 | cut -d. -f1)
       if [ -e $(which python${v}) ] ;then
-        python${v} "${DOWNLOADS}/get-pip.py" --user
+        python${v} "${DOWNLOADS}/get-pip.py"
       fi
     fi
   fi
 }
 
-function install_python_virtualenv {
+function __install_python_virtualenv {
   if [[ ! -z $(which python) ]] ;then
     local -i v=$(python -V 2>&1 | cut -d' ' -f2 | cut -d. -f1)
     if [ -e $(which python${v}) ] ;then
