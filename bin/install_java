@@ -32,15 +32,10 @@ function __install_java() {
   local version=${1:-"${version}"}
   local major=$(echo ${version} | cut -d. -f1)
 
-  if [[ $version =~ ^(1\.)?7\.* ]] ;then
-    local file=openjdk-7u75-b13-linux-x64-18_dec_2014.tar.gz
-    local url=https://download.java.net/openjdk/jdk7u75/ri/${file}
-    local folder=java-se-7u75-ri
-    local symlink=jdk7
-  elif [[ $version =~ ^(1\.)?8\.* ]] ;then
-    local file=openjdk-8u40-b25-linux-x64-10_feb_2015.tar.gz
-    local url=https://download.java.net/openjdk/jdk8u40/ri/${file}
-    local folder=java-se-8u40-ri
+  if [[ $version =~ ^(1\.)?8\.* ]] ;then
+    local file=OpenJDK8U-jdk_x64_linux_hotspot_8u265b01.tar.gz
+    local url=https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u265-b01/${file}
+    local folder=jdk8u265-b01-jdk
     local symlink=jdk8
   elif [[ $version =~ ^11\.* ]] ;then
     local file=openjdk-11+28_linux-x64_bin.tar.gz
@@ -64,7 +59,7 @@ function __install_java() {
     local symlink=jdk14
   else
     echo "ERROR: Unsupported Java version $JAVA_VERSION"
-    echo 'INFO: Supported JDK versions are: 1.7.*, 1.8.*, 11.*, 12.*, 13.* and 14.*'
+    echo 'INFO: Supported JDK versions are: 1.8.*, 11.*, 12.*, 13.* and 14.*'
     return 1
   fi
 
