@@ -1,6 +1,14 @@
 #!/bin/bash -e
 
 
+function __bash_path_preppend() {
+  [[ ! -z "$1" ]] && echo "$PATH" | tr ':' '\n' | fgrep "$1" > /dev/null || export PATH="$1:${PATH}"
+}
+function __bash_path_append() {
+  [[ ! -z "$1" ]] && echo "$PATH" | tr ':' '\n' | fgrep "$1" > /dev/null || export PATH="${PATH}:$1"
+}
+
+
 ## A minimal Python installation should be available in your distribution in general.
 ## However, we simply skip this entire business in case Python is missing.
 function __bash_virtualenv_install_pip {
@@ -8,7 +16,6 @@ function __bash_virtualenv_install_pip {
     if [[ ! -e "${HOME}/.local/bin/pip" ]] ;then
       [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
       [[ ! -f "${DOWNLOADS}/get-pip.py" ]] && wget https://bootstrap.pypa.io/get-pip.py -O "${DOWNLOADS}/get-pip.py"
-   
       if [ -e $(which python3) ] ;then
         python3 "${DOWNLOADS}/get-pip.py" --user
       fi
@@ -27,6 +34,11 @@ function __bash_virtualenv_install_virtualenv {
   [[ -e "${HOME}/.local/bin/virtualenvwrapper.sh" ]] && source "${HOME}/.local/bin/virtualenvwrapper.sh"
 }
 
+
+dir=$(dirname $(readlink -f "${BASH_SOURCE[0]}"))
+__bash_path_preppend "${dir}/bin"
+# __bash_path_preppend "${HOME}/bin"
+# __bash_path_preppend "${HOME}/.local/bin"
 
 
 ##FIXME: this is a temporary fix for snaps not being found. See: https://www.youtube.com/watch?v=2g-teghxI2A 
@@ -120,9 +132,6 @@ if [ -d "${HOME}"/.bashrc-scripts/installed ] ;then
 fi   
 ##### AUTO-MIGRATION :: end
 
-
-dir=$(dirname $(readlink -f "${BASH_SOURCE[0]}"))
-echo ${PATH} | tr ':' '\n' | grep -E "^${dir}$" > /dev/null 2>&1 || export PATH="${dir}/bin":${PATH}
 
 __bash_virtualenv_install_pip
 __bash_virtualenv_install_virtualenv
