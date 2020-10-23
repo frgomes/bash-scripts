@@ -1,0 +1,27 @@
+#!/bin/bash -x
+
+function __install_podman {
+  if [ ! -f /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list ] ;then
+    which lsb_release >/dev/null 2>&1 || sudo apt install lsb_release -qqy
+    id="$(lsb_release -is)"
+    if [[ "${id}" == Debian ]] ;then
+      release="$(lsb_release -rs)"
+      case "${release}" in
+        10) ;;
+        testing) release=Testing ;;
+        *) echo "ERROR: Debian release is not supported: ${release}"; return 1;;
+      esac
+      echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_${release}/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list > /dev/null
+      curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_${release}/Release.key | sudo apt-key add -
+    else
+      echo "ERROR: Operating system or distribution is not supported: ${id}"; return 1
+    fi
+  fi
+
+  sudo apt update -qq
+  sudo apt install --reinstall podman -qqy
+  echo 'kernel.unprivileged_userns_clone=1' | sudo tee /etc/sysctl.d/00-local-userns.conf > /dev/null
+  sudo service procps restart
+}
+
+__install_podman
