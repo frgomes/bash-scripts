@@ -39,7 +39,6 @@ function __bash_virtualenv_install_virtualenv {
 
 
 dir=$(dirname $(readlink -f "${BASH_SOURCE[0]}"))
-__bash_path_preppend "${dir}/sbin"
 __bash_path_preppend "${dir}/bin"
 # __bash_path_preppend "${HOME}/bin"
 # __bash_path_preppend "${HOME}/.local/bin"
