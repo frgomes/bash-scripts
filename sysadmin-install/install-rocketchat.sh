@@ -6,7 +6,7 @@
 
 
 function install_rocketchat_nginx {
-  sudo apt install fail2ban nginx python-certbot-nginx -y
+  sudo apt install fail2ban nginx python3-certbot-nginx -y
 
   ufw allow 80/tcp
   ufw allow 443/tcp

@@ -2,8 +2,8 @@
 
 function __yaml2json() {
   which python3 >/dev/null 2>&1 || sudo apt install python3-minimal -y
-  pip -qq --disable-pip-version-check install PyYAML > /dev/null 2>&1
-  python -c 'import sys, yaml, json; print(json.dumps(yaml.load(sys.stdin.read(),Loader=yaml.FullLoader), sort_keys=False))'
+  pip3 -qq --disable-pip-version-check install PyYAML > /dev/null 2>&1
+  python3 -c 'import sys, yaml, json; print(json.dumps(yaml.load(sys.stdin.read(),Loader=yaml.FullLoader), sort_keys=False))'
 }
 
 __yaml2json $*

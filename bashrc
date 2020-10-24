@@ -11,9 +11,12 @@ function __bash_path_append() {
 
 ## A minimal Python installation should be available in your distribution in general.
 ## However, we simply skip this entire business in case Python is missing.
+function __bash_virtualenv_install_python {
+  which python3 >/dev/null 2>&1 || sudo apt install python3-minimal -y
+}
 function __bash_virtualenv_install_pip {
   if [[ ! -z $(which python3) ]] ;then
-    if [[ ! -e "${HOME}/.local/bin/pip" ]] ;then
+    if [[ ! -e "${HOME}/.local/bin/pip3" ]] ;then
       [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
       [[ ! -f "${DOWNLOADS}/get-pip.py" ]] && wget https://bootstrap.pypa.io/get-pip.py -O "${DOWNLOADS}/get-pip.py"
       if [ -e $(which python3) ] ;then
@@ -134,6 +137,7 @@ fi
 ##### AUTO-MIGRATION :: end
 
 
+__bash_virtualenv_install_python
 __bash_virtualenv_install_pip
 __bash_virtualenv_install_virtualenv
 

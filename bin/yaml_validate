@@ -2,7 +2,8 @@
 
 function __yaml_validate() {
   which python3 >/dev/null 2>&1 || sudo apt install python3-minimal -y
-  python -c 'import sys, yaml, json; yaml.safe_load(sys.stdin.read())'
+  pip3 -qq --disable-pip-version-check install PyYAML > /dev/null 2>&1
+  python3 -c 'import sys, yaml, json; yaml.safe_load(sys.stdin.read())'
 }
 
-(pip --disable-pip-version-check install PyYAML > /dev/null 2>&1) && __yaml_validate $*
+__yaml_validate $*
