@@ -33,7 +33,7 @@ function __bash_virtualenv_install_virtualenv {
       fi
     fi
   fi
-  export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+  export VIRTUALENVWRAPPER_PYTHON=$(readlink -f /usr/bin/python) # due to compatibility issues
   [[ -e "${HOME}/.local/bin/virtualenvwrapper.sh" ]] && source "${HOME}/.local/bin/virtualenvwrapper.sh"
 }
 
