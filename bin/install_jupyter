@@ -1,0 +1,33 @@
+#!/bin/bash -x
+
+function __install_jupyter {
+  which python3 >/dev/null 2>&1 || sudo apt install python3-minimal -y
+  python3 -m pip install --upgrade pip
+  python3 -m pip install --upgrade pygments jupyter
+
+  which curl >/dev/null 2>&1 || sudo apt install curl -y
+  mkdir -p ${HOME}/bin
+  if [ ! -e $HOME/bin/coursier ] ;then
+    curl -L -o $HOME/bin/coursier https://git.io/coursier \
+      && chmod +x $HOME/bin/coursier \
+        && $HOME/bin/coursier --help
+  fi
+
+  local SCALA_VERSION=2.13.3
+  local ALMOND_VERSION=0.10.8
+
+  mkdir -p ${HOME}/bin
+  coursier bootstrap \
+    -r jitpack \
+    -i user -I user:sh.almond:scala-kernel-api_$SCALA_VERSION:$ALMOND_VERSION \
+    sh.almond:scala-kernel_$SCALA_VERSION:$ALMOND_VERSION \
+    -f -o ${HOME}/bin/almond \
+      && ${HOME}/bin/almond --install --force
+
+  python3 -m pip install --upgrade jupyter_contrib_nbextensions
+
+  hash -r; jupyter kernelspec list
+}
+
+
+__install_jupyter
