@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function install_emacs_requirements {
-    sudo apt install -y build-essential gcc git-core texinfo libncurses5-dev hunspell hunspell-en-gb hunspell-en-us hunspell-es hunspell-pt-pt hunspell-pt-br hunspell-de-de hunspell-it hunspell-fr
+    sudo apt install -y build-essential autoconf gcc git-core texinfo libncurses5-dev hunspell hunspell-en-gb hunspell-en-us hunspell-es hunspell-pt-pt hunspell-pt-br hunspell-de-de hunspell-it hunspell-fr
 }
 
 function install_emacs_download {
