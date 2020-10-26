@@ -147,11 +147,13 @@ __bash_virtualenv_install_python
 __bash_virtualenv_install_pip
 __bash_virtualenv_install_virtualenv
 
+
 if [ -z "$1" ] ;then
     "${dir}"/bin/bash_scripts_setup
     source "${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/bin/postactivate
 else
-    [[ ! -z $(which python3) ]] && [[ ! -z "$1" ]] && workon "$1"
+    "${dir}"/bin/bash_scripts_setup "$1"
+    workon "$1"
 fi
 
 # echo "[ Run legacy initialization scripts ]"

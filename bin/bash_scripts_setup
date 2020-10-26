@@ -2,12 +2,17 @@
 
 function __bash_setup_postactivate(){
     dir=$(dirname $(readlink -f "${BASH_SOURCE[0]}"))
-    cat <<EOF
+cat <<EOF
 #!/bin/bash -e
-# created by bash-scripts
+# created by http://github.com/frgomes/bash-scripts
 
-
-### DO NOT EDIT THIS SCRIPT BY HAND ###
+#################################################################
+###                                                           ###
+###              DO NOT EDIT THIS SCRIPT BY HAND              ###
+###                                                           ###
+### ANY CHANGES MADE BY HAND ON THIS FILE WILL BE OVERWRITTEN ###
+###                                                           ###
+#################################################################
 
 
 # echo "[ Make sure directory structure is created ]"
@@ -24,5 +29,29 @@ done
 EOF
 }
 
-__bash_setup_postactivate > "${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/bin/postactivate
-chmod u+x "${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/bin/postactivate
+function __bash_setup_virtualenv_dir {
+    if [ -z "${VIRTUAL_ENV}" ] ;then
+      if [ -z "$1" ] ;then
+        echo "${HOME}/.local/share/bash-scripts"
+      else
+        echo "${VIRTUALENVWRAPPER_HOOK_DIR}/${1}"
+      fi
+    else
+      if [ -z "$1" ] ;then
+        echo "${VIRTUAL_ENV}"
+      else
+        echo "${VIRTUALENVWRAPPER_HOOK_DIR}/${1}"
+      fi
+    fi
+}
+
+
+function __bash_setup_postactivate_overwrite {
+    local virtualenv_dir=$(__bash_setup_virtualenv_dir "$1")
+    [[ -d "${virtualenv_dir}" ]] || mkdir -p "${virtualenv_dir}"
+    __bash_setup_postactivate > "${virtualenv_dir}"/bin/postactivate
+    chmod u+x "${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/bin/postactivate
+}
+
+
+__bash_setup_postactivate_overwrite "$1"

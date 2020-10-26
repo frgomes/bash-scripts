@@ -14,7 +14,7 @@ function __install_java_activator() {
 
 export JAVA_VERSION=${version}
 export JAVA_VERSION_MAJOR=${major}
-export JAVA_HOME=\${TOOLS_HOME:=\$HOME/tools}/jdk-\${JAVA_VERSION_MAJOR}
+export JAVA_HOME=\${TOOLS_HOME:=\$HOME/tools}/jdk\${JAVA_VERSION_MAJOR}
 
 export PATH=\${JAVA_HOME}/bin:\${PATH}
 EOD
@@ -28,31 +28,31 @@ function __install_java() {
 
   which wget >/dev/null 2>&1 || sudo apt install wget -y
 
-  local version=${version:-"14.36"}
+  local version=${version:-"8"}
   local version=${1:-"${version}"}
   local major=$(echo ${version} | cut -d. -f1)
 
-  if [[ $version =~ ^(1\.)?8\.* ]] ;then
+  if [[ $version =~ ^8(\.*)? ]] ;then
     local file=OpenJDK8U-jdk_x64_linux_hotspot_8u265b01.tar.gz
     local url=https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u265-b01/${file}
     local folder=jdk8u265-b01-jdk
     local symlink=jdk8
-  elif [[ $version =~ ^11\.* ]] ;then
+  elif [[ $version =~ ^11(\.*)? ]] ;then
     local file=openjdk-11+28_linux-x64_bin.tar.gz
     local url=https://download.java.net/openjdk/jdk11/ri/${file}
     local folder=jdk-11
     local symlink=jdk11
-  elif [[ $version =~ ^12\.* ]] ;then
+  elif [[ $version =~ ^12(\.*)? ]] ;then
     local file=openjdk-12+32_linux-x64_bin.tar.gz
     local url=https://download.java.net/openjdk/jdk12/ri/${file}
     local folder=jdk-12
     local symlink=jdk12
-  elif [[ $version =~ ^13\.* ]] ;then
+  elif [[ $version =~ ^13(\.*)? ]] ;then
     local file=openjdk-13+33_linux-x64_bin.tar.gz
     local url=https://download.java.net/openjdk/jdk13/ri/${file}
     local folder=jdk-13
     local symlink=jdk13
-  elif [[ $version =~ ^14\.* ]] ;then
+  elif [[ $version =~ ^14(\.*)? ]] ;then
     local file=openjdk-14+36_linux-x64_bin.tar.gz
     local url=https://download.java.net/openjdk/jdk14/ri/${file}
     local folder=jdk-14
