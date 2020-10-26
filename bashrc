@@ -33,7 +33,14 @@ function __bash_virtualenv_install_virtualenv {
       fi
     fi
   fi
-  export VIRTUALENVWRAPPER_PYTHON=$(readlink -f /usr/bin/python) # due to compatibility issues
+
+  # due to compatibility reasons
+  if [ -f /usr/bin/python ] ;then
+    export VIRTUALENVWRAPPER_PYTHON=$(readlink -f /usr/bin/python)
+  else
+    export VIRTUALENVWRAPPER_PYTHON=$(readlink -f /usr/bin/python3)
+  fi
+
   [[ -e "${HOME}/.local/bin/virtualenvwrapper.sh" ]] && source "${HOME}/.local/bin/virtualenvwrapper.sh"
 }
 
@@ -147,8 +154,7 @@ else
     [[ ! -z $(which python3) ]] && [[ ! -z "$1" ]] && workon "$1"
 fi
 
-echo "[ Run legacy initialization scripts ]"
-echo dir=${dir}
+# echo "[ Run legacy initialization scripts ]"
 for script in "${dir}"/bash_*.sh ;do
     [[ -x "${script}" ]] && echo "sourcing ${script}" && source "${script}"
 done
