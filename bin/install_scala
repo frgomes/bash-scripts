@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
 function __install_scala_activator() {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
@@ -43,11 +43,11 @@ function __install_scala() {
     "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlink}" "${config}"
   else
     local file=scala-${version}.tgz
-    local url=https://scala-lang.org/files/archive/${version}/${file}
+    local url=https://downloads.lightbend.com/scala/${version}/${file}
     local folder=scala-${version}
     local symlink=scala-${major}
     
-   "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlink}" "--strip-components=1"
+    "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlink}" "--strip-components=1"
     "${dir}"/bash_install_tar "https://scala-lang.org/files/archive/scala-docs-${version}.txz" "scala-docs-${version}.txz" "scala-${version}" "scala-${major}" "--strip-components=1"
 
     local tools="${TOOLS_HOME:=$HOME/tools}"
