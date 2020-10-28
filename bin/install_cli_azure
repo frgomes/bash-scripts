@@ -2,7 +2,7 @@
 
 function __install_cli_azure {
   which python3 >/dev/null 2>&1 || sudo apt install python3-minimal -y
-  pip3 -qq --disable-pip-version-check install --upgrade azure-cli > /dev/null 2>&1)
+  pip3 --disable-pip-version-check install --upgrade azure-cli
 }
 
 
