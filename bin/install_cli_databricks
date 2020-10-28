@@ -1,0 +1,15 @@
+#!/bin/bash -e
+
+function __install_cli_databricks {
+  which python3 >/dev/null 2>&1 || sudo apt install python3-minimal -y
+  pip3 --disable-pip-version-check install --upgrade databricks_cli
+}
+
+
+if [ $_ != $0 ]; then
+  # echo "Script is being sourced: list all functions"
+  grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2 | sed 's/()//'
+else
+  # echo "Script is a subshell: execute last function"
+  $(grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2  | sed 's/()//' | tail -1) "$@"
+fi
