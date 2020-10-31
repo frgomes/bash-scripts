@@ -42,7 +42,7 @@ function __install_kubectl() {
   esac
 
   local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/270-kubectl.sh
-   __install_dhall_activator "${config}" "${version}"
+   __install_kubectl_activator "${config}" "${version}"
 
   "${dir}"/bash_install_app "https://storage.googleapis.com/kubernetes-release/release/v${version}/bin/linux/${arch}/kubectl" "kubectl"       "kube-${version}" "kube"
   "${dir}"/bash_install_app "https://github.com/stashed/cli/releases/download/v0.3.1/kubectl-stash-linux-${arch}"             "kubectl-stash" "kube-${version}" "kube"
