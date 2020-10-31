@@ -2,7 +2,7 @@
 
 function __bash_install_app_help(){
   echo "Usage: bash_install_app url file folder [symlink]"
-  echo "Downloads url, save onto file,copying into folder, optionally creating symlink."
+  echo "Downloads url, save onto file, copy into folder, optionally create symlink."
 }
 
 function __bash_install_app() {
