@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 
-function __bash_path_preppend() {
+function __bash_path_prepend() {
   [[ ! -z "$1" ]] && echo "$PATH" | tr ':' '\n' | fgrep "$1" > /dev/null || export PATH="$1:${PATH}"
 }
 function __bash_path_append() {
@@ -35,10 +35,10 @@ function __bash_virtualenv_install_virtualenv {
   fi
 
   # due to compatibility reasons
-  if [ -f /usr/bin/python ] ;then
-    export VIRTUALENVWRAPPER_PYTHON=$(readlink -f /usr/bin/python)
-  else
+  if [ -f /usr/bin/python3 ] ;then
     export VIRTUALENVWRAPPER_PYTHON=$(readlink -f /usr/bin/python3)
+  else
+    export VIRTUALENVWRAPPER_PYTHON=$(readlink -f /usr/bin/python2)
   fi
 
   [[ -e "${HOME}/.local/bin/virtualenvwrapper.sh" ]] && source "${HOME}/.local/bin/virtualenvwrapper.sh"
@@ -46,9 +46,9 @@ function __bash_virtualenv_install_virtualenv {
 
 
 dir=$(dirname $(readlink -f "${BASH_SOURCE[0]}"))
-__bash_path_preppend "${dir}/bin"
-# __bash_path_preppend "${HOME}/bin"
-# __bash_path_preppend "${HOME}/.local/bin"
+__bash_path_prepend "${dir}/bin"
+# __bash_path_prepend "${HOME}/bin"
+# __bash_path_prepend "${HOME}/.local/bin"
 
 
 ##FIXME: this is a temporary fix for snaps not being found. See: https://www.youtube.com/watch?v=2g-teghxI2A 
