@@ -35,10 +35,10 @@ function __bash_virtualenv_install_virtualenv {
   fi
 
   # due to compatibility reasons
-  if [ -f /usr/bin/python3 ] ;then
-    export VIRTUALENVWRAPPER_PYTHON=$(readlink -f /usr/bin/python3)
-  else
+  if [ -f /usr/bin/python2 ] ;then
     export VIRTUALENVWRAPPER_PYTHON=$(readlink -f /usr/bin/python2)
+  else
+    export VIRTUALENVWRAPPER_PYTHON=$(readlink -f /usr/bin/python3)
   fi
 
   [[ -e "${HOME}/.local/bin/virtualenvwrapper.sh" ]] && source "${HOME}/.local/bin/virtualenvwrapper.sh"
