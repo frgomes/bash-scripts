@@ -1,0 +1,8 @@
+#!/bin/bash
+
+function __cryptogen() {
+  which python3 >/dev/null 2>&1 || sudo apt install python3-minimal -y
+  python3 -c "import crypt; print(crypt.crypt(input('clear-text password: '), crypt.mksalt(crypt.METHOD_SHA512)))"
+}
+
+__cryptogen $*
