@@ -1,0 +1,17 @@
+#!/bin/bash -e
+
+function __unpfx() {
+    which openssl >/dev/null 2>&1 || sudo apt install -qqy openssl
+    read -s -p "Password: " pass
+    echo ""
+    while [ $# -gt 0 ] ;do
+      local file="$1"
+      shift
+      local dir=$(dirname "${file}")
+      local base=$(basename "${file}" .pfx)
+      openssl pkcs12 -password pass:"${pass}" -in "${file}" -clcerts -nokeys -out "${dir}/${base}.cer"
+      openssl pkcs12 -password pass:"${pass}" -in "${file}" -nocerts -nodes  -out "${dir}/${base}.key"
+    done
+}
+
+__unpfx $@
