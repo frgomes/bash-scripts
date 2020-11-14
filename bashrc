@@ -20,6 +20,7 @@ function __bash_virtualenv_install_pip {
       [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
       [[ ! -f "${DOWNLOADS}/get-pip.py" ]] && wget https://bootstrap.pypa.io/get-pip.py -O "${DOWNLOADS}/get-pip.py"
       if [ -e $(which python3) ] ;then
+        python3 -c "import distutils" || sudo apt install -y python3-distutils
         python3 "${DOWNLOADS}/get-pip.py" --user
       fi
     fi
