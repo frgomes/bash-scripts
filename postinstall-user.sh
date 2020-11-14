@@ -41,29 +41,30 @@ cat <<EOD
   pre-merge = merge --no-commit --no-ff
 
 [diff]
-  tool = "diffuse"
+    guitool = meld
 
-[difftool "intellij"]
-  cmd = "\${HOME}"/tools/idea/bin/idea.sh diff "\$LOCAL" "\$REMOTE"
-
-[difftool "diffuse"]
-  cmd = diffuse "\$LOCAL" "\$REMOTE"
+[difftool "meld"]
+    cmd = meld \"$LOCAL\" \"$REMOTE\" --label \"DIFF (ORIGINAL MY)\"
 
 [merge]
-  tool = "diffuse"
-  conflictstyle = diff3
+    tool = meld
+
+[mergetool "meld"]
+    cmd = meld --auto-merge \"$LOCAL\" \"$BASE\" \"$REMOTE\" --output \"$MERGED\" --label \"MERGE (REMOTE BASE MY)\"
+    trustExitCode = false
 
 [mergetool]
-  prompt = false
+    # don't ask if we want to skip merge
+    prompt = false
 
-[mergetool "intellij"]
-  cmd = "\${HOME}"/tools/idea/bin/idea.sh merge "\$LOCAL" "\$BASE" "\$REMOTE" "\$MERGED"  
-
-[mergetool "diffuse"]
-  cmd = diffuse "\$LOCAL" "\$BASE" "\$REMOTE" "\$MERGED"  
+    # don't create backup *.orig files
+    keepBackup = false
 
 [push]
   default = simple
+
+[pull]
+  rebase = true
 EOD
 }
 
