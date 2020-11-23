@@ -22,7 +22,7 @@ function install_discord_binaries {
     wget "$url" -O "${archive}"
   fi
 
-  sudo apt install -y ${archive}
+  sudo aptitude install -y ${archive}
 }
 
 function install_discord {

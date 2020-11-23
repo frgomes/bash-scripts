@@ -19,7 +19,7 @@ function pdf_check_wkhtmltopdf {
 ###
 function pdf_converter_and_combiner {
   local out=$1
-  local  log=$(tempfile)
+  local  log=/tmp/bash_30pdf_$$
   local work=$log.dir
 
   egrep -v -e '^#' | \

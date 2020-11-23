@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 function __kubectl_stats_cluster {
-  which cut tail sort uniq >/dev/null 2>&1 || sudo apt install coreutils -y
+  which cut tail sort uniq >/dev/null 2>&1 || sudo aptitude install -y coreutils
   which kubectl >/dev/null 2>&1 || install_kubectl
   local resources=$(kubectl api-resources --namespaced=false | cut -d' ' -f1 | tail -n +2 | sort | uniq | mkString)
   kubectl get ${resources} 2> /dev/null

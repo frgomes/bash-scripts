@@ -1,8 +1,8 @@
 #!/bin/bash -e
 
 function __kubectl_clusters {
-  which jq  >/dev/null 2>&1 || sudo apt install jq -y
-  which sed >/dev/null 2>&1 || sudo apt install sed -y
+  which jq  >/dev/null 2>&1 || sudo aptitude install -y jq
+  which sed >/dev/null 2>&1 || sudo aptitude install -y sed
   cat ~/.kube/config | yaml2json | jq '.clusters[].name' | sed 's/"//g'
 }
 

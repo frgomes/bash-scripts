@@ -20,7 +20,7 @@ function install_mozilla_sops_binaries {
     wget "$url" -O "${archive}"
   fi
 
-  sudo apt install -y ${archive}
+  sudo aptitude install -y ${archive}
 }
 
 function install_mozilla_sops {

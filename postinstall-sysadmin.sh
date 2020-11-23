@@ -5,7 +5,7 @@ function __installed {
   if [ "${1}" == "" ] ;then
     return 1
   else
-    sudo apt list --installed $* 2> /dev/null
+    sudo aptitude list -i $* 2> /dev/null
   fi
 }
 
@@ -13,12 +13,12 @@ function __uninstalled {
   if [ "${1}" == "" ] ;then
     return 1
   else
-    fgrep -v -f <(sudo apt list --installed $* 2> /dev/null) <(sudo apt list $* 2> /dev/null)
+    fgrep -v -f <(sudo aptitude list -i $* 2> /dev/null) <(sudo aptitude list $* 2> /dev/null)
   fi
 }
 
 function postinstall_compression {
-  sudo apt install -y atool arc arj lzip lzop nomarch rar rpm unace unalz unrar lbzip2 zip unzip p7zip p7zip-rar unrar-free
+  sudo aptitude install -y atool arc arj lzip lzop nomarch rar rpm unace unalz unrar lbzip2 zip unzip p7zip p7zip-rar unrar-free
 
   #TODO: needs code review and tests!!!
   #[[ ! -e /usr/local/bin/bzip2   ]] && ln -s /usr/bin/lbzip2   /usr/local/bin/bzip2
@@ -31,40 +31,42 @@ function postinstall_compression {
 }
 
 function postinstall_texlive {
-  sudo apt install -y texlive-latex-base texlive-latex-extra texlive-latex-recommended
+  sudo aptitude install -y texlive-latex-base texlive-latex-extra texlive-latex-recommended
 }
 
 function postinstall_scm {
-  sudo apt install -y git
+  sudo aptitude install -y git
 }
 
 function postinstall_downloads {
-  sudo apt install -y wget curl
+  sudo aptitude install -y wget curl
 }
 
 function postinstall_editors {
-  sudo apt install -y zile vim
+  sudo aptitude install -y zile vim
 }
 
 function postinstall_sudo_apt {
-  sudo apt install -y apt-file apt-transport-https apt-utils
-  sudo apt-file update
+  case "$(lsb_release -si)" in
+    Debian) sudo apt install -y aptitude;;
+    openSUSE) sudo zypper install -y zypper-aptitude;;
+  esac
 }
 
 function postinstall_networking {
-  sudo apt install -y dnsmasq net-tools bridge-utils avahi-ui-utils kde-zeroconf avahi-utils cups-client avahi-daemon dnsutils nmap
+  sudo aptitude install -y dnsmasq net-tools bridge-utils avahi-ui-utils kde-zeroconf avahi-utils cups-client avahi-daemon dnsutils nmap
 }
 
 function postinstall_source_code_utils {
-  sudo apt install -y less source-highlight
+  sudo aptitude install -y less source-highlight
 }
 
 function postinstall_http_utils {
-  sudo apt install -y httrack
+  sudo aptitude install -y httrack
 }
 
 function postinstall_misc {
-  sudo apt install -y psmisc htop
+  sudo aptitude install -y psmisc htop
 }
 
 
@@ -72,11 +74,11 @@ function postinstall_misc {
 
 
 function __postinstall_x11 {
-  sudo apt install -y xclip
-  sudo apt install -y zeal
-  sudo apt install -y gitk
-  sudo apt install -y tortoisehg
-  sudo apt install -y chromium
+  sudo aptitude install -y xclip
+  sudo aptitude install -y zeal
+  sudo aptitude install -y gitk
+  sudo aptitude install -y tortoisehg
+  sudo aptitude install -y chromium
 }
 
 function postinstall_x11 {
@@ -85,11 +87,11 @@ function postinstall_x11 {
 
 
 function postinstall_remove_smtp_servers {
-  __installed exim4-base && sudo apt remove -y --purge exim4-daemon-light exim4-config exim4-base
+  __installed exim4-base && sudo aptitude remove exim4-daemon-light exim4-config exim4-base
 }
 
 function postinstall_install_development_libraries {
-  sudo apt install -v libssl-dev
+  sudo aptitude install -y -v libssl-dev
 }
 
 
@@ -97,18 +99,15 @@ function postinstall_install_development_libraries {
 
 
 function postinstall_sysadmin {
-  sudo apt update -y
-  sudo apt dist-upgrade -y
-  sudo apt autoremove --purge -y
+  sudo aptitude update
+  sudo aptitude dist-upgrade
 
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
   grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1 | while read cmd ;do
     $cmd
   done
 
-  sudo apt autoremove --purge -y
-  sudo apt autoclean
-  sudo apt clean
+  sudo aptitude clean
 }
 
 

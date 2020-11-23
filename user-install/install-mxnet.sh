@@ -2,8 +2,8 @@
 
 
 function install_mxnet_binaries {
-    sudo apt update
-    sudo apt install -y build-essential git libatlas-base-dev libopencv-dev
+    sudo aptitude update
+    sudo aptitude install -y build-essential git libatlas-base-dev libopencv-dev
 
     cd "${WORKSPACE}"
 

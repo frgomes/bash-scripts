@@ -9,7 +9,7 @@ EOD
 }
 
 function install_riot_binaries {
-  sudo apt update && sudo apt install -y riot-web 
+  sudo aptitude update && sudo aptitude install -y riot-web 
 }
 
 function install_riot {

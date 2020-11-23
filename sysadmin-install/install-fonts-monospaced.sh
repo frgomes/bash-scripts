@@ -2,7 +2,7 @@
 
 
 function install_fonts_monospaced_binaries {
-    sudo apt install -y \
+    sudo aptitude install -y \
          fonts-3270 \
          fonts-fantasque-sans \
          fonts-inconsolata \

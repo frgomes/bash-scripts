@@ -14,7 +14,7 @@ EOD
 }
 
 function install_r_binaries {
-    apt-cache -t jessie search "^r-.*" | cut -d' ' -f1 | fgrep -v -f <(__install_r_exclude) | xargs sudo apt install -y
+    apt-cache -t jessie search "^r-.*" | cut -d' ' -f1 | fgrep -v -f <(__install_r_exclude) | xargs sudo aptitude install -y
 }
 
 function install_r {

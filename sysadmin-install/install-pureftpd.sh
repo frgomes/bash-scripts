@@ -5,12 +5,12 @@
 
 function install_pureftpd_remove_all {
   sudo service pure-ftpd stop
-  sudo apt remove -y --purge  pure-ftpd-common pure-ftpd
+  sudo aptitude remove  pure-ftpd-common pure-ftpd
   sudo rm -r -f /etc/pure-ftpd
 }
 
 function install_pureftpd_binaries {
-  sudo apt install pure-ftpd-common pure-ftpd -y
+  sudo aptitude install -y pure-ftpd-common pure-ftpd
 }
 
 function install_pureftpd_config {

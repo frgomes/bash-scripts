@@ -5,7 +5,7 @@
 #       your DNS server to 127.0.0.1
 
 function install_unbound_squid_binaries {
-    sudo apt install unbound squid3 -y
+    sudo aptitude install -y unbound squid3
 
     # make a configuration which just works
     sudo cp -p /etc/squid/squid.conf /etc/squid/squid.conf.ORIGINAL

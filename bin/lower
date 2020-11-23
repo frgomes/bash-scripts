@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 function __lower() {
-  which tr >/dev/null 2>&1 || sudo apt install coreutils -y
+  which tr >/dev/null 2>&1 || sudo aptitude install -y coreutils
   tr [:upper:] [:lower:] $*
 }
 

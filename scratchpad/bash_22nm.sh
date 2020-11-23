@@ -1,8 +1,7 @@
 #!/bin/bash
 
 
-apt_install_no_prompt network-manager
-apt_install_no_prompt wireless-tools
+aptitude install -y network-manager wireless-tools
 
 
 function nmcli_list {

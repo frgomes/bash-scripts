@@ -26,7 +26,7 @@ function __install_dhall_compiler_binaries() {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
 
-  which wget >/dev/null 2>&1 || sudo apt install wget -y
+  which wget >/dev/null 2>&1 || sudo aptitude install -y wget
 
   local latest=https://github.com/dhall-lang/dhall-haskell/releases/latest
   local version=$(wget -q -SO- -T 5 -t 1 "${latest}" 2>/dev/null | fgrep location: | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')
@@ -51,7 +51,7 @@ function __install_dhall_lsp_binaries() {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
 
-  which wget >/dev/null 2>&1 || sudo apt install wget -y
+  which wget >/dev/null 2>&1 || sudo aptitude install -y wget
 
   local latest=https://github.com/dhall-lang/dhall-haskell/releases/latest
   local version=$(wget -q -SO- -T 5 -t 1 "${latest}" 2>/dev/null | fgrep location: | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')
@@ -76,7 +76,7 @@ function __install_dhall_json_binaries() {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
 
-  which wget >/dev/null 2>&1 || sudo apt install wget -y
+  which wget >/dev/null 2>&1 || sudo aptitude install -y wget
 
   local latest=https://github.com/dhall-lang/dhall-haskell/releases/latest
   local version=$(wget -q -SO- -T 5 -t 1 "${latest}" 2>/dev/null | fgrep location: | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')
@@ -101,7 +101,7 @@ function __install_dhall_yaml_binaries() {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
 
-  which wget >/dev/null 2>&1 || sudo apt install wget -y
+  which wget >/dev/null 2>&1 || sudo aptitude install -y wget
 
   local latest=https://github.com/dhall-lang/dhall-haskell/releases/latest
   local version=$(wget -q -SO- -T 5 -t 1 "${latest}" 2>/dev/null | fgrep location: | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')
@@ -126,7 +126,7 @@ function __install_dhall_bash_binaries() {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
 
-  which wget >/dev/null 2>&1 || sudo apt install wget -y
+  which wget >/dev/null 2>&1 || sudo aptitude install -y wget
 
   local latest=https://github.com/dhall-lang/dhall-haskell/releases/latest
   local version=$(wget -q -SO- -T 5 -t 1 "${latest}" 2>/dev/null | fgrep location: | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')
@@ -151,7 +151,7 @@ function __install_dhall_nix_binaries() {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
 
-  which wget >/dev/null 2>&1 || sudo apt install wget -y
+  which wget >/dev/null 2>&1 || sudo aptitude install -y wget
 
   local latest=https://github.com/dhall-lang/dhall-haskell/releases/latest
   local version=$(wget -q -SO- -T 5 -t 1 "${latest}" 2>/dev/null | fgrep location: | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')

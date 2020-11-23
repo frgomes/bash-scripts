@@ -3,7 +3,7 @@
 ## NOTE: THIS SCRIPT IS EXPERIMENTAL AND HAS HARDCODED VALUES
 
 function install_openfire_server {
-  sudo apt install openjdk-8-jre-headless -y
+  sudo aptitude install -y openjdk-8-jre-headless
   sudo dpkg -i "${DOWNLOADS}"/openfire_4.3.1_all.deb 
   sudo ufw allow proto tcp from 80.235.237.178 to any port 9090,9091 comment 'OpenFire Console'
 }

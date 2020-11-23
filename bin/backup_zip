@@ -1,9 +1,9 @@
 #!/bin/bash -e
 
 function __backup_zip() {
-  which find >/dev/null 2>&1 || sudo apt install findutils -y
-  which grep >/dev/null 2>&1 || sudo apt install grep -y
-  which zip  >/dev/null 2>&1 || sudo apt install zip -y
+  which find >/dev/null 2>&1 || sudo aptitude install -y findutils
+  which grep >/dev/null 2>&1 || sudo aptitude install -y grep
+  which zip  >/dev/null 2>&1 || sudo aptitude install -y zip
 
   now=`date +%Y%m%d_%H%M%S`
 

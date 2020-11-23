@@ -78,15 +78,14 @@ So, if you are using Python or if you are using [virtual environments](https://r
 
 ```bash
 #!/bin/bash
-sudo apt remove --purge python-pip python3-pip python-pip-whl python-stevedore virtualenv virtualenv-clone virtualenvwrapper python-virtualenv python-virtualenv-clone python3-virtualenv python2-dev python3-dev -V -s
+sudo aptitude remove python-pip python3-pip python-pip-whl python-stevedore virtualenv virtualenv-clone virtualenvwrapper python-virtualenv python-virtualenv-clone python3-virtualenv python2-dev python3-dev -V -s
 ```
 
 AFTER YOU REVIEW the output of the previous command and you are aware of the consequences of uninstalling these packages and you are sure that you are not going to render your computer unusable, then you can proceed like this:
 
 ```bash
 #!/bin/bash
-sudo apt remove --purge python-pip python3-pip python-pip-whl python-stevedore virtualenv virtualenv-clone virtualenvwrapper python-virtualenv python-virtualenv-clone python3-virtualenv python2-dev python3-dev -y
-sudo apt autoremove --purge -y
+sudo aptitude remove python-pip python3-pip python-pip-whl python-stevedore virtualenv virtualenv-clone virtualenvwrapper python-virtualenv python-virtualenv-clone python3-virtualenv python2-dev python3-dev -y
 sudo rm /usr/local/bin/pip{,2,3}
 rm $HOME/.local/bin/pip{,2,3}
 ```

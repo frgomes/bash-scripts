@@ -2,7 +2,7 @@
 
 function __install_podman {
   if [ ! -f /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list ] ;then
-    which lsb_release >/dev/null 2>&1 || sudo apt install lsb_release -qqy
+    which lsb_release >/dev/null 2>&1 || sudo aptitude install -y lsb_release
     id="$(lsb_release -is)"
     if [[ "${id}" == Debian ]] ;then
       release="$(lsb_release -rs)"
@@ -18,8 +18,8 @@ function __install_podman {
     fi
   fi
 
-  sudo apt update -qq
-  sudo apt install --reinstall podman runc skopeo -qqy
+  sudo aptitude update -qq
+  sudo aptitude install -y podman runc skopeo
   echo 'kernel.unprivileged_userns_clone=1' | sudo tee /etc/sysctl.d/00-local-userns.conf > /dev/null
   sudo service procps restart
 }

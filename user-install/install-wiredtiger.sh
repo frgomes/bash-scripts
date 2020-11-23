@@ -2,8 +2,8 @@
 
 
 function install_wiredtiger_requirements {
-  sudo apt update -y
-  sudo apt install -y autoconf autogen intltool libtool make swig openjdk-8-jdk-headless
+  sudo aptitude update
+  sudo aptitude install -y autoconf autogen intltool libtool make swig openjdk-8-jdk-headless
 }
 
 

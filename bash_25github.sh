@@ -7,7 +7,7 @@
 function github_org_repositories {
   local org=${1:-}
   local token=${2:-}
-  local tmp=$( tempfile )
+  local tmp=/tmp/bash_25github_org_repositories_$$
 
   if [ -z "$token" ] ;then
     auth=""
@@ -39,7 +39,7 @@ function github_org_repositories {
 function github_user_repositories {
   local user=${1:-}
   local token=${2:-}
-  local tmp=$( tempfile )
+  local tmp=/tmp/bash_25github_user_repositories_$$
 
   if [ -z "$token" ] ;then
     auth=""

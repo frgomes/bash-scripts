@@ -26,7 +26,7 @@ function __install_kubectl() {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
 
-  which wget >/dev/null 2>&1 || sudo apt install wget -y
+  which wget >/dev/null 2>&1 || sudo aptitude install -y wget
 
   local version=${version:-$(wget -q -O - https://storage.googleapis.com/kubernetes-release/release/stable.tx | cut -c2-)}
   local version=${version:-"1.18.6"}

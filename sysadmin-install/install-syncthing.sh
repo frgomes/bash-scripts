@@ -3,14 +3,14 @@
 # compiled from https://docs.docker.com/engine/installation/linux/debian/
 
 function install_syncthing_binaries {
-    sudo apt-get update
-    sudo apt-get install -y apt-transport-https ca-certificates wget software-properties-common
+    sudo aptitude update
+    sudo aptitude install -y apt-transport-https ca-certificates wget software-properties-common
 
     curl -s https://syncthing.net/release-key.txt | sudo apt-key add -
     echo "deb https://apt.syncthing.net/ syncthing stable" | sudo tee /etc/apt/sources.list.d/syncthing.list
 
-    sudo apt-get update
-    sudo apt-get install syncthing
+    sudo aptitude update
+    sudo aptitude install -y syncthing
 }
 
 function install_syncthing {

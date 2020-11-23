@@ -4,7 +4,7 @@
 # Credits: http://github.com/geco/ezinstall
 
 function install_torch7_binaries {
-    sudo apt install qt4-default qt4-dev-tools libjpeg-dev libopenblas-dev libreadline-dev -y && \
+    sudo aptitude install -y qt4-default qt4-dev-tools libjpeg-dev libopenblas-dev libreadline-dev && \
         curl -s https://raw.githubusercontent.com/geco/ezinstall/patch-1/install-all | sudo bash
 }
 

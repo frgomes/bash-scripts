@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 function __capitalize() {
-  which sed >/dev/null 2>&1 || sudo apt install sed -y
+  which sed >/dev/null 2>&1 || sudo aptitude install -y sed
   sed -E 's/[^ \t]*/\u&/g' $*
 }
 

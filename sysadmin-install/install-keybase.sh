@@ -19,7 +19,7 @@ function install_keybase_binaries {
     wget "$url" -O "${archive}"
   fi
 
-  sudo apt install -y ${archive}
+  sudo aptitude install -y ${archive}
 }
 
 function install_keybase {

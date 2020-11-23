@@ -1,8 +1,8 @@
 #!/bin/bash -e
 
 function __plasma_stop() {
-  which killall >/dev/null 2>&1 || sudo apt install psmisc -y
-  which plasmashell >/dev/null 2>&1 || sudo apt install plasma-workspace -y
+  which killall >/dev/null 2>&1 || sudo aptitude install -y psmisc
+  which plasmashell >/dev/null 2>&1 || sudo aptitude install -y plasma-workspace
   killall plasmashell
 }
 

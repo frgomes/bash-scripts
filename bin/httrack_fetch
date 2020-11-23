@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 function __httrack_fetch() {
-  which httrack >/dev/null 2>&1 || sudo apt install httrack -y
+  which httrack >/dev/null 2>&1 || sudo aptitude install -y httrack
 
   local url="$1"
   local folder="$2"

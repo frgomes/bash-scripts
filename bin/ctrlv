@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 function __ctrlv() {
-  which xclip >/dev/null 2>&1 || sudo apt install xclip -y
+  which xclip >/dev/null 2>&1 || sudo aptitude install -y xclip
   xclip -o -selection clipboard
 }
 

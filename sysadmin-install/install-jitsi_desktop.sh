@@ -3,8 +3,8 @@
 function install_jitsi_desktop_binaries {
     wget -qO - https://download.jitsi.org/jitsi-key.gpg.key | sudo apt-key add -
     echo 'deb https://download.jitsi.org stable/' | sudo tee /etc/apt/sources.list.d/jitsi-stable.list
-    sudo apt update -y
-    sudo apt install -y jitsi
+    sudo aptitude update
+    sudo aptitude install -y jitsi
 }
 
 function install_jitsi_desktop {

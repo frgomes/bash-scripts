@@ -12,7 +12,7 @@ function install_clang_binaries {
   local release=${1:-"stable"}
   local version=${2:-"3.8"}
   echo "Installing clang-${version} and llvm-${version} from ${release} ..."
-  sudo apt install -t ${release} \
+  sudo aptitude install -y -t ${release} \
        clang-${version} clang-${version}-doc clang-format-${version} \
        llvm-${version} llvm-${version}-doc llvm-${version}-examples \
        lldb-${version}

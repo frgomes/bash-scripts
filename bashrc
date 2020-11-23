@@ -8,48 +8,31 @@ function __bash_path_append() {
   [[ ! -z "$1" ]] && echo "$PATH" | tr ':' '\n' | fgrep "$1" > /dev/null || export PATH="${PATH}:$1"
 }
 
-
-## A minimal Python installation should be available in your distribution in general.
-## However, we simply skip this entire business in case Python is missing.
-function __bash_virtualenv_install_python {
-  which python3 >/dev/null 2>&1 || sudo apt install python3-minimal -y
+## install aptitude in order to add some compatibility layer among distributions
+function __bash_aptitude_install {
+  case "$(lsb_release -si)" in
+    Debian)   which aptitude >/dev/null 2>&1 || sudo apt install -y aptitude;;
+    openSUSE) which aptitude >/dev/null 2>&1 || sudo zypper install -y zypper-aptitude;;
+  esac
 }
-function __bash_virtualenv_install_pip {
-  if [[ ! -z $(which python3) ]] ;then
-    if [[ ! -e "${HOME}/.local/bin/pip3" ]] ;then
-      [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
-      [[ ! -f "${DOWNLOADS}/get-pip.py" ]] && wget https://bootstrap.pypa.io/get-pip.py -O "${DOWNLOADS}/get-pip.py"
-      if [ -e $(which python3) ] ;then
-        python3 -c "import distutils" || sudo apt install -y python3-distutils
-        python3 "${DOWNLOADS}/get-pip.py" --user
-      fi
-    fi
-  fi
-}
-function __bash_virtualenv_install_virtualenv {
-  if [[ ! -z $(which python3) ]] ;then
-    if [[ ! -e "${HOME}/.local/bin/virtualenv" ]] ;then
-      if [ -e $(which python3) ] ;then
-        python3 -m pip install --quiet --user --upgrade pip virtualenv virtualenvwrapper
-      fi
-    fi
+
+## A minimal Python3 installation should be available in your distribution in general.
+function __bash_virtualenv_install {
+  which python3 >/dev/null 2>&1 || sudo aptitude install -y python3
+  which pip3    >/dev/null 2>&1 || sudo aptitude install -y python3-pip
+  if [[ ! -e "${HOME}/.local/bin/virtualenv" ]] ;then
+    python3 -m pip install --quiet --user --upgrade pip virtualenv virtualenvwrapper
   fi
 
-  # due to compatibility reasons
-  if [ -f /usr/bin/python2 ] ;then
-    export VIRTUALENVWRAPPER_PYTHON=$(readlink -f /usr/bin/python2)
-  else
-    export VIRTUALENVWRAPPER_PYTHON=$(readlink -f /usr/bin/python3)
-  fi
-
+  export VIRTUALENVWRAPPER_PYTHON=$(which python3)
   [[ -e "${HOME}/.local/bin/virtualenvwrapper.sh" ]] && source "${HOME}/.local/bin/virtualenvwrapper.sh"
 }
 
 
 dir=$(dirname $(readlink -f "${BASH_SOURCE[0]}"))
 __bash_path_prepend "${dir}/bin"
+__bash_path_prepend "${HOME}/.local/bin"
 # __bash_path_prepend "${HOME}/bin"
-# __bash_path_prepend "${HOME}/.local/bin"
 
 
 ##FIXME: this is a temporary fix for snaps not being found. See: https://www.youtube.com/watch?v=2g-teghxI2A 
@@ -144,9 +127,8 @@ fi
 ##### AUTO-MIGRATION :: end
 
 
-__bash_virtualenv_install_python
-__bash_virtualenv_install_pip
-__bash_virtualenv_install_virtualenv
+__bash_aptitude_install
+__bash_virtualenv_install
 
 
 if [ -z "$1" ] ;then

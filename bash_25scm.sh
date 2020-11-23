@@ -70,7 +70,7 @@ function scm_pullall {
 ##
 
 function git_top_squash {
-  local tmp=$(tempfile)
+  local tmp=/tmp/bash_25scm_$$
   git log --format=%B -n 1 | head -1 > $tmp
   git reset --soft HEAD~
   git commit --amend -F $tmp

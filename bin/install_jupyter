@@ -1,11 +1,11 @@
 #!/bin/bash -x
 
 function __install_jupyter {
-  which python3 >/dev/null 2>&1 || sudo apt install python3-minimal -y
+  which python3 >/dev/null 2>&1 || sudo aptitude install -y python3-minimal
   python3 -m pip install --upgrade pip
   python3 -m pip install --upgrade pygments jupyter
 
-  which curl >/dev/null 2>&1 || sudo apt install curl -y
+  which curl >/dev/null 2>&1 || sudo aptitude install -y curl
   mkdir -p ${HOME}/bin
   if [ ! -e $HOME/bin/coursier ] ;then
     curl -L -o $HOME/bin/coursier https://git.io/coursier \

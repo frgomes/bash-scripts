@@ -21,7 +21,7 @@ function install_matrix_checkdns {
 function install_matrix_binaries {
   local email="$1"
 
-  sudo apt install git pwgen -y
+  sudo aptitude install -y git pwgen
 
   mkdir -p "${WORKSPACE}"
   pushd "${WORKSPACE}"

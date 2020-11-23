@@ -10,14 +10,14 @@ function install_virtualbox_binaries {
   local version=${1}
   local version=${version:=5.2}
 
-  sudo apt install lsb-release apt-transport-https dirmngr -y
+  sudo aptitude install -y lsb-release apt-transport-https dirmngr
 
   release=$(lsb_release -cs)
   echo deb http://download.virtualbox.org/virtualbox/debian ${release} contrib | sudo tee /etc/apt/sources.list.d/virtualbox.list
   curl https://www.virtualbox.org/download/oracle_vbox_2016.asc | sudo apt-key add -
 
-  sudo apt update
-  sudo apt install virtualbox-${version}
+  sudo aptitude update
+  sudo aptitude install -y virtualbox-${version}
 
   sudo usermod -a -G vboxusers $USER
 }

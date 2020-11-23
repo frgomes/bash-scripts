@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 function __mkString() {
-  which paste >/dev/null 2>&1 || sudo apt install coreutils -y
+  which paste >/dev/null 2>&1 || sudo aptitude install -y coreutils
   local sep=${1}
   local sep=${sep:=,}
   paste -sd${sep}

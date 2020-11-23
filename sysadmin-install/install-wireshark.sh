@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function install_wiredshark_binaries {
-    sudo apt install wireshark -y
+    sudo aptitude install -y wireshark
 
     sudo groupadd wireshark
     sudo chgrp wireshark /usr/bin/dumpcap

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function install_bluray_binaries {
-    sudo apt install vlc libaacs0 libbluray-bdj libbluray1
+    sudo aptitude install -y vlc libaacs0 libbluray-bdj libbluray1
     mkdir -p ~/.config/aacs/
     cd ~/.config/aacs/ && wget http://vlc-bluray.whoknowsmy.name/files/KEYDB.cfg
 }

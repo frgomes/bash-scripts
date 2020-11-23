@@ -9,7 +9,7 @@
 
 
 function install_x2go_server_binaries {
-  sudo apt install lsb-release apt-transport-https dirmngr -y
+  sudo aptitude install -y lsb-release apt-transport-https dirmngr
 
   local machine=$(uname -m)
   case "${machine}" in
@@ -25,10 +25,10 @@ function install_x2go_server_binaries {
   echo deb http://packages.x2go.org/${distro} ${release} main | sudo tee /etc/apt/sources.list.d/x2go.list
   sudo apt-key adv --recv-keys keys.gnupg.net E1F958385BFE2B6E
 
-  sudo apt update
-  sudo apt install x2go-keyring -y && sudo apt update
+  sudo aptitude update
+  sudo aptitude install -y x2go-keyring && sudo aptitude update
   
-  sudo apt install x2goserver x2goserver-xsession x2godesktopsharing x2goserver-printing cups cups-x2go -y
+  sudo aptitude install -y x2goserver x2goserver-xsession x2godesktopsharing x2goserver-printing cups cups-x2go
 }
 
 function install_x2go_configure_printer {

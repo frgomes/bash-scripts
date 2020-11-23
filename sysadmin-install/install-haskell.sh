@@ -2,7 +2,7 @@
 
 
 function install_haskell_binaries {
-  sudo apt install -y ghc ghc-prof ghc-doc hlint
+  sudo aptitude install -y ghc ghc-prof ghc-doc hlint
 }
 
 function install_haskell {

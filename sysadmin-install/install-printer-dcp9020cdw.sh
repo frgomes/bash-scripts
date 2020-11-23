@@ -7,8 +7,8 @@ function install_cdp9020cdw_requirements {
   if [ ! -z "$ip" ] ;then
     [[ ! $( dpkg -s lib32stdc++6 > /dev/null 2>&1 ) ]] \
       && sudo dpkg --add-architecture i386 \
-      && sudo apt update \
-      && sudo apt install lib32stdc++6 -y 
+      && sudo aptitude update \
+      && sudo aptitude install -y lib32stdc++6 
   else
     echo ERROR: please make sure that IP address dcp9020cdw can be resolved.
     return 1
@@ -28,14 +28,14 @@ function install_dcp9020cdw_packages {
        -f "${DOWNLOADS}"/brscan-skey-0.2.4-1.amd64.deb -a \
        -f "${DOWNLOADS}"/brother-udev-rule-type1-1.0.2-0.all.deb ] ;then \
     [[ ! -d /var/spool/lpd/dcp9020cdw ]] && sudo mkdir -p /var/spool/lpd/dcp9020cdw
-    sudo apt install libkf5kdelibs4support5-bin libnotify-bin kio-extras nomacs skanlite sane-utils psutils gscan2pdf -y \
+    sudo aptitude install -y libkf5kdelibs4support5-bin libnotify-bin kio-extras nomacs skanlite sane-utils psutils gscan2pdf \
     && sudo dpkg --install --force-all \
           "${DOWNLOADS}"/dcp9020cdwlpr-1.1.2-1.i386.deb \
           "${DOWNLOADS}"/dcp9020cdwcupswrapper-1.1.4-0.i386.deb \
           "${DOWNLOADS}"/brscan4-0.4.4-4.amd64.deb \
           "${DOWNLOADS}"/brscan-skey-0.2.4-1.amd64.deb \
           "${DOWNLOADS}"/brother-udev-rule-type1-1.0.2-0.all.deb \
-    && sudo apt install -y -f
+    && sudo aptitude install -y -f
   else
     echo ERROR: Could not download installation packages
     return 1
