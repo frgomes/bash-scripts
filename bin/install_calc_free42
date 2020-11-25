@@ -1,0 +1,84 @@
+#!/bin/bash -xe
+
+function install_free42_binaries {
+  local file=Free42Linux.tgz
+  local url=https://thomasokken.com/free42/download/${file}
+  local folder=free42
+  local symlink=
+  local executable=free42dec
+  local name=Free42
+  local icon=free42icon-128x128.xpm
+
+  local tools=${TOOLS_HOME:=$HOME/tools}
+  local Software="${SOFTWARE:=/mnt/omv/Software}"
+
+  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
+  [[ ! -d $tools ]] && mkdir -p $tools
+
+  local archive=""
+  if [[ -f ${Software}/Linux/archives/${file} ]] ;then
+    local archive=${Software}/Linux/archives/${file}
+  elif [[ -f "${DOWNLOADS}"/${file} ]] ;then
+    local archive="${DOWNLOADS}"/${file}
+  fi
+  if [[ -z ${archive} ]] ;then
+    local archive="${DOWNLOADS}"/${file}
+    wget "$url" -O "${archive}"
+  fi
+
+  if [ ! -d ${tools}/${folder} ] ;then
+    mkdir -p ${tools}/${folder}
+    tar -C ${tools}/${folder} --strip-components 1 -xpf ${archive}
+  fi
+  if [ ! -z ${symlink} ] ;then
+    if [ -L ${tools}/${symlink} ] ;then rm ${tools}/${symlink} ;fi
+    [[ ! -L ${tools}/${symlink} ]] && ln -s ${folder} ${tools}/${symlink}
+  fi
+  if [ ! -z ${executable} ] ;then
+    [[ ! -L ~/bin/${executable} ]] && ln -s ${tools}/${folder}/${executable} ~/bin
+    echo ~/bin/${executable}
+  fi
+  
+  cat <<EOF > ~/.local/share/applications/${name}.desktop
+[Desktop Entry]
+Name=${name}
+Comment=
+Exec=${tools}/${folder}/${executable}
+Icon=${tools}/${folder}/${icon}
+Terminal=false
+Type=Application
+EOF
+}
+
+function install_free42_skins {
+  local layouts="42ctplus.layout Andy480x800.layout Ehrling42sm.layout HP-41.layout kacskin.layout KD0GLS_Compact.layout SemiAuto42b.layout"
+  local url=https://thomasokken.com/free42/skins/desktop
+  local folder=free42
+
+  [[ ! -d ~/.local/share/free42 ]] && mkdir -p ~/.local/share/free42
+
+  for layout in ${layouts} ;do
+      local gif=$(basename ${layout} .layout).gif
+      [[ ! -e ~/.local/share/free42/${layout} ]] && wget "${url}/${layout}" -O ~/.local/share/free42/${layout}
+      [[ ! -e ~/.local/share/free42/${gif} ]]    && wget "${url}/${gif}"    -O ~/.local/share/free42/${gif}
+  done
+}
+
+function install_free42 {
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1 | while read cmd ;do
+    $cmd $*
+  done
+}
+
+
+if [ $_ != $0 ] ;then
+  # echo "Script is being sourced: list all functions"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1
+else
+  # echo "Script is a subshell: execute last function"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  cmd=$(grep -E "^function " $self | cut -d' ' -f2 | tail -1)
+  $cmd $*
+fi

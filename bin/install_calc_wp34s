@@ -7,6 +7,8 @@ function install_wp34s_binaries {
   local folder=wp34s
   local symlink=
   local executable=WP-34s
+  local name=WP-34s
+  local icon=wp34s-logo.png
 
   local tools=${TOOLS_HOME:=$HOME/tools}
   local Software="${SOFTWARE:=/mnt/omv/Software}"
@@ -15,8 +17,8 @@ function install_wp34s_binaries {
   [[ ! -d $tools ]] && mkdir -p $tools
 
   local archive=""
-  if [[ -f ${Software}/Linux/${file} ]] ;then
-    local archive=${Software}/Linux/${file}
+  if [[ -f ${Software}/Linux/archives/${file} ]] ;then
+    local archive=${Software}/Linux/archives/${file}
   elif [[ -f "${DOWNLOADS}"/${file} ]] ;then
     local archive="${DOWNLOADS}"/${file}
   fi
@@ -31,12 +33,23 @@ function install_wp34s_binaries {
   fi
   if [ ! -z ${symlink} ] ;then
     if [ -L ${tools}/${symlink} ] ;then rm ${tools}/${symlink} ;fi
-    ln -s ${folder} ${tools}/${symlink}
+    [[ ! -L ${tools}/${symlink} ]] && ln -s ${folder} ${tools}/${symlink}
   fi
   if [ ! -z ${executable} ] ;then
-    ln -s ${tools}/${folder}/${executable} ~/bin
+    [[ ! -L ~/bin/${executable} ]] && ln -s ${tools}/${folder}/${executable} ~/bin
     echo ~/bin/${executable}
   fi
+
+  cat <<EOF > ~/.local/share/applications/${executable}.desktop
+[Desktop Entry]
+Name=${name}
+Comment=
+Exec=${tools}/${folder}/${executable}
+Icon=${tools}/${folder}/${icon}
+Terminal=false
+Type=Application
+EOF
+  
 }
 
 function install_wp34s {
