@@ -1,5 +1,12 @@
 #!/bin/bash
 
+function __install_rust_build_essentials {
+  case "$(lsb_release -si)" in
+    Debian)   sudo aptitude install -y build-essentials;;
+    openSUSE) sudo aptitude install -y -t pattern devel_basis;;
+  esac
+}
+
 function __install_rust_activator() {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
@@ -26,7 +33,8 @@ function install_rust_minimal {
     && source "${HOME}"/.cargo/env && hash -r \
       && rustup default stable && rustup update \
         && rustup component add clippy rustfmt \
-        && rustup component add rust-src
+        && rustup component add rust-src \
+        && [[ -e $(which gcc) ]] || __install_rust_build_essentials
 }
 
 function __install_rust_addons {
