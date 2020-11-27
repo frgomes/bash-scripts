@@ -7,6 +7,15 @@ function __install_rust_build_essentials {
   esac
 }
 
+function __install_rust_install_dependencies {
+  case "$(lsb_release -si)" in
+    Debian)   sudo aptitude install -y openssl libssl-dev sqlite3 libsqlite3-dev;;
+    openSUSE) sudo aptitude install -y openssl libopenssl-devel sqlite3 sqlite3-devel;;
+  esac
+}
+
+
+
 function __install_rust_activator() {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
@@ -51,8 +60,9 @@ EOD
 }
 
 function install_rust_addons {
-  source "${HOME}"/.cargo/env && hash -r && rustup default stable && rustup update
-  __install_rust_addons | grep -v -E '^#' | while read line ;do cargo install --force ${line} ;done
+  source "${HOME}"/.cargo/env && hash -r && rustup default stable && rustup update \
+    && __install_rust_install_dependencies \
+      && __install_rust_addons | grep -v -E '^#' | while read line ;do cargo install --force ${line} ;done
 }
 
 function __install_rust_web_addons {
