@@ -1,7 +1,14 @@
 #!/bin/bash -e
 
+function __ffd_install_fd() {
+  case "$(lsb_release -si)" in
+    Debian)   sudo aptitude install -y fd-find;;
+    openSUSE) sudo aptitude install -y fd;;
+  esac
+}
+
 function __ffd() {
-    which fd >/dev/null 2>&1 || sudo aptitude install -y fd
+    which fd >/dev/null 2>&1 || __ffd_install_fd
     case "${1}" in
         ant)    shift; fd -F build.xml $@;;
         config) shift; fd -e cfg -e conf -e config -e ini $@;;
