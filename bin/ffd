@@ -2,7 +2,8 @@
 
 function __ffd_install_fd() {
   case "$(lsb_release -si)" in
-    Debian)   sudo aptitude install -y fd-find;;
+    Debian)   sudo aptitude install -y fd-find && \
+              sudo ln -s $(which fdfind) /usr/bin/fd;; # this may colide with a console file manager from package fd-clone
     openSUSE) sudo aptitude install -y fd;;
   esac
 }
