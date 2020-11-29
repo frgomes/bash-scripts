@@ -9,9 +9,9 @@ function install_metals_coursier {
 }
 
 function install_metals_emacs {
-  local SCALA_VERSION=${SCALA_VERSION:=2.12.10}
+  local SCALA_VERSION=${SCALA_VERSION:=2.12.12}
   local SCALA_VERSION_MAJOR=${SCALA_VERSION_MAJOR:=2.12}
-  local METALS_VERSION=0.7.6
+  local METALS_VERSION=0.9.7
 
   coursier bootstrap \
     --java-opt -Xss4m \
