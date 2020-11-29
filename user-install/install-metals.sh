@@ -2,7 +2,7 @@
 
 function install_metals_coursier {
   if [ ! -e $HOME/bin/coursier ] ;then
-    curl -L -o $HOME/bin/coursier https://git.io/coursier \
+    curl -L -o $HOME/bin/coursier https://git.io/coursier-cli-linux \
       && chmod +x $HOME/bin/coursier \
         && $HOME/bin/coursier --help
   fi
