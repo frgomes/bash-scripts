@@ -1,7 +1,11 @@
+#!/bin/bash
+
 function __install_thunderbird {
   [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
   local name=thunderbird
   local folder=thunderbird
+  local title=Thunderbird
+  local comment="Mail Reader"
   local executable=thunderbird
   local icon=chrome/icons/default/default32.png
   local lang=$(echo $LANG | cut -d. -f1 | sed "s/_/-/")
@@ -19,13 +23,13 @@ function __install_thunderbird {
   [[ ! -d "${tools}" ]] && mkdir -p "${tools}"
   [[ ! -d "${tools}/${folder}" ]] && tar -C "${tools}" xpf "${DOWNLOADS}"/${name}-${version}.tar.bz2
   [[ ! -d ~/bin ]] && mkdir -p ~/bin
-  ln -s "${tools}/${name}/${name}" "~/bin/${name}"
+  [[ ! -L ~/bin/"${name}" ]] && ln -s "${tools}/${name}/${name}" ~/bin/"${name}"
   echo ~/bin/${name}
 
   cat <<EOF > ~/.local/share/applications/${name}.desktop
 [Desktop Entry]
-Name=${name}
-Comment=
+Name=${title}
+Comment=${comment}
 Exec=${tools}/${folder}/${executable}
 Icon=${tools}/${folder}/${icon}
 Terminal=false
