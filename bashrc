@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 
 
 function __bash_path_prepend() {
@@ -20,7 +20,7 @@ function __bash_aptitude_install {
 function __bash_virtualenv_install {
   which python3 >/dev/null 2>&1 || sudo aptitude install -y python3
   which pip3    >/dev/null 2>&1 || sudo aptitude install -y python3-pip
-  which mkvirtualenv >/dev/null 2>&1 || python3 -m pip install --quiet --upgrade pip virtualenv virtualenvwrapper
+  which virtualenv >/dev/null 2>&1 || python3 -m pip install --quiet --upgrade pip virtualenv virtualenvwrapper
   export VIRTUALENVWRAPPER_PYTHON=$(which python3)
   [[ -e "${HOME}/.local/bin/virtualenvwrapper.sh" ]] && source "${HOME}/.local/bin/virtualenvwrapper.sh"
 }
