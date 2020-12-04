@@ -1,0 +1,38 @@
+#!/bin/bash
+
+function __install_firefox {
+  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
+  local name=firefox
+  local folder=firefox
+  local executable=firefox
+  local icon=browser/chrome/icons/default/default32.png
+  local lang=$(echo $LANG | cut -d. -f1 | sed "s/_/-/")
+  local hwarch=$(uname -m)
+  local osarch=$(uname -s | tr [:upper:] [:lower:])
+  local version=83.0
+
+  if [ ! -e "${DOWNLOADS}"/${name}-${version}.tar.bz2 ] ;then
+    pushd "${DOWNLOADS}" 2>&1 > /dev/null
+    wget https://ftp.mozilla.org/pub/${name}/releases/${version}/${osarch}-${hwarch}/${lang}/${name}-${version}.tar.bz2
+    popd 2>&1 > /dev/null
+  fi
+
+  local tools="${TOOLS_HOME:=$HOME/tools}"
+  [[ ! -d "${tools}" ]] && mkdir -p "${tools}"
+  [[ ! -d "${tools}/${folder}" ]] && tar -C "${tools}" xpf "${DOWNLOADS}"/${name}-${version}.tar.bz2
+  [[ ! -d ~/bin ]] && mkdir -p ~/bin
+  ln -s "${tools}/${name}/${name}" "~/bin/${name}"
+  echo ~/bin/${name}
+
+  cat <<EOF > ~/.local/share/applications/${name}.desktop
+[Desktop Entry]
+Name=${name}
+Comment=
+Exec=${tools}/${folder}/${executable}
+Icon=${tools}/${folder}/${icon}
+Terminal=false
+Type=Application
+EOF
+}
+
+__install_firefox
