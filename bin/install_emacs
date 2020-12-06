@@ -1,0 +1,95 @@
+#!/bin/bash -ex
+
+function install_emacs_setup_workspace {
+    [[ ! -d "${WORKSPACE}/emacs" ]] && mkdir -p "${WORKSPACE}/emacs"
+    pushd "${WORKSPACE}/emacs"
+    which git >/dev/null 2>&1 || sudo aptitude install -y git
+    if [[ ! -d .git ]] ;then
+        git init
+        git remote add origin git://git.savannah.gnu.org/emacs.git
+    fi
+    popd
+}
+
+function install_emacs_download {
+    pushd "${WORKSPACE}/emacs"
+  
+    local url=git://git.savannah.gnu.org/emacs.git
+    local current="${EMACS_VERSION}"
+    local default="27.1"
+
+    local latest="$(git ls-remote --tags | grep -o -E 'refs/tags/emacs-[0-9]*(\.[0-9]*)+' | sort -r | uniq | head -1 | grep -o '[^\/]*$' | grep -o '[^\-]*$')"
+    local version="${1:-${latest}}"        # user can force a version, passing it on the first parameter
+    local version="${version:-${current}}" # falls back to current installed version, if any
+    local version="${version:-${default}}" # falls back to default version
+
+    git fetch origin +refs/tags/emacs-${version}:refs/tags/emacs-${version}
+    git checkout emacs-${version}
+
+    popd
+}
+
+function __install_emacs_build_essentials {
+    case "$(lsb_release -si)" in
+        Debian)   sudo aptitude install -y build-essentials;;
+        openSUSE) sudo aptitude install -y -t pattern devel_basis;;
+    esac
+}
+
+function install_emacs_build_essentials {
+    which autoconf >/dev/null 2>&1 || __install_emacs_build_essentials
+}
+
+function __install_emacs_build_dependencies {
+    case "$(lsb_release -si)" in
+        #Debian)   sudo aptitude install -y texinfo libncurses5-dev hunspell hunspell-en-gb hunspell-en-us hunspell-es hunspell-pt-pt hunspell-pt-br hunspell-de-de hunspell-it hunspell-fr;;
+        ##XXX texinfo
+        Debian)   sudo aptitude build-deps -y emacs;;
+        openSUSE) sudo aptitude -y source-install --build-deps-only emacs;;
+    esac
+}
+
+function install_emacs_install_dependencies {
+    ## /sbin/ldconfig -N -v $(sed 's/:/ /g' <<< $LD_LIBRARY_PATH) 2>/dev/null | fgrep hunspell.so || \
+        __install_emacs_install_dependencies
+}
+
+
+function install_emacs_make {
+    local tools="${TOOLS_HOME:=$HOME/tools}"
+    if [ -d "${WORKSPACE}"/emacs ] ;then
+        cd "${WORKSPACE}"/emacs && \
+            ./autogen.sh && \
+            ./configure --prefix="${tools}/emacs" && \
+            make && \
+            if [ "${PWD##$HOME}" != "${PWD}" ] ;then
+                sudo make install
+            else
+                make install
+            fi && \
+                for app in ctags etags ebrowse emacs ;do
+                    [[ -L ~/bin/${app} ]] || ln -s "${tools}/emacs/bin/${app}" "~/bin/${app}"
+                done
+    else
+        return 1
+    fi
+}
+
+function install_emacs {
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1 | while read cmd ;do
+    $cmd $*
+  done
+}
+
+
+if [ $_ != $0 ] ;then
+  # echo "Script is being sourced: list all functions"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1
+else
+  # echo "Script is a subshell: execute last function"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  cmd=$(grep -E "^function " $self | cut -d' ' -f2 | tail -1)
+  $cmd $*
+fi
