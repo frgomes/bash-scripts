@@ -65,6 +65,7 @@ function __install_rust_addons {
 cat << EOD
 cargo-watch
 cargo-edit
+cargo-generate
 cargo-udeps
 cargo-whatfeatures
 cargo-docset
