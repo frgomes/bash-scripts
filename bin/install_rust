@@ -98,9 +98,9 @@ function install_rust_web {
   __install_rust_web_addons | grep -v -E '^#' | while read line ;do cargo install --force ${line} ;done
 }
 
-function install_rust_lsp {
+function install_rust_lsp_texlab {
   source "${HOME}"/.cargo/env && hash -r && rustup default stable && rustup update
-  rustup component add rls rust-analysis rust-src
+  ## rustup component add rls rust-analysis rust-src
   cargo install --force --git https://github.com/latex-lsp/texlab.git
 }
 
@@ -113,7 +113,7 @@ function __install_rust {
     "complete") install_rust_binaries complete; __install_rust_activator "${config}";;
     "addons")   install_rust_addons;            __install_rust_activator "${config}";;
     "web")      install_rust_web;               __install_rust_activator "${config}";;
-    "lsp")      install_rust_lsp;               __install_rust_activator "${config}";;
+    "texlab")   install_rust_lsp_texlab         __install_rust_activator "${config}";;
     "all")
         install_rust_minimal
         install_rust_addons
