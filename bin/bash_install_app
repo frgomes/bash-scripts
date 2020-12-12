@@ -36,8 +36,8 @@ function __bash_install_app() {
   cp "${archive}" "${tools}/${folder}/bin/${file}"
   chmod ugo+x "${tools}/${folder}/bin/${file}"
 
-  [[ -z "${symlink}" || "${symlink}" == "." ]] || [[ -L "${tools}/${symlink}" ]] && rm "${tools}/${symlink}"
-  [[ -z "${symlink}" || "${symlink}" == "." ]] || ln -s "${folder}" "${tools}/${symlink}"
+  [[ ! -z "${symlink}" && "${symlink}" != "." ]] || [[ -L "${tools}/${symlink}" ]] && rm "${tools}/${symlink}"
+  [[ ! -z "${symlink}" && "${symlink}" != "." ]] || ln -s "${folder}" "${tools}/${symlink}"
 }
 
 if [ $_ != $0 ]; then

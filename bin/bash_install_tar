@@ -37,8 +37,8 @@ function __bash_install_tar() {
   [[ ! -d "${tools}/${folder}" ]] && mkdir -p "${tools}/${folder}"
   tar -C "${tools}/${folder}" "$@" -xpf "${archive}"
 
-  [[ -z "${symlink}" || "${symlink}" == "." ]] || [[ -L "${tools}/${symlink}" ]] && rm "${tools}/${symlink}"
-  [[ -z "${symlink}" || "${symlink}" == "." ]] || ln -s "${folder}" "${tools}/${symlink}"
+  [[ ! -z "${symlink}" && "${symlink}" != "." ]] || [[ -L "${tools}/${symlink}" ]] && rm "${tools}/${symlink}"
+  [[ ! -z "${symlink}" && "${symlink}" != "." ]] || ln -s "${folder}" "${tools}/${symlink}"
 }
 
 if [ $_ != $0 ]; then

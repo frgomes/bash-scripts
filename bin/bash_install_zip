@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 
 function __bash_install_zip_help(){
   echo "Usage: bash_install_zip url file folder [symlink] [option] ..."
@@ -38,8 +38,8 @@ function __bash_install_zip() {
   which zip  >/dev/null 2>&1 || sudo aptitude install -y zip unzip
   unzip  "$@" "${archive}" -d "${tools}/${folder}"
 
-  [[ -z "${symlink}" || "${symlink}" == "." ]] || [[ -L "${tools}/${symlink}" ]] && rm "${tools}/${symlink}"
-  [[ -z "${symlink}" || "${symlink}" == "." ]] || ln -s "${folder}" "${tools}/${symlink}"
+  [[ ! -z "${symlink}" && "${symlink}" != "." ]] || [[ -L "${tools}/${symlink}" ]] && rm "${tools}/${symlink}"
+  [[ ! -z "${symlink}" && "${symlink}" != "." ]] || ln -s "${folder}" "${tools}/${symlink}"
 }
 
 if [ $_ != $0 ]; then
