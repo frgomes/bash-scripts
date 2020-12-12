@@ -1,0 +1,56 @@
+#!/bin/bash -ex
+
+function __bash_install_zip_help(){
+  echo "Usage: bash_install_zip url file folder [symlink] [option] ..."
+  echo "Downloads url, save onto file, zip extract onto folder, optionally creating symlink."
+  echo "Pass options to zip command, if specified."
+  echo "Enter a dot . if a symlink is not required but options for zip are required."
+}
+
+function __bash_install_zip() {
+  which wget >/dev/null 2>&1 || sudo aptitude install -y wget
+
+  [[ $# -lt 3 ]] && __bash_install_zip_help && return 1
+  local url="$1"
+  local file="$2"
+  local folder="$3"
+  shift; shift; shift
+  [[ $# -gt 0 ]] && local symlink="$1" && shift
+
+  local tools="${TOOLS_HOME:=$HOME/tools}"
+  local Software="${SOFTWARE:=/mnt/omv/Software}"
+
+  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
+  [[ ! -d "${tools}" ]] && mkdir -p "${tools}"
+
+  local archive=""
+  if [[ -f "${Software}/Linux/${file}" ]]; then
+    local archive="${Software}/Linux/${file}"
+  elif [[ -f "${DOWNLOADS}/${file}" ]]; then
+    local archive="${DOWNLOADS}/${file}"
+  fi
+  if [[ -z "${archive}" ]]; then
+    local archive="${DOWNLOADS}/${file}"
+    wget -q "$url" -O "${archive}"
+  fi
+
+  [[ ! -d "${tools}/${folder}" ]] && mkdir -p "${tools}/${folder}"
+  which zip  >/dev/null 2>&1 || sudo aptitude install -y zip unzip
+  unzip  "$@" "${archive}" -d "${tools}/${folder}"
+
+  [[ -z "${symlink}" || "${symlink}" == "." ]] || [[ -L "${tools}/${symlink}" ]] && rm "${tools}/${symlink}"
+  [[ -z "${symlink}" || "${symlink}" == "." ]] || ln -s "${folder}" "${tools}/${symlink}"
+}
+
+if [ $_ != $0 ]; then
+  # echo "Script is being sourced: list all functions"
+  self=$(readlink -f "${BASH_SOURCE[0]}")
+  dir=$(dirname $self)
+  grep -E "^function __" $self | cut -d' ' -f2 | sed 's/()//'
+else
+  # echo "Script is a subshell: execute last function"
+  self=$(readlink -f "${BASH_SOURCE[0]}")
+  dir=$(dirname $self)
+  cmd=$(grep -E "^function __" $self | cut -d' ' -f2  | sed 's/()//' | tail -1)
+  $cmd $*
+fi

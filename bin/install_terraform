@@ -1,0 +1,63 @@
+#!/bin/bash -ex
+
+
+function __install_terraform_activator() {
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
+
+  local activator="${1}"
+  local version="${2}"
+
+  [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
+  cat <<EOD > "${config}"
+#!/bin/bash
+
+export TERRAFORM_VERSION=${version}
+export TERRAFORM_HOME=\${TOOLS_HOME:=\$HOME/tools}/terraform-\${TERRAFORM_VERSION}
+
+export PATH=\${TERRAFORM_HOME}:\${PATH}
+EOD
+  chmod ugo+x "${config}"
+  echo "${config}"
+}
+
+function __install_terraform() {
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
+
+  local current="${TERRAFORM_VERSION}"
+  local default="0.14.2"
+  ### local latest="$(curl -I ${url} 2>/dev/null | fgrep location: | tr -d [:cntrl:] | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')"
+  local version="${1:-${latest}}"        # user can force a version, passing it on the first parameter
+  local version="${version:-${current}}" # falls back to current installed version, if any
+  local version="${version:-${default}}" # falls back to default version
+
+  local osarch=$(uname -s | tr [:upper:] [:lower:])
+  local hwarch=$(uname -m)
+  case "${hwarch}" in
+    armv7l) hwarch=arm ;;
+    x86_64) hwarch=amd64 ;;
+    i386)   hwarch=386 ;;
+    *) echo "ERROR: Could not install Terraform on platform ${osarch}-${hwarch}" ; return 1 ;;
+  esac
+  local arch=${1:-"$TERRAFORM_ARCH"}
+  local arch=${arch:-"linux_amd64"}
+
+  local file=terraform_${version}_${arch}.zip
+  local url=https://releases.hashicorp.com/terraform/${version}/${file}
+  local folder=terraform-${version}
+  local symlink=terraform
+
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/271-terraform.sh
+   __install_terraform_activator "${config}" "${version}"
+
+  "${dir}"/bash_install_zip "${url}" "${file}" "${folder}" "${symlink}"
+}
+
+if [ $_ != $0 ]; then
+  # echo "Script is being sourced: list all functions"
+  grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2 | sed 's/()//'
+else
+  # echo "Script is a subshell: execute last function"
+  $(grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2  | sed 's/()//' | tail -1) "$@"
+fi
