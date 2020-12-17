@@ -19,9 +19,12 @@ function __install_jupyter {
 
   coursier launch --fork almond:${ALMOND_VERSION} --scala ${SCALA_MAJOR} -- --install --force
 
-  python3 -m pip install --upgrade --force jupyter_contrib_nbextensions
+  python3 -m pip install --upgrade --force jupyter_contrib_nbextensions jupyter_nbextensions_configurator
 
-  hash -r; jupyter kernelspec list
+  hash -r
+  jupyter contrib nbextension install --user
+  jupyter nbextensions_configurator enable --user
+  jupyter kernelspec list
 }
 
 
