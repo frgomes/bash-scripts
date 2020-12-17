@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 
 
 function __bash_path_prepend() {
@@ -130,7 +130,7 @@ __bash_virtualenv_install
 
 if [ -z "$1" ] ;then
     "${dir}"/bin/bash_scripts_setup
-    source "${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/bin/postactivate
+    [[ -d "${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/bin ]] && source "${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/bin/postactivate
 else
     "${dir}"/bin/bash_scripts_setup "$1"
     workon "$1"

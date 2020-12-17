@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 function __bash_setup_postactivate(){
     dir=$(dirname $(readlink -f "${BASH_SOURCE[0]}"))
@@ -50,7 +50,7 @@ function __bash_setup_postactivate_overwrite {
     local virtualenv_dir=$(__bash_setup_virtualenv_dir "$1")
     [[ -d "${virtualenv_dir}" ]] || mkdir -p "${virtualenv_dir}"
     __bash_setup_postactivate > "${virtualenv_dir}"/bin/postactivate
-    chmod u+x "${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/bin/postactivate
+    chmod u+x "${virtualenv_dir}"/bin/postactivate
 }
 
 
