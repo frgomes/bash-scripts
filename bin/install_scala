@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -e
 
 function __install_scala_activator() {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
@@ -50,9 +50,9 @@ function __install_scala() {
     "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlink}" "--strip-components=1"
     "${dir}"/bash_install_tar "https://scala-lang.org/files/archive/scala-docs-${version}.txz" "scala-docs-${version}.txz" "scala-${version}" "scala-${major}" "--strip-components=1"
 
-    local tools="${TOOLS_HOME:=$HOME/tools}"
-    "${dir}"/httrack_fetch "https://www.scala-lang.org/files/archive/spec/${major}" "${tools}/${folder}/scala-${version}/spec"
-    "${dir}"/httrack_fetch "https://scala-lang.org/files/archive/api/${version}"    "${tools}/${folder}/scala-${version}/api"
+    # local tools="${TOOLS_HOME:=$HOME/tools}"
+    # "${dir}"/httrack_fetch "https://www.scala-lang.org/files/archive/spec/${major}" "${tools}/${folder}/scala-${version}/spec"
+    # "${dir}"/httrack_fetch "https://scala-lang.org/files/archive/api/${version}"    "${tools}/${folder}/scala-${version}/api"
   fi
 }
 
