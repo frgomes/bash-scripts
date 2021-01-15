@@ -1,0 +1,53 @@
+#!/bin/bash -ex
+
+
+# see: http://www.androidtablets.net/threads/rotating-screen-touchpad-on-linux.33309/
+
+
+function rotate_screen_icon() {
+    local self=$(readlink -f "${BASH_SOURCE[0]}")
+    local dir=$(dirname $self)
+
+    if [ ! -f ~/.local/share/applications/rotate-screen.desktop ] ;then
+        cat <<EOF > ~/.local/share/applications/rotate-screen.desktop
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Name=Rotate
+Comment=Rotate Screen
+Type=Application
+Exec=${self}
+Icon=/usr/share/icons/gnome/48x48/actions/view-refresh.png
+Terminal=false
+Categories=Settings
+StartupNotify=true
+EOF
+    fi
+}
+
+
+function rotate_screen_action() {
+    # Find the line in "xrandr -q --verbose" output that contains current screen orientation and "strip" out current orientation.
+    local rotation="$(xrandr -q --verbose | grep 'connected' | egrep -o  '\) (normal|left|inverted|right) \(' | egrep -o '(normal|left|inverted|right)')"
+
+    # Using current screen orientation proceed to rotate screen and input tools.
+    case "$rotation" in
+    normal)
+        # tablet mode
+        xrandr -o left
+        xsetwacom set stylus rotate  cw
+        xsetwacom set touch rotate cw
+        xsetwacom set eraser rotate cw
+        ;;
+    left)
+        # desktop mode
+        xrandr -o normal
+        xsetwacom set stylus rotate none
+        xsetwacom set touch rotate none
+        xsetwacom set eraser rotate none
+        ;;
+    esac
+}
+
+
+rotate_screen_icon; rotate_screen_action
