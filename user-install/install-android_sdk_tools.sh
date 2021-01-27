@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -ex
 
 ## https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip
 
@@ -42,8 +42,8 @@ export JAVA_OPTS="-Djava.io.tmpdir=${HOME}/tmp"
 echo y | ${folder}/tools/bin/sdkmanager \\
 EOD
 
-  ${folder}/tools/bin/sdkmanager --list | \
-    fgrep -A 1000 "Available Packages:" | tail +4 | sed -r 's/[ \t]+/ /g' | cut -c 2- | cut -d' ' -f1 | \
+  ${folder}/tools/bin/sdkmanager --list 2> /dev/null | \
+    fgrep -A 1000 "Available Packages:" | tail -n +4 | sed -r 's/[ \t]+/ /g' | cut -c 2- | cut -d' ' -f1 | \
       grep \
         -e "^extras;" \
         -e "^emulator" \
