@@ -4,7 +4,7 @@
 function install_libvirt_binaries {
   [[ ! -d /srv/lib/libvirt ]] && mkdir -p /srv/lib/libvirt
   [[ ! -d /var/lib/libvirt ]] && ln -s /srv/lib/libvirt /var/lib/libvirt
-  sudo aptitude install -y libvirt-daemon libvirt-daemon-system
+  sudo aptitude install -y libvirt-daemon libvirt-daemon-system bridge-utils
 }
 
 function install_libvirt_modprobe {
