@@ -27,27 +27,10 @@ EOF
 
 
 function rotate_screen_action() {
-    # Find the line in "xrandr -q --verbose" output that contains current screen orientation and "strip" out current orientation.
-    local rotation="$(xrandr -q --verbose | grep 'connected' | egrep -o  '\) (normal|left|inverted|right) \(' | egrep -o '(normal|left|inverted|right)')"
-
-    # Using current screen orientation proceed to rotate screen and input tools.
-    case "$rotation" in
-    normal)
-        # tablet mode
-        xrandr -o left
-        xsetwacom set stylus rotate  cw
-        xsetwacom set touch rotate cw
-        xsetwacom set eraser rotate cw
-        ;;
-    left)
-        # desktop mode
-        xrandr -o normal
-        xsetwacom set stylus rotate none
-        xsetwacom set touch rotate none
-        xsetwacom set eraser rotate none
-        ;;
-    esac
+    local device=$(xrandr --listproviders | head -3 | tail -1 | sed -E 's/[ \t]+/ /g' | cut -d' ' -f3)
+    rotation=${1:-normal}
+    xrandr --output ${device} --auto --rotate ${rotation}
 }
 
 
-rotate_screen_icon; rotate_screen_action
+rotate_screen_icon; rotate_screen_action $*
