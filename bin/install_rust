@@ -98,6 +98,11 @@ function install_rust_web {
   __install_rust_web_addons | grep -v -E '^#' | while read line ;do cargo install --force ${line} ;done
 }
 
+function install_rust_lsp {
+  source "${HOME}"/.cargo/env && hash -r && rustup default stable && rustup update
+  rustup component add rls rust-analysis rust-src
+}
+
 function install_rust_lsp_texlab {
   source "${HOME}"/.cargo/env && hash -r && rustup default stable && rustup update
   ## rustup component add rls rust-analysis rust-src
@@ -108,11 +113,13 @@ function __install_rust {
   local option="${1}"
   local option="${option:=help}"
   local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/400-rust.sh
+
   case "${option}" in
     "minimal")  install_rust_binaries minimal;  __install_rust_activator "${config}";;
     "complete") install_rust_binaries complete; __install_rust_activator "${config}";;
     "addons")   install_rust_addons;            __install_rust_activator "${config}";;
     "web")      install_rust_web;               __install_rust_activator "${config}";;
+    "lsp")      install_rust_lsp;               __install_rust_activator "${config}";;
     "texlab")   install_rust_lsp_texlab         __install_rust_activator "${config}";;
     "all")
         install_rust_minimal
@@ -129,6 +136,7 @@ function __install_rust {
        echo "  addons    installs an oppinionated set of useful Cargo plugins"
        echo "  web       installs an oppinionated set of tools for web and mobile development"
        echo "  lsp       installs Rust support for Language Server Protocol"
+       echo "  texlab    installs Rust support for LaTeX LSP"
        echo "  all       installs all tools and packages"
        ;;
   esac
