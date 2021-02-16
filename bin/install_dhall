@@ -30,7 +30,7 @@ function __install_dhall_compiler_binaries() {
 
   local latest=https://github.com/dhall-lang/dhall-haskell/releases/latest
   local version=$(wget -q -SO- -T 5 -t 1 "${latest}" 2>/dev/null | fgrep location: | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')
-  local version=${version:-"1.33.0"}
+  local version=${version:-"1.38.0"}
   local version=${1:-"${version}"}
 
   ##FIXME: local arch=${2:-"$DHALL_ARCH"}
@@ -55,11 +55,11 @@ function __install_dhall_lsp_binaries() {
 
   local latest=https://github.com/dhall-lang/dhall-haskell/releases/latest
   local version=$(wget -q -SO- -T 5 -t 1 "${latest}" 2>/dev/null | fgrep location: | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')
-  local version=${version:-"1.33.0"}
+  local version=${version:-"1.38.0"}
   local version=${1:-"${version}"}
 
   ##FIXME: local vtool=${2:-"$DHALL_LSP_VERSION"}
-  local vtool=${vtool:-"1.0.8"}
+  local vtool=${vtool:-"1.0.13"}
 
   ##FIXME: local arch=${3:-"$DHALL_ARCH"}
   local arch=${arch:-"x86_64-linux"}
@@ -80,11 +80,11 @@ function __install_dhall_json_binaries() {
 
   local latest=https://github.com/dhall-lang/dhall-haskell/releases/latest
   local version=$(wget -q -SO- -T 5 -t 1 "${latest}" 2>/dev/null | fgrep location: | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')
-  local version=${version:-"1.33.0"}
+  local version=${version:-"1.38.0"}
   local version=${1:-"${version}"}
 
   ##FIXME: local vtool=${2:-"$DHALL_JSON_VERSION"}
-  local vtool=${vtool:-"1.7.0"}
+  local vtool=${vtool:-"1.7.5"}
 
   ##FIXME: local arch=${3:-"$DHALL_ARCH"}
   local arch=${arch:-"x86_64-linux"}
@@ -105,11 +105,11 @@ function __install_dhall_yaml_binaries() {
 
   local latest=https://github.com/dhall-lang/dhall-haskell/releases/latest
   local version=$(wget -q -SO- -T 5 -t 1 "${latest}" 2>/dev/null | fgrep location: | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')
-  local version=${version:-"1.33.0"}
+  local version=${version:-"1.38.0"}
   local version=${1:-"${version}"}
 
   ##FIXME: local vtool=${2:-"$DHALL_YAML_VERSION"}
-  local vtool=${vtool:-"1.2.0"}
+  local vtool=${vtool:-"1.2.5"}
 
   ##FIXME: local arch=${3:-"$DHALL_ARCH"}
   local arch=${arch:-"x86_64-linux"}
@@ -130,11 +130,11 @@ function __install_dhall_bash_binaries() {
 
   local latest=https://github.com/dhall-lang/dhall-haskell/releases/latest
   local version=$(wget -q -SO- -T 5 -t 1 "${latest}" 2>/dev/null | fgrep location: | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')
-  local version=${version:-"1.33.0"}
+  local version=${version:-"1.38.0"}
   local version=${1:-"${version}"}
 
   ##FIXME: local vtool=${2:-"$DHALL_BASH_VERSION"}
-  local vtool=${vtool:-"1.0.31"}
+  local vtool=${vtool:-"1.0.36"}
 
   ##FIXME: local arch=${3:-"$DHALL_ARCH"}
   local arch=${arch:-"x86_64-linux"}
@@ -155,11 +155,11 @@ function __install_dhall_nix_binaries() {
 
   local latest=https://github.com/dhall-lang/dhall-haskell/releases/latest
   local version=$(wget -q -SO- -T 5 -t 1 "${latest}" 2>/dev/null | fgrep location: | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')
-  local version=${version:-"1.33.0"}
+  local version=${version:-"1.38.0"}
   local version=${1:-"${version}"}
 
   ##FIXME: local vtool=${2:-"$DHALL_NIX_VERSION"}
-  local vtool=${vtool:-"1.1.15"}
+  local vtool=${vtool:-"1.1.20"}
 
   ##FIXME: local arch=${3:-"$DHALL_ARCH"}
   local arch=${arch:-"x86_64-linux"}
