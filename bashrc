@@ -1,5 +1,9 @@
 #!/bin/bash -e
 
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+[ -z "$PS1" ] && return
+
 
 function __bash_path_prepend() {
   [[ ! -z "$1" ]] && echo "$PATH" | tr ':' '\n' | fgrep "$1" > /dev/null || export PATH="$1:${PATH}"
