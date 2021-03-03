@@ -26,7 +26,7 @@ function install_libvirt_clients {
 }
 
 function install_libvirt_usermod {
-  sudo usermod -a -G libvirt $USER
+  sudo usermod -a -G libvirt ${SUDO_USER:-${USER}}
 }
 
 
