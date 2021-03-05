@@ -19,7 +19,7 @@ function __ffd() {
         yaml)   shift; fd -e yml -e yaml $@;;
         file)   shift; fd $@;;
         dir)    shift; fd -t d $@;;
-        *) local extension ="${1}"; shift; fd -e "${extension}" $@;;
+        *) local extension="${1}"; shift; fd -e "${extension}" $@;;
     esac
 }
 
