@@ -20,22 +20,23 @@ function __bash_aptitude_install {
   esac
 }
 
-## A minimal Python3 installation should be available in your distribution in general.
-function __bash_virtualenv_install {
-  which python3 >/dev/null 2>&1 || sudo aptitude install -y python3
-  which pip3    >/dev/null 2>&1 || sudo aptitude install -y python3-pip
-  which virtualenv        >/dev/null 2>&1            || python3 -m pip install --quiet --upgrade pip virtualenv
-  which virtualenvwrapper >/dev/null 2>&1            || python3 -m pip install --quiet --upgrade pip virtualenvwrapper
-  [[ -e "${HOME}/.local/bin/virtualenvwrapper.sh" ]] || python3 -m pip install --quiet --upgrade pip virtualenvwrapper
-  export VIRTUALENVWRAPPER_PYTHON=$(which python3)
-  [[ -e "${HOME}/.local/bin/virtualenvwrapper.sh" ]] && source "${HOME}/.local/bin/virtualenvwrapper.sh"
+function mkvirtualenv {
+  if [ ! -z "$1" ] ;then
+    [[ -d "${HOME}/.virtualenvs" ]] | mkdir -p "${HOME}/.virtualenvs"
+    python3 -m venv "${HOME}/.virtualenvs/${1}"
+  fi
+}
+
+function workon {
+  if [ ! -z "${1}" ] ;then
+    source "${HOME}/.virtualenvs/${1}/bin/activate"
+  fi
 }
 
 
 dir=$(dirname $(readlink -f "${BASH_SOURCE[0]}"))
 __bash_path_prepend "${dir}/bin"
 __bash_path_prepend "${HOME}/.local/bin"
-# __bash_path_prepend "${HOME}/bin"
 
 
 ##FIXME: this is a temporary fix for snaps not being found. See: https://www.youtube.com/watch?v=2g-teghxI2A 
@@ -131,16 +132,6 @@ fi
 
 
 __bash_aptitude_install
-__bash_virtualenv_install
-
-
-if [ -z "$1" ] ;then
-    "${dir}"/bin/bash_scripts_setup
-    [[ -d "${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/bin ]] && source "${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/bin/postactivate
-else
-    "${dir}"/bin/bash_scripts_setup "$1"
-    workon "$1"
-fi
 
 # echo "[ Run legacy initialization scripts ]"
 for script in "${dir}"/bash_*.sh ;do

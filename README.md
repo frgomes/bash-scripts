@@ -1,6 +1,13 @@
-This is a bunch of shell scripts for Debian and derivatives containing aliases and useful functions aiming to deliver increased productivity.
+This is a bunch of shell scripts containing aliases and useful functions aiming to deliver increased productivity.
+
+> Tested on Debian and derivatives. Most features may also work on OpenSUSE ``zypper-aptitude`` is installed.
 
 WARNING: This toolbox is under heavy development and improvement. Expect that things may change.
+
+## Requirements
+
+* Python version 3.4+
+* ``zypper-aptitude`` on OpenSUSE
 
 ## For the impatient
 
@@ -32,9 +39,7 @@ $ echo 'source $HOME/workspace/bash-scripts/bashrc' >> $HOME/.bashrc
 
 ## Release Notes
 
-1. Supports virtual environments in order to allow you install multiple versions of your preferred applicatons. If you are not familiar to virtual environments, we provide an executive summary down below and mention caveats which may apply to your system.
-
-2. This release of ``bashrc-scripts`` performs these migration steps if necessary:
+1. This release of ``bashrc-scripts`` performs these migration steps if necessary:
 
 ```bash
 cp -vp "${HOME}"/.bashrc.scripts.before "${HOME}"/.local/share/bash-scripts/postactivate/head.d/000-default.sh
@@ -51,7 +56,7 @@ Starting from a brand new laptop with only the base operating system installed, 
 * One post installation script for sysadmins configuring a brand new laptop or server;
 * One post installation script for regular users seeking Firefox and Thunderbird in user's space;
 * Shell scripts for installing Java, Node, Scala, Rust, among a bunch of other things;
-* Employs virtual environments, in order to allow distinct versions of your preferred tools;
+* Employs virtual environments via Python3 module ``venv``, in order to allow distinct versions of your preferred tools;
 * All commands always available, no matter if you are using functions, sub-shells or whatever;
 * Flexibility of a separate history per session but also a global ``history+`` for all sessions.
 
@@ -67,6 +72,14 @@ $ history+ Software
 ```
 
 ## Caveats
+
+### Support for virtual environments
+
+Virtual environments are supported via Python3 module ``venv``.
+
+> Support for ``virtualenv`` and ``virtualenvwrapper`` is deprecated.
+
+We provide functions ``mkvirtualenv`` and ``workon`` for convenience, mimicking functions of the same name provided by packages ``virtualenv`` and ``virtualenvwrapper``.
 
 ### Clash between system level and user level Python PIP
 
@@ -89,9 +102,6 @@ sudo aptitude remove python-pip python3-pip python-pip-whl python-stevedore virt
 sudo rm /usr/local/bin/pip{,2,3}
 rm $HOME/.local/bin/pip{,2,3}
 ```
-
-> Note: despite the commands above remove packages ``virtualenv`` and ``virtualenvwrapper``, we install them again but this time, we install under your user, not at system level.
-
 
 ## Additional tricks
 
