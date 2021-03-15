@@ -18,8 +18,6 @@ function __history+() {
     local PID="PID"
     local DATE="Date/Time"
     local COMMAND="Command line"
-    local RESULT="result(s) found"
-    local COUNTER=0
 
     # Checando as opcoes definidas pelo usuario:
     while [ ${#} -ne 0 ]
@@ -78,13 +76,11 @@ function __history+() {
         else
             printf "%+7s%+8s %-10s%+9s %.44s\n" ${_SESS} ${_PID} ${_DATE} ${_TIME} "${_COMMAND}"
         fi
-        ((COUNTER++))
     done
 
     if ((${HEADEROUT}))
     then
-        printf "%.7s %.7s %.19s %.42s\n" "${DASH}" "${DASH}" "${DASH}" "${DASH}"
-        printf "%+78s\n\n" "${COUNTER} ${RESULT}"
+        printf "%.7s %.7s %.19s %.42s\n\n" "${DASH}" "${DASH}" "${DASH}" "${DASH}"
     fi
 }
 
