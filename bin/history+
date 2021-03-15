@@ -1,8 +1,87 @@
 #!/bin/bash
 
 function __history+() {
-  local text="${1:-$(date +%Y-%m-%d)}"
-  find "${HOME}"/.bash_history+ -type f | sort | xargs grep "${text}"
+    local SEARCHTEXT=$(date +%Y-%m-%d)  # Default search argument
+    local COLOROUT=0            # Define default to print out with no color
+    local HEADEROUT=0           # Define default to print out with no header
+    local B0=$(tput setab 0)    # Set background color to black
+    local B9=$(tput setab 9)    # Reset background color to terminal default
+    local F2=$(tput setaf 2)    # Set foreground color to green
+    local F3=$(tput setaf 3)    # Set foreground color to yellow
+    local F4=$(tput setaf 4)    # Set foreground color to blue
+    local F7=$(tput setaf 7)    # Set foreground color to white
+    local F9=$(tput setaf 9)    # Reset foreground color to terminal default
+    local DASH="--------------------------------------------------"
+    local NOW=$(date +"%d-%m-%Y %H:%M:%S")
+    local TITLE="History+"
+    local SESSION="Session"
+    local PID="PID"
+    local DATE="Date/Time"
+    local COMMAND="Command line"
+
+    # Checando as opcoes definidas pelo usuario:
+    while [ ${#} -ne 0 ]
+    do
+        case "${1}" in
+            -h|--help)          # Print help
+                echo
+                echo "History+"
+                echo "Syntax: ${0} [OPTIONS] [TEXT]"
+                echo "Where OPTIONS can be one or more:"
+                echo "   -h|--help     Print this help text"
+                echo "   -H|--header   Print out a header"
+                echo "   -c|--color    Print colored data"
+                echo "and TEXT is a string searched in the history+ database."
+                echo
+                exit 0
+                ;;
+            -H|--header)        # Print with headers
+                HEADEROUT=1
+                shift
+            ;;
+            -c|--color)         # Print out in colors
+                COLOROUT=1
+                shift
+            ;;
+            *)                  # Search text
+                SEARCHTEXT="${1}"
+                shift
+            ;;
+        esac
+    done
+
+    # Test if the script runs in a interactive session
+    if [ -t 1 ]
+    then
+        ((${COLOROUT})) && COLOROUT=1 || COLOROUT=0
+    else
+        COLOROUT=0
+    fi
+
+    if ((${HEADEROUT}))
+    then
+        printf "\n%-20s%+58s\n" "${TITLE}" "${NOW}"
+        printf "%-7s %-7s %-19s %-42s\n" "${SESSION}" "${PID}" "${DATE}" "${COMMAND}"
+        printf "%.7s %.7s %.19s %.42s\n" "${DASH}" "${DASH}" "${DASH}" "${DASH}"
+    fi
+
+    find "${HOME}/.bash_history+" -type f | \
+    sort -nb | \
+    xargs grep -h "${SEARCHTEXT}" | \
+    while read _SESS _PID _DATE _TIME _COMMAND
+    do
+        if ((${COLOROUT}))
+        then
+            printf "%s%s%+7s%s%+8s %s%-10s%+9s %s%.44s%s%s\n" ${B0} ${F2} ${_SESS} ${F3} ${_PID} ${F4} ${_DATE} ${_TIME} ${F7} "${_COMMAND}" ${B0} ${F7}
+        else
+            printf "%+7s%+8s %-10s%+9s %.44s\n" ${_SESS} ${_PID} ${_DATE} ${_TIME} "${_COMMAND}"
+        fi
+    done
+
+    if ((${HEADEROUT}))
+    then
+        printf "%.7s %.7s %.19s %.42s\n\n" "${DASH}" "${DASH}" "${DASH}" "${DASH}"
+    fi
 }
 
 __history+ $@
