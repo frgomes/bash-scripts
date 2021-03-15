@@ -1,8 +1,51 @@
 #!/bin/bash
 
 function __history+() {
-  local text="${1:-$(date +%Y-%m-%d)}"
-  find "${HOME}"/.bash_history+ -type f | sort | xargs grep "${text}"
+    local text="${1:-$(date +%Y-%m-%d)}"
+    local B0=$(tput setab 0)    # Set background color to black
+    local B9=$(tput setab 9)    # Reset background color to terminal default
+    local F2=$(tput setaf 2)    # Set foreground color to green
+    local F3=$(tput setaf 3)    # Set foreground color to yellow
+    local F4=$(tput setaf 4)    # Set foreground color to blue
+    local F7=$(tput setaf 7)    # Set foreground color to white
+    local F9=$(tput setaf 9)    # Reset foreground color to terminal default
+    local DASH="--------------------------------------------------"
+    local NOW=$(date +"%d-%m-%Y %H:%M:%S")
+    local TITLE="History+"
+    local SESSION="Session"
+    local PID="PID"
+    local DATE="Date/Time"
+    local COMMAND="Command line"
+    local POWEREDBY="Powered by Mathminds"
+
+    if [ "${1}" == "-h" ]
+    then
+        local text="${2:-$(date +%Y-%m-%d)}"
+        printf "\n%-20s%+58s\n" "${TITLE}" "${NOW}"
+        printf "%-7s %-7s %-19s %-42s\n" "${SESSION}" "${PID}" "${DATE}" "${COMMAND}"
+        printf "%.7s %.7s %.19s %.42s\n" "${DASH}" "${DASH}" "${DASH}" "${DASH}"
+    else
+        local text="${1:-$(date +%Y-%m-%d)}"
+    fi
+
+    find "${HOME}/.bash_history+" -type f | \
+    sort -nb | \
+    xargs grep -h "${text}" | \
+    while read _SESS _PID _DATE _TIME _COMMAND
+    do
+        if [ -t 1 ]
+        then
+            printf "%s%s%+7s%s%+8s %s%-10s%+9s %s%.44s%s%s\n" ${B0} ${F2} ${_SESS} ${F3} ${_PID} ${F4} ${_DATE} ${_TIME} ${F7} "${_COMMAND}" ${B0} ${F7}
+        else
+            printf "%+7s%+8s %-10s%+9s %.44s\n" ${_SESS} ${_PID} ${_DATE} ${_TIME} "${_COMMAND}"
+        fi
+    done
+
+    if [ "${1}" == "-h" ]
+    then
+        printf "%.7s %.7s %.19s %.42s\n" "${DASH}" "${DASH}" "${DASH}" "${DASH}"
+        printf "%+78s\n\n" "${POWEREDBY}"
+    fi
 }
 
 __history+ $@

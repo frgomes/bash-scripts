@@ -61,6 +61,7 @@ alias ll='ls -lhL'
 alias lt='ls -lhtL'
 alias df='df -h'
 alias du='du -h'
+alias h+='history+ -h'
 
 ##FIXME: the obligatory Emacs (or its surrogate...)
 if [ ! -z $(which zile) ] ;then
@@ -108,7 +109,8 @@ export HISTFILESIZE=-1
 export HISTTIMEFORMAT="%Y-%m-%d %H:%M:%S "
 export HISTCONTROL=ignorespace
 export HISTIGNORE=ls:ps
-PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;}"'echo $$ "$(history 1)" >> "${HOME}"/.bash_history+/$(date +%Y%m%d)'
+#mlg# PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;}"'echo $$ "$(history 1)" >> "${HOME}"/.bash_history+/$(date +%Y%m%d)'
+export PROMPT_COMMAND='printf "%+7s %s\n" ${$} "$(history 1)" >> "${HOME}/.bash_history+/$(date +%Y%m%d)"'
 shopt -s histappend
 shopt -s checkwinsize
 shopt -s globstar
