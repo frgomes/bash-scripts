@@ -13,20 +13,20 @@ function __history+() {
     local F9=$(tput setaf 9)    # Reset foreground color to terminal default
     local WIDTH=$(($(tput cols)-36))
     local DASH=$(printf "%0.*d" $(tput cols) 0|tr 0 -)
-    local NOW=$(date +"%d-%m-%Y %H:%M:%S")
-    local TITLE="History+"
-    local SESSION="Session"
-    local PID="PID"
-    local DATE="Date/Time"
-    local COMMAND="Command line"
+    local NOW=$(date "+%Y-%m-%d %H:%M:%S")
+    local TITLE="history+"
+    local SESSION="session"
+    local PID="pid"
+    local DATE="datetime"
+    local COMMAND="command"
 
-    # Checando as opcoes definidas pelo usuario:
+    # Checking options defined in command line by the user:
     while [ ${#} -ne 0 ]
     do
         case "${1}" in
             -h|--help)          # Print help
-                echo "Usage: ${0} [OPTIONS] [TEXT]"
-                echo "List information about commands submited to run by the"
+                echo "Usage: history+ [OPTIONS] [TEXT]"
+                echo "Lists information about commands submited to run by the"
                 echo "computer (based on extended data from history)."
                 echo
                 echo "OPTIONS can be one or more:"
@@ -35,6 +35,9 @@ function __history+() {
                 echo "  -c, --color    Print colored data"
                 echo
                 echo "TEXT is a string searched in the history+ database."
+                echo
+                echo "All parameters can be specified in any order. If TEXT is"
+                echo "specified more than once, then the last one will be used."
                 echo
                 exit 0
                 ;;
@@ -63,9 +66,8 @@ function __history+() {
 
     if ((${HEADEROUT}))
     then
-        printf "\n%-20s%+58s\n" "${TITLE}" "${NOW}"
-        printf "%-7s %-7s %-19s %-42s\n" "${SESSION}" "${PID}" "${DATE}" "${COMMAND}"
-        printf "%.7s %.7s %.19s %.*s\n" "${DASH}" "${DASH}" "${DASH}" ${WIDTH} "${DASH}"
+        printf "%-19s %-7s %-7s %-*s\n" "${DATE}" "${SESSION}" "${PID}" ${WIDTH} "${COMMAND}"
+        printf "%.19s %.7s %.7s %.*s\n" "${DASH}" "${DASH}" "${DASH}" ${WIDTH} "${DASH}"
     fi
 
     find "${HOME}/.bash_history+" -type f | \
@@ -75,15 +77,15 @@ function __history+() {
     do
         if ((${COLOROUT}))
         then
-            printf "%s%s%+7s%s%+8s %s%-10s%+9s %s%.*s%s%s\n" ${B0} ${F2} ${_SESS} ${F3} ${_PID} ${F4} ${_DATE} ${_TIME} ${F7} ${WIDTH} "${_COMMAND}" ${B0} ${F7}
+            printf "%s%s%-10s%+9s %s%+7s%s%+8s %s%.*s%s%s\n" ${B0} ${F4} ${_DATE} ${_TIME} ${F2} ${_SESS} ${F3} ${_PID} ${F7} ${WIDTH} "${_COMMAND}" ${B0} ${F7}
         else
-            printf "%+7s%+8s %-10s%+9s %.*s\n" ${_SESS} ${_PID} ${_DATE} ${_TIME} ${WIDTH} "${_COMMAND}"
+            printf "%-10s%+9s %+7s%+8s %s\n" ${_DATE} ${_TIME} ${_SESS} ${_PID} "${_COMMAND}"
         fi
     done
 
     if ((${HEADEROUT}))
     then
-        printf "%.7s %.7s %.19s %.*s\n\n" "${DASH}" "${DASH}" "${DASH}" ${WIDTH} "${DASH}"
+        printf "%.19s %.7s %.7s %.*s\n\n" "${DASH}" "${DASH}" "${DASH}" ${WIDTH} "${DASH}"
     fi
 }
 
