@@ -25,14 +25,16 @@ function __history+() {
     do
         case "${1}" in
             -h|--help)          # Print help
+                echo "Usage: ${0} [OPTIONS] [TEXT]"
+                echo "List information about commands submited to run by the"
+                echo "computer (based on extended data from history)."
                 echo
-                echo "History+"
-                echo "Syntax: ${0} [OPTIONS] [TEXT]"
-                echo "Where OPTIONS can be one or more:"
-                echo "   -h|--help     Print this help text"
-                echo "   -H|--header   Print out a header"
-                echo "   -c|--color    Print colored data"
-                echo "and TEXT is a string searched in the history+ database."
+                echo "OPTIONS can be one or more:"
+                echo "  -h, --help     Print this help text"
+                echo "  -H, --header   Print out a header"
+                echo "  -c, --color    Print colored data"
+                echo
+                echo "TEXT is a string searched in the history+ database."
                 echo
                 exit 0
                 ;;
