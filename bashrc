@@ -28,8 +28,13 @@ function mkvirtualenv {
 }
 
 function workon {
-  if [ ! -z "${1}" ] ;then
+    if [ ! -z "${1}" ] ;then
     source "${HOME}/.virtualenvs/${1}/bin/activate"
+    for script in ${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/postactivate/head.d/*.sh \
+                  ${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/postactivate/postactivate.d/*.sh \
+                  ${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/postactivate/tail.d/*.sh ;do
+      [[ -x "${script}" ]] && echo "sourcing ${script}" && source "${script}"
+    done
   fi
 }
 
@@ -117,7 +122,7 @@ shopt -s cmdhist
 
 
 # Create directory structure
-for folder in "${HOME}"/.local/share/bash-scripts/{bin,postactivate/head.d,postactivate/postactivate.d,postactivate/tail.d} ;do
+for folder in "${HOME}"/.local/share/bash-scripts/postactivate/{head.d,postactivate.d,tail.d} ;do
     [[ ! -d "${folder}" ]] && mkdir -p "${folder}"
 done
 
