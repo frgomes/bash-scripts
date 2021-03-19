@@ -38,6 +38,20 @@ function workon {
   fi
 }
 
+function __workon_complete {
+  local cur prev opts base
+  COMPREPLY=()
+  cur="${COMP_WORDS[COMP_CWORD]}"
+  prev="${COMP_WORDS[COMP_CWORD-1]}"
+  opts=""
+
+  local envs=$( ls -p ~/.virtualenvs | fgrep / | sed 's:/::' )
+  COMPREPLY=( $(compgen -W "${envs}" -- ${cur}) )
+  return 0
+}
+
+complete -F __workon_complete workon
+
 
 dir=$(dirname $(readlink -f "${BASH_SOURCE[0]}"))
 __bash_path_prepend "${dir}/bin"
