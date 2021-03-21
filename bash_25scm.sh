@@ -47,16 +47,30 @@ function scm_changeset {
 
 
 function scm_pullall {
-  local branch=$1
-
   for prj in ./ */ ;do
     pushd $prj
     if [ -d .hg ] ;then
-      hg pull
-      hg checkout branch=${branch:=default}
+      hg pull default
+      hg pull upstream
     elif [ -d .git ] ;then
-      git pull
-      git checkout ${branch:=master}
+      git pull origin -v
+      git pull upstream -v
+    fi
+    popd
+  done
+}
+
+
+function scm_fetchall {
+  for prj in ./ */ ;do
+    pushd $prj
+    if [ -d .hg ] ;then
+      hg pull default
+      hg pull upstream
+      hg update
+    elif [ -d .git ] ;then
+      git fetch origin -v
+      git fetch upstream -v
     fi
     popd
   done
