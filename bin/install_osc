@@ -1,0 +1,55 @@
+#!/bin/bash -x
+
+function __install_osc_repositories {
+  which lsb_release >/dev/null 2>&1 || sudo aptitude install -y lsb_release
+  id=$(lsb_release -is)
+  release=$(lsb_release -rs)
+  description=$(lsb_release -ds)
+
+  case "${id}" in
+    Debian)
+      case "${release}" in
+        10) ;;
+        testing) release=Testing ;;
+        *) echo "ERROR: Debian release is not supported: ${release}"; return 1;;
+      esac
+
+      echo "deb https://download.opensuse.org/repositories/openSUSE:/Tools/Debian_${release} /" | sudo tee /etc/apt/sources.list.d/openSUSE:Tools.repo.list > /dev/null
+      curl -L   https://download.opensuse.org/repositories/openSUSE:/Tools/Debian_${release}/Release.key | sudo apt-key add -
+      ;;
+    openSUSE)
+      case "${description}" in
+        '"openSUSE Tumbleweed"') release="openSUSE_Tumbleweed" ;;
+        *) echo "ERROR: openSUSE release is not supported: ${release}"; return 1;;
+      esac
+      zypper lr | fgrep builder-tools || sudo zypper ar https://download.opensuse.org/repositories/openSUSE:/Tools/${release} builder-tools
+      ;;
+    *)
+      echo "ERROR: Operating system or distribution is not supported: ${id}"; return 1
+      ;;
+  esac
+}
+
+function __install_osc_binaries {
+  sudo aptitude update
+  sudo apt install -y osc
+
+  sudo echo usermod -a -G osc ${USER}
+
+  cat <<EOD | sudo tee /etc/sudoers.d/osc
+Cmnd_Alias  OSC_CMD = /usr/bin/osc, /usr/bin/build
+%osc  ALL = (ALL) NOPASSWD:OSC_CMD
+EOD
+}
+
+function __install_osc {
+  __install_osc_repositories && __install_osc_binaries
+}
+
+if [ $_ != $0 ]; then
+  # echo "Script is being sourced: list all functions"
+  grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2 | sed 's/()//'
+else
+  # echo "Script is a subshell: execute last function"
+  $(grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2  | sed 's/()//' | tail -1) "$@"
+fi
