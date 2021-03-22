@@ -82,11 +82,6 @@ function __history+() {
             printf "%-10s%+9s %+7s%+8s %s\n" ${_DATE} ${_TIME} ${_SESS} ${_PID} "${_COMMAND}"
         fi
     done
-
-    if ((${HEADEROUT}))
-    then
-        printf "%.19s %.7s %.7s %.*s\n\n" "${DASH}" "${DASH}" "${DASH}" ${WIDTH} "${DASH}"
-    fi
 }
 
 __history+ $@
