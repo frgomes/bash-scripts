@@ -85,6 +85,7 @@ function __install_rust_web_addons {
 cat <<EOD
 cargo-wasi
 cargo-web
+basic-http-server
 wasm-bindgen-cli
 wasm-pack
 EOD
