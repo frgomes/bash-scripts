@@ -71,7 +71,7 @@ cargo-whatfeatures
 cargo-docset
 cargo-tarpaulin
 cargo-audit --features=fix
-#cargo-deny
+cargo-deny
 EOD
 }
 
@@ -98,6 +98,30 @@ function install_rust_web {
   __install_rust_web_addons | grep -v -E '^#' | while read line ;do cargo install --force ${line} ;done
 }
 
+function __install_rust_android_addons {
+cat <<EOD
+cargo-ndk
+EOD
+}
+
+function install_rust_android {
+  source "${HOME}"/.cargo/env && hash -r && rustup default stable && rustup update
+  rustup target add aarch64-linux-android armv7-linux-androideabi x86_64-linux-android i686-linux-android
+  __install_rust_mobile_addons | grep -v -E '^#' | while read line ;do cargo install --force ${line} ;done
+}
+
+function __install_rust_ios_addons {
+cat <<EOD
+cargo-lipo
+EOD
+}
+
+function install_rust_ios {
+  source "${HOME}"/.cargo/env && hash -r && rustup default stable && rustup update
+  rustup target add aarch64-apple-ios x86_64-apple-ios armv7-apple-ios i386-apple-ios
+  __install_rust_ios_addons | grep -v -E '^#' | while read line ;do cargo install --force ${line} ;done
+}
+
 function install_rust_lsp {
   source "${HOME}"/.cargo/env && hash -r && rustup default stable && rustup update
   rustup component add rls rust-analysis rust-src
@@ -119,12 +143,16 @@ function __install_rust {
     "complete") install_rust_binaries complete; __install_rust_activator "${config}";;
     "addons")   install_rust_addons;            __install_rust_activator "${config}";;
     "web")      install_rust_web;               __install_rust_activator "${config}";;
+    "android")  install_rust_android;           __install_rust_activator "${config}";;
+    "ios")      install_rust_ios;               __install_rust_activator "${config}";;
     "lsp")      install_rust_lsp;               __install_rust_activator "${config}";;
     "texlab")   install_rust_lsp_texlab         __install_rust_activator "${config}";;
     "all")
         install_rust_minimal
         install_rust_addons
         install_rust_web
+        install_rust_android
+	install_rust_ios
         install_rust_lsp
         __install_rust_activator "${config}";;
     *) echo "Usage install_rust [command]"
@@ -134,7 +162,9 @@ function __install_rust {
        echo "  minimal   installs Rust, Cargo and minimal set of tools"
        echo "  complete  installs Rust, Cargo and complete set of tools"
        echo "  addons    installs an oppinionated set of useful Cargo plugins"
-       echo "  web       installs an oppinionated set of tools for web and mobile development"
+       echo "  web       installs an oppinionated set of tools for web development"
+       echo "  android   installs an oppinionated set of tools for Android development"
+       echo "  ios       installs an oppinionated set of tools for iOS development"
        echo "  lsp       installs Rust support for Language Server Protocol"
        echo "  texlab    installs Rust support for LaTeX LSP"
        echo "  all       installs all tools and packages"
