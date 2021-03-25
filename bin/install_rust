@@ -93,9 +93,7 @@ EOD
 
 function install_rust_web {
   source "${HOME}"/.cargo/env && hash -r && rustup default stable && rustup update
-  rustup target add wasm32-unknown-emscripten \
-    && rustup target add wasm32-unknown-emscripten \
-      && rustup target add wasm32-unknown-unknown
+  rustup target add wasm32-wasi wasm32-unknown-emscripten wasm32-unknown-unknown
   __install_rust_web_addons | grep -v -E '^#' | while read line ;do cargo install --force ${line} ;done
 }
 
