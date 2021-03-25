@@ -4,25 +4,25 @@ function __install_osc_repositories {
   which lsb_release >/dev/null 2>&1 || sudo aptitude install -y lsb_release
   id=$(lsb_release -is)
   release=$(lsb_release -rs)
-  description=$(lsb_release -ds)
+  codename=$(lsb_release -cs)
+  [[ "${codename}" == "n/a" ]] && codename=$(lsb_release -ds | cut -d' ' -f2)
 
   case "${id}" in
     Debian)
-      case "${release}" in
+      case "${codename}" in
         10) ;;
-        testing) release=Testing ;;
-        *) echo "ERROR: Debian release is not supported: ${release}"; return 1;;
+        testing) codename=Testing ;;
+        *) echo "ERROR: Debian codename is not supported: ${codename}"; return 1;;
       esac
-
-      echo "deb https://download.opensuse.org/repositories/openSUSE:/Tools/Debian_${release} /" | sudo tee /etc/apt/sources.list.d/openSUSE:Tools.repo.list > /dev/null
-      curl -L   https://download.opensuse.org/repositories/openSUSE:/Tools/Debian_${release}/Release.key | sudo apt-key add -
+      echo "deb https://download.opensuse.org/repositories/openSUSE:/Tools/${id}_${codename} /" | sudo tee /etc/apt/sources.list.d/openSUSE:Tools.repo.list > /dev/null
+      curl -L   https://download.opensuse.org/repositories/openSUSE:/Tools/${id}_${codename}/Release.key | sudo apt-key add -
       ;;
     openSUSE)
-      case "${description}" in
-        '"openSUSE Tumbleweed"') release="openSUSE_Tumbleweed" ;;
-        *) echo "ERROR: openSUSE release is not supported: ${release}"; return 1;;
+      case "${codename}" in
+        Tumbleweed) ;;
+        *) echo "ERROR: openSUSE codename is not supported: ${codename}"; return 1;;
       esac
-      zypper lr | fgrep builder-tools || sudo zypper ar https://download.opensuse.org/repositories/openSUSE:/Tools/${release} builder-tools
+      zypper lr | fgrep builder-tools || sudo zypper ar https://download.opensuse.org/repositories/openSUSE:/Tools/${id}_${codename} builder-tools
       ;;
     *)
       echo "ERROR: Operating system or distribution is not supported: ${id}"; return 1
