@@ -1,0 +1,85 @@
+#!/bin/bash -xe
+
+function __install_wabt_activator() {
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
+
+  local activator="${1}"
+  local version="${2}"
+
+  [[ -d $(dirname "${config}") ]] || mkdir -p $(dirname "${config}")
+  cat <<EOD > "${config}"
+#!/bin/bash
+
+export WABT_VERSION=${version}
+export WABT_HOME=\${TOOLS_HOME:=\$HOME/tools}/wabt-${version}
+
+export PATH=\${WABT_HOME}/bin:\${PATH}
+EOD
+  chmod ugo+x "${config}"
+  echo "${config}"
+}    
+
+function install_wabt_requirements {
+    which gcc   >/dev/null 2>&1 || sudo apt install -y gcc
+    which cmake >/dev/null 2>&1 || sudo apt install -y cmake
+}
+
+function install_wabt_download {
+  [[ -d "${WORKSPACE}" ]] || mkdir -p "${WORKSPACE}"
+  if [ ! -d "${WORKSPACE}/wabt" ] ;then
+      git clone --recursive https://github.com/WebAssembly/wabt.git "${WORKSPACE}/wabt"
+  else
+      git -C "${WORKSPACE}/wabt" pull
+  fi
+}
+
+function install_wabt_install {
+  local url=https://github.com/WebAssembly/wabt/releases/latest
+  local current="${WABT_VERSION}"
+  local default="1.0.23"
+
+  ##local latest="$(curl -I ${url} 2>/dev/null | fgrep location: | tr -d [:cntrl:] | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')"
+  local latest="$(curl -I ${url} 2>/dev/null | fgrep location: | tr -d [:cntrl:] | cut -d' ' -f2 | cut -d/ -f8)"
+  local version="${1:-${latest}}"        # user can force a version, passing it on the first parameter
+  local version="${version:-${current}}" # falls back to current installed version, if any
+  local version="${version:-${default}}" # falls back to default version
+
+  ## local file=wabt-${version}-ubuntu.tgz
+  ## local url=https://github.com/WebAssembly/wabt/releases/download/v${version}/${file}
+  local folder=wabt-${version}
+  local symlink=wabt
+  
+  [[ -d "${WORKSPACE}/wabt/build" ]] || mkdir -p "${WORKSPACE}/wabt/build"
+  [[ -d "${TOOLS_HOME}/${folder}" ]] || mkdir -p "${TOOLS_HOME}/${folder}"
+
+  cmake "${WORKSPACE}/wabt" -B "${WORKSPACE}/wabt/build" && \
+  cmake --build "${WORKSPACE}/wabt/build" && \
+  cmake --install "${WORKSPACE}/wabt/build" --prefix "${TOOLS_HOME}/${folder}" && \
+  rm -r -f "${WORKSPACE}/wabt/build"
+
+  [[ ! -z "${symlink}" && "${symlink}" != "." ]] || [[ ! -L "${TOOLS_HOME}/${symlink}" ]] || rm "${TOOLS_HOME}/${symlink}"
+  [[ ! -z "${symlink}" && "${symlink}" != "." ]] || ln -s "${folder}" "${TOOLS_HOME}/${symlink}"
+  
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/451-wabt.sh
+  __install_wabt_activator "${config}" "${version}"
+}
+
+function install_wabt {
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1 | while read cmd ;do
+    $cmd $*
+  done
+}
+
+
+if [ $_ != $0 ] ;then
+  # echo "Script is being sourced: list all functions"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1
+else
+  # echo "Script is a subshell: execute last function"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  cmd=$(grep -E "^function " $self | cut -d' ' -f2 | tail -1)
+  $cmd $*
+fi
