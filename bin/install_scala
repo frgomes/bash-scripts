@@ -28,7 +28,7 @@ function __install_scala() {
 
   local latest=https://github.com/scala/scala/releases/latest
   local version=$(wget -q -SO- -T 5 -t 1 "${latest}" 2>/dev/null | fgrep location: | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')
-  local version=${version:-"2.13.3"}
+  local version=${version:-"2.13.5"}
   local version=${1:-"${version}"}
   local major=$(echo ${version} | cut -d. -f1-2)
 
