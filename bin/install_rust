@@ -77,26 +77,11 @@ wasm-pack
 EOD
 }
 
-function install_rust_lsp_wasm {
-  [[ -d "${WORKSPACE}" ]] || mkdir -p "${WORKSPACE}"
-  if [ ! -d "${WORKSPACE}/wasm_lsp_server" ] ;then
-      git clone https://github.com/wasm-lsp/wasm_lsp_server.git "${WORKSPACE}/wasm_lsp_server"
-  else
-      git -C "${WORKSPACE}/wasm_lsp_server" pull
-  fi
-
-  pushd "${WORKSPACE}/wasm_lsp_server"
-  cargo xtask init
-  cargo xtask install
-  popd
-}
-
 function install_rust_web {
   local toolchain=${1:-stable}
   source "${HOME}"/.cargo/env && hash -r && rustup update ${toolchain} \
     && rustup target add --toolchain ${toolchain} wasm32-wasi wasm32-unknown-emscripten wasm32-unknown-unknown \
-      && __install_rust_web_addons | grep -v -E '^#' | while read line ;do cargo install --force ${line} ;done \
-        && install_rust_lsp_wasm
+      && __install_rust_web_addons | grep -v -E '^#' | while read line ;do cargo install --force ${line} ;done
 }
 
 function __install_rust_android_addons {
@@ -125,17 +110,37 @@ function install_rust_ios {
       && __install_rust_ios_addons | grep -v -E '^#' | while read line ;do cargo install --force ${line} ;done
 }
 
+function install_rust_lsp_wasm {
+  local toolchain=${1:-stable}
+
+  [[ -d "${WORKSPACE}" ]] || mkdir -p "${WORKSPACE}"
+  if [ ! -d "${WORKSPACE}/wasm-lsp-server" ] ;then
+      git clone --recursive http://github.com/wasm-lsp/wasm-lsp-server "${WORKSPACE}/wasm-lsp-server"
+  else
+      git -C "${WORKSPACE}/wasm-lsp-server" pull
+  fi
+
+  pushd "${WORKSPACE}/wasm-lsp-server"
+  cargo +${toolchain} xtask init
+  cargo +${toolchain} xtask install
+  popd
+}
+
 function install_rust_lsp {
   local toolchain=${1:-stable}
   source "${HOME}"/.cargo/env && hash -r && rustup update ${toolchain} \
-    && rustup component add --toolchain ${toolchain} rls rust-analysis rust-src \
-      && install_rust_lsp_wasm
+    && rustup component add --toolchain ${toolchain} rls rust-analysis rust-src
 }
 
 function install_rust_lsp_texlab {
   local toolchain=${1:-stable}
   source "${HOME}"/.cargo/env && hash -r && rustup update ${toolchain} \
     && cargo install --force --git https://github.com/latex-lsp/texlab.git
+}
+
+function install_rust_experimental {
+  local toolchain=${1:-stable}
+  install_rust_lsp_wasm ${toolchain}
 }
 
 function __install_rust {
@@ -163,19 +168,21 @@ function __install_rust {
         install_rust_android  ${toolchain} 
 	install_rust_ios      ${toolchain} 
         install_rust_lsp      ${toolchain} 
-        __install_rust_activator "${config}";;
+        __install_rust_activator "${config}" ;;
+    "experimental") install_rust_experimental ;;
     *) echo "Usage install_rust command [nightly]"
        echo "Installs Rust compiler, Cargo package manager and additional tools and packages"
        echo ""
        echo "Commands:"
-       echo "  install   installs Rust, Cargo in a profile of a complete set of tools"
-       echo "  addons    installs an oppinionated set of useful Cargo plugins"
-       echo "  web       installs an oppinionated set of tools for web development"
-       echo "  android   installs an oppinionated set of tools for Android development"
-       echo "  ios       installs an oppinionated set of tools for iOS development"
-       echo "  lsp       installs Rust support for Language Server Protocol"
-       echo "  texlab    installs Rust support for LaTeX LSP"
-       echo "  all       installs all tools and packages"
+       echo "  install         installs Rust, Cargo in a profile of a complete set of tools"
+       echo "  addons          installs an oppinionated set of useful Cargo plugins"
+       echo "  web             installs an oppinionated set of tools for web development"
+       echo "  android         installs an oppinionated set of tools for Android development"
+       echo "  ios             installs an oppinionated set of tools for iOS development"
+       echo "  lsp             installs Rust support for Language Server Protocol"
+       echo "  texlab          installs Rust support for LaTeX LSP"
+       echo "  experimental    installs experimental tools and packages"
+       echo "  all             installs all tools and packages, except experimental ones"
        ;;
   esac
 }
