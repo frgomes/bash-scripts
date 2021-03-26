@@ -2,15 +2,15 @@
 
 function __install_rust_build_essentials {
   case "$(lsb_release -si)" in
-    Debian)   sudo aptitude install -y build-essentials;;
-    openSUSE) sudo aptitude install -y -t pattern devel_basis;;
+    Debian)   which gcc   >/dev/null 2>&1 || sudo aptitude install -y build-essentials;;
+    openSUSE) which gcc   >/dev/null 2>&1 || sudo aptitude install -y -t pattern devel_basis;;
   esac
 }
 
 function __install_rust_install_dependencies {
   case "$(lsb_release -si)" in
-    Debian)   sudo aptitude install -y openssl libssl-dev sqlite3 libsqlite3-dev;;
-    openSUSE) sudo aptitude install -y openssl libopenssl-devel sqlite3 sqlite3-devel;;
+    Debian)   which gcc   >/dev/null 2>&1 || sudo aptitude install -y openssl libssl-dev sqlite3 libsqlite3-dev;;
+    openSUSE) which gcc   >/dev/null 2>&1 || sudo aptitude install -y openssl libopenssl-devel sqlite3 sqlite3-devel;;
   esac
 }
 
@@ -30,34 +30,18 @@ EOD
   echo "${config}"
 }    
 
-function __install_rust_rustup_issue_2578 {
-cat << EOF > "$HOME"/.cargo/env
-#!/bin/sh
-# rustup shell setup
-# affix colons on either side of \$PATH to simplify matching
-case ":\${PATH}:" in
-    *:"\$HOME/.cargo/bin":*)
-        ;;
-    *)
-        # Prepending path in case a system-installed rustc must be overwritten
-        export PATH="\$HOME/.cargo/bin:\$PATH"
-        ;;
-esac
-EOF
-}
-
 function install_rust_binaries {
-  local profile=${1:-minimal}
+  local toolchain=${1:-stable}
+  local profile=${2:-minimal}
   local tools=${TOOLS_HOME:=$HOME/tools}
   [[ ! -d $tools ]] && mkdir -p $tools
   [[ ! -d $tools/cargo ]] && mkdir -p $tools/cargo
   [[ ! -L ~/.cargo ]] && ln -s $tools/cargo ~/.cargo
 
-  curl https://sh.rustup.rs -sSf | sh -s -- --profile ${profile} --no-modify-path -y \
-    && __install_rust_rustup_issue_2578 && source "${HOME}"/.cargo/env && hash -r \
-      && rustup default stable && rustup update \
-        && rustup component add clippy rustfmt \
-        && rustup component add rust-src \
+  curl https://sh.rustup.rs -sSf | sh -s -- --profile ${profile} --default-toolchain ${toolchain} --no-modify-path -y \
+    && source "${HOME}"/.cargo/env && hash -r \
+        && rustup component add --toolchain ${toolchain} clippy rustfmt \
+        && rustup component add --toolchain ${toolchain} rust-src \
         && [[ -e $(which gcc) ]] || __install_rust_build_essentials
 }
 
@@ -72,11 +56,13 @@ cargo-docset
 cargo-tarpaulin
 cargo-audit --features=fix
 cargo-deny
+cargo-xtask
 EOD
 }
 
 function install_rust_addons {
-  source "${HOME}"/.cargo/env && hash -r && rustup default stable && rustup update \
+  local toolchain=${1:-stable}
+  source "${HOME}"/.cargo/env && hash -r && rustup update ${toolchain} \
     && __install_rust_install_dependencies \
       && __install_rust_addons | grep -v -E '^#' | while read line ;do cargo install --force ${line} ;done
 }
@@ -91,10 +77,26 @@ wasm-pack
 EOD
 }
 
+function install_rust_lsp_wasm {
+  [[ -d "${WORKSPACE}" ]] || mkdir -p "${WORKSPACE}"
+  if [ ! -d "${WORKSPACE}/wasm_lsp_server" ] ;then
+      git clone https://github.com/wasm-lsp/wasm_lsp_server.git "${WORKSPACE}/wasm_lsp_server"
+  else
+      git -C "${WORKSPACE}/wasm_lsp_server" pull
+  fi
+
+  pushd "${WORKSPACE}/wasm_lsp_server"
+  cargo xtask init
+  cargo xtask install
+  popd
+}
+
 function install_rust_web {
-  source "${HOME}"/.cargo/env && hash -r && rustup default stable && rustup update
-  rustup target add wasm32-wasi wasm32-unknown-emscripten wasm32-unknown-unknown
-  __install_rust_web_addons | grep -v -E '^#' | while read line ;do cargo install --force ${line} ;done
+  local toolchain=${1:-stable}
+  source "${HOME}"/.cargo/env && hash -r && rustup update ${toolchain} \
+    && rustup target add --toolchain ${toolchain} wasm32-wasi wasm32-unknown-emscripten wasm32-unknown-unknown \
+      && __install_rust_web_addons | grep -v -E '^#' | while read line ;do cargo install --force ${line} ;done \
+        && install_rust_lsp_wasm
 }
 
 function __install_rust_android_addons {
@@ -104,9 +106,10 @@ EOD
 }
 
 function install_rust_android {
-  source "${HOME}"/.cargo/env && hash -r && rustup default stable && rustup update
-  rustup target add aarch64-linux-android armv7-linux-androideabi x86_64-linux-android i686-linux-android
-  __install_rust_mobile_addons | grep -v -E '^#' | while read line ;do cargo install --force ${line} ;done
+  local toolchain=${1:-stable}
+  source "${HOME}"/.cargo/env && hash -r && rustup update ${toolchain} \
+    && rustup target add --toolchain ${toolchain} aarch64-linux-android armv7-linux-androideabi x86_64-linux-android i686-linux-android \
+      && __install_rust_android_addons | grep -v -E '^#' | while read line ;do cargo install --force ${line} ;done
 }
 
 function __install_rust_ios_addons {
@@ -116,53 +119,56 @@ EOD
 }
 
 function install_rust_ios {
-  source "${HOME}"/.cargo/env && hash -r && rustup default stable && rustup update
-  rustup target add aarch64-apple-ios x86_64-apple-ios armv7-apple-ios i386-apple-ios
-  __install_rust_ios_addons | grep -v -E '^#' | while read line ;do cargo install --force ${line} ;done
+  local toolchain=${1:-stable}
+  source "${HOME}"/.cargo/env && hash -r && rustup update ${toolchain} \
+    && rustup target add --toolchain ${toolchain} aarch64-apple-ios x86_64-apple-ios armv7-apple-ios i386-apple-ios \
+      && __install_rust_ios_addons | grep -v -E '^#' | while read line ;do cargo install --force ${line} ;done
 }
 
 function install_rust_lsp {
-  source "${HOME}"/.cargo/env && hash -r && rustup default stable && rustup update
-  rustup component add rls rust-analysis rust-src
+  local toolchain=${1:-stable}
+  source "${HOME}"/.cargo/env && hash -r && rustup update ${toolchain} \
+    && rustup component add --toolchain ${toolchain} rls rust-analysis rust-src \
+      && install_rust_lsp_wasm
 }
 
 function install_rust_lsp_texlab {
-  source "${HOME}"/.cargo/env && hash -r && rustup default stable && rustup update
-  ## rustup component add rls rust-analysis rust-src
-  cargo install --force --git https://github.com/latex-lsp/texlab.git
+  local toolchain=${1:-stable}
+  source "${HOME}"/.cargo/env && hash -r && rustup update ${toolchain} \
+    && cargo install --force --git https://github.com/latex-lsp/texlab.git
 }
 
 function __install_rust {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
   
-  local option="${1}"
-  local option="${option:=help}"
+  local option="${1:-help}"
+  local toolchain="${2:-stable}"
   local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/400-rust.sh
 
+  local profile="complete"
+
   case "${option}" in
-    "minimal")  install_rust_binaries minimal;  __install_rust_activator "${config}";;
-    "complete") install_rust_binaries complete; __install_rust_activator "${config}";;
-    "addons")   install_rust_addons;            __install_rust_activator "${config}";;
-    "web")      install_rust_web;               __install_rust_activator "${config}";  ${dir}/install_wabt;;
-    "android")  install_rust_android;           __install_rust_activator "${config}";;
-    "ios")      install_rust_ios;               __install_rust_activator "${config}";;
-    "lsp")      install_rust_lsp;               __install_rust_activator "${config}";;
-    "texlab")   install_rust_lsp_texlab         __install_rust_activator "${config}";;
+    "install")  install_rust_binaries   ${toolchain} ${profile} ; __install_rust_activator "${config}";;
+    "addons")	install_rust_addons 	${toolchain}            ; __install_rust_activator "${config}";;
+    "web")	install_rust_web	${toolchain}            ; __install_rust_activator "${config}";  ${dir}/install_wabt;;
+    "android")	install_rust_android	${toolchain}            ; __install_rust_activator "${config}";;
+    "ios")	install_rust_ios	${toolchain}            ; __install_rust_activator "${config}";;
+    "lsp")	install_rust_lsp	${toolchain}            ; __install_rust_activator "${config}";;
+    "texlab")	install_rust_lsp_texlab	${toolchain}            ; __install_rust_activator "${config}";;
     "all")
-        install_rust_minimal
-        install_rust_addons
-        install_rust_web
-        install_rust_android
-	install_rust_ios
-        install_rust_lsp
+        install_rust_binaries ${toolchain} ${profile} 
+        install_rust_addons   ${toolchain} 
+        install_rust_web      ${toolchain} 
+        install_rust_android  ${toolchain} 
+	install_rust_ios      ${toolchain} 
+        install_rust_lsp      ${toolchain} 
         __install_rust_activator "${config}";;
-    *) echo "Usage install_rust [command]"
+    *) echo "Usage install_rust command [nightly]"
        echo "Installs Rust compiler, Cargo package manager and additional tools and packages"
        echo ""
        echo "Commands:"
-       echo "  minimal   installs Rust, Cargo and minimal set of tools"
-       echo "  complete  installs Rust, Cargo and complete set of tools"
+       echo "  install   installs Rust, Cargo in a profile of a complete set of tools"
        echo "  addons    installs an oppinionated set of useful Cargo plugins"
        echo "  web       installs an oppinionated set of tools for web development"
        echo "  android   installs an oppinionated set of tools for Android development"
