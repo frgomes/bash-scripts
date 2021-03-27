@@ -2,7 +2,7 @@
 
 function install_discord_binaries {
   local version=${1:-"$DISCORD_VERSION"}
-  local version=${version:-"0.0.9"}
+  local version=${version:-"0.0.14"}
 
   local file=discord-${version}.deb
   local url=https://dl.discordapp.net/apps/linux/${version}/${file}
