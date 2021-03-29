@@ -20,6 +20,24 @@ function __bash_aptitude_install {
   esac
 }
 
+function __bash_source_highlight {
+  which lsb_release >/dev/null 2>&1 || sudo aptitude install -y lsb_release
+  case "$(lsb_release -is)" in
+    Debian|Ubuntu)
+        export LESS=' -R ';
+        export LESSOPEN='| /usr/share/source-highlight/src-hilite-lesspipe.sh %s';
+        export LESSCLOSE='| /usr/share/source-highlight/src-hilite-lesspipe.sh %s %s';
+        export VIEWER=less;
+        ;;
+    *)
+        export LESS=' -R ';
+        export LESSOPEN='| /usr/bin/src-hilite-lesspipe.sh %s';
+        export LESSCLOSE='| /usr/bin/src-hilite-lesspipe.sh %s %s';
+        export VIEWER=less;
+        ;;
+  esac
+}
+
 function mkvirtualenv {
   if [ ! -z "$1" ] ;then
     [[ -d "${HOME}/.virtualenvs" ]] | mkdir -p "${HOME}/.virtualenvs"
@@ -98,11 +116,8 @@ else
 fi
 export VISUAL EDITOR ALTERNATE_EDITOR
 
-##FIXME: viewing files nicely
-export LESS=' -R '
-export LESSOPEN='| /usr/share/source-highlight/src-hilite-lesspipe.sh %s'
-export LESSCLOSE='| /usr/share/source-highlight/src-hilite-lesspipe.sh %s %s'
-export VIEWER=less
+# viewing files nicely
+__bash_source_highlight
 
 # define prompt
 if [ -x /usr/bin/dircolors ]; then
