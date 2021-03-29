@@ -62,4 +62,4 @@ You may find useful to run something _before_ and/or something _after_ you load 
 This way, you can define defaults for environment variables before scripts run.
 You can also adjust keyboard configurations and other preferences after all scripts run.
 
-More detail [here](docs/extensions.md).
+More details [here](docs/extensions.md).
