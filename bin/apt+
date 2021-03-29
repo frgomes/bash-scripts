@@ -1,0 +1,48 @@
+#!/bin/bash +eux
+
+function __apt+_debian {
+    cat <<EOF
+# program : package [ : program-alias ]*
+curl:curl
+fd:fd-find
+rg:ripgrep
+EOF
+}
+
+function __apt+_opensuse {
+    cat <<EOF
+# program : package [ : program-alias ]*
+curl:curl
+fd:fd
+rg:ripgrep
+EOF
+}
+
+function apt+ {
+    if [[ "$1" == "install" ]] ;then
+        shift
+        local distro="$(lsb_release -si)"
+        case "${distro}" in
+            Debian)   distro=debian;;
+            openSUSE) distro=opensuse;;
+            *) echo "Unsupported distribution ${distro}" ; return 1 ;;
+        esac
+
+        for pkg in $@ ;do
+            local program=$1
+            local pkg=$(__apt+_${distro} | grep -E "^${program}:" | grep -E -v '(^[ \t]*#)|(^[ \t]*$)' | cut -d: -f2)
+            if [[ ! -z "${pkg}" ]] ;then
+                case "${distro}" in
+                    debian)   which ${program} >/dev/null 2>&1 || apt    install -y ${pkg} ;;
+                    opensuse) which ${program} >/dev/null 2>&1 || zypper install -y ${pkg} ;;
+                    *) echo "Unsupported distribution ${distro}" ; return 1;;
+                esac
+            else
+                echo "Unable to find package for program: ${program}" ; return 1
+            fi
+            shift
+        done
+    fi
+}
+
+apt+ $@

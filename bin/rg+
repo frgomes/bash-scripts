@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
-function __frg() {
-    which rg >/dev/null 2>&1 || sudo aptitude install -y ripgrep
+function rg+ {
+    apt+ install rg && \
     case "${1}" in
         ant)   shift; rg --type-add 'ant:build.xml' -t ant -H -n $@;;
         pom)   shift; rg --type-add 'pom:pom.xml' -t pom -H -n $@;;
@@ -10,4 +10,4 @@ function __frg() {
     esac
 }
 
-__frg $@
+rg+ $@
