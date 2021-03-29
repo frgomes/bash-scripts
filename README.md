@@ -18,7 +18,7 @@ Starting from a brand new laptop with only the base operating system installed, 
 
 ## Requirements
 
-* Debian or openSUSE. ([contribute](docs/contributor.md))
+* Debian or openSUSE. ([contribute](docs/contribute.md))
 * Python version 3.4+ ([why?](docs/python-venv.md))
 
 ## For the impatient
