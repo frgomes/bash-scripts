@@ -1,4 +1,4 @@
-#!/bin/bash -eu
+#!/bin/bash -eux
 
 #------------------------------------------------------------------
 # This script runs a command inside a container which comes with:
@@ -22,6 +22,7 @@
 function __list_toolchains {
     local stable=1.51.0
     cat <<EOF
+# This is a list of toolchains
 ${stable}
 nightly
 EOF
@@ -29,6 +30,7 @@ EOF
 
 function __list_targets {
     cat <<EOF
+# This is a list of targets
 aarch64-apple-ios
 aarch64-linux-android
 armv7-linux-androideabi
@@ -62,7 +64,6 @@ EOF
 function __miniglue_install_podman {
     which podman  >/dev/null 2>&1 || sudo aptitude install -y podman
     which buildah >/dev/null 2>&1 || sudo aptitude install -y buildah
-    which curl    >/dev/null 2>&1 || sudo aptitude install -y curl
 }
 function __miniglue_install_curl {
     which curl    >/dev/null 2>&1 || sudo aptitude install -y curl ca-certificates gpg
@@ -88,7 +89,7 @@ function __miniglue_build_container {
     local ndk_arch=linux-x86_64
     local ndk_folder=${ndk}
     local ndk_repo=https://dl.google.com/android/repository
-    local sdk_archive=${ndk}-${ndk_arch}.zip
+    local ndk_archive=${ndk}-${ndk_arch}.zip
 
     # Android SDK
     local sdk=sdk-tools
@@ -106,7 +107,6 @@ function __miniglue_build_container {
     local ANDROID_HOME=/opt/${sdk_folder}
     local NDK_HOME=/opt/${ndk_folder}
     local SDK_VERSION=29.0.0
-    local home=/root
 
     # download OpenJDK
     [[ -f ${Downloads}/${jdk_archive} ]] || ( __miniglue_install_curl && curl ${jdk_repo}/${jdk_archive} -o ${Downloads}/${jdk_archive} )
@@ -125,7 +125,9 @@ function __miniglue_build_container {
     # download android-ndk-rs
     if [ ! -d ${Downloads}/android-ndk-rs ] ;then
       echo Downloading ${url} ...
-      git clone ${url} ${Downloads}/android-ndk-rs && git -C ${Downloads}/android-ndk-rs checkout ${branch} && git -C ${Downloads}/android-ndk-rs pull
+      git clone ${url} ${Downloads}/android-ndk-rs
+      git -C ${Downloads}/android-ndk-rs checkout ${branch}
+      git -C ${Downloads}/android-ndk-rs pull
     else
       git -C ${Downloads}/android-ndk-rs pull
     fi
@@ -158,15 +160,15 @@ function __miniglue_build_container {
     # prepare Rust configuration file
     local config_rust=config-rust.sh
     echo '#!/bin/bash -eux' > /tmp/${config_rust}
-    __list_toolchains | grep -v -E '(^#)|(^[ \t]*$)'  | while read toolchain ;do
+    __list_toolchains | grep -v -E '(^[ \t]*#)|(^[ \t]*$)'  | while read toolchain ;do
         echo "curl https://sh.rustup.rs -sSf | sh -s -- --profile minimal --default-toolchain ${toolchain} --no-modify-path -y" >> /tmp/${config_rust}
     done
-    __list_toolchains | grep -v -E '(^#)|(^[ \t]*$)' | while read toolchain ;do
+    __list_toolchains | grep -v -E '(^[ \t]*#)|(^[ \t]*$)' | while read toolchain ;do
         echo "rustup component add --toolchain ${toolchain} clippy" >> /tmp/${config_rust}
     done
-    __list_toolchains | grep -v -E '(^#)|(^[ \t]*$)' | while read toolchain ;do
+    __list_toolchains | grep -v -E '(^[ \t]*#)|(^[ \t]*$)' | while read toolchain ;do
         buildah run ${container} -- rustup toolchain install ${toolchain}
-        __list_targets | grep -v -E '(^#)|(^[ \t]*$)' | while read target ;do
+        __list_targets | grep -v -E '(^[ \t]*#)|(^[ \t]*$)' | while read target ;do
             echo "rustup target add --toolchain ${toolchain} ${target}" >> /tmp/${config_rust}
         done
     done
@@ -187,7 +189,8 @@ function __miniglue_build_container {
     # prepare Android SDK configuration file
     local config_android=config-android-sdk.sh
     echo '#!/bin/bash -eux' > /tmp/${config_android}
-    __list_api_levels | grep -v -E '(^#)|(^[ \t]*$)' | while read api ;do
+    echo "yes | ${ANDROID_HOME}/tools/bin/sdkmanager --update" >> /tmp/${config_android}
+    __list_api_levels | grep -v -E '(^[ \t]*#)|(^[ \t]*$)' | while read api ;do
         cmd=$(echo "yes | ${ANDROID_HOME}/tools/bin/sdkmanager \"platforms;android-${api}\"")
         echo "${cmd}" >> /tmp/${config_android}
     done
@@ -195,7 +198,6 @@ function __miniglue_build_container {
         cmd=$(echo "yes | ${ANDROID_HOME}/tools/bin/sdkmanager \"${pkg}\"")
         echo "${cmd}" >> /tmp/${config_android}
     done
-    echo "${ANDROID_HOME}/tools/bin/sdkmanager --update" >> /tmp/${config_android}
     chmod 755 /tmp/${config_android}
 
     # add Android command line tools
@@ -234,20 +236,10 @@ function __miniglue_build_container {
     # tag container
     buildah tag ${image} miniglue miniglue:${SDK_VERSION}
     echo Successfully renamed tagged image ${image} as miniglue:${SDK_VERSION}
-
-    ## ------------------------------------------------------------------------------------------------
-    
-    # remove temporary folders
-    if [[ $(podman image exists miniglue) ]] ;then
-        for dir in ${Downloads}/${sdk} ${Downloads}/${ndk} ${Downloads}/android-ndk-rs ; do
-            echo rm -r -f ${dir}
-        done
-    fi
 }
 
 function miniglue {
-    __miniglue_install_podman && \
-        ( podman image exists miniglue || __miniglue_build_container ) && \
+    ( podman image exists miniglue || ( __miniglue_install_podman && __miniglue_install_curl && __miniglue_build_container )) && \
         podman run --rm -v $(pwd)":/root/src" -w /root/src localhost/miniglue $@
 }
 
