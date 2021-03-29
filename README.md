@@ -1,30 +1,29 @@
 This is a bunch of shell scripts containing aliases and useful functions aiming to deliver increased productivity.
 
-> Tested on Debian and derivatives. Most features may also work on OpenSUSE ``zypper-aptitude`` is installed.
+> WARNING: This toolbox is under heavy development. Expect that things may change.
 
-WARNING: This toolbox is under heavy development and improvement. Expect that things may change.
+## Design Concept
+
+Starting from a brand new laptop with only the base operating system installed, I would like to be able to quickly have my environment setup. I would like to download a shell script from the Internet which sets up everything for me. Then I open a new terminal window and all remaining bits are automagically configured for me. Then I'm ready to go. The entire thing should not take more than a minute or two.
+
+### Features in a nutshell
+
+* Useful shell scripts aiming daily mundane tasks, such as finding text on large codebases;
+* Shell scripts for installing Java, Node, Scala, Rust, among a bunch of other things;
+* One [post installation script for sysadmins](docs/postinstall-sysadmin.md) configuring a brand new laptop or server;
+* One [post installation script for regular users](docs/postinstall-user.md) seeking Firefox and Thunderbird in user's space;
+* Employs [virtual environments](docs/python-venv.md) in order to allow distinct versions of your preferred tools;
+* All [commands always available](docs/design.md), no matter if you are using functions, sub-shells or whatever;
+* Flexibility of a separate history per session but also a [global history for all sessions](docs/history%2B).
 
 ## Requirements
 
-* Python version 3.4+
-* ``zypper-aptitude`` on OpenSUSE
+* Debian or openSUSE. ([contribute](docs/contributor.md))
+* Python version 3.4+ ([why?](docs/python-venv.md))
 
 ## For the impatient
 
-### Post-installation scripts for sysadmins
-
-```bash
-$ wget https://raw.githubusercontent.com/frgomes/bash-scripts/master/postinstall-sysadmin.sh -O - | bash
-```
-
-### Post-installation scripts for regular users
-```bash
-$ wget https://raw.githubusercontent.com/frgomes/bash-scripts/master/postinstall-user.sh -O - | bash
-```
-
-### Integrate powerful commands and aliases into your shell
-
-This is how I install these scripts in my environment:
+This is how I install a powerful set of functions and commands into the shell:
 
 ```bash
 $ mkdir -p "$HOME/workspace"
@@ -37,70 +36,22 @@ Then add a call to ``$HOME/workspace/bash-scripts/bashrc`` into your ``$HOME/.ba
 $ echo 'source $HOME/workspace/bash-scripts/bashrc' >> $HOME/.bashrc
 ```
 
-## Release Notes
+Open a new terminal session and enjoy!
 
-1. This release of ``bashrc-scripts`` performs these migration steps if necessary:
+### Other uses
+
+* Opinionated [post installation on system's space](docs/postinstall-sysadmin.md);
+* Opinionated [post installation on user's space](docs/postinstall-user.md);
+
+### Migration Notes
+
+> The migration procedure may be entirely removed if I do not hear from users.
+
+This release performs migration steps if necessary, in a best effort basis, trying to make life easier for users of the previous [legacy branch](https://github.com/frgomes/bash-scripts/tree/legacy). This is why you may see messages such the ones below when you start a new terminal session:
 
 ```bash
 cp -vp "${HOME}"/.bashrc.scripts.before "${HOME}"/.local/share/bash-scripts/postactivate/head.d/000-default.sh
 cp -vp "${HOME}"/.bashrc.scripts.after  "${HOME}"/.local/share/bash-scripts/postactivate/tail.d/999-default.sh
-```
-
-## Design Concept
-
-Starting from a brand new laptop with only the base operating system installed, I would like to be able to quickly have my environment setup. I would like to download a shell script from the Internet which sets up everything for me. Then I open a new terminal window and all remaining bits are automagically configured for me. Then I'm ready to go. The entire thing should not take more than a minute or two.
-
-### Features in a nutshell
-
-* Useful shell scripts aiming daily mundane tasks, such as finding text on large codebases;
-* One post installation script for sysadmins configuring a brand new laptop or server;
-* One post installation script for regular users seeking Firefox and Thunderbird in user's space;
-* Shell scripts for installing Java, Node, Scala, Rust, among a bunch of other things;
-* Employs virtual environments via Python3 module ``venv``, in order to allow distinct versions of your preferred tools;
-* All commands always available, no matter if you are using functions, sub-shells or whatever;
-* Flexibility of a separate history per session but also a global ``history+`` for all sessions.
-
-### Local and global history of previous commands
-
-The well known ``history`` works as usual, i.e.: every terminal session has its own history.
-
-However, there's also a global history available via command ``history+`` which is useful when you have dozens of terminal sessions open and you don't really remember very well where exactly you've typed the command you need. The global history also keeps previous commands organized by date, providing information about the date and time it was typed and the pid of the terminal session which performed it. This is an example:
-
-```bash
-$ history+ Software
-/home/rgomes/.bash_history+/20200504:16370  1038  2020-05-04 15:39:40 frg sh Software | cut -d: -f1 | sort | uniq | while read file ;do sed 's|$ {Software}/| "${Software}"/|g' -i $file ;done
-```
-
-## Caveats
-
-### Support for virtual environments
-
-Virtual environments are supported via Python3 module ``venv``.
-
-> Support for ``virtualenv`` and ``virtualenvwrapper`` is deprecated.
-
-We provide functions ``mkvirtualenv`` and ``workon`` for convenience, mimicking functions of the same name provided by packages ``virtualenv`` and ``virtualenvwrapper``.
-
-### Clash between system level and user level Python PIP
-
-The [documentation on Python PIP installation](https://pip.pypa.io/en/stable/installing/) warns that you may have troubles if you've installed ``python-pip`` or ``python3-pip`` using the package manager of your operating system and suddenly you'd like to install Python packages in user's space.
-
-> The best practice is keeping system packages at a minimum and installing all tools in your own user's space. This allows multiple users keep multiple dependencies trees separate, allows a single user keep multiple environments separated and also reduces the exposed [security attack surface](https://en.wikipedia.org/wiki/Attack_surface) of your system.
-
-So, if you are using Python or if you are using [virtual environments](https://realpython.com/python-virtual-environments-a-primer/), please consider uninstalling system packages which are known to cause difficulties to [Python PIP](https://pip.pypa.io) and [Python virtualenv](https://virtualenv.pypa.io). For your convenience, the commands below are known to work on Debian:
-
-```bash
-#!/bin/bash
-sudo aptitude remove python-pip python3-pip python-pip-whl python-stevedore virtualenv virtualenv-clone virtualenvwrapper python-virtualenv python-virtualenv-clone python3-virtualenv python2-dev python3-dev -V -s
-```
-
-AFTER YOU REVIEW the output of the previous command and you are aware of the consequences of uninstalling these packages and you are sure that you are not going to render your computer unusable, then you can proceed like this:
-
-```bash
-#!/bin/bash
-sudo aptitude remove python-pip python3-pip python-pip-whl python-stevedore virtualenv virtualenv-clone virtualenvwrapper python-virtualenv python-virtualenv-clone python3-virtualenv python2-dev python3-dev -y
-sudo rm /usr/local/bin/pip{,2,3}
-rm $HOME/.local/bin/pip{,2,3}
 ```
 
 ## Additional tricks
@@ -111,58 +62,4 @@ You may find useful to run something _before_ and/or something _after_ you load 
 This way, you can define defaults for environment variables before scripts run.
 You can also adjust keyboard configurations and other preferences after all scripts run.
 
-### Actions before loading scripts
-
-Simply create a file named ``$HOME/.bashrc-scripts/head`` and it will be executed before
-[these] scripts [provided by this package] run.
-
-This is an example which may be useful if you visit several customers:
-
-```bash
-#!/bin/bash
-
-function nmcli_connected_wifi {
-  nmcli -t -f active,ssid dev wifi | fgrep yes: | cut -d: -f2
-}
-
-#--
-# Define environment variable WORKSPACE
-# In case I'm connected to "my customer" access point, I'd rather defined it as
-# a folder which contains "my customer's" stuff. Otherwise, I simply left undefined.
-#--
-case "$(nmcli_connected_wifi)" in
-  "CUSTOMER_A") export WORKSPACE=$HOME/Documents/customers/CustomerA/
-                ;;
-  "CUSTOMER_B") export WORKSPACE=$HOME/Documents/customers/CustomerB/
-                ;;
-  *)            export WORKSPACE=$HOME/workspace
-                ;;
-esac
-```
-
-### Actions after loading scripts
-
-Simply create a file named ``$HOME/.bashrc-scripts/tail``, as the example below shows:
-
-```bash
-#!/bin/bash
-
-#--
-# Select preferences in case a VPN connection is active.
-#--
-if [[ $( nmcli -t -f device,type,state,connection dev | fgrep tun:connected:tun0 ) ]] ;then
-  echo "VPN is active"
-fi
-
-#--
-# Configure keyboard, depending on which one is connected.
-# See also: http://github.com/frgomes/carpalx
-#---
-if [[ $( lsusb | fgrep 17f6:0905 | fgrep Unicomp ) ]] ;then
-  carpalx_hyena_us
-elif [[ $( lsusb | fgrep feed:6060 ) ]] ;then
-  carpalx_hyena_us
-else
-  carpalx_hyena_gb
-fi
-```
+More detail [here](docs/extensions.md).
