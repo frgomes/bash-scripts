@@ -1,0 +1,254 @@
+#!/bin/bash -eu
+
+#------------------------------------------------------------------
+# This script runs a command inside a container which comes with:
+#   * Rust
+#   * Android NDK
+#   * Android SDK
+#   * Java JDK 1.8
+#   * android-ndk-rs
+#
+# If the container does not exist, this script automagically creates
+# the container and then runs the command passed as argument.
+#
+# Examples
+#   $ miniglue rustup show
+#   $ miniglue java -version
+#   $ miniglue sdkmanager --version
+#   $ miniglue cargo apk build
+#------------------------------------------------------------------
+
+
+function __list_toolchains {
+    local stable=1.51.0
+    cat <<EOF
+${stable}
+nightly
+EOF
+}
+
+function __list_targets {
+    cat <<EOF
+aarch64-apple-ios
+aarch64-linux-android
+armv7-linux-androideabi
+i686-linux-android
+wasm32-unknown-emscripten
+wasm32-unknown-unknown
+wasm32-wasi
+x86_64-apple-ios
+x86_64-linux-android
+x86_64-unknown-linux-gnu
+EOF
+}
+
+function __list_api_levels {
+    cat <<EOF
+# This is a list of API levels
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+EOF
+}
+
+# https://developers.redhat.com/blog/2019/04/04/build-and-run-buildah-inside-a-podman-container/
+function __miniglue_install_podman {
+    which podman  >/dev/null 2>&1 || sudo aptitude install -y podman
+    which buildah >/dev/null 2>&1 || sudo aptitude install -y buildah
+    which curl    >/dev/null 2>&1 || sudo aptitude install -y curl
+}
+function __miniglue_install_curl {
+    which curl    >/dev/null 2>&1 || sudo aptitude install -y curl ca-certificates gpg
+}
+
+function __miniglue_build_container {
+    local Downloads=${Downloads:-${HOME}/Downloads}
+    [[ -d ${Downloads} ]] || mkdir -p ${Downloads}
+
+    # from distribution
+    local distribution=debian:bullseye-slim
+
+    # Java JDK
+    local jdk=OpenJDK8U-jdk
+    local jdk_version=8u265b01
+    local jdk_arch=x64_linux_hotspot_8u265b01
+    local jdk_folder=jdk8u265-b01
+    local jdk_repo=https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u265-b01
+    local jdk_archive=${jdk}_${jdk_arch}.tar.gz
+
+    # Android NDK
+    local ndk=android-ndk-r22b
+    local ndk_arch=linux-x86_64
+    local ndk_folder=${ndk}
+    local ndk_repo=https://dl.google.com/android/repository
+    local sdk_archive=${ndk}-${ndk_arch}.zip
+
+    # Android SDK
+    local sdk=sdk-tools
+    local sdk_arch=linux-4333796
+    local sdk_folder=android-sdk
+    local sdk_repo=https://dl.google.com/android/repository
+    local sdk_archive=${sdk}-${sdk_arch}.zip
+
+    # android-ndk-rs
+    local url=https://github.com/nikita-skobov/android-ndk-rs
+    local branch=miniglue
+    
+    # Environment variables to be defined inside the container
+    local JAVA_HOME=/opt/${jdk_folder}
+    local ANDROID_HOME=/opt/${sdk_folder}
+    local NDK_HOME=/opt/${ndk_folder}
+    local SDK_VERSION=29.0.0
+    local home=/root
+
+    # download OpenJDK
+    [[ -f ${Downloads}/${jdk_archive} ]] || ( __miniglue_install_curl && curl ${jdk_repo}/${jdk_archive} -o ${Downloads}/${jdk_archive} )
+
+    # download Android NDK
+    [[ -f ${Downloads}/${ndk_archive} ]] || ( __miniglue_install_curl && curl ${ndk_repo}/${ndk_archive} -o ${Downloads}/${ndk_archive} )
+
+    # download command lines tools
+    [[ -f ${Downloads}/${sdk_archive} ]] || ( __miniglue_install_curl && curl ${sdk_repo}/${sdk_archive} -o ${Downloads}/${sdk_archive} )
+
+    # expand downloaded archives
+    [[ -d ${Downloads}/${jdk_folder} ]] || tar -C ${Downloads} -xpzf ${Downloads}/${jdk_archive}
+    [[ -d ${Downloads}/${ndk_folder} ]] || unzip ${Downloads}/${ndk_archive} -d ${Downloads}
+    [[ -d ${Downloads}/${sdk_folder} ]] || ( mkdir -p ${Downloads}/${sdk_folder} && unzip ${Downloads}/${sdk_archive} -d ${Downloads}/${sdk_folder} )
+
+    # download android-ndk-rs
+    if [ ! -d ${Downloads}/android-ndk-rs ] ;then
+      echo Downloading ${url} ...
+      git clone ${url} ${Downloads}/android-ndk-rs && git -C ${Downloads}/android-ndk-rs checkout ${branch} && git -C ${Downloads}/android-ndk-rs pull
+    else
+      git -C ${Downloads}/android-ndk-rs pull
+    fi
+
+    # sanity checks
+    [[ -s ${Downloads}/${jdk_archive} ]] || return 1
+    ( [[ -s ${Downloads}/${sdk_archive} ]] && [[ -d ${Downloads}/${sdk_folder}/tools/bin ]] ) || return 1
+    ( [[ -s ${Downloads}/${ndk_archive} ]] && [[ -d ${Downloads}/${ndk_folder}/build ]] )     || return 1
+    [[ -d ${Downloads}/android-ndk-rs/.git ]] || return 1
+    
+    ## ------------------------------------------------------------------------------------------------
+    
+    # create a new container
+    container=$(buildah from ${distribution})
+    echo Creating container ${container} ...
+
+    # define environment variables
+    buildah config --env JAVA_HOME=${JAVA_HOME}       ${container}
+    buildah config --env ANDROID_HOME=${ANDROID_HOME} ${container}
+    buildah config --env NDK_HOME=${NDK_HOME}         ${container}
+    buildah config --env SDK_VERSION=${SDK_VERSION}   ${container}
+    buildah config --env PATH=/usr/local/bin:/usr/bin:/bin:/root/bin:/root/.cargo/bin:${JAVA_HOME}/bin:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin ${container}
+
+    # Install essential tools
+    buildah run  ${container} -- apt-get update
+    buildah run  ${container} -- apt-get install -yq curl
+
+    ## ------------------------------------------------------------------------------------------------
+    
+    # prepare Rust configuration file
+    local config_rust=config-rust.sh
+    echo '#!/bin/bash -eux' > /tmp/${config_rust}
+    __list_toolchains | grep -v -E '(^#)|(^[ \t]*$)'  | while read toolchain ;do
+        echo "curl https://sh.rustup.rs -sSf | sh -s -- --profile minimal --default-toolchain ${toolchain} --no-modify-path -y" >> /tmp/${config_rust}
+    done
+    __list_toolchains | grep -v -E '(^#)|(^[ \t]*$)' | while read toolchain ;do
+        echo "rustup component add --toolchain ${toolchain} clippy" >> /tmp/${config_rust}
+    done
+    __list_toolchains | grep -v -E '(^#)|(^[ \t]*$)' | while read toolchain ;do
+        buildah run ${container} -- rustup toolchain install ${toolchain}
+        __list_targets | grep -v -E '(^#)|(^[ \t]*$)' | while read target ;do
+            echo "rustup target add --toolchain ${toolchain} ${target}" >> /tmp/${config_rust}
+        done
+    done
+    chmod 755 /tmp/${config_rust}
+
+    # install Rust
+    buildah copy ${container} /tmp/${config_rust} /opt/${config_rust}
+    buildah run  ${container} -- /opt/${config_rust}
+
+    ## ------------------------------------------------------------------------------------------------
+
+    # install Java
+    buildah run  ${container} -- mkdir -p ${JAVA_HOME}
+    buildah copy ${container} ${Downloads}/${jdk_folder} ${JAVA_HOME}
+
+    ## ------------------------------------------------------------------------------------------------
+    
+    # prepare Android SDK configuration file
+    local config_android=config-android-sdk.sh
+    echo '#!/bin/bash -eux' > /tmp/${config_android}
+    __list_api_levels | grep -v -E '(^#)|(^[ \t]*$)' | while read api ;do
+        cmd=$(echo "yes | ${ANDROID_HOME}/tools/bin/sdkmanager \"platforms;android-${api}\"")
+        echo "${cmd}" >> /tmp/${config_android}
+    done
+    for pkg in "platform-tools" "build-tools;${SDK_VERSION}" ;do
+        cmd=$(echo "yes | ${ANDROID_HOME}/tools/bin/sdkmanager \"${pkg}\"")
+        echo "${cmd}" >> /tmp/${config_android}
+    done
+    echo "${ANDROID_HOME}/tools/bin/sdkmanager --update" >> /tmp/${config_android}
+    chmod 755 /tmp/${config_android}
+
+    # add Android command line tools
+    buildah run  ${container} -- mkdir -p ${ANDROID_HOME}
+    buildah copy ${container} ${Downloads}/${sdk_folder} ${ANDROID_HOME}
+
+    # add Android NDK
+    buildah run  ${container} -- mkdir -p ${NDK_HOME}
+    buildah copy ${container} ${Downloads}/${ndk_folder} ${NDK_HOME}
+
+    # install Android components
+    buildah copy ${container} /tmp/${config_android} /opt/${config_android}
+    buildah run  ${container} -- /opt/${config_android}
+    
+    ## ------------------------------------------------------------------------------------------------
+    
+    # define working directory
+    buildah run ${container} -- mkdir /root/bin /root/src
+    buildah config --workingdir /root/src ${container}
+
+    ## ------------------------------------------------------------------------------------------------
+    
+    # build and install android-ndk-rs
+    buildah run  ${container} -- apt-get install -yq cmake
+    buildah run  ${container} -- mkdir -p /root/src/android-ndk-rs
+    buildah copy ${container} ${Downloads}/android-ndk-rs /root/src/android-ndk-rs
+    buildah run  ${container} -- cargo install --path /root/src/android-ndk-rs/cargo-apk
+    buildah run  ${container} -- rm -rf /root/src/android-ndk-rs
+
+    ## ------------------------------------------------------------------------------------------------
+    
+    # commit container
+    image=$(buildah commit ${container})
+    echo Successfully created container ${container}
+
+    # tag container
+    buildah tag ${image} miniglue miniglue:${SDK_VERSION}
+    echo Successfully renamed tagged image ${image} as miniglue:${SDK_VERSION}
+
+    ## ------------------------------------------------------------------------------------------------
+    
+    # remove temporary folders
+    if [[ $(podman image exists miniglue) ]] ;then
+        for dir in ${Downloads}/${sdk} ${Downloads}/${ndk} ${Downloads}/android-ndk-rs ; do
+            echo rm -r -f ${dir}
+        done
+    fi
+}
+
+function miniglue {
+    __miniglue_install_podman && \
+        ( podman image exists miniglue || __miniglue_build_container ) && \
+        podman run --rm -v $(pwd)":/root/src" -w /root/src localhost/miniglue $@
+}
+
+miniglue $@
