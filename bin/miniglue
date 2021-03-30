@@ -239,12 +239,9 @@ function __miniglue_build_container {
 }
 
 function miniglue {
+    if [[ ( $# -eq 1 ) && ( "$1" == "/bin/bash" ) ]] ;then local opts="-it" ;else local opts="" ;fi
     ( podman image exists miniglue || ( __miniglue_install_podman && __miniglue_install_curl && __miniglue_build_container )) && \
-        if [[ $# -eq 1 ]] && [[ "$1" == "/bin/bash" ]] ;then
-            podman run -it --rm -v $(pwd)":/root/src" -w /root/src localhost/miniglue $@
-        else
-            podman run     --rm -v $(pwd)":/root/src" -w /root/src localhost/miniglue $@
-        fi
+        podman run ${opts} --rm -v $(pwd)":/root/src" -w /root/src localhost/miniglue $@
 }
 
 miniglue $@
