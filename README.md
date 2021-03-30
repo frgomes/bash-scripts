@@ -27,7 +27,7 @@ This is how I install a powerful set of functions and commands into the shell:
 
 ```bash
 $ mkdir -p "$HOME/workspace"
-$ git -C "$HOME/workspace/bash-scripts" clone http://github.com/frgomes/bash-scripts
+$ git -C "$HOME/workspace" clone http://github.com/frgomes/bash-scripts
 ```
 
 Then add a call to ``$HOME/workspace/bash-scripts/bashrc`` into your ``$HOME/.bashrc``:
