@@ -1,0 +1,11 @@
+#!/bin/bash
+
+function scm_modified {
+  if [ -d .hg ] ;then
+    hg status | scm_filter
+  elif [ -d .git ] ;then
+    git status --porcelain | scm_filter
+  fi
+}
+
+scm_modified $@

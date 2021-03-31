@@ -1,0 +1,12 @@
+#!/bin/bash
+
+function java_disable_md5 {
+  _info "Disabling MD5 on ${JAVA_HOME}/jre/lib/security/java.security"
+  if [ -f ${JAVA_HOME}/jre/lib/security/java.security.ORIGINAL ] ;then
+    cp -v ${JAVA_HOME}/jre/lib/security/java.security.ORIGINAL ${JAVA_HOME}/jre/lib/security/java.security
+  else
+    _error could not find ${JAVA_HOME}/jre/lib/security/java.security.ORIGINAL
+  fi
+}            
+ 
+java_disable_md5 

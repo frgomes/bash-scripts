@@ -1,0 +1,7 @@
+#!/bin/bash
+
+function podman_remove_images_none {
+  podman images | sed -r 's/[ \t]+/ /g' | tail -n +2 | fgrep "<none>" | cut -d' ' -f3 | xargs podman rmi --force
+}
+ 
+podman_remove_images_none 

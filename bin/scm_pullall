@@ -1,0 +1,17 @@
+#!/bin/bash
+
+function scm_pullall {
+  for prj in ./ */ ;do
+    pushd $prj
+    if [ -d .hg ] ;then
+      hg pull default
+      hg pull upstream
+    elif [ -d .git ] ;then
+      git pull origin -v
+      git pull upstream -v
+    fi
+    popd
+  done
+}
+
+scm_pullall $@

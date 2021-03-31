@@ -1,0 +1,10 @@
+#!/bin/bash
+
+function git_checkout_deleted {
+    for file in $* ;do
+        echo "[ ${file} ]"
+        git checkout $(git rev-list --max-count=1 HEAD -- "${file}") -- "${file}"
+    done
+}
+
+git_checkout_deleted $@

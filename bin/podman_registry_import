@@ -1,0 +1,14 @@
+#!/bin/bash
+
+function podman_registry_import {
+  for image in $* ::nil:: ;do
+    if [ ${image} != "::nil::" ] ;then
+      podman pull ${image}
+      podman tag  ${image} localhost:5000/${image}
+      podman push localhost:5000/${image}
+      podman pull localhost:5000/${image}
+    fi
+  done
+}
+ 
+podman_registry_import 

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+function intellij_reset_keyboard {
+  ibus-daemon -rd
+  sleep 3
+  stty sane
+}
+ 
+intellij_reset_keyboard 

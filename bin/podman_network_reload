@@ -1,0 +1,11 @@
+#!/bin/bash
+
+function podman_network_reload {
+  sudo systemctl stop podman
+  sudo iptables -t nat -F
+  sudo ifconfig podman0 down
+  sudo ip link del podman0
+  sudo systemctl start podman
+}
+ 
+podman_network_reload 

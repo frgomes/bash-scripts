@@ -1,0 +1,8 @@
+#!/bin/bash
+
+function java_jpda_off {
+  export JAVA_OPTS=""
+  echo $JAVA_OPTS
+}
+ 
+java_jpda_off 

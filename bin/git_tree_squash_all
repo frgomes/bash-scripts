@@ -1,0 +1,7 @@
+#!/bin/bash
+
+function git_tree_squash_all {
+  git reset $(git commit-tree HEAD^{tree} -m "Initial import.")
+}
+
+git_tree_squash_all $@

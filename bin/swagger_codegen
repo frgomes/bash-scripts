@@ -1,0 +1,14 @@
+#!/bin/bash
+
+function swagger_codegen {
+    case "$1" in
+        finch)   lang=finch ;;
+        angular) lang=typescript_angular ;;
+        "") return 1 ;;
+        *) lang=$1 ;;
+    esac
+    shift
+    java -jar $jar generate -l ${lang} -i $2 -o $3
+}
+ 
+swagger_codegen 

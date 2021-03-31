@@ -1,0 +1,9 @@
+#!/bin/bash
+
+function java_jpda_status {
+  local port=$1
+  local port=${port:=5005}
+  ps -ef | fgrep java | fgrep jdwp | fgrep "transport=dt_socket,address="
+}
+ 
+java_jpda_status 

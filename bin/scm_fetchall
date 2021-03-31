@@ -1,0 +1,18 @@
+#!/bin/bash
+
+function scm_fetchall {
+  for prj in ./ */ ;do
+    pushd $prj
+    if [ -d .hg ] ;then
+      hg pull default
+      hg pull upstream
+      hg update
+    elif [ -d .git ] ;then
+      git fetch origin -v
+      git fetch upstream -v
+    fi
+    popd
+  done
+}
+
+scm_fetchall $@

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+function podman_run_beakerx {
+  podman run -p 8888:8888 beakerx/beakerx $*
+}
+ 
+podman_run_beakerx 

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+function podman_prune {
+  podman container prune -f
+  podman volume prune -f
+  podman network prune -f
+}
+ 
+podman_prune 

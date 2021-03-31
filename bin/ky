@@ -1,0 +1,7 @@
+#!/bin/bash
+
+function ky {
+    kubectl -o yaml $@
+}
+
+ky $@

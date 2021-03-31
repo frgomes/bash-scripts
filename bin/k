@@ -1,0 +1,7 @@
+#!/bin/bash
+
+function k {
+    kubectl $@
+}
+
+k $@

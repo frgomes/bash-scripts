@@ -1,0 +1,11 @@
+#!/bin/bash
+
+function git_top_swap {
+  git tag top
+  git reset --hard HEAD~2
+  git cherry-pick top
+  git cherry-pick top~1
+  git tag -d top
+git_top_swap $@
+}
+git_top_swap $@

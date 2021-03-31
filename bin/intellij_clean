@@ -1,11 +1,4 @@
-#!/bin/sh
-
-function intellij_reset_keyboard {
-  ibus-daemon -rd
-  sleep 3
-  stty sane
-  carpalx_hyena_gb
-}
+#!/bin/bash
 
 function intellij_clean {
   for base in $HOME/.IntelliJ* ;do
@@ -16,3 +9,5 @@ function intellij_clean {
     done
   done
 }
+ 
+intellij_clean 

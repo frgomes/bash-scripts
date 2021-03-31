@@ -1,0 +1,7 @@
+#!/bin/bash
+
+function podman_registry_stop {
+  podman stop registry && podman rm -v registry
+}
+ 
+podman_registry_stop 

@@ -1,0 +1,22 @@
+#!/bin/bash
+
+function git_switch {
+    module=$1
+    tag=$2
+    echo "[ checkout $module ]"
+    if [ -d "${WORKSPACE}"/${module} ] ;then
+        pushd "${WORKSPACE}"/${module}
+	git clean -d -x -f -f
+        if [ $? != 0 ] ; then popd; return 1 ;fi
+        git checkout tags/${tag} --force
+        if [ $? != 0 ] ; then popd; return 1 ;fi
+	git submodule update --init --force --recursive
+        if [ $? != 0 ] ; then popd; return 1 ;fi
+	git clean -d -x -f -f
+        if [ $? != 0 ] ; then popd; return 1 ;fi
+        git status
+        popd
+    fi
+}
+
+git_switch $@

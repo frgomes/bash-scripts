@@ -10,3 +10,5 @@ rmr /brokers/topics
 rmr /admin/delete_topics
 EOD
 }
+
+kafka_delete_all_topics $@

@@ -1,0 +1,16 @@
+#!/bin/bash
+
+function scm_changeset {
+  here=$( pwd )
+  name=$( basename $here )
+  dir=~/backup/${SUDO_USER:=${USER}}/changesets${here}
+
+  mkdir -p $dir
+
+  now=$(date +%Y%m%d_%H%M%S )
+  file=${dir}/${now}-${name}.tgz
+
+  scm_modified | xargs tar cpzf $file && echo $file
+}
+
+scm_changeset $@

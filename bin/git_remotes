@@ -1,0 +1,11 @@
+#!/bin/bash
+
+function git_remotes {
+  if [ $# == 0 ] ;then
+    git remote
+  else
+    echo $* | tr " " "\n"
+  fi
+}
+
+git_remotes $@

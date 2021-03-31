@@ -168,7 +168,7 @@ fi
 
 __bash_aptitude_install
 
-# echo "[ Run legacy initialization scripts ]"
-for script in "${dir}"/bash_*.sh ;do
+# echo "[ Run user defined initialization scripts ]"
+for script in "${HOME}"/bin/bash_*.sh ;do
     [[ -x "${script}" ]] && echo "sourcing ${script}" && source "${script}"
 done

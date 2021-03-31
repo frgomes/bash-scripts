@@ -1,0 +1,15 @@
+#!/bin/bash
+
+function scm_filter {
+  while read line ;do
+    s="$( echo $line | cut -d' ' -f 1 )"
+    f="$( echo $line | cut -d' ' -f 2 )"
+    # echo ":::$s:::$f:::"
+    # if [ "$s" == "M" -o "$s" == "A" -o "$s" == "?" ] ;then
+    if [ -f "$f" ] ;then
+      echo $f
+    fi
+  done
+}
+
+scm_filter $@
