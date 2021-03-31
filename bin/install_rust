@@ -57,6 +57,7 @@ cargo-tarpaulin
 cargo-audit --features=fix
 cargo-deny
 cargo-xtask
+cargo-about
 EOD
 }
 
