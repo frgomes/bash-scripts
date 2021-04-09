@@ -24,7 +24,7 @@ EOD
 
 function install_node_binaries {
   local version=${1:-"$NODE_VERSION"}
-  local version=${version:-"15.3.0"}
+  local version=${version:-"15.14.0"}
 
   local arch=${2:-"$NODE_ARCH"}
   local arch=${arch:-"linux-x64"}
