@@ -14,7 +14,7 @@ Starting from a brand new laptop with only the base operating system installed, 
 * One [post installation script for regular users](docs/postinstall-user.md) seeking Firefox and Thunderbird in user's space;
 * Employs [virtual environments](docs/python-venv.md) in order to allow distinct versions of your preferred tools;
 * All [commands always available](docs/design.md), no matter if you are using functions, sub-shells or whatever;
-* Flexibility of a separate history per session but also a [global history for all sessions](docs/history%2B).
+* Flexibility of a separate history per session but also a [global history for all sessions](docs/history.md).
 
 ## Requirements
 
