@@ -1,0 +1,20 @@
+#!/bin/bash -eux
+
+function install_ammonite {
+    local version=2.3.8
+    local scala=$(echo ${SCALA_VERSION:-2.13.5} | cut -d. -f1-2)
+    local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/bin
+    [[ -e ${bin}/amm ]] || \
+        ( curl -L https://github.com/com-lihaoyi/Ammonite/releases/download/${version}/${scala}-${version} > ${bin}/amm && chmod 755 ${bin}/amm )
+}
+
+if [ $_ != $0 ] ;then
+  # echo "Script is being sourced: list all functions"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1
+else
+  # echo "Script is a subshell: execute last function"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  cmd=$(grep -E "^function " $self | cut -d' ' -f2 | tail -1)
+  $cmd $*
+fi
