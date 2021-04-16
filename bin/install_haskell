@@ -1,0 +1,51 @@
+#!/bin/bash -eux
+
+function __install_haskell_activator() {
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
+
+  local activator="${1}"
+
+  [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
+  cat <<EOD > "${config}"
+#!/bin/bash
+
+source "${HOME}"/.ghcup/env
+EOD
+  chmod ugo+x "${config}"
+  echo "${config}"
+}    
+
+function install_haskell_requirements {
+    # always specify Debian package names and apt+ will adjust accordingly
+    apt+ install curl g++ gcc libgmp-dev make libncurses-dev realpath xz-utils
+}
+
+function install_haskell_install {
+  curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
+}
+
+function install_haskell_activator {
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/500-haskell.sh
+  __install_haskell_activator "${config}"
+}
+
+
+function install_haskell {
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1 | while read cmd ;do
+    $cmd $*
+  done
+}
+
+
+if [ $_ != $0 ] ;then
+  # echo "Script is being sourced: list all functions"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1
+else
+  # echo "Script is a subshell: execute last function"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  cmd=$(grep -E "^function " $self | cut -d' ' -f2 | tail -1)
+  $cmd $*
+fi

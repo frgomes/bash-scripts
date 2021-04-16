@@ -1,11 +1,18 @@
-#!/bin/bash +eux
+#!/bin/bash -eux
 
 function __apt+_debian {
     cat <<EOF
 # program : package [ : program-alias ]*
 curl:curl
-fd:fd-find
+fd-find:fd-find
 rg:ripgrep
+g++:g++
+gcc:gcc
+libgmp-dev:libgmp-dev
+make:cmake
+libncurses-dev:libncurses-dev
+xz-utils:xz-utils
+realpath:coreutils
 EOF
 }
 
@@ -15,6 +22,13 @@ function __apt+_opensuse {
 curl:curl
 fd:fd
 rg:ripgrep
+g++:gcc-c++
+gcc:gcc
+libgmp-dev:libgmpxx4
+make:cmake
+libncurses-dev:ncurses-devel
+xz-utils:xz
+realpath:coreutils
 EOF
 }
 
@@ -30,11 +44,12 @@ function apt+ {
 
         for pkg in $@ ;do
             local program=$1
-            local pkg=$(__apt+_${distro} | grep -E "^${program}:" | grep -E -v '(^[ \t]*#)|(^[ \t]*$)' | cut -d: -f2)
+            local pkg=$(echo $1 | sed 's/+/\\+/g')
+            local pkg=$(__apt+_${distro} | grep -E "^${pkg}:" | grep -E -v '(^[ \t]*#)|(^[ \t]*$)' | cut -d: -f2)
             if [[ ! -z "${pkg}" ]] ;then
                 case "${distro}" in
-                    debian)   which ${program} >/dev/null 2>&1 || apt    install -y ${pkg} ;;
-                    opensuse) which ${program} >/dev/null 2>&1 || zypper install -y ${pkg} ;;
+                    debian)   which ${program} >/dev/null 2>&1 || dpkg-query -s ${pkg} >/dev/null 2>&1 || sudo apt    install -y ${pkg} ;;
+                    opensuse) which ${program} >/dev/null 2>&1 || zypper se -ix ${pkg} >/dev/null 2>&1 || sudo zypper install -y ${pkg} ;;
                     *) echo "Unsupported distribution ${distro}" ; return 1;;
                 esac
             else
