@@ -1,10 +1,10 @@
-This is a bunch of shell scripts containing aliases and useful functions aiming to deliver increased productivity.
+This is a bunch of shell scripts containing useful functions aiming to deliver increased productivity.
 
-> WARNING: This toolbox is under heavy development. Expect that things may change.
+> WARNING: This toolbox is under heavy development. Expect that things change.
 
 ## Design Concept
 
-Starting from a brand new laptop with only the base operating system installed, I would like to be able to quickly have my environment setup. I would like to download a shell script from the Internet which sets up everything for me. Then I open a new terminal window and all remaining bits are automagically configured for me. Then I'm ready to go. The entire thing should not take more than a minute or two.
+Starting from a brand new laptop with only the base operating system installed, I would like to be able to quickly have my environment setup. Then I open a new terminal window and all remaining bits are automagically configured for me. I also would like to install complex software packages easily, employing just a single command. Then I'm ready to go. The entire thing should not take more than a few minutes.
 
 ### Features in a nutshell
 

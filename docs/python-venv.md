@@ -1,8 +1,8 @@
 ## Overview
 
-> A virtual environment is basically a way to group certain environment variables, functions and programs which are useful for a given task. When you switch to work on a different task, you would like to forget the environment variable, functions and programs you are using right now and you would like to remember new environment variables, functions and program which will be useful in your next stream of work.
+> A virtual environment is basically a way to group certain environment variables, functions and programs which are useful for a given task. When you switch to work on a different task, you would like to forget the environment variables, functions and programs you are using right now and you would like to remember new environment variables, functions and programs which will be useful in your next stream of work.
 
-In the old days of Python2, there was a Python package named [virtualenv](https://pypi.org/project/virtualenv/) which helps us create virtual environments and switch between them. With the advent of Python 3.4, part of the funcionality provided by [virtualenv](https://pypi.org/project/virtualenv/) is now available as part of [venv module](https://docs.python.org/3/library/venv.html).
+In the old days of Python2, there was a Python package named [virtualenv](https://pypi.org/project/virtualenv/) which helps us create virtual environments and switch between them. With the advent of Python 3.4, part of the funcionality provided by [virtualenv](https://pypi.org/project/virtualenv/) is now available as part of [venv module](https://docs.python.org/3/library/venv.html), which is the solution we use here.
 
 ## Support for virtual environments
 
@@ -17,14 +17,14 @@ However, [virtualenv](https://pypi.org/project/virtualenv/) provides some functi
  
 Examples:
 
-    # virtual environment for Java 8 with Scala 2.12
+    ### virtual environment for Java 8 with Scala 2.12
     $ mkvirtualenv j8s212
     $ workon j8s212
     $ install_java 8
     $ install_scala 2.12.12
     $ deactivate
     
-    # virtual environment for Java 11 with Scala 2.13
+    ### virtual environment for Java 11 with Scala 2.13
     $ mkvirtualenv j11s213
     $ workon j11s213
     $ install_java 11
