@@ -1,7 +1,6 @@
-#!/bin/bash
+#!/bin/bash -eux
 
-## A minimal Python installation should be available in your distribution in general.
-## However, we simply skip this entire business in case Python is missing.
+## In general, a minimal Python installation is already available in your distribution.
 
 function install_python_pip {
   which python3 >/dev/null 2>&1 || sudo aptitude install -y python3-minimal
@@ -11,19 +10,7 @@ function install_python_pip {
       [[ ! -f "${DOWNLOADS}/get-pip.py" ]] && wget https://bootstrap.pypa.io/get-pip.py -O "${DOWNLOADS}/get-pip.py"
       python3 "${DOWNLOADS}/get-pip.py" --user
     fi
-  fi
-}
-
-function __install_python_virtualenv {
-  which python3 >/dev/null 2>&1 || sudo aptitude install -y python3-minimal
-  if [[ ! -z $(which python3) ]] ;then
-    if [[ ! -f "${HOME}/.local/bin/virtualenvwrapper.sh" ]] ;then
-      python3 -m pip install --quiet --user --upgrade pip virtualenv virtualenvwrapper
-    fi
-    [[ -e "${HOME}/.local/bin/virtualenvwrapper.sh" ]] && source "${HOME}/.local/bin/virtualenvwrapper.sh"
-  fi
-  if [ -d "${HOME}/.local/bin" ] ;then
-    [[ ! $(echo ${PATH} | tr ':' '\n' | fgrep "${HOME}/.local/bin") ]] && export PATH="${HOME}/.local/bin":"${PATH}"
+    python3 -m pip install --upgrade pip
   fi
 }
 
@@ -36,12 +23,12 @@ function install_python_install_packages {
 
 function install_python_LSP_support {
   which python3 >/dev/null 2>&1 || sudo aptitude install -y python3-minimal
-  for module in pylint pyflakes python-language-server[all] ;do
+  for module in pylint pycodestyle pyflakes python-language-server[all] ;do
     python3 -m pip install --upgrade ${module}
   done
 }
 
-function install_python_LSP_optional_cmake {
+function install_python_LSP_cmake {
   which python3 >/dev/null 2>&1 || sudo aptitude install -y python3-minimal
   for module in pip pylint pyflakes python-language-server[all] cmake-language-server ;do
     python3 -m pip install --upgrade ${module}
@@ -50,7 +37,7 @@ function install_python_LSP_optional_cmake {
 
 function install_python_LSP_optional_fortran {
   which python3 >/dev/null 2>&1 || sudo aptitude install -y python3-minimal
-  for module in pip pylint pyflakes python-language-server[all] fortran-language-server ;do
+  for module in pip pylint pycodestyle pyflakes python-language-server[all] fortran-language-server ;do
     python3 -m pip install --upgrade ${module}
   done
 }
