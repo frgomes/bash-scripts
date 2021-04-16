@@ -36,8 +36,8 @@ function install_wabt_download {
 
 function install_wabt_install {
   local url=https://github.com/WebAssembly/wabt/releases/latest
-  local current="${WABT_VERSION}"
   local default="1.0.23"
+  local current="${WABT_VERSION:-${default}}"
 
   ##local latest="$(curl -I ${url} 2>/dev/null | fgrep location: | tr -d [:cntrl:] | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')"
   local latest="$(curl -I ${url} 2>/dev/null | fgrep location: | tr -d [:cntrl:] | cut -d' ' -f2 | cut -d/ -f8)"
