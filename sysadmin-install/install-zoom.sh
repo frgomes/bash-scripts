@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -eu
 
 function install_zoom_binaries {
   local file=zoom_amd64.deb

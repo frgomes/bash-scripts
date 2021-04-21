@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -eu
 
 function install_skype_binaries {
   local file=skypeforlinux-64.deb

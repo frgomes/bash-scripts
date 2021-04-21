@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -eu
 
 function __kubectl_clusters {
   which jq  >/dev/null 2>&1 || sudo aptitude install -y jq

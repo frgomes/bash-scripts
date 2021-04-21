@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -eu
 
 function install_mozilla_sops_binaries {
   local version=${SOPS_VERSION:=3.5.0}

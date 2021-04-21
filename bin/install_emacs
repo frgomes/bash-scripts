@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -eu
 
 function install_emacs_setup_workspace {
     [[ ! -d "${WORKSPACE}/emacs" ]] && mkdir -p "${WORKSPACE}/emacs"

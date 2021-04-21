@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -eu
 
 function __capitalize() {
   which sed >/dev/null 2>&1 || sudo aptitude install -y sed

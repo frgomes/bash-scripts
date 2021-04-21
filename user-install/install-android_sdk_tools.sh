@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -eu
 
 ## https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip
 

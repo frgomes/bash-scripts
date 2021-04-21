@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -eu
 
 
 function install_zeppelin_binaries {
@@ -15,7 +15,7 @@ function install_zeppelin_binaries {
 
   [[ ! -d $tools ]] && mkdir -p $tools
   pushd $tools \
-    && tar -xf "${DOWNLOADS}"/zeppelin-${version}-bin-all.tgz
+    && tar -euf "${DOWNLOADS}"/zeppelin-${version}-bin-all.tgz
 
   echo $tools/zeppelin-${version}-bin-all
 }

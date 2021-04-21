@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -eu
 
 # Compiled from
 #  https://www.vultr.com/docs/setup-pure-ftpd-with-tls-on-debian-9

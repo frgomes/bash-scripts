@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -eu
 
 
 function install_dwhelper_binaries {
@@ -40,7 +40,7 @@ function install_dwhelper_binaries {
 
   if [ ! -d ${folder} ] ;then
     mkdir -p ${folder}
-    tar -C ${folder} --strip-components 1 -xpf ${archive}
+    tar -C ${folder} --strip-components 1 -eupf ${archive}
   fi
   if [ ! -z ${symlink} ] ;then
     if [ -L ${tools}/${symlink} ] ;then rm ${tools}/${symlink} ;fi

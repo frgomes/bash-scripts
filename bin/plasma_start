@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -eu
 
 function __plasma_start() {
   which kstart >/dev/null 2>&1 || sudo aptitude install -y kde-runtime

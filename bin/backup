@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -eu
 
 function __backup() {
   which find >/dev/null 2>&1 || sudo aptitude install -y findutils

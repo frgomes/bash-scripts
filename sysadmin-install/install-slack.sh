@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -eu
 
 function install_slack_binaries {
   local version=4.3.2

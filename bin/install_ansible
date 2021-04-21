@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -eu
 
 
 function __install_ansible {

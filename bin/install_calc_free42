@@ -1,4 +1,4 @@
-#!/bin/bash -xe
+#!/bin/bash -eu
 
 function install_free42_binaries {
   local file=Free42Linux.tgz

@@ -1,4 +1,4 @@
-#!/bin/bash -eux
+#!/bin/bash -eu
 
 ## In general, a minimal Python installation is already available in your distribution.
 

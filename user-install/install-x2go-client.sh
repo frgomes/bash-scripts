@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -eu
 
 # Compiled from
 #   https://wiki.x2go.org/doku.php/wiki:repositories:raspbian
@@ -27,7 +27,7 @@ function install_x2go_client_binaries {
   sudo aptitude update
   sudo aptitude install -y x2go-keyring && sudo aptitude update
 
-  sudo aptitude install -y x2goclient plasma-widget-x2go
+  sudo aptitude install -y x2goclient plasma-widget-eu2go
 }
 
 function install_x2go_client {

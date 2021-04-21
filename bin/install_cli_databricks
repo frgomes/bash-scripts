@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -eu
 
 function __install_cli_databricks {
   which python3 >/dev/null 2>&1 || sudo aptitude install -y python3-minimal

@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -eu
 
 
 ## NOTE: THIS SCRIPT IS EXPERIMENTAL

@@ -1,4 +1,4 @@
-#!/bin/bash -eux
+#!/bin/bash -eu
 
 #------------------------------------------------------------------
 # This script runs a command inside a container which comes with:

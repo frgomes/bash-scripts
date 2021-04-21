@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -eu
 
 function install_keybase_binaries {
   local file=keybase_amd64.deb

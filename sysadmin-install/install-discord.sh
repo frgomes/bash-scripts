@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -eu
 
 function install_discord_binaries {
   local version=${1:-"$DISCORD_VERSION"}

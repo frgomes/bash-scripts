@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -eu
 
 function __bash_install_tar_help(){
   echo "Usage: bash_install_tar url file folder [symlink] [option] ..."

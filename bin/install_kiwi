@@ -1,4 +1,4 @@
-#!/bin/bash -xe
+#!/bin/bash -eu
 
 function __install_osc_repositories {
   which lsb_release >/dev/null 2>&1 || sudo aptitude install -y lsb_release

@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -eu
 
 # Compiled from
 #   https://wiki.x2go.org/doku.php/wiki:repositories:debian
@@ -28,11 +28,11 @@ function install_x2go_server_binaries {
   sudo aptitude update
   sudo aptitude install -y x2go-keyring && sudo aptitude update
   
-  sudo aptitude install -y x2goserver x2goserver-xsession x2godesktopsharing x2goserver-printing cups cups-x2go
+  sudo aptitude install -y x2goserver x2goserver-eusession x2godesktopsharing x2goserver-printing cups cups-x2go
 }
 
 function install_x2go_configure_printer {
-  sudo lpadmin -p "X2GO" -D "Virtual X2Go Printer" -E -v cups-x2go:/ -m lsb/usr/cups-x2go/CUPS-X2GO.ppd
+  sudo lpadmin -p "X2GO" -D "Virtual X2Go Printer" -E -v cups-eu2go:/ -m lsb/usr/cups-x2go/CUPS-X2GO.ppd
 }
 
 function install_x2go_server {

@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -eu
 
 
 function install_vscode_binaries {
@@ -7,7 +7,7 @@ function install_vscode_binaries {
 
   local file=vscode-${version}.tar.gz
   local url=https://az764295.vo.msecnd.net/stable/ff915844119ce9485abfe8aa9076ec76b5300ddd/code-stable-1587060099.tar.gz # yes, Micro$oft always make things different and locked down.
-  local folder=VSCode-linux-x64
+  local folder=VSCode-linux-eu64
   local symlink=vscode
        
   local tools="${TOOLS_HOME:=$HOME/tools}"
@@ -28,7 +28,7 @@ function install_vscode_binaries {
   fi
 
   if [ ! -d "${tools}"/${folder} ] ;then
-    tar -C "${tools}" -xpf ${archive}
+    tar -C "${tools}" -eupf ${archive}
   fi
   
   if [ ! -z ${symlink} ] ;then

@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -eu
 
 function install_metals_coursier {
   if [ ! -e $HOME/bin/coursier ] ;then
