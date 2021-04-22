@@ -1,0 +1,38 @@
+#!/bin/bash -eu
+
+function install_bfg {
+    local v=1.13.0
+    local name=bfg-${v}.jar
+    local url=https://repo1.maven.org/maven2/com/madgag/bfg/${v}/${name}
+    local file="${HOME}/bin/${name}"
+    if [ ! -f ${file} ] ;then
+        mkdir -p "${HOME}/bin" > /dev/null
+        apt+ install curl
+        curl -L "$url" > "${file}"
+        [[ -s ${file} ]] || ( echo ERROR: could not download file ${url} ; return 1 )
+    fi
+
+    if [ ! -f /opt/bin/bfg ] ;then
+        [[ ! -d "${HOME}/bin" ]] && sudo mkdir -p "${HOME}/bin"
+        cat << EOD > "${HOME}/bin/bfg"
+#!/bin/bash
+
+export BFG_VERSION=${v}
+java -jar "\${HOME}/bin/bfg-\${BFG_VERSION}.jar" $*
+EOD
+        sudo chmod 755 "${HOME}/bin/bfg"
+    fi
+    echo "${HOME}/bin/bfg"
+}
+
+
+if [ $_ != $0 ] ;then
+  # echo "Script is being sourced: list all functions"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1
+else
+  # echo "Script is a subshell: execute last function"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  cmd=$(grep -E "^function " $self | cut -d' ' -f2 | tail -1)
+  $cmd $*
+fi
