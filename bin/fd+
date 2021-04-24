@@ -2,7 +2,7 @@
 
 function fd+ {
     # always specify Debian package names and apt+ will adjust accordingly
-    apt+ install fd-find && \
+    apt+ install fd && \
     case "${1}" in
         ant)    shift; fd -F build.xml $@;;
         config) shift; fd -e cfg -e conf -e config -e ini $@;;

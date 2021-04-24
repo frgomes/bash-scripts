@@ -55,7 +55,7 @@ function apt+ {
                     *) echo "Unsupported distribution ${distro}" ; return 1;;
                 esac
             else
-                echo "Unable to find package for program: ${program}" ; return 1
+                echo "Unable to find package: ${id}" ; return 1
             fi
             shift
         done
