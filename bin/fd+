@@ -1,18 +1,24 @@
 #!/bin/bash -eu
 
 function fd+ {
+    local distro="$(lsb_release -si)"
+    case "${distro}" in
+        Debian)   cmd=fdfind;;
+        *) cmd=fd;;
+    esac
+
     # always specify Debian package names and apt+ will adjust accordingly
     apt+ install fd && \
     case "${1}" in
-        ant)    shift; fd -F build.xml $@;;
-        config) shift; fd -e cfg -e conf -e config -e ini $@;;
-        cpp)    shift; fd -e c -e h -e cpp -e hpp $@;;
-        pom)    shift; fd -F pom.xml $@;;
-        scala)  shift; fd -e scala -e sbt $@;;
-        yaml)   shift; fd -e yml -e yaml $@;;
-        file)   shift; fd $@;;
-        dir)    shift; fd -t d $@;;
-        *) local extension="${1}"; shift; fd -e "${extension}" $@;;
+        ant)    shift; ${cmd} -F build.xml $@;;
+        config) shift; ${cmd} -e cfg -e conf -e config -e ini $@;;
+        cpp)    shift; ${cmd} -e c -e h -e cpp -e hpp $@;;
+        pom)    shift; ${cmd} -F pom.xml $@;;
+        scala)  shift; ${cmd} -e scala -e sbt $@;;
+        yaml)   shift; ${cmd} -e yml -e yaml $@;;
+        file)   shift; ${cmd} $@;;
+        dir)    shift; ${cmd} -t d $@;;
+        *) local extension="${1}"; shift; ${cmd} -e "${extension}" $@;;
     esac
 }
 
