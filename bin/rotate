@@ -1,0 +1,71 @@
+#!/bin/bash -eu
+
+
+function rotate_icon() {
+    local self=$(readlink -f "${BASH_SOURCE[0]}")
+    local dir=$(dirname $self)
+
+    if [ ! -f ~/.local/share/applications/rotate.desktop ] ;then
+        cat <<EOF > ~/.local/share/applications/rotate.desktop
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Name=Rotate
+Comment=Rotate Screen
+Type=Application
+Exec=${self}
+Icon=input-tablet-symbolic
+Terminal=false
+Categories=Settings
+StartupNotify=true
+EOF
+    fi
+}
+
+
+function __rotate_parser {
+    monitor=$(echo ${1} | cut -d' ' -f 4)
+    xsize=$(echo ${1} | cut -d' ' -f 3 | cut -dx -f1 | cut -d/ -f1)
+    ysize=$(echo ${1} | cut -d' ' -f 3 | cut -dx -f2 | cut -d+ -f1 | cut -d/ -f1)
+    xoffset=$(echo ${1} | cut -d' ' -f 3 | cut -d+ -f2)
+    yoffset=$(echo ${1} | cut -d' ' -f 3 | cut -d+ -f3)
+    xmm=$(echo ${1} | cut -d' ' -f 3 | cut -dx -f1 | cut -d/ -f2)
+    ymm=$(echo ${1} | cut -d' ' -f 3 | cut -dx -f2 | cut -d+ -f1 | cut -d/ -f2)
+    role=$(echo ${1} | cut -d' ' -f 2 | grep -E '^\+\*.*' > /dev/null 2>&1 && echo primary)
+    role="${role:-secondary}"
+    xdim=$(expr ${xsize} + ${xoffset})
+    ydim=$(expr ${ysize} + ${yoffset})
+    echo $monitor $xsize $ysize $xoffset $yoffset $xmm $ymm $role $xdim $ydim
+}
+
+
+function __rotate_find_primary {
+    xrandr --listmonitors | tail -n +2 | while read line ;do
+        __rotate_parser "${line}"
+    done | fgrep primary
+}
+
+
+function rotate {
+    local primary=( $(__rotate_find_primary) )
+    local monitor=${primary[0]}
+    local current=$(xrandr -q --verbose | grep ${monitor} | grep -v disconnected | sed -E 's/connected( primary)? //' | cut -d' ' -f4)
+    case "${current}" in
+        normal)   local next=left;;
+        left)     local next=inverted;;
+        inverted) local next=right;;
+        right)    local next=normal;;
+        *)        local next=normal;;
+    esac
+    local mode=${1:-${next}}
+
+    local devices=$( xinput --list | fgrep Pen | sed -E 's/^.*id=([0-9]+).*$/\1/' | xargs echo )
+    
+    xrandr --output ${monitor} --rotate ${mode}
+    for device in ${devices} ;do
+        xinput --map-to-output ${device} ${monitor}
+    done
+}
+
+
+rotate_icon; rotate $*
