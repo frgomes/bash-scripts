@@ -58,9 +58,7 @@ function rotate {
         *)        local next=normal;;
     esac
     local mode=${1:-${next}}
-
-    local devices=$( xinput --list | fgrep Pen | sed -E 's/^.*id=([0-9]+).*$/\1/' | xargs echo )
-    
+    local devices=$( xinput --list | fgrep Pen | sed -E 's/^.*id=([0-9]+).*$/\1/' )
     xrandr --output ${monitor} --rotate ${mode}
     for device in ${devices} ;do
         xinput --map-to-output ${device} ${monitor}
