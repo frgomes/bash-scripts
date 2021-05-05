@@ -1,0 +1,81 @@
+#!/bin/bash -eu
+
+
+function __install_kafka_activator() {
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
+
+  local activator="${1}"
+  local version="${2}"
+  local scala="${3}"
+
+  [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
+  cat <<EOD > "${config}"
+#!/bin/bash
+
+export KAFKA_VERSION=${version}
+export KAFKA_HOME=\${TOOLS_HOME:=\$HOME/tools}/kafka_\${SCALA_VERSION_MAJOR:-${scala}}-\${KAFKA_VERSION}
+
+export PATH=\${KAFKA_HOME}/bin:\${PATH}
+EOD
+
+  chmod ugo+x "${config}"
+  echo "${config}"
+}    
+
+function install_kafka {
+  local default="2.8.0"
+  local current="${KAFKA_VERSION:-${default}}"
+  local version=${1:-"$current"}
+
+  local default_scala="2.13"
+  local current_scala="${SCALA_VERSION_MAJOR:-${default_scala}}"
+  local scala=${2:-"${current_scala}"}
+
+  local file=kafka_${scala}-${version}.tgz
+  local url=https://www.mirrorservice.org/sites/ftp.apache.org/kafka/${version}/${file}
+  local folder=kafka_${scala}-${version}
+  local symlink=kafka
+
+  local tools="${TOOLS_HOME:-$HOME/tools}"
+  local Software="${SOFTWARE:=/mnt/omv/Software}"
+
+  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
+  [[ ! -d "${tools}" ]] && mkdir -p $tools
+
+  local archive=""
+  if [[ -f "${Software}/Linux/${file}" ]] ;then
+    local archive="${Software}/Linux/${file}"
+  elif [[ -f "${DOWNLOADS}"/${file} ]] ;then
+    local archive="${DOWNLOADS}/${file}"
+  fi
+  if [[ -z "${archive}" ]] ;then
+    local archive="${DOWNLOADS}/${file}"
+    which wget >/dev/null 2>&1 || sudo aptitude install -y wget
+    wget "$url" -O "${archive}"
+  fi
+
+  if [ ! -d "${tools}/${folder}" ] ;then
+    which tar >/dev/null 2>&1 || sudo aptitude install -y tar
+    tar -C "${tools}" -xpf "${archive}"
+  fi
+  if [ ! -z "${symlink}" ] ;then
+    if [ -L "${tools}/${symlink}" ] ;then rm "${tools}/${symlink}" ;fi
+    ln -s "${folder}" "${tools}/${symlink}"
+  fi
+
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/360-kafka.sh
+  __install_kafka_activator "${config}" "${version}" "${scala}" 
+}
+
+
+if [ $_ != $0 ] ;then
+  # echo "Script is being sourced: list all functions"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1
+else
+  # echo "Script is a subshell: execute last function"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  cmd=$(grep -E "^function " $self | cut -d' ' -f2 | tail -1)
+  $cmd $*
+fi
