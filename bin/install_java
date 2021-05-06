@@ -33,40 +33,70 @@ function __install_java() {
   local major=$(echo ${version} | cut -d. -f1)
 
   if [[ $version =~ ^8(\.*)? ]] ;then
-    local file=OpenJDK8U-jdk_x64_linux_hotspot_8u265b01.tar.gz
-    local url=https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u265-b01/${file}
-    local folder=jdk8u265-b01-jdk
+    local tag=8u292
+    local build=b10
+    local file=OpenJDK8U-jdk_x64_linux_hotspot_${tag}${build}.tar.gz
+    local url=https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk${tag}-${build}/${file}
+    local folder=jdk${tag}-${build}-jdk
     local symlink=jdk8
   elif [[ $version =~ ^11(\.*)? ]] ;then
-    local file=openjdk-11+28_linux-x64_bin.tar.gz
-    local url=https://download.java.net/openjdk/jdk11/ri/${file}
-    local folder=jdk-11
-    local symlink=jdk11
+    local jvm=11
+    local tag=${jvm}.0.11
+    local build=9
+    local file=OpenJDK${jvm}U-jdk_x64_linux_hotspot_${tag}_${build}.tar.gz
+    local url=https://github.com/AdoptOpenJDK/openjdk${jvm}-binaries/releases/download/jdk-${tag}%2B${build}/${file}
+    local folder=jdk-${jvm}
+    local symlink=jdk${jvm}
   elif [[ $version =~ ^12(\.*)? ]] ;then
-    local file=openjdk-12+32_linux-x64_bin.tar.gz
-    local url=https://download.java.net/openjdk/jdk12/ri/${file}
-    local folder=jdk-12
-    local symlink=jdk12
+    local jvm=12
+    local tag=${jvm}.0.2
+    local build=10
+    local file=OpenJDK${jvm}U-jdk_x64_linux_hotspot_${tag}_${build}.tar.gz
+    local url=https://github.com/AdoptOpenJDK/openjdk${jvm}-binaries/releases/download/jdk-${tag}%2B${build}/${file}
+    local folder=jdk-${jvm}
+    local symlink=jdk${jvm}
   elif [[ $version =~ ^13(\.*)? ]] ;then
-    local file=openjdk-13+33_linux-x64_bin.tar.gz
-    local url=https://download.java.net/openjdk/jdk13/ri/${file}
-    local folder=jdk-13
-    local symlink=jdk13
+    local jvm=13
+    local tag=${jvm}.0.2
+    local build=8
+    local file=OpenJDK${jvm}U-jdk_x64_linux_hotspot_${tag}_${build}.tar.gz
+    local url=https://github.com/AdoptOpenJDK/openjdk${jvm}-binaries/releases/download/jdk-${tag}%2B${build}/${file}
+    local folder=jdk-${jvm}
+    local symlink=jdk${jvm}
   elif [[ $version =~ ^14(\.*)? ]] ;then
-    local file=openjdk-14+36_linux-x64_bin.tar.gz
-    local url=https://download.java.net/openjdk/jdk14/ri/${file}
-    local folder=jdk-14
-    local symlink=jdk14
+    local jvm=14
+    local tag=${jvm}.0.2
+    local build=12
+    local file=OpenJDK${jvm}U-jdk_x64_linux_hotspot_${tag}_${build}.tar.gz
+    local url=https://github.com/AdoptOpenJDK/openjdk${jvm}-binaries/releases/download/jdk-${tag}%2B${build}/${file}
+    local folder=jdk-${jvm}
+    local symlink=jdk${jvm}
+  elif [[ $version =~ ^15(\.*)? ]] ;then
+    local jvm=15
+    local tag=${jvm}.0.2
+    local build=7
+    local file=OpenJDK${jvm}U-jdk_x64_linux_hotspot_${tag}_${build}.tar.gz
+    local url=https://github.com/AdoptOpenJDK/openjdk${jvm}-binaries/releases/download/jdk-${tag}%2B${build}/${file}
+    local folder=jdk-${jvm}
+    local symlink=jdk${jvm}
+  elif [[ $version =~ ^16(\.*)? ]] ;then
+    local jvm=16
+    local tag=${jvm}.0.1
+    local build=9
+    local file=OpenJDK${jvm}U-jdk_x64_linux_hotspot_${tag}_${build}.tar.gz
+    local url=https://github.com/AdoptOpenJDK/openjdk${jvm}-binaries/releases/download/jdk-${tag}%2B${build}/${file}
+    local folder=jdk-${jvm}
+    local symlink=jdk${jvm}
   else
     echo "ERROR: Unsupported Java version $JAVA_VERSION"
-    echo 'INFO: Supported JDK versions are: 1.8.*, 11.*, 12.*, 13.* and 14.*'
+    echo 'INFO: Supported JDK versions are: 1.8.*, 11.*, 12.*, 13.*, 14.*, 15.*, 16.*'
     return 1
   fi
 
+  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlink}" "--strip-components=1"
+
   local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/300-java.sh
    __install_java_activator "${config}" "${version}"
-
-  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlink}" "--strip-components=1"
 }
 
 if [ $_ != $0 ]; then
