@@ -32,9 +32,6 @@ function __install_scala() {
   local version=${1:-"${version}"}
   local major=$(echo ${version} | cut -d. -f1-2)
 
-  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/351-scala.sh
-   __install_scala_activator "${config}" "${version}"
-
   if [[ $version =~ ^(0\.).* ]] ;then
     local file=dotty-${version}.tar.gz
     local url=https://github.com/lampepfl/dotty/releases/download/${version}/${file}
@@ -54,6 +51,9 @@ function __install_scala() {
     # "${dir}"/httrack_fetch "https://www.scala-lang.org/files/archive/spec/${major}" "${tools}/${folder}/scala-${version}/spec"
     # "${dir}"/httrack_fetch "https://scala-lang.org/files/archive/api/${version}"    "${tools}/${folder}/scala-${version}/api"
   fi
+
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/351-scala.sh
+   __install_scala_activator "${config}" "${version}"
 }
 
 if [ $_ != $0 ]; then
