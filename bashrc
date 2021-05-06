@@ -40,7 +40,7 @@ function __bash_source_highlight {
 
 function mkvirtualenv {
   if [ ! -z "$1" ] ;then
-    [[ -d "${HOME}/.virtualenvs" ]] | mkdir -p "${HOME}/.virtualenvs"
+    [[ -d "${HOME}/.virtualenvs" ]] || mkdir -p "${HOME}/.virtualenvs"
     python3 -m venv "${HOME}/.virtualenvs/${1}"
   fi
 }
