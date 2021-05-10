@@ -2,15 +2,13 @@
 
 
 function install_security_hardening_binaries {
-    sudo aptitude update
-    sudo aptitude install -y lsb-release
-    sudo aptitude install -y fail2ban
-    sudo aptitude install -y policycoreutils haveged
-    sudo aptitude install -y strongswan openvpn network-manager-strongswan network-manager-openvpn
+    apt+ update
+    apt+ install fail2ban
+    apt+ install policycoreutils haveged
+    apt+ install strongswan openvpn network-manager-strongswan network-manager-openvpn
     sudo restorecon -R -v ~/.cert
     # See: https://www.cyberciti.biz/faq/howto-check-linux-rootkist-with-detectors-software/
-    sudo aptitude install -y chkrootkit rkhunter scanssh
-    sudo aptitude clean
+    apt+ install chkrootkit rkhunter scanssh
 }
 
 function install_security_hardening {

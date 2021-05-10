@@ -21,8 +21,7 @@ EOD
 }    
 
 function install_wabt_requirements {
-    which gcc   >/dev/null 2>&1 || sudo apt install -y gcc
-    which cmake >/dev/null 2>&1 || sudo apt install -y cmake
+    apt+ install gcc cmake
 }
 
 function install_wabt_download {

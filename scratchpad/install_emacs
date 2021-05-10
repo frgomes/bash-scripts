@@ -3,7 +3,7 @@
 function install_emacs_setup_workspace {
     [[ ! -d "${WORKSPACE}/emacs" ]] && mkdir -p "${WORKSPACE}/emacs"
     pushd "${WORKSPACE}/emacs"
-    which git >/dev/null 2>&1 || sudo aptitude install -y git
+    which git >/dev/null 2>&1 || apt+ install git
     if [[ ! -d .git ]] ;then
         git init
         git remote add origin git://git.savannah.gnu.org/emacs.git
@@ -31,8 +31,8 @@ function install_emacs_download {
 
 function __install_emacs_build_essentials {
     case "$(lsb_release -si)" in
-        Debian)   sudo aptitude install -y build-essentials;;
-        openSUSE) sudo aptitude install -y -t pattern devel_basis;;
+        Debian)   sudo apt install -y build-essentials;;
+        openSUSE) sudo zypper install -y -t pattern devel_basis;;
     esac
 }
 
@@ -42,7 +42,7 @@ function install_emacs_build_essentials {
 
 function __install_emacs_build_dependencies {
     case "$(lsb_release -si)" in
-        #Debian)   sudo aptitude install -y texinfo libncurses5-dev hunspell hunspell-en-gb hunspell-en-us hunspell-es hunspell-pt-pt hunspell-pt-br hunspell-de-de hunspell-it hunspell-fr;;
+        #Debian)   apt+ install texinfo libncurses5-dev hunspell hunspell-en-gb hunspell-en-us hunspell-es hunspell-pt-pt hunspell-pt-br hunspell-de-de hunspell-it hunspell-fr;;
         ##XXX texinfo
         Debian)   sudo aptitude build-deps -y emacs;;
         openSUSE) sudo aptitude -y source-install --build-deps-only emacs;;

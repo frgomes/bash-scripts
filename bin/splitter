@@ -1,7 +1,7 @@
 #!/bin/bash -eu
 
 function __splitter() {
-  which tr >/dev/null 2>&1 || sudo aptitude install -y coreutils
+  which tr >/dev/null 2>&1 || apt+ install coreutils
   local sep="${1}"
   local sep="${sep:=':'}"
   tr ${sep} '\n'

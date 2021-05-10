@@ -62,11 +62,11 @@ EOF
 
 # https://developers.redhat.com/blog/2019/04/04/build-and-run-buildah-inside-a-podman-container/
 function __miniglue_install_podman {
-    which podman  >/dev/null 2>&1 || sudo aptitude install -y podman
-    which buildah >/dev/null 2>&1 || sudo aptitude install -y buildah
+    which podman  >/dev/null 2>&1 || apt+ install podman
+    which buildah >/dev/null 2>&1 || apt+ install buildah
 }
 function __miniglue_install_curl {
-    which curl    >/dev/null 2>&1 || sudo aptitude install -y curl ca-certificates gpg
+    which curl    >/dev/null 2>&1 || apt+ install curl ca-certificates gpg
 }
 
 function __miniglue_build_container {
@@ -152,8 +152,8 @@ function __miniglue_build_container {
     buildah config --env PATH=/usr/local/bin:/usr/bin:/bin:/root/bin:/root/.cargo/bin:${JAVA_HOME}/bin:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin ${container}
 
     # Install essential tools
-    buildah run  ${container} -- apt-get update
-    buildah run  ${container} -- apt-get install -yq curl
+    buildah run  ${container} -- apt update
+    buildah run  ${container} -- apt install -yq curl
 
     ## ------------------------------------------------------------------------------------------------
     
@@ -221,7 +221,7 @@ function __miniglue_build_container {
     ## ------------------------------------------------------------------------------------------------
     
     # build and install android-ndk-rs
-    buildah run  ${container} -- apt-get install -yq cmake
+    buildah run  ${container} -- apt install -yq cmake
     buildah run  ${container} -- mkdir -p /root/src/android-ndk-rs
     buildah copy ${container} ${Downloads}/android-ndk-rs /root/src/android-ndk-rs
     buildah run  ${container} -- cargo install --path /root/src/android-ndk-rs/cargo-apk

@@ -2,15 +2,15 @@
 
 function __install_rust_build_essentials {
   case "$(lsb_release -si)" in
-    Debian)   which gcc   >/dev/null 2>&1 || sudo aptitude install -y build-essentials;;
-    openSUSE) which gcc   >/dev/null 2>&1 || sudo aptitude install -y -t pattern devel_basis;;
+    Debian)   which gcc   >/dev/null 2>&1 || sudo apt install build-essentials;;
+    openSUSE) which gcc   >/dev/null 2>&1 || sudo zypper install -t pattern devel_basis;;
   esac
 }
 
 function __install_rust_install_dependencies {
   case "$(lsb_release -si)" in
-    Debian)   which gcc   >/dev/null 2>&1 || sudo aptitude install -y openssl libssl-dev sqlite3 libsqlite3-dev;;
-    openSUSE) which gcc   >/dev/null 2>&1 || sudo aptitude install -y openssl libopenssl-devel sqlite3 sqlite3-devel;;
+    Debian)   which gcc   >/dev/null 2>&1 || apt+ install openssl libssl-dev sqlite3 libsqlite3-dev;;
+    openSUSE) which gcc   >/dev/null 2>&1 || apt+ install openssl libopenssl-devel sqlite3 sqlite3-devel;;
   esac
 }
 

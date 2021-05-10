@@ -24,7 +24,7 @@ function __install_sbt() {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
 
-  which curl >/dev/null 2>&1 || sudo aptitude install -y curl
+  which curl >/dev/null 2>&1 || apt+ install curl
 
   local url=https://github.com/sbt/sbt/releases/latest
   local default="1.5.0"

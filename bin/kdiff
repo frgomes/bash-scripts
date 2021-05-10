@@ -1,7 +1,7 @@
 #!/bin/bash -eu
 
 function __kdiff() {
-  which kdiff3 >/dev/null 2>&1 || sudo aptitude install -y kdiff3
+  which kdiff3 >/dev/null 2>&1 || apt+ install kdiff3
   kdiff3 $*
 }
 

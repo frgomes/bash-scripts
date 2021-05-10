@@ -39,14 +39,14 @@ Please consider uninstalling system packages which are known to cause difficulti
 
 ```bash
 #!/bin/bash
-sudo aptitude remove python-pip python3-pip python-pip-whl python-stevedore virtualenv virtualenv-clone virtualenvwrapper python-virtualenv python-virtualenv-clone python3-virtualenv python2-dev python3-dev -V -s
+sudo apt remove python-pip python3-pip python-pip-whl python-stevedore virtualenv virtualenv-clone virtualenvwrapper python-virtualenv python-virtualenv-clone python3-virtualenv python2-dev python3-dev -V -s
 ```
 
 **AFTER YOU REVIEW CAREFULLY** the output of the previous command and you are aware of the consequences of uninstalling these packages and **you are plenty sure that you are not going to render your computer unusable after uninstalling the list of packages you see**, then you can proceed like this:
 
 ```bash
 #!/bin/bash
-sudo aptitude remove python-pip python3-pip python-pip-whl python-stevedore virtualenv virtualenv-clone virtualenvwrapper python-virtualenv python-virtualenv-clone python3-virtualenv python2-dev python3-dev -y
+sudo apt remove python-pip python3-pip python-pip-whl python-stevedore virtualenv virtualenv-clone virtualenvwrapper python-virtualenv python-virtualenv-clone python3-virtualenv python2-dev python3-dev -y
 sudo rm /usr/local/bin/pip{,2,3}
 rm $HOME/.local/bin/pip{,2,3}
 ```

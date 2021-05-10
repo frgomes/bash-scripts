@@ -1,7 +1,6 @@
 #!/bin/bash -eu
 
 function __install_osc_repositories {
-  which lsb_release >/dev/null 2>&1 || sudo aptitude install -y lsb_release
   id=$(lsb_release -is)
   release=$(lsb_release -rs)
   codename=$(lsb_release -cs)
@@ -31,12 +30,12 @@ function __install_osc_repositories {
 }
 
 function __install_kiwi_binaries {
-  sudo aptitude update
-  sudo apt install -y kiwi-systemdeps kiwi-tools
+  apt+ update
+  apt+ install kiwi-systemdeps kiwi-tools
 }
 
 function __install_kiwi_apps {
-  which python3 >/dev/null 2>&1 || sudo aptitude install -y python3-minimal
+  which python3 >/dev/null 2>&1 || apt+ install python3-minimal
   pip3 --disable-pip-version-check install --upgrade kiwi kiwi_boxed_plugin kiwi-obs-plugin 
 }
 

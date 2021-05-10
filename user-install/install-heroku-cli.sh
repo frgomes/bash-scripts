@@ -4,8 +4,8 @@
 function install_heroku_cli_binaries {
   sudo add-apt-repository "deb https://cli-assets.heroku.com/branches/stable/apt ./"
   curl -L https://cli-assets.heroku.com/apt/release.key | sudo apt-key add -
-  sudo aptitude update
-  sudo aptitude install -y heroku
+  apt+ update
+  apt+ install heroku
 }
 
 function install_heroku_cli {

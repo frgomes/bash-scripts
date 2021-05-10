@@ -1,7 +1,7 @@
 #!/bin/bash -eu
 
 function __ips() {
-  which ip >/dev/null 2>&1 || sudo aptitude install -y iproute2
+  which ip >/dev/null 2>&1 || apt+ install iproute2
   ip -o addr show | fgrep "scope global" | sed -r "s/[ \t]+/ /g" | cut -d" " -f2,3,4
 }
 

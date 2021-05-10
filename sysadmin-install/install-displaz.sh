@@ -2,7 +2,7 @@
 
 function install_displaz_requirements {
     ##TODO: centos: installed git gcc-c++ make patch cmake qt5-qtbase-devel python3-docutils
-    sudo aptitude install -y git g++ cmake qt5-default python3-docutils
+    apt+ install git g++ cmake qt5-default python3-docutils
 }
 
 function install_displaz_download {

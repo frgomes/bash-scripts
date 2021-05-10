@@ -14,15 +14,15 @@ function install_docker_working_folder {
 } 
 
 function install_docker_binaries {
-    sudo aptitude update
-    sudo aptitude install -y apt-transport-https ca-certificates wget software-properties-common
+    apt+ update
+    apt+ install apt-transport-https ca-certificates wget software-properties-common
 
     sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
 
     wget https://download.docker.com/linux/debian/gpg -O - | sudo apt-key add -
 
     echo "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list
-    sudo aptitude install -y dnsmasq docker.io docker-compose
+    apt+ install dnsmasq docker.io docker-compose
 }
 
 function install_docker_permissions {

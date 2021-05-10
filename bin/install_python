@@ -3,7 +3,7 @@
 ## In general, a minimal Python installation is already available in your distribution.
 
 function install_python_pip {
-  which python3 >/dev/null 2>&1 || sudo aptitude install -y python3-minimal
+  which python3 >/dev/null 2>&1 || apt+ install python3-minimal
   if [[ ! -z $(which python3) ]] ;then
     if [[ ! -e "${HOME}/.local/bin/pip3" ]] ;then
       [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
@@ -15,35 +15,35 @@ function install_python_pip {
 }
 
 function install_python_install_packages {
-  which python3 >/dev/null 2>&1 || sudo aptitude install -y python3-minimal
+  which python3 >/dev/null 2>&1 || apt+ install python3-minimal
   for module in mercurial oyaml ;do
     python3 -m pip install --upgrade ${module}
   done
 }
 
 function install_python_LSP_support {
-  which python3 >/dev/null 2>&1 || sudo aptitude install -y python3-minimal
+  which python3 >/dev/null 2>&1 || apt+ install python3-minimal
   for module in pylint pycodestyle pyflakes python-language-server[all] ;do
     python3 -m pip install --upgrade ${module}
   done
 }
 
 function install_python_LSP_cmake {
-  which python3 >/dev/null 2>&1 || sudo aptitude install -y python3-minimal
+  which python3 >/dev/null 2>&1 || apt+ install python3-minimal
   for module in pip pylint pyflakes python-language-server[all] cmake-language-server ;do
     python3 -m pip install --upgrade ${module}
   done
 }
 
 function install_python_LSP_optional_fortran {
-  which python3 >/dev/null 2>&1 || sudo aptitude install -y python3-minimal
+  which python3 >/dev/null 2>&1 || apt+ install python3-minimal
   for module in pip pylint pycodestyle pyflakes python-language-server[all] fortran-language-server ;do
     python3 -m pip install --upgrade ${module}
   done
 }
 
 function install_python_LSP_optional_hdl {
-  which python3 >/dev/null 2>&1 || sudo aptitude install -y python3-minimal
+  which python3 >/dev/null 2>&1 || apt+ install python3-minimal
   for module in pip pylint pyflakes python-language-server[all] hdl-checker ;do
     python3 -m pip install --upgrade ${module}
   done

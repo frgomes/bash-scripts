@@ -3,14 +3,8 @@
 # Compiled from
 #  https://www.vultr.com/docs/setup-pure-ftpd-with-tls-on-debian-9
 
-function install_pureftpd_remove_all {
-  sudo service pure-ftpd stop
-  sudo aptitude remove  pure-ftpd-common pure-ftpd
-  sudo rm -r -f /etc/pure-ftpd
-}
-
 function install_pureftpd_binaries {
-  sudo aptitude install -y pure-ftpd-common pure-ftpd
+  apt+ install pure-ftpd-common pure-ftpd
 }
 
 function install_pureftpd_config {

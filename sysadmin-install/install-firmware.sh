@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function install_firmware_binaries {
-    sudo aptitude install -y firmware-linux firmware-linux-nonfree firmware-misc-nonfree
+    apt+ install firmware-linux firmware-linux-nonfree firmware-misc-nonfree
 }
 
 function install_firmware {

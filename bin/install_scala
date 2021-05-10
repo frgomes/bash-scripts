@@ -24,7 +24,7 @@ function __install_scala() {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
 
-  which wget >/dev/null 2>&1 || sudo aptitude install -y wget
+  which wget >/dev/null 2>&1 || apt+ install wget
 
   local latest=https://github.com/scala/scala/releases/latest
   local version=$(wget -q -SO- -T 5 -t 1 "${latest}" 2>/dev/null | fgrep location: | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')

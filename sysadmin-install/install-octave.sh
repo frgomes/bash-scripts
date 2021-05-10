@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function install_octave_binaries {
-    sudo aptitude install -y dynare octave octave-dataframe octave-econometrics octave-financial octave-statistics octave-tsa octave-htmldoc octave-info
+    apt+ install dynare octave octave-dataframe octave-econometrics octave-financial octave-statistics octave-tsa octave-htmldoc octave-info
 }
 
 function install_octave {

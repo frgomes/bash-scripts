@@ -26,7 +26,7 @@ function __install_java() {
   self=$(readlink -f "${BASH_SOURCE[0]}")
   dir=$(dirname $self)
 
-  which wget >/dev/null 2>&1 || sudo aptitude install -y wget
+  which wget >/dev/null 2>&1 || apt+ install wget
 
   local version=${version:-"8"}
   local version=${1:-"${version}"}

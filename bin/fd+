@@ -8,7 +8,7 @@ function fd+ {
     esac
 
     # always specify Debian package names and apt+ will adjust accordingly
-    apt+ install fd && \
+    apt+ install fd
     case "${1}" in
         ant)    shift; ${cmd} -F build.xml $@;;
         config) shift; ${cmd} -e cfg -e conf -e config -e ini $@;;

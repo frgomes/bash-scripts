@@ -1,7 +1,7 @@
 #!/bin/bash -eu
 
 function __vdiff() {
-  which diffuse >/dev/null 2>&1 || sudo aptitude install -y diffuse
+  which diffuse >/dev/null 2>&1 || apt+ install diffuse
   diffuse $*
 }
 

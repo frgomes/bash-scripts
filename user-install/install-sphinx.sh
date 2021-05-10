@@ -4,7 +4,7 @@
 # see: https://downloads.lightbend.com/paradox/akka-docs-new/20170510-wip/scala/dev/documentation.html
 
 function install_sphinx_pip {
-  which python3 >/dev/null 2>&1 || sudo aptitude install -y python3-minimal
+  which python3 >/dev/null 2>&1 || apt+ install python3-minimal
   mkdir -p "${DOWNLOADS}"
   pushd "${DOWNLOADS}"
   if [ ! -f get-pip.py ] ;then
@@ -16,7 +16,7 @@ function install_sphinx_pip {
 }
 
 function install_sphinx_binaries {
-    which python3 >/dev/null 2>&1 || sudo aptitude install -y python3-minimal
+    which python3 >/dev/null 2>&1 || apt+ install python3-minimal
     python3 -m pip install --user --upgrade python-sphinx
 
     mkdir -p ~/tmp

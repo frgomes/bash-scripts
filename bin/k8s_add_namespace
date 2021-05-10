@@ -2,7 +2,7 @@
 
 
 function __k8s_add_namespace_prelude() {
-  which python3 >/dev/null 2>&1 || sudo aptitude install -y python3-minimal
+  which python3 >/dev/null 2>&1 || apt+ install python3-minimal
   pip3 --disable-pip-version-check install PyYAML > /dev/null 2>&1
 }
 

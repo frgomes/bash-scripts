@@ -8,7 +8,7 @@ function __bash_install_tar_help(){
 }
 
 function __bash_install_tar() {
-  which wget >/dev/null 2>&1 || sudo aptitude install -y wget
+  which wget >/dev/null 2>&1 || apt+ install wget
 
   [[ $# -lt 3 ]] && __bash_install_tar_help && return 1
   local url="$1"

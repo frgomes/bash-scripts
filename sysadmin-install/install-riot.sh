@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -eu
 
 
 function install_riot_repository {
@@ -9,7 +9,8 @@ EOD
 }
 
 function install_riot_binaries {
-  sudo aptitude update && sudo aptitude install -y riot-web 
+  apt+ update
+  apt+ install riot-web 
 }
 
 function install_riot {

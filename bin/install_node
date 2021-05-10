@@ -48,12 +48,12 @@ function install_node_binaries {
   fi
   if [[ -z "${archive}" ]] ;then
     local archive="${DOWNLOADS}/${file}"
-    which wget >/dev/null 2>&1 || sudo aptitude install -y wget
+    which wget >/dev/null 2>&1 || apt+ install wget
     wget "$url" -O "${archive}"
   fi
 
   if [ ! -d "${tools}/${folder}" ] ;then
-    which tar >/dev/null 2>&1 || sudo aptitude install -y tar
+    which tar >/dev/null 2>&1 || apt+ install tar
     tar -C "${tools}" -xpf "${archive}"
   fi
   if [ ! -z "${symlink}" ] ;then

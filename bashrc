@@ -12,16 +12,7 @@ function __bash_path_append() {
   [[ ! -z "$1" ]] && echo "$PATH" | tr ':' '\n' | fgrep "$1" > /dev/null || export PATH="${PATH}:$1"
 }
 
-## install aptitude in order to add some compatibility layer among distributions
-function __bash_aptitude_install {
-  case "$(lsb_release -si)" in
-    Debian)   which aptitude >/dev/null 2>&1 || sudo apt install -y aptitude;;
-    openSUSE) which aptitude >/dev/null 2>&1 || sudo zypper install -y zypper-aptitude;;
-  esac
-}
-
 function __bash_source_highlight {
-  which lsb_release >/dev/null 2>&1 || sudo aptitude install -y lsb_release
   case "$(lsb_release -is)" in
     Debian|Ubuntu)
         export LESS=' -R ';
@@ -165,8 +156,6 @@ if [ -d "${HOME}"/.bashrc-scripts/installed ] ;then
 fi   
 ##### AUTO-MIGRATION :: end
 
-
-__bash_aptitude_install
 
 # echo "[ Run user defined initialization scripts ]"
 for script in "${HOME}"/bin/bash_*.sh ;do

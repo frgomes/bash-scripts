@@ -1,13 +1,13 @@
 #!/bin/bash
 
 function install_pgadmin4_binaries {
-  sudo aptitude install -y curl ca-certificates gnupg
+  apt+ install curl ca-certificates gnupg
   curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 
   local release=$(lsb_release -c -s)
   echo "deb http://apt.postgresql.org/pub/repos/apt/ ${release}-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
-  sudo aptitude update
-  sudo aptitude install -y pgadmin4
+  apt+ update
+  apt+ install pgadmin4
 }
 
 function install_pgadmin4 {

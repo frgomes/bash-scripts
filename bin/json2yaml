@@ -1,7 +1,7 @@
 #!/bin/bash -eu
 
 function __json2yaml() {
-  which python3 >/dev/null 2>&1 || sudo aptitude install -y python3-minimal
+  which python3 >/dev/null 2>&1 || apt+ install python3-minimal
   pip3 -qq --disable-pip-version-check install PyYAML > /dev/null 2>&1
   python3 -c 'import sys, yaml, json; print(yaml.dump(json.loads(sys.stdin.read()), default_flow_style=False, sort_keys=False))'
 }

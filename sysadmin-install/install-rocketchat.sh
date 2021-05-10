@@ -6,7 +6,7 @@
 
 
 function install_rocketchat_nginx {
-  sudo aptitude install -y fail2ban nginx python3-certbot-nginx
+  apt+ install fail2ban nginx python3-certbot-nginx
 
   ufw allow 80/tcp
   ufw allow 443/tcp
@@ -57,7 +57,7 @@ EOD
 
 
 function install_rocketchat_services {
-  sudo aptitude install -y docker-ce docker-ce-cli docker-compose
+  apt+ install docker-ce docker-ce-cli docker-compose
   docker-compose --version
 
   mkdir -p /opt/rocket.chat/data/{runtime/db,dump}

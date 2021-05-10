@@ -4,7 +4,7 @@
 function install_libvirt_binaries {
   [[ ! -d /srv/lib/libvirt ]] && mkdir -p /srv/lib/libvirt
   [[ ! -d /var/lib/libvirt ]] && ln -s /srv/lib/libvirt /var/lib/libvirt
-  sudo aptitude install -y libvirt-daemon libvirt-daemon-system bridge-utils
+  apt+ install libvirt-daemon libvirt-daemon-system bridge-utils
 }
 
 function install_libvirt_modprobe {
@@ -22,7 +22,7 @@ function install_libvirt_modprobe {
 }
 
 function install_libvirt_clients {
-  sudo aptitude install -y virt-manager libvirt-clients virt-top xmlstarlet uuid-runtime
+  apt+ install virt-manager libvirt-clients virt-top xmlstarlet uuid-runtime
 }
 
 function install_libvirt_usermod {

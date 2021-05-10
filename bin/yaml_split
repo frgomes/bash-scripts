@@ -1,8 +1,8 @@
 #!/bin/bash -eu
 
 function __yaml_split() {
-  which csplit >/dev/null 2>&1 || sudo aptitude install -y coreutils
-  which tail >/dev/null 2>&1 || sudo aptitude install -y coreutils
+  which csplit >/dev/null 2>&1 || apt+ install coreutils
+  which tail >/dev/null 2>&1 || apt+ install coreutils
   for file in "$@"; do
     local dir=$(dirname "${file}")
     local name=$(basename "${file}" .yaml)

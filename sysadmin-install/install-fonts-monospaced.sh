@@ -2,17 +2,7 @@
 
 
 function install_fonts_monospaced_binaries {
-    sudo aptitude install -y \
-         fonts-3270 \
-         fonts-fantasque-sans \
-         fonts-inconsolata \
-         fonts-ricty-diminished \
-         fonts-hack-otf \
-         xfonts-terminus \
-         xfonts-traditional \
-         fonts-firacode \
-         fonts-jura \
-         fonts-noto-mono
+    apt+ install fonts-3270 fonts-fantasque-sans fonts-inconsolata fonts-ricty-diminished fonts-hack-otf xfonts-terminus xfonts-traditional fonts-firacode fonts-jura fonts-noto-mono
 }
 
 function install_fonts_monospaced {

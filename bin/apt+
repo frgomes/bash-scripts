@@ -3,14 +3,9 @@
 function __apt+_debian {
     cat <<EOF
 # program : id : package [ : program-or-path ]*
-wget:wget
-curl:curl
 fd:fd-find:fdfind
-rg:ripgrep
-g++:g++:g++
-gcc:gcc:gcc
+rg:ripgrep:rg
 libgmp-dev:libgmp-dev:/usr/include/gmpxx.h
-cmake:cmake
 libncurses-dev:libncurses-dev:/usr/include/curses.h
 xz-utils:xz-utils:xzgrep
 realpath:coreutils:realpath
@@ -20,14 +15,9 @@ EOF
 function __apt+_opensuse {
     cat <<EOF
 # id : package [ : program-or-path ]*
-wget:wget
-curl:curl
-fd:fd:fd
-rg:ripgrep
+rg:ripgrep:rg
 g++:gcc-c++:g++
-gcc:gcc:gcc
 libgmp-dev:libgmpxx4
-cmake:cmake
 libncurses-dev:ncurses-devel
 xz-utils:xz:xzgrep
 realpath:coreutils:realpath
@@ -35,31 +25,73 @@ EOF
 }
 
 function apt+ {
-    if [[ "$1" == "install" ]] ;then
-        shift
-        local distro="$(lsb_release -si)"
-        case "${distro}" in
-            Debian)   distro=debian;;
-            openSUSE) distro=opensuse;;
-            *) echo "Unsupported distribution ${distro}" ; return 1 ;;
-        esac
-
-        for id in $@ ;do
-            local pkg=$(echo ${id} | sed 's/+/\\+/g')
-            local pkg=$(__apt+_${distro} | grep -E "^${pkg}:" | grep -E -v '(^[ \t]*#)|(^[ \t]*$)' | cut -d: -f2)
-            local obj=$(__apt+_${distro} | grep -E "^${pkg}:" | grep -E -v '(^[ \t]*#)|(^[ \t]*$)' | cut -d: -f3)
-            if [[ ! -z "${pkg}" ]] ;then
-                case "${distro}" in
-                    debian)   [[ -f ${obj} ]] || which ${obj} >/dev/null 2>&1 || dpkg-query -s ${pkg} >/dev/null 2>&1 || sudo apt    install -y ${pkg} ;;
-                    opensuse) [[ -f ${obj} ]] || which ${obj} >/dev/null 2>&1 || zypper se -ix ${pkg} >/dev/null 2>&1 || sudo zypper install -y ${pkg} ;;
-                    *) echo "Unsupported distribution ${distro}" ; return 1;;
-                esac
-            else
-                echo "Unable to find package: ${id}" ; return 1
-            fi
+    local distro="$(lsb_release -si)"
+    case "${distro}" in
+        Debian)   distro=debian;;
+        openSUSE) distro=opensuse;;
+        *) echo "Unsupported distribution ${distro}" ; return 1 ;;
+    esac
+    case "${1}" in
+        update)
             shift
-        done
-    fi
+            case "${distro}" in
+                debian)   sudo apt    update ;;
+                opensuse) sudo zypper update ;;
+                *) echo "Unsupported distribution ${distro}" ; return 1;;
+            esac
+            ;;
+        install)
+            shift
+            for id in $@ ;do
+                local pkg=$(echo ${id} | sed 's/+/\\+/g')
+                local pkg=$(__apt+_${distro} | grep -E "^${pkg}:" | grep -E -v '(^[ \t]*#)|(^[ \t]*$)' | cut -d: -f2)
+                local obj=$(__apt+_${distro} | grep -E "^${pkg}:" | grep -E -v '(^[ \t]*#)|(^[ \t]*$)' | cut -d: -f3)
+                local pkg=${pkg:-${id}}
+                local obj=${obj:-${id}}
+                if [[ ! -z "${pkg}" ]] ;then
+                    case "${distro}" in
+                        debian)   [[ -f ${obj} ]] || which ${obj} >/dev/null 2>&1 || dpkg-query -s ${pkg} >/dev/null 2>&1 || sudo apt    install -y ${pkg} ;;
+                        opensuse) [[ -f ${obj} ]] || which ${obj} >/dev/null 2>&1 || zypper se -ix ${pkg} >/dev/null 2>&1 || sudo zypper install -y ${pkg} ;;
+                        *) echo "Unsupported distribution ${distro}" ; return 1;;
+                    esac
+                else
+                    echo "Unable to find package: ${id}" ; return 1
+                fi
+                shift
+            done
+            ;;
+        remove)
+            shift
+            for id in $@ ;do
+                local pkg=$(echo ${id} | sed 's/+/\\+/g')
+                local pkg=$(__apt+_${distro} | grep -E "^${pkg}:" | grep -E -v '(^[ \t]*#)|(^[ \t]*$)' | cut -d: -f2)
+                local obj=$(__apt+_${distro} | grep -E "^${pkg}:" | grep -E -v '(^[ \t]*#)|(^[ \t]*$)' | cut -d: -f3)
+                local pkg=${pkg:-${id}}
+                local obj=${obj:-${id}}
+                if [[ ! -z "${pkg}" ]] ;then
+                    case "${distro}" in
+                        debian)   sudo apt    autoremove --purge -y ${pkg} ;;
+                        opensuse) sudo zypper remove --clean-deps -y ${pkg} ;;
+                        *) echo "Unsupported distribution ${distro}" ; return 1;;
+                    esac
+                else
+                    echo "Unable to find package: ${id}" ; return 1
+                fi
+                shift
+            done
+            ;;
+        dist-upgrade)
+            shift
+            case "${distro}" in
+                debian)   sudo apt    dist-upgrade ;;
+                opensuse) sudo zypper dist-upgrade ;;
+                *) echo "Unsupported distribution ${distro}" ; return 1;;
+            esac
+            ;;
+        *)
+            echo "Unsupported command ${1}" ; return 1;;
+            ;;
+    esac
 }
 
 apt+ $@

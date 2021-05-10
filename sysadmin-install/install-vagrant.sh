@@ -2,7 +2,7 @@
 
 
 function install_vagrant_binaries {
-  sudo aptitude install -y vagrant vagrant-libvirt vagrant-digitalocean
+  apt+ install vagrant vagrant-libvirt vagrant-digitalocean
 }
 
 function install_vagrant {
