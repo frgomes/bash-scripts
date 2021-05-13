@@ -90,7 +90,6 @@ function apt+ {
             ;;
         *)
             echo "Unsupported command ${1}" ; return 1;;
-            ;;
     esac
 }
 
