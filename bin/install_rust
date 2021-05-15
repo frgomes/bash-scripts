@@ -107,9 +107,16 @@ EOD
 
 function install_rust_ios {
   local toolchain=${1:-stable}
-  source "${HOME}"/.cargo/env && hash -r && rustup update ${toolchain} \
-    && rustup target add --toolchain ${toolchain} aarch64-apple-ios x86_64-apple-ios armv7-apple-ios i386-apple-ios \
-      && __install_rust_ios_addons | grep -v -E '^#' | while read line ;do cargo install --force ${line} ;done
+  local mode=${2:-current}
+  if [[ "${mode}" == "legacy" ]] ;then
+    source "${HOME}"/.cargo/env && hash -r && rustup update ${toolchain} \
+      && rustup target add --toolchain ${toolchain} aarch64-apple-ios x86_64-apple-ios armv7-apple-ios i386-apple-ios \
+        && __install_rust_ios_addons | grep -v -E '^#' | while read line ;do cargo install --force ${line} ;done
+  else
+    source "${HOME}"/.cargo/env && hash -r && rustup update ${toolchain} \
+      && rustup target add --toolchain ${toolchain} aarch64-apple-ios x86_64-apple-ios \
+        && __install_rust_ios_addons | grep -v -E '^#' | while read line ;do cargo install --force ${line} ;done
+  fi
 }
 
 function install_rust_lsp_wasm {
@@ -153,13 +160,21 @@ function __install_rust {
   local toolchain="${2:-stable}"
   local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/400-rust.sh
 
+
+
   case "${option}" in
     "minimal")  install_rust_binaries   ${toolchain} minimal    ; __install_rust_activator "${config}";;
     "complete") install_rust_binaries   ${toolchain} complete   ; __install_rust_activator "${config}";;
     "addons")	install_rust_addons 	${toolchain}            ; __install_rust_activator "${config}";;
     "web")	install_rust_web	${toolchain}            ; __install_rust_activator "${config}";  ${dir}/install_wabt;;
     "android")	install_rust_android	${toolchain}            ; __install_rust_activator "${config}";;
-    "ios")	install_rust_ios	${toolchain}            ; __install_rust_activator "${config}";;
+    "ios")	version=$(rustup ${toolchain} --version 2>&1 | tail -1 | sed -E 's/^.*`rustc ([0-9.]+) .*$/\1/')
+                if [[ "1.52.1" > "1.41.0" ]] ;then
+                    install_rust_ios	${toolchain}
+                else
+                    install_rust_ios    ${toolchain} legacy
+                fi
+                __install_rust_activator "${config}" ;;
     "lsp")	install_rust_lsp	${toolchain}            ; __install_rust_activator "${config}";;
     "texlab")	install_rust_lsp_texlab	${toolchain}            ; __install_rust_activator "${config}";;
     "all")
@@ -184,7 +199,7 @@ function __install_rust {
        echo "  lsp             installs Rust support for Language Server Protocol"
        echo "  texlab          installs Rust support for LaTeX LSP"
        echo "  experimental    installs experimental tools and packages"
-       echo "  all             installs all tools and packages, except experimental ones"
+       echo "  all             installs all tools and packages, except experimental packages"
        ;;
   esac
 }
