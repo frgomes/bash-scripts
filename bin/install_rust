@@ -153,10 +153,9 @@ function __install_rust {
   local toolchain="${2:-stable}"
   local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/400-rust.sh
 
-  local profile="complete"
-
   case "${option}" in
-    "install")  install_rust_binaries   ${toolchain} ${profile} ; __install_rust_activator "${config}";;
+    "minimal")  install_rust_binaries   ${toolchain} minimal    ; __install_rust_activator "${config}";;
+    "complete") install_rust_binaries   ${toolchain} complete   ; __install_rust_activator "${config}";;
     "addons")	install_rust_addons 	${toolchain}            ; __install_rust_activator "${config}";;
     "web")	install_rust_web	${toolchain}            ; __install_rust_activator "${config}";  ${dir}/install_wabt;;
     "android")	install_rust_android	${toolchain}            ; __install_rust_activator "${config}";;
@@ -164,7 +163,7 @@ function __install_rust {
     "lsp")	install_rust_lsp	${toolchain}            ; __install_rust_activator "${config}";;
     "texlab")	install_rust_lsp_texlab	${toolchain}            ; __install_rust_activator "${config}";;
     "all")
-        install_rust_binaries ${toolchain} ${profile} 
+        install_rust_binaries ${toolchain} complete
         install_rust_addons   ${toolchain} 
         install_rust_web      ${toolchain} 
         install_rust_android  ${toolchain} 
@@ -176,7 +175,8 @@ function __install_rust {
        echo "Installs Rust compiler, Cargo package manager and additional tools and packages"
        echo ""
        echo "Commands:"
-       echo "  install         installs Rust, Cargo in a profile of a complete set of tools"
+       echo "  minimal         installs Rust and a minimal set of tools"
+       echo "  complete        installs Rust and a complete set of tools"
        echo "  addons          installs an oppinionated set of useful Cargo plugins"
        echo "  web             installs an oppinionated set of tools for web development"
        echo "  android         installs an oppinionated set of tools for Android development"
