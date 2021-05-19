@@ -32,12 +32,12 @@ function __install_scala() {
   local version=${1:-"${version}"}
   local major=$(echo ${version} | cut -d. -f1-2)
 
-  if [[ $version =~ ^(0\.).* ]] ;then
-    local file=dotty-${version}.tar.gz
+  if [[ $version =~ ^(3\.).* ]] ;then
+    local file=scala3-${version}.tar.gz
     local url=https://github.com/lampepfl/dotty/releases/download/${version}/${file}
-    local folder=dotty-${version}
-    local symlink=dotty-${major}
-    "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlink}" "${config}"
+    local folder=scala-${version}
+    local symlink=scala-${major}
+    "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlink}" "--strip-components=1"
   else
     local file=scala-${version}.tgz
     local url=https://downloads.lightbend.com/scala/${version}/${file}
@@ -45,8 +45,9 @@ function __install_scala() {
     local symlink=scala-${major}
     
     "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlink}" "--strip-components=1"
-    "${dir}"/bash_install_tar "https://scala-lang.org/files/archive/scala-docs-${version}.txz" "scala-docs-${version}.txz" "scala-${version}" "scala-${major}" "--strip-components=1"
 
+    #-- This is all about installing documentation and sources, which is now deprecated. Kept here for historical reasons.
+    # "${dir}"/bash_install_tar "https://scala-lang.org/files/archive/scala-docs-${version}.txz" "scala-docs-${version}.txz" "scala-${version}" "scala-${major}" "--strip-components=1"
     # local tools="${TOOLS_HOME:=$HOME/tools}"
     # "${dir}"/httrack_fetch "https://www.scala-lang.org/files/archive/spec/${major}" "${tools}/${folder}/scala-${version}/spec"
     # "${dir}"/httrack_fetch "https://scala-lang.org/files/archive/api/${version}"    "${tools}/${folder}/scala-${version}/api"
