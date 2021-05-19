@@ -27,7 +27,7 @@ function __install_sbt() {
   which curl >/dev/null 2>&1 || apt+ install curl
 
   local url=https://github.com/sbt/sbt/releases/latest
-  local default="1.5.0"
+  local default="1.5.2"
   local current="${SBT_VERSION:-${default}}"
   local latest="$(curl -I ${url} 2>/dev/null | fgrep location: | tr -d [:cntrl:] | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')"
   local version="${1:-${latest}}"        # user can force a version, passing it on the first parameter
