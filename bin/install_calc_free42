@@ -42,11 +42,15 @@ function install_free42_binaries {
   cat <<EOF > ~/.local/share/applications/${name}.desktop
 [Desktop Entry]
 Name=${name}
-Comment=
+Comment=Free42 Calaulator
+Encoding=UTF-8
+Version=1.0
 Exec=${tools}/${folder}/${executable}
 Icon=${tools}/${folder}/${icon}
 Terminal=false
 Type=Application
+Category=Utilities
+StartupNotify=true
 EOF
 }
 
