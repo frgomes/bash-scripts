@@ -1,29 +1,27 @@
 #!/bin/bash -eu
 
-function __backup() {
-  which find >/dev/null 2>&1 || apt+ install findutils
-  which grep >/dev/null 2>&1 || apt+ install grep
-  which tar  >/dev/null 2>&1 || apt+ install tar
+function backup() {
+  apt+ install fd
+  apt+ install grep
+  apt+ install tar
   
-  now=`date +%Y%m%d_%H%M%S`
-
-  cwd="$1"
-  cwd=${cwd:=$(pwd)}
+  local now=$(date +%Y%m%d_%H%M%S)
+  local cwd="${1:-$(pwd)}"
 
   if [ -d "$cwd" ] ;then
-      dir="$( readlink -f "$cwd" )"
-      dst=${HOME}/backup/archives"${dir}"
-      name="$( basename "$dir" )"
+      local dir="$( readlink -f "$cwd" )"
+      local dst=${HOME}/backup/archives"${dir}"
+      local name="$( basename "$dir" )"
       mkdir -p ${dst} > /dev/null 2>&1
       # echo "$dir" ...
-      archive=${dst}/${now}_${name}.tar.bz2
+      local archive=${dst}/${now}_${name}.tar.bz2
       echo "${archive}"
 
       find "${dir}" -type f | fgrep -v "${dir}"'./*.iml' | fgrep -v "${dir}"'./.idea/' | fgrep -v "${dir}"'./.hg/' | fgrep -v '/.git/' | fgrep -v '/.lib/' | fgrep -v '/node_modules/' | fgrep -v '/target/' | \
-          tar cvpJf "${archive}" -T - > /dev/null
+          tar cvpJf "${archive}" -T - > /dev/null 2>&1
 
       # copy to Dropbox, if available
-      replica=${HOME}/Dropbox/Private/backup/"${dst}"
+      local replica=${HOME}/Dropbox/Private/backup/"${dst}"
       mkdir -p "${replica}" > /dev/null 2>&1
       if [ $? -eq 0 ] ;then
           cp ${archive} "${replica}"
@@ -31,4 +29,4 @@ function __backup() {
   fi
 }
 
-__backup $*
+backup $*
