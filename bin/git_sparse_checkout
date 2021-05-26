@@ -1,36 +1,56 @@
-#!/bin/bash
+#!/bin/bash -eu
+
+# see also: git_origin and git_clone
 
 function git_sparse_checkout {
+    local self=$(readlink -f "${BASH_SOURCE[0]}")
+    local app=$(basename $self)
+    local usage="USAGE: ${app} repository-URL [tag] [project-directory] [--] [list-of-paths]"
+
     # git repository, e.g.: http://github.com/frgomes/bash-scripts
-    local url=$1
-    # directory where the repository will be downloaded, e.g.: ./build/sources
-    local dir=$2
-    # repository name, in general taken from the url, e.g.: bash-scripts
-    local prj=$3
-    # tag, e.g.: master
-    local tag=$4
-    [[ ( -z "$url" ) || ( -z "$dir" ) || ( -z "$prj" ) || ( -z "$tag" ) ]] && \
-        echo "git_sparse_checkout: invalid arguments" && \
-        return 1
-    shift; shift; shift; shift
+    [[ $# != 0 ]] || (echo "${usage}" 1>&2 ; return 1)
+    local arg=${1}
+    [[ "${arg}" != "--" ]] || (echo "${usage}" 1>&2 ; return 1)
+    local url="${arg}"
+    [[ $# == 0 ]] || shift
+
+    local prj=$(echo "$url" | sed 's:/:\n:g' | tail -1)
+
+    if [[ "${arg}" != "--" ]] ;then arg="${1:-.}" ;fi
+    if [[ "${arg}" == "--" || "${arg}" == "." ]] ;then
+      local dir=$(readlink -f "./${prj}")
+    else
+      local dir=$(readlink -f "${arg}")
+      [[ $# == 0 ]] || shift
+    fi
+
+    # default is master for historical reasons
+    if [[ "${arg}" != "--" ]] ;then arg="${1:-master}" ;fi
+    if [[ "${arg}" == "--" ]] ;then
+      local tag=master
+    else
+      local tag="${arg}"
+      [[ $# == 0 ]] || shift
+    fi
+
+    if [[ "${arg}" == "--" ]] ;then [[ $# == 0 ]] || shift; fi
+    if [[ "${1:-}" == "--" ]] ;then [[ $# == 0 ]] || shift; fi
 
     # Note: any remaining arguments after these above are considered as a
     # list of files or directories to be downloaded.
-    
-    mkdir -p ${dir}
-    if [ ! -d ${dir}/${prj} ] ;then
-        mkdir -p ${dir}/${prj}
-        pushd ${dir}/${prj}
-        git init
-        git config core.sparseCheckout true
-        for path in $* ;do
-            echo "${path}" >> .git/info/sparse-checkout
-        done
-        git remote add origin ${url}
-        git fetch --depth=1 origin ${tag}
-        git checkout ${tag}
-        popd
-    fi
+
+    local sparse=true
+    local opts='--depth=1'
+
+    mkdir -p "${dir}"
+    git -C "${dir}" init
+    git -C "${dir}" config core.sparseCheckout ${sparse}
+    for path in $* ;do
+        echo "${path}" >> ${dir}/.git/info/sparse-checkout
+    done
+    git -C "${dir}" remote add origin ${url}
+    git -C "${dir}" fetch ${opts} origin ${tag}
+    git -C "${dir}" checkout ${tag}
 }
 
 git_sparse_checkout $@

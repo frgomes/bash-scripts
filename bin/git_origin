@@ -1,0 +1,14 @@
+#!/bin/bash -eu
+
+# see also: git_clone and git_sparse_checkout
+
+function list_git {
+  find . -type d -name .git | sort | while read d ;do
+    local dir=$(dirname "${d}")
+    local url=$(git -C "${dir}" remote get-url origin)
+    local branch=$(git -C "${dir}" branch --show-current)
+    echo ${url} ${dir} ${branch}
+  done
+}
+
+list_git
