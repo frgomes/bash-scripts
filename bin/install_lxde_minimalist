@@ -1,0 +1,12 @@
+#!/bin/bash
+
+## This script installs a minimalist flavor of LXDE, containing only a terminal.
+function install_lxde_minimalist {
+  sudo apt+ install network-manager
+  sudo apt+ install xorg openbox xdm
+  sudo apt+ install xbacklight pcmanfm lxappearance lxpanel gmrun gnome-terminal
+}
+
+##TODO: echo "lxpanel &" | tee > /dev/null ~/.config/openbox/autostart
+
+install_lxde_minimalist
