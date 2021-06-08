@@ -13,8 +13,9 @@ function __install_scala_activator() {
 
 export SCALA_VERSION=${version}
 export SCALA_HOME=\${TOOLS_HOME:=\$HOME/tools}/scala-\${SCALA_VERSION}
+export COURSIER_HOME=\${HOME}/.local/share/coursier
 
-export PATH=\${SCALA_HOME}/bin:\${PATH}
+export PATH=\${SCALA_HOME}/bin:\${COURSIER_HOME}/bin:\${PATH}
 EOD
   chmod ugo+x "${config}"
   echo "${config}"
