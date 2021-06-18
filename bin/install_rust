@@ -59,6 +59,8 @@ cargo-deny
 cargo-make
 cargo-xtask
 cargo-about
+mdbook
+mdbook-linkcheck
 EOD
 }
 
