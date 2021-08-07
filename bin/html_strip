@@ -1,0 +1,7 @@
+#!/bin/bash -eu
+
+function __html_strip() {
+  sed 's/<[^>]*>//g'
+}
+
+__html_strip $*
