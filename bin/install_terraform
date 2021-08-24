@@ -25,10 +25,10 @@ function __install_terraform_binaries() {
     local self=$(readlink -f "${BASH_SOURCE[0]}")
     local dir=$(dirname $self)
 
-    local current="${TERRAFORM_VERSION}"
-    local default="0.14.2"
+    local default="1.0.5"
+    local current="${TERRAFORM_VERSION:-}"
     ### local latest="$(curl -I ${url} 2>/dev/null | fgrep location: | tr -d [:cntrl:] | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')"
-    local version="${1:-${latest}}"        # user can force a version, passing it on the first parameter
+    local version="${1:-}"                 # user can force a version, passing it on the first parameter
     local version="${version:-${current}}" # falls back to current installed version, if any
     local version="${version:-${default}}" # falls back to default version
 
@@ -40,8 +40,7 @@ function __install_terraform_binaries() {
         i386)   hwarch=386 ;;
         *) echo "ERROR: Could not install Terraform on platform ${osarch}-${hwarch}" ; return 1 ;;
     esac
-    local arch=${1:-"$TERRAFORM_ARCH"}
-    local arch=${arch:-"linux_amd64"}
+    local arch=${1:-"linux_amd64"}
 
     local file=terraform_${version}_${arch}.zip
     local url=https://releases.hashicorp.com/terraform/${version}/${file}
@@ -73,7 +72,7 @@ function __install_terraform_libvirt() {
 
 
 function __install_terraform() {
-    __install_terraforma_binaries || __install_terraform_libvirt
+    __install_terraform_binaries || __install_terraform_libvirt
 }
 
 
