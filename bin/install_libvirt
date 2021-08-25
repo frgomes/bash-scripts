@@ -1,0 +1,83 @@
+#!/bin/bash
+
+function install_libvirt_binaries {
+  apt+ install qemu-kvm libvirt-daemon libvirt-daemon-system bridge-utils
+}
+
+function install_libvirt_modprobe {
+  case $( cat /proc/cpuinfo | fgrep vendor_id | head -1 | sed -E 's/[ \t]+/ /g' | cut -d' ' -f3 ) in
+    AuthenticAMD) local cpu=amd   ;;
+    GenuineIntel) local cpu=intel ;;
+    *) local cpu=unknown ;;
+  esac
+
+  # shake the tree
+  sudo rmmod kvm_${cpu}
+  sudo rmmod kvm
+  sudo modprobe kvm
+  sudo modprobe kvm_${cpu}
+}
+
+function install_libvirt_clients {
+  apt+ install libvirt-clients virt-manager virt-top xmlstarlet uuid-runtime
+}
+
+function install_libvirt_usermod {
+  sudo usermod -a -G libvirt      ${SUDO_USER:-${USER}}
+  sudo usermod -a -G libvirt-qemu ${SUDO_USER:-${USER}}
+}
+
+function __install_libvirt_pool_xml {
+local name=${1}
+cat <<EOD | sudo tee /srv/lib/libvirt/define-pool_${name}.xml
+<pool type='dir'>
+  <name>${name}</name>
+  <target>
+    <path>/srv/lib/libvirt/${name}</path>
+  </target>
+</pool>
+EOD
+}
+
+function __install_libvirt_pool {
+  local name=${1}
+  sudo mkdir -p /srv/lib/libvirt/${name}
+  sudo chown -R ${SUDO_USER:-${USER}}:libvirt /srv/lib/libvirt/${name}
+  __install_libvirt_pool_xml ${name}
+  sudo virsh pool-define /srv/lib/libvirt/define-pool_${name}.xml
+  sudo virsh pool-start ${name}
+  sudo virsh pool-autostart ${name}
+}
+
+function install_libvirt_pools {
+  sudo virsh pool-destroy default
+  __install_libvirt_pool images
+  __install_libvirt_pool volumes
+}
+
+# Disable SELinux
+# see:https://github.com/dmacvicar/terraform-provider-libvirt/issues/546
+function install_libvirt_disable_selinux {
+  sudo cp -p /etc/libvirt/qemu.conf /etc/libvirt/qemu.conf.ORIGINAL
+  sudo sed 's/#security_driver = "selinux"/security_driver = "none"/' -i /etc/libvirt/qemu.conf
+  sudo systemctl restart libvirtd
+}
+
+function install_libvirt {
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1 | while read cmd ;do
+    $cmd $*
+  done
+}
+
+
+if [ $_ != $0 ] ;then
+  # echo "Script is being sourced: list all functions"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1
+else
+  # echo "Script is a subshell: execute last function"
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  cmd=$(grep -E "^function " $self | cut -d' ' -f2 | tail -1)
+  $cmd $*
+fi
