@@ -29,6 +29,7 @@ function apt+ {
     local distro="$(lsb_release -si)"
     case "${distro}" in
         Debian)   distro=debian;;
+        Ubuntu)   distro=ubuntu;;
         openSUSE) distro=opensuse;;
         *) echo "Unsupported distribution ${distro}" ; return 1 ;;
     esac
@@ -37,6 +38,7 @@ function apt+ {
             shift
             case "${distro}" in
                 debian)   sudo apt    update ;;
+                ubuntu)   sudo apt-get    update ;;
                 opensuse) sudo zypper update ;;
                 *) echo "Unsupported distribution ${distro}" ; return 1;;
             esac
@@ -52,6 +54,7 @@ function apt+ {
                 if [[ ! -z "${pkg}" ]] ;then
                     case "${distro}" in
                         debian)   [[ -f ${obj} ]] || which ${obj} >/dev/null 2>&1 || dpkg-query -s ${pkg} >/dev/null 2>&1 || sudo apt    install -y ${pkg} ;;
+                        ubuntu)   [[ -f ${obj} ]] || which ${obj} >/dev/null 2>&1 || dpkg-query -s ${pkg} >/dev/null 2>&1 || sudo apt-get install -y ${pkg} ;;
                         opensuse) [[ -f ${obj} ]] || which ${obj} >/dev/null 2>&1 || zypper se -ix ${pkg} >/dev/null 2>&1 || sudo zypper install -y ${pkg} ;;
                         *) echo "Unsupported distribution ${distro}" ; return 1;;
                     esac
@@ -72,6 +75,7 @@ function apt+ {
                 if [[ ! -z "${pkg}" ]] ;then
                     case "${distro}" in
                         debian)   sudo apt    autoremove --purge -y ${pkg} ;;
+                        ubuntu)   sudo apt-get    autoremove --purge -y ${pkg} ;;
                         opensuse) sudo zypper remove --clean-deps -y ${pkg} ;;
                         *) echo "Unsupported distribution ${distro}" ; return 1;;
                     esac
@@ -85,6 +89,7 @@ function apt+ {
             shift
             case "${distro}" in
                 debian)   sudo apt    dist-upgrade ;;
+                ubuntu)   sudo apt-get -y dist-upgrade ;;
                 opensuse) sudo zypper dist-upgrade ;;
                 *) echo "Unsupported distribution ${distro}" ; return 1;;
             esac
