@@ -23,8 +23,13 @@ function install_libvirt_clients {
 }
 
 function install_libvirt_usermod {
+  case "${distro}" in
+    Debian) qemu=libvirt-qemu;;
+    *)      qemu=qemu ;;
+  esac
+
   sudo usermod -a -G libvirt      ${SUDO_USER:-${USER}}
-  sudo usermod -a -G libvirt-qemu ${SUDO_USER:-${USER}}
+  sudo usermod -a -G ${qemu}      ${SUDO_USER:-${USER}}
 }
 
 function __install_libvirt_pool_xml {
