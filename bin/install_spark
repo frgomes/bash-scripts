@@ -3,10 +3,10 @@
 
 function install_spark_binaries {
   local spark_version=${1:-"$SPARK_VERSION"}
-  local spark_version=${spark_version:-"2.4.3"}
+  local spark_version=${spark_version:-"3.1.2"}
 
   local hadoop_version=${1:-"$HADOOP_VERSION"}
-  local hadoop_version=${hadoop_version:-"2.7"}
+  local hadoop_version=${hadoop_version:-"3.2"}
 
   [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
   pushd "${DOWNLOADS}" > /dev/null
@@ -25,7 +25,8 @@ function install_spark_binaries {
   fi
 
   [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed
-  cat << EOD > ~/.bashrc-scripts/installed/370-spark.sh
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/370-spark.sh
+  cat << EOD > "${config}"
 #!/bin/bash
 
 export SPARK_VERSION=${spark_version}
@@ -34,6 +35,8 @@ export SPARK_HOME=\${TOOLS_HOME:=\$HOME/tools}/spark-\${SPARK_VERSION}-bin-hadoo
 
 export PATH=\${SPARK_HOME}/bin:\${PATH}
 EOD
+  chmod 755 "${config}"
+  echo "${config}"
 }
 
 function install_spark {
