@@ -35,7 +35,8 @@ function __bash_install_tar() {
   fi
 
   [[ ! -d "${tools}/${folder}" ]] && mkdir -p "${tools}/${folder}"
-  tar -C "${tools}/${folder}" "$@" -xpf "${archive}"
+  which xz >/dev/null 2>&1 || apt+ install xz
+  tar -C "${tools}/${folder}" "$@" -xpvf "${archive}"
 
   [[ ! -z "${symlink}" && "${symlink}" != "." ]] && [[ -L "${tools}/${symlink}" ]] && [[ -e "${tools}/${symlink}" ]] && rm "${tools}/${symlink}"
   [[ ! -z "${symlink}" && "${symlink}" != "." ]] && ln -s "${folder}" "${tools}/${symlink}"

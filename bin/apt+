@@ -2,12 +2,13 @@
 
 function __apt+_debian {
     cat <<EOF
-# program : id : package [ : program-or-path ]*
+# id : package [ : program-or-path ]*
+wget:wget:wget
 fd:fd-find:fdfind
 rg:ripgrep:rg
 libgmp-dev:libgmp-dev:/usr/include/gmpxx.h
 libncurses-dev:libncurses-dev:/usr/include/curses.h
-xz-utils:xz-utils:xzgrep
+xz:xz-utils:xzgrep
 realpath:coreutils:realpath
 EOF
 }
@@ -19,7 +20,7 @@ rg:ripgrep:rg
 g++:gcc-c++:g++
 libgmp-dev:libgmpxx4
 libncurses-dev:ncurses-devel
-xz-utils:xz:xzgrep
+xz:xz:xzgrep
 realpath:coreutils:realpath
 EOF
 }

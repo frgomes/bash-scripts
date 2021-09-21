@@ -54,6 +54,7 @@ function install_node_binaries {
 
   if [ ! -d "${tools}/${folder}" ] ;then
     which tar >/dev/null 2>&1 || apt+ install tar
+    which xz  >/dev/null 2>&1 || apt+ install xz
     tar -C "${tools}" -xpf "${archive}"
   fi
   if [ ! -z "${symlink}" ] ;then
@@ -91,6 +92,8 @@ function install_node_react {
 # }
 
 function install_node_language_servers {
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/341-node.sh
+  source ${config}
   npm install -g bash-language-server
   npm install -g vscode-css-languageserver-bin
   npm install -g dockerfile-language-server-nodejs
