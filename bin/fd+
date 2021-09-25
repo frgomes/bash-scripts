@@ -1,6 +1,7 @@
 #!/bin/bash -eu
 
 function fd+ {
+    apt+ install lsb-release
     local distro="$(lsb_release -si)"
     case "${distro}" in
         Debian)   cmd=fdfind;;

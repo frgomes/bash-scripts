@@ -2,6 +2,25 @@ This is a bunch of shell scripts containing useful functions aiming to deliver i
 
 > WARNING: This toolbox is under heavy development. Expect that things change.
 
+See extra documentation: [docs](docs)
+
+## Requirements
+
+* Debian, Ubuntu or openSUSE
+* [other distributions?](docs/distros.md) ([contribute](docs/contribute.md)) 
+* Python version 3.4+ ([why?](docs/python-venv.md))
+
+## For the impatient
+
+```bash
+#!/bin/bash
+mkdir -p "$HOME/workspace"
+git -C "$HOME/workspace" clone http://github.com/frgomes/bash-scripts
+echo 'source $HOME/workspace/bash-scripts/bashrc' >> $HOME/.bashrc
+```
+
+Open a new terminal session and enjoy!
+
 ## Design Concept
 
 Starting from a brand new laptop with only the base operating system installed, I would like to be able to quickly have my environment setup. Then I open a new terminal window and all remaining bits are automagically configured for me. I also would like to install complex software packages easily, employing just a single command. Then I'm ready to go. The entire thing should not take more than a few minutes.
@@ -16,50 +35,19 @@ Starting from a brand new laptop with only the base operating system installed, 
 * All [commands always available](docs/design.md), no matter if you are using functions, sub-shells or whatever;
 * Flexibility of a separate history per session but also a [global history for all sessions](docs/history.md).
 
-## Requirements
-
-* Debian or openSUSE. ([contribute](docs/contribute.md))
-* Python version 3.4+ ([why?](docs/python-venv.md))
-
-## For the impatient
-
-This is how I install a powerful set of functions and commands into the shell:
-
-```bash
-$ mkdir -p "$HOME/workspace"
-$ git -C "$HOME/workspace" clone http://github.com/frgomes/bash-scripts
-```
-
-Then add a call to ``$HOME/workspace/bash-scripts/bashrc`` into your ``$HOME/.bashrc``:
-
-```bash
-$ echo 'source $HOME/workspace/bash-scripts/bashrc' >> $HOME/.bashrc
-```
-
-Open a new terminal session and enjoy!
-
-### Other uses
+### Other use cases
 
 * Opinionated [post installation on system's space](docs/postinstall-sysadmin.md);
 * Opinionated [post installation on user's space](docs/postinstall-user.md);
 
-### Migration Notes
-
-> The migration procedure may be entirely removed if I do not hear from users.
-
-This release performs migration steps if necessary, in a best effort basis, trying to make life easier for users of the previous [legacy branch](https://github.com/frgomes/bash-scripts/tree/legacy). This is why you may see messages such the ones below when you start a new terminal session:
-
-```bash
-cp -vp "${HOME}"/.bashrc.scripts.before "${HOME}"/.local/share/bash-scripts/postactivate/head.d/000-default.sh
-cp -vp "${HOME}"/.bashrc.scripts.after  "${HOME}"/.local/share/bash-scripts/postactivate/tail.d/999-default.sh
-```
-
 ## Additional tricks
 
-You may find useful to run something _before_ and/or something _after_ you load [these] scripts
-[provided by this package] into your terminal session.
+### Source your own custom scripts
 
-This way, you can define defaults for environment variables before scripts run.
-You can also adjust keyboard configurations and other preferences after all scripts run.
+The initializaton runs scripts matching the pattern: ``$HOME/bin/bash_*.sh``
+
+### Other custom scripts
+
+> This is experimental and requires code review.
 
 More details [here](docs/extensions.md).

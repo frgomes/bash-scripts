@@ -62,6 +62,7 @@ function __install_terraform_libvirt() {
     local swarch=linux
     local arch=${swarch}_${hwarch}
     
+    apt+ install lsb-release
     ##FIXME:: This is a temporary hack, until this plugin reaches Terraform Registry
     case $(lsb_release -sd | sed 's/ /_/g' | sed 's/"//g') in
         openSUSE_Tumbleweed)

@@ -3,6 +3,8 @@
 function __apt+_debian {
     cat <<EOF
 # id : package [ : program-or-path ]*
+lsb-release:lsb-release:lsb_release
+python-pip::python3-pip
 wget:wget:wget
 fd:fd-find:fdfind
 rg:ripgrep:rg
@@ -13,34 +15,79 @@ realpath:coreutils:realpath
 EOF
 }
 
+function __apt+_ubuntu {
+    cat <<EOF
+# id : package [ : program-or-path ]*
+lsb-release:lsb-release:lsb_release
+python-pip::python3-pip
+fd:fd-find:fdfind
+rg:ripgrep:rg
+g++:gcc-c++:g++
+libgmp-dev:libgmp-dev:/usr/include/gmpxx.h
+libncurses-dev:libncurses-dev:/usr/include/curses.h
+xz:xz-utils:xzgrep
+realpath:coreutils:realpath
+EOF
+}
+
 function __apt+_opensuse {
     cat <<EOF
 # id : package [ : program-or-path ]*
+lsb-release:lsb-release:lsb_release
+python-pip::python-pip
+fd:fd:fd
 rg:ripgrep:rg
 g++:gcc-c++:g++
-libgmp-dev:libgmpxx4
-libncurses-dev:ncurses-devel
+libgmp-dev:libgmpxx4:/usr/include/gmpxx.h
+libncurses-dev:ncurses-devel:/usr/include/curses.h
 xz:xz:xzgrep
 realpath:coreutils:realpath
 EOF
 }
 
+function __apt+_bootstrap {
+    if [[ ! -z $(which apt) ]] ;then
+        sudo apt install -y lsb-release
+        echo "apt"
+    elif [[ ! -z $(which zypper) ]] ;then
+        sudo zypper install -y lsb-release
+        echo "zypper"
+    elif [[ ! -z $(which yum) ]] ;then
+        sudo yum install lsb-release
+        echo "yum"
+    elif [[ ! -z $(which dnf) ]] ;then
+        sudo dnf install lsb-release
+        echo "dnf"
+    elif [[ ! -z $(which opkg) ]] ;then
+        sudo opkg install lsb-release
+        echo "opkg"
+    else
+        echo "ERROR: could not install lsb-release. See: http://github.com/frgomes/bash-scripts/docs/distros.md"
+        echo "fail" # just an arbitrary output which is doomed to fail like any other
+        return 1
+    fi
+}    
+
+
 function apt+ {
+    local manager=$(which lsb_release || __apt+_bootstrap || return 1)
     local distro="$(lsb_release -si)"
     case "${distro}" in
         Debian)   distro=debian;;
         Ubuntu)   distro=ubuntu;;
         openSUSE) distro=opensuse;;
-        *) echo "Unsupported distribution ${distro}" ; return 1 ;;
+        *)        distro=${manager};;
     esac
     case "${1}" in
         update)
             shift
             case "${distro}" in
-                debian)   sudo apt    update ;;
-                ubuntu)   sudo apt-get    update ;;
-                opensuse) sudo zypper update ;;
-                *) echo "Unsupported distribution ${distro}" ; return 1;;
+                debian|ubuntu) sudo apt    update ;;
+                opensuse)      sudo zypper refresh ;;
+                yum)           sudo yum    makecache ;; # FIXME :: add support for yum based distributions here
+                dnf)           sudo dnf    makecache ;; # FIXME :: add support for dnf based distributions here
+                opkg)          sudo opkg   makecache ;; # FIXME :: add support for opkg based distributiions here
+                *)             echo "Unsupported distribution ${distro}" ; return 1;;
             esac
             ;;
         install)
@@ -53,10 +100,12 @@ function apt+ {
                 local obj=${obj:-${id}}
                 if [[ ! -z "${pkg}" ]] ;then
                     case "${distro}" in
-                        debian)   [[ -f ${obj} ]] || which ${obj} >/dev/null 2>&1 || dpkg-query -s ${pkg} >/dev/null 2>&1 || sudo apt    install -y ${pkg} ;;
-                        ubuntu)   [[ -f ${obj} ]] || which ${obj} >/dev/null 2>&1 || dpkg-query -s ${pkg} >/dev/null 2>&1 || sudo apt-get install -y ${pkg} ;;
-                        opensuse) [[ -f ${obj} ]] || which ${obj} >/dev/null 2>&1 || zypper se -ix ${pkg} >/dev/null 2>&1 || sudo zypper install -y ${pkg} ;;
-                        *) echo "Unsupported distribution ${distro}" ; return 1;;
+                        debian|ubuntu) [[ -f ${obj} ]] || which ${obj} >/dev/null 2>&1 || dpkg-query -s ${pkg} >/dev/null 2>&1 || sudo apt    install -y ${pkg} ;;
+                        opensuse)      [[ -f ${obj} ]] || which ${obj} >/dev/null 2>&1 || zypper se -ix ${pkg} >/dev/null 2>&1 || sudo zypper install -y ${pkg} ;;
+                        yum)           [[ -f ${obj} ]] || which ${obj} >/dev/null 2>&1 || yum  search ${pkg} >/dev/null 2>&1   || sudo yum    install ${pkg} ;; ##FIXME: needs tests
+                        dnf)           [[ -f ${obj} ]] || which ${obj} >/dev/null 2>&1 || dnf  search ${pkg} >/dev/null 2>&1   || sudo dnf    install ${pkg} ;; ##FIXME: needs tests
+                        opkg)          [[ -f ${obj} ]] || which ${obj} >/dev/null 2>&1 || opkg search ${pkg} >/dev/null 2>&1   || sudo opkg   install ${pkg} ;; ##FIXME: needs tests
+                        *)             echo "Unsupported distribution ${distro}" ; return 1;;
                     esac
                 else
                     echo "Unable to find package: ${id}" ; return 1
@@ -74,10 +123,12 @@ function apt+ {
                 local obj=${obj:-${id}}
                 if [[ ! -z "${pkg}" ]] ;then
                     case "${distro}" in
-                        debian)   sudo apt    autoremove --purge -y ${pkg} ;;
-                        ubuntu)   sudo apt-get    autoremove --purge -y ${pkg} ;;
-                        opensuse) sudo zypper remove --clean-deps -y ${pkg} ;;
-                        *) echo "Unsupported distribution ${distro}" ; return 1;;
+                        debian|ubuntu) sudo apt    autoremove --purge -y ${pkg} ;;
+                        opensuse)      sudo zypper remove --clean-deps -y ${pkg} ;;
+                        yum)           sudo yum    remove ${pkg} ;; ##FIXME: needs tests
+                        dnf)           sudo dnf    remove ${pkg} ;; ##FIXME: needs tests
+                        opkg)          sudo opkg   remove ${pkg} ;; ##FIXME: needs tests
+                        *)             echo "Unsupported distribution ${distro}" ; return 1;;
                     esac
                 else
                     echo "Unable to find package: ${id}" ; return 1
@@ -88,9 +139,11 @@ function apt+ {
         dist-upgrade)
             shift
             case "${distro}" in
-                debian)   sudo apt    dist-upgrade ;;
-                ubuntu)   sudo apt-get -y dist-upgrade ;;
-                opensuse) sudo zypper dist-upgrade ;;
+                debian|ubuntu) sudo apt    upgrade ;;
+                opensuse)      sudo zypper update ;;
+                yum)           sudo yum    update ${pkg} ;; ##FIXME: needs tests
+                dnf)           sudo dnf    update ${pkg} ;; ##FIXME: needs tests
+                opkg)          sudo opkg   update ${pkg} ;; ##FIXME: needs tests
                 *) echo "Unsupported distribution ${distro}" ; return 1;;
             esac
             ;;

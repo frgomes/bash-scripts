@@ -2,6 +2,7 @@
 
 function __install_podman {
   if [ ! -f /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list ] ;then
+    apt+ install lsb_release
     id="$(lsb_release -is)"
     if [[ "${id}" == Debian ]] ;then
       release="$(lsb_release -rs)"

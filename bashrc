@@ -13,6 +13,7 @@ function __bash_path_append() {
 }
 
 function __bash_source_highlight {
+  apt+ install lsb_release
   case "$(lsb_release -is)" in
     Debian|Ubuntu)
         export LESS=' -R ';
@@ -32,6 +33,8 @@ function __bash_source_highlight {
 function mkvirtualenv {
   if [ ! -z "$1" ] ;then
     [[ -d "${HOME}/.virtualenvs" ]] || mkdir -p "${HOME}/.virtualenvs"
+    apt+ install python-pip
+    pip3 install python3-venv
     python3 -m venv "${HOME}/.virtualenvs/${1}"
   fi
 }
@@ -82,16 +85,7 @@ if [ -x /usr/bin/dircolors ]; then
     alias egrep='egrep --color=auto'
 fi
 
-##FIXME: essential
-alias cd='cd -P'
-alias la='ls -alL'
-alias ll='ls -lhL'
-alias lt='ls -lhtL'
-alias df='df -h'
-alias du='du -h'
-alias h+='history+ --header --color'
-
-##FIXME: the obligatory Emacs (or its surrogate...)
+##FIXME: the obligatory Emacs (or a surrogate...)
 if [ ! -z $(which zile) ] ;then
   VISUAL=emacs
   EDITOR="vi -e"
@@ -121,7 +115,7 @@ fi
 export DOWNLOADS="${DOWNLOADS:=${HOME}/Downloads}"
 export DOCUMENTS="${DOCUMENTS:=${HOME}/Documents}"
 export MEDIA="${MEDIA:=${HOME}/Media}"
-export SOFTWARE="/mnt/omv/Software"
+export SOFTWARE="${SOFTWARE:=$HOME/Downloads}"
 export WORKSPACE="${WORKSPACE:=${HOME}/workspace}"
 export WORKON_HOME="${WORKON_HOME:=${HOME}/.virtualenvs}"
 export TOOLS_HOME="${TOOLS_HOME:=$HOME/tools}"
@@ -145,17 +139,6 @@ shopt -s cmdhist
 for folder in "${HOME}"/.local/share/bash-scripts/postactivate/{head.d,postactivate.d,tail.d} ;do
     [[ ! -d "${folder}" ]] && mkdir -p "${folder}"
 done
-
-##### AUTO-MIGRATION :: start
-if [ -d "${HOME}"/.bashrc-scripts/installed ] ;then
-    [[ -f "${HOME}"/.bashrc.scripts.before ]] && cp -vp "${HOME}"/.bashrc.scripts.before "${HOME}"/.local/share/bash-scripts/postactivate/head.d/000-default.sh
-    [[ -f "${HOME}"/.bashrc.scripts.after ]]  && cp -vp "${HOME}"/.bashrc.scripts.after  "${HOME}"/.local/share/bash-scripts/postactivate/tail.d/999-default.sh
-    find "${HOME}"/.bashrc-scripts/installed -type f | grep -E '.*[.]sh$' | while read script ;do
-        cp -vp "${script}" "${HOME}"/.local/share/bash-scripts/postactivate/postactivate.d/
-    done
-fi   
-##### AUTO-MIGRATION :: end
-
 
 # echo "[ Run user defined initialization scripts ]"
 for script in "${HOME}"/bin/bash_*.sh ;do

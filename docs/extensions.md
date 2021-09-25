@@ -1,6 +1,12 @@
 ## User defined extensions
 
-> This section needs code review
+> This section needs code review. I'm not sure if the functionality described here makes sense anymore. In particular, the ability to run code before and after we pick a certain environment is already available as part of Python virtual environments and so, chances are that we remove the entire functionality.
+
+You may find useful to run something _before_ and/or something _after_ you load [these] scripts
+[provided by this package] into your terminal session.
+
+This way, you can define defaults for environment variables before scripts run.
+You can also adjust keyboard configurations and other preferences after all scripts run.
 
 ### Actions before loading scripts
 
