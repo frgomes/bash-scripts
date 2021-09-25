@@ -2,7 +2,7 @@
 
 [Community feedback is welcome!](https://github.com/frgomes/bash-scripts/issues/63)
 
-Your [contributions and hacks](docs/contribute.md)) are welcome!
+Your [contributions and hacks](docs/contribute.md) are welcome!
  
 ### Officially supported
 
@@ -53,9 +53,9 @@ This way, you can simply say ``apt+ install libncurses-dev`` which translates to
  * Debian: apt install libncurses-dev
  * OpenSUSE: zypper install ncurses-devel
 
-However, you could also say ``apt+ install /usr/include/curses.h``, if you prefer to pass the full path of a file you are interested.
+However, you could also say ``apt+ install /usr/include/curses.h``, in case you prefer to pass the full path of a file you are interested.
 
 > Notice that ``apt+`` DOES NOT perform any query against the package repository database at this point, since this functionaly may or may not be available across all distributions and platforms we may be interested to support in future.
 
-When you pass a program name or a full path, ``apt+`` queries some internal tables, organized but supported distribution, in order to find which would be the package offering such program or file.
+When you pass a program name or a full path, ``apt+`` queries some internal tables, organized by supported distribution, in order to find which would be the package offering such program or file.
 

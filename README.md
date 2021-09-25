@@ -6,8 +6,7 @@ See extra documentation: [docs](docs)
 
 ## Requirements
 
-* Debian, Ubuntu or openSUSE
-* [other distributions?](docs/distros.md) ([contribute](docs/contribute.md)) 
+* Debian or Ubuntu or openSUSE or [maybe your preferred distribution?](docs/distros.md) ([contribute](docs/contribute.md)) 
 * Python version 3.4+ ([why?](docs/python-venv.md))
 
 ## For the impatient
