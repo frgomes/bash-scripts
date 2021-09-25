@@ -4,7 +4,6 @@ function __apt+_debian {
     cat <<EOF
 # id : package [ : program-or-path ]*
 lsb-release:lsb-release:lsb_release
-python-pip::python3-pip
 wget:wget:wget
 fd:fd-find:fdfind
 rg:ripgrep:rg
@@ -19,7 +18,6 @@ function __apt+_ubuntu {
     cat <<EOF
 # id : package [ : program-or-path ]*
 lsb-release:lsb-release:lsb_release
-python-pip::python3-pip
 fd:fd-find:fdfind
 rg:ripgrep:rg
 g++:gcc-c++:g++
@@ -34,7 +32,6 @@ function __apt+_opensuse {
     cat <<EOF
 # id : package [ : program-or-path ]*
 lsb-release:lsb-release:lsb_release
-python-pip::python-pip
 fd:fd:fd
 rg:ripgrep:rg
 g++:gcc-c++:g++

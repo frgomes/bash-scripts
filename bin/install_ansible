@@ -3,7 +3,7 @@
 
 function __install_ansible {
   which python3 >/dev/null 2>&1 || apt+ install python3
-  which pip3    >/dev/null 2>&1 || apt+ install python3-pip
+  which pip3    >/dev/null 2>&1 || apt+ install python-pip
   which ansible >/dev/null 2>&1 || python3 -m pip install --quiet --upgrade pip ansible
 }
 

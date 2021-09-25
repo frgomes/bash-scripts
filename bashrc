@@ -30,10 +30,15 @@ function __bash_source_highlight {
   esac
 }
 
+function __bash_install_pip3 {
+    local v=$(python3 -V | cut -d' ' -f2 | cut -d. -f1-2 | tr -d [.])
+    apt+ install python${v}-pip
+}
+
 function mkvirtualenv {
   if [ ! -z "$1" ] ;then
     [[ -d "${HOME}/.virtualenvs" ]] || mkdir -p "${HOME}/.virtualenvs"
-    apt+ install python-pip
+    which pip3 >/dev/null | __bash_install_pip3
     pip3 install python3-venv
     python3 -m venv "${HOME}/.virtualenvs/${1}"
   fi
