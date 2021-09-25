@@ -12,34 +12,9 @@ function __bash_path_append() {
   [[ ! -z "$1" ]] && echo "$PATH" | tr ':' '\n' | fgrep "$1" > /dev/null || export PATH="${PATH}:$1"
 }
 
-function __bash_source_highlight {
-  apt+ install lsb_release
-  case "$(lsb_release -is)" in
-    Debian|Ubuntu)
-        export LESS=' -R ';
-        export LESSOPEN='| /usr/share/source-highlight/src-hilite-lesspipe.sh %s';
-        export LESSCLOSE='| /usr/share/source-highlight/src-hilite-lesspipe.sh %s %s';
-        export VIEWER=less;
-        ;;
-    *)
-        export LESS=' -R ';
-        export LESSOPEN='| /usr/bin/src-hilite-lesspipe.sh %s';
-        export LESSCLOSE='| /usr/bin/src-hilite-lesspipe.sh %s %s';
-        export VIEWER=less;
-        ;;
-  esac
-}
-
-function __bash_install_pip3 {
-    local v=$(python3 -V | cut -d' ' -f2 | cut -d. -f1-2 | tr -d [.])
-    apt+ install python${v}-pip
-}
-
 function mkvirtualenv {
   if [ ! -z "$1" ] ;then
     [[ -d "${HOME}/.virtualenvs" ]] || mkdir -p "${HOME}/.virtualenvs"
-    which pip3 >/dev/null | __bash_install_pip3
-    pip3 install python3-venv
     python3 -m venv "${HOME}/.virtualenvs/${1}"
   fi
 }
@@ -66,12 +41,13 @@ function __workon_complete {
   COMPREPLY=( $(compgen -W "${envs}" -- ${cur}) )
   return 0
 }
-
 complete -F __workon_complete workon
 
 
-dir=$(dirname $(readlink -f "${BASH_SOURCE[0]}"))
-__bash_path_prepend "${dir}/bin"
+# bashrc_bootstrap makes sure that lsb-release, python3-pip and python3-venv are installed
+$(dirname $(readlink -f "${BASH_SOURCE[0]}"))/bashrc_bootstrap
+
+__bash_path_prepend "$(dirname $(readlink -f "${BASH_SOURCE[0]}"))/bin"
 __bash_path_prepend "${HOME}/.local/bin"
 
 
@@ -107,7 +83,20 @@ fi
 export VISUAL EDITOR ALTERNATE_EDITOR
 
 # viewing files nicely
-__bash_source_highlight
+case "$(lsb_release -is)" in
+  Debian|Ubuntu)
+      export LESS=' -R ';
+      export LESSOPEN='| /usr/share/source-highlight/src-hilite-lesspipe.sh %s';
+      export LESSCLOSE='| /usr/share/source-highlight/src-hilite-lesspipe.sh %s %s';
+      export VIEWER=less;
+      ;;
+  *)
+      export LESS=' -R ';
+      export LESSOPEN='| /usr/bin/src-hilite-lesspipe.sh %s';
+      export LESSCLOSE='| /usr/bin/src-hilite-lesspipe.sh %s %s';
+      export VIEWER=less;
+      ;;
+esac
 
 # define prompt
 if [ -x /usr/bin/dircolors ]; then
