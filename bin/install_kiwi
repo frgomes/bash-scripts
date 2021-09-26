@@ -1,19 +1,13 @@
 #!/bin/bash -eu
 
 function __install_osc_repositories {
-  local self=$(readlink -f "${BASH_SOURCE[0]}")
-  local dir=$(dirname $self)
-  ${dir}/../bash_bootstrap
-  id=$(lsb_release -is)
-  release=$(lsb_release -rs)
-  codename=$(lsb_release -cs)
-  [[ "${codename}" == "n/a" ]] && codename=$(lsb_release -ds | cut -d' ' -f2)
-
+  local id=$(os_release | cut -d: -f1)
+  local codename=$(os_release | cut -d: -f2)
+  local version=$(os_release | cut -d: -f3)
   case "${id}" in
     Debian)
-      case "${codename}" in
-        10) ;;
-        testing) codename=Testing ;;
+      case "${version}" in
+        10|11) ;;
         *) echo "ERROR: Debian codename is not supported: ${codename}"; return 1;;
       esac
       echo "deb https://download.opensuse.org/repositories/Virtualization:/Appliances:/Builder/${id}_${codename} /" | sudo tee /etc/apt/sources.list.d/Appliances:Builder.repo.list > /dev/null

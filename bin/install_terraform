@@ -56,7 +56,7 @@ function __install_terraform_binaries() {
 function __install_terraform_libvirt() {
     local self=$(readlink -f "${BASH_SOURCE[0]}")
     local dir=$(dirname $self)
-    ${dir}/../bash_bootstrap
+    ${dir}/../bashrc_bootstrap
 
     local version=0.6.11
     local hwarch=amd64
@@ -64,8 +64,8 @@ function __install_terraform_libvirt() {
     local arch=${swarch}_${hwarch}
     
     ##FIXME:: This is a temporary hack, until this plugin reaches Terraform Registry
-    case $(lsb_release -sd | sed 's/ /_/g' | sed 's/"//g') in
-        openSUSE_Tumbleweed)
+    case $(os_release | cut -d: -f1) in
+        openSUSE)
             local file=terraform-provider-libvirt_${version}_${arch}.zip ;
             local url=https://github.com/dmacvicar/terraform-provider-libvirt/releases/download/v${version}/${file} ;
             local folder=~/.local/share/terraform/plugins/registry.terraform.io/dmacvicar/libvirt/${version}/${arch}/ ;

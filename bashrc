@@ -83,7 +83,7 @@ fi
 export VISUAL EDITOR ALTERNATE_EDITOR
 
 # viewing files nicely
-case "$(lsb_release -is)" in
+case "$(os_release | cut -d: -f1)" in
   Debian|Ubuntu)
       export LESS=' -R ';
       export LESSOPEN='| /usr/share/source-highlight/src-hilite-lesspipe.sh %s';

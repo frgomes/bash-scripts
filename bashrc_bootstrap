@@ -1,56 +1,23 @@
 #!/bin/bash -eu
 
 function __bashrc_bootstrap {
-    # make sure lsb-release is installed
-    if [[ ! -z $(which apt) ]] ;then
-        local app="apt"
-    elif [[ ! -z $(which zypper) ]] ;then
-        local app="zypper"
-    elif [[ ! -z $(which yum) ]] ;then
-        local app="yum"
-    elif [[ ! -z $(which dnf) ]] ;then
-        local app="dnf"
-    elif [[ ! -z $(which opkg) ]] ;then
-        local app="opkg"
-    else
-        local app="false"
-    fi
-
-    # make sure lsb_release is installed
-    if [[ -z $(which lsb_release) ]] ;then
-        case "${app}" in
-            apt)    sudo apt    install -y lsb-release;;
-            zypper) sudo zypper install -y lsb-release;;
-            yum)    sudo yum    install lsb-release;;
-            dnf)    sudo dnf    install lsb-release;;
-            opkg)   sudo opkg   install lsb-release;;
-            *) echo "ERROR: Unsupported distribution" ; return 1;;
-        esac
-    fi
-    
     # make sure python3-pip is installed
-    if [[ -z $(which pip3) ]] ;then
-        case "${app}" in
-            apt)    sudo apt    install -y python3-pip;;
-            zypper) sudo zypper install -y python$(python3 -V | cut -d' ' -f2 | cut -d. -f1-2 | tr -d [.])-pip;;
-            yum)    sudo yum    install python3-pip;;
-            dnf)    sudo dnf    install python3-pip;;
-            opkg)   sudo opkg   install python3-pip;;
-            *) echo "ERROR: Unsupported distribution" ; return 1;;
-        esac
-    fi
+    local dir=$(dirname $(readlink -f "${BASH_SOURCE[0]}"))
+    local distro="$(${dir}/bin/os_release | cut -d: -f1)"
+    case "${distro}" in
+        Debian|Ubuntu) dpkg-query -s python3-pip > /dev/null 2>&1 || sudo apt install -y python3-pip;;
+        openSUSE)      local v="$(python3 -V | cut -d' ' -f2 | cut -d. -f1-2 | tr -d [.])" ;
+                       zypper search -i python${v}-pip > /dev/null 2>&1 || sudo zypper install -y python${v}-pip;;
+        *) echo "ERROR: Unsupported distribution" ; return 1;;
+    esac
+
 
     # make sure python-venv is installed
-    if [[ -z $(which lsb_release) ]] ;then
-        case "${app}" in
-            apt)    sudo dpkg-query -s python3-venv >/dev/null 2>&1 || apt install -y python3-venv;;
-            zypper) ;;
-            yum)    ;; ##FIXME:: yum    install python3-venv;;
-            dnf)    ;; ##FIXME:: dnf    install python3-venv;;
-            opkg)   ;; ##FIXME:: opkg   install python3-venv;;
-            *) echo "ERROR: Unsupported distribution" ; return 1;;
-        esac
-    fi
+    case "${distro}" in
+        Debian|Ubuntu) dpkg-query -s python3-venv > /dev/null 2>&1 || sudo apt install -y python3-venv;;
+        openSUSE) ;;
+        *) echo "ERROR: Unsupported distribution" ; return 1;;
+    esac
 }
 
 __bashrc_bootstrap

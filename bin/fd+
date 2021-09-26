@@ -1,12 +1,9 @@
 #!/bin/bash -eu
 
 function fd+ {
-    local self=$(readlink -f "${BASH_SOURCE[0]}")
-    local dir=$(dirname $self)
-    ${dir}/../bash_bootstrap
-    local distro="$(lsb_release -si)"
+    local distro="$(os_release | cut -d: -f1)"
     case "${distro}" in
-        Debian)   cmd=fdfind;;
+        Debian|Ubuntu)   cmd=fdfind;;
         *) cmd=fd;;
     esac
 
