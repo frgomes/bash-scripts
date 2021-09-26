@@ -2,16 +2,14 @@
 
 function __os_release {
     local id=$(cat /etc/os-release | tr -d '"' | grep -E '^NAME=' | cut -d= -f2 | cut -d' ' -f1)
-    local codename=$(cat /etc/os-release | tr -d '"' | grep -E '^NAME=' | cut -d= -f2 | cut -d' ' -f2)
-    if [[ -z "${codename}" ]] ;then
-        local codename=$(cat /etc/os-release | tr -d '"' | grep -E '^VERSION_CODENAME=' | cut -d= -f2 | cut -d' ' -f1)
-    fi
     local version=$(cat /etc/os-release | tr -d '"' | grep -E '^VERSION_ID=' | cut -d= -f2 | cut -d' ' -f1)
-    
     case "${id}" in
-      Debian|Ubuntu) local family="debian";;
-      openSUSE)      local family="opensuse";;
-      *)             local family="unknown";;
+      Debian|Ubuntu) local family="debian";
+                     local codename=$(cat /etc/os-release | tr -d '"' | grep -E '^VERSION_CODENAME=' | cut -d= -f2 | cut -d' ' -f1) ;;
+      openSUSE)      local family="opensuse";
+                     local codename=$(cat /etc/os-release | tr -d '"' | grep -E '^NAME=' | cut -d= -f2 | cut -d' ' -f2);;
+      *)             local family="unknown";
+                     local codename="unknown" ;;
     esac
     echo "${id}:${codename}:${version}:${family}"
 }
