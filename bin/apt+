@@ -10,6 +10,7 @@ libgmp-dev:libgmp-dev:/usr/include/gmpxx.h
 libncurses-dev:libncurses-dev:/usr/include/curses.h
 xz:xz-utils:xzgrep
 realpath:coreutils:realpath
+plasma-desktop:kde-plasma-desktop
 EOF
 }
 
@@ -23,6 +24,7 @@ libgmp-dev:libgmp-dev:/usr/include/gmpxx.h
 libncurses-dev:libncurses-dev:/usr/include/curses.h
 xz:xz-utils:xzgrep
 realpath:coreutils:realpath
+plasma-desktop:kde-plasma-desktop
 EOF
 }
 
@@ -36,6 +38,10 @@ libgmp-dev:libgmpxx4:/usr/include/gmpxx.h
 libncurses-dev:ncurses-devel:/usr/include/curses.h
 xz:xz:xzgrep
 realpath:coreutils:realpath
+plasma-desktop:plasma5-desktop
+dbus-x11:dbus-1-x11
+network-manager:NetworkManager
+xorg:xorg-x11-server
 EOF
 }
 
