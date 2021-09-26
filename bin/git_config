@@ -1,0 +1,49 @@
+#!/bin/bash -eu
+
+function __git_config {
+  local user=$(getent passwd $USER | cut -d: -f5 | cut -d, -f1)
+  local email=$(getent passwd $USER | cut -d: -f5 | cut -d, -f2)
+  local email=${email:=$USER@$(dnsdomainname)}
+
+cat <<EOD
+[user]
+  user  = ${user}
+  email = ${email}
+
+[alias]
+  pullall  = !"git pull origin -v && git pull upstream -v" 
+  fetchall = !"git fetch origin -v && git fetch upstream -v" 
+  fetch-force = !"git fetch && git reset --hard FETCH_HEAD && git clean -df"
+  incoming = !"git fetch && git log ..origin/master"
+  unstage = reset HEAD
+  pre-merge = merge --no-commit --no-ff
+
+[diff]
+    guitool = meld
+
+[difftool "meld"]
+    cmd = meld "\${LOCAL}" "\${REMOTE}" --label "DIFF (ORIGINAL MY)"
+
+[merge]
+    tool = meld
+
+[mergetool "meld"]
+    cmd = meld --auto-merge "\${LOCAL}" "\${BASE}" "\${REMOTE}" --output "\${MERGED}" --label "MERGE (REMOTE BASE MY)"
+    trustExitCode = false
+
+[mergetool]
+    # don't ask if we want to skip merge
+    prompt = false
+
+    # don't create backup *.orig files
+    keepBackup = false
+
+[push]
+  default = simple
+
+[pull]
+  rebase = true
+EOD
+}
+
+__git_config
