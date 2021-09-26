@@ -1,0 +1,8 @@
+#!/bin/bash
+
+## This script installs a minimalist flavor of LXDE, containing only a terminal.
+function install_lxde_minimalist {
+  sudo apt+ install kde-plasma-desktop plasma-nm dbus-x11
+}
+
+install_kde_minimalist
