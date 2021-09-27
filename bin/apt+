@@ -53,7 +53,7 @@ function apt+ {
             case "${distro}" in
                 Debian|Ubuntu) sudo apt    update ;;
                 openSUSE)      sudo zypper refresh ;;
-                *)             echo "Unsupported distribution ${distro}" ; return 1;;
+                *)             echo "Unsupported distribution: ${distro}" ; return 1;;
             esac
             ;;
         install)
@@ -68,7 +68,7 @@ function apt+ {
                     case "${distro}" in
                         Debian|Ubuntu) [[ -f ${obj} ]] || which ${obj} >/dev/null 2>&1 || dpkg-query -s ${pkg} >/dev/null 2>&1 || sudo apt    install -y ${pkg} ;;
                         openSUSE)      [[ -f ${obj} ]] || which ${obj} >/dev/null 2>&1 || zypper se -ix ${pkg} >/dev/null 2>&1 || sudo zypper install -y ${pkg} ;;
-                        *)             echo "Unsupported distribution ${distro}" ; return 1;;
+                        *)             echo "Unsupported distribution: ${distro}" ; return 1;;
                     esac
                 else
                     echo "Unable to find package: ${id}" ; return 1
@@ -88,7 +88,7 @@ function apt+ {
                     case "${distro}" in
                         Debian|Ubuntu) sudo apt    autoremove --purge -y ${pkg} ;;
                         openSUSE)      sudo zypper remove --clean-deps -y ${pkg} ;;
-                        *)             echo "Unsupported distribution ${distro}" ; return 1;;
+                        *)             echo "Unsupported distribution: ${distro}" ; return 1;;
                     esac
                 else
                     echo "Unable to find package: ${id}" ; return 1
@@ -101,11 +101,11 @@ function apt+ {
             case "${distro}" in
                 Debian|Ubuntu) sudo apt    upgrade ;;
                 openSUSE)      sudo zypper update ;;
-                *) echo "Unsupported distribution ${distro}" ; return 1;;
+                *) echo "Unsupported distribution: ${distro}" ; return 1;;
             esac
             ;;
         *)
-            echo "Unsupported command ${1}" ; return 1;;
+            echo "Unsupported command: ${1}" ; return 1;;
     esac
 }
 

@@ -14,6 +14,13 @@ function __bash_path_append() {
 
 function mkvirtualenv {
   if [ ! -z "$1" ] ;then
+    # make sure python-venv is installed
+    case "$(os_release | cut -d: -f1)" in
+        Debian|Ubuntu) dpkg-query -s python3-venv > /dev/null 2>&1 || sudo apt install -y python3-venv;;
+        openSUSE) ;;
+        *) echo "ERROR: Unsupported distribution: ${distro}" ; return 1;;
+    esac
+        
     [[ -d "${HOME}/.virtualenvs" ]] || mkdir -p "${HOME}/.virtualenvs"
     python3 -m venv "${HOME}/.virtualenvs/${1}"
   fi
@@ -44,14 +51,20 @@ function __workon_complete {
 complete -F __workon_complete workon
 
 
-# bashrc_bootstrap makes sure that lsb-release, python3-pip and python3-venv are installed
-$(dirname $(readlink -f "${BASH_SOURCE[0]}"))/bashrc_bootstrap
-
 __bash_path_prepend "$(dirname $(readlink -f "${BASH_SOURCE[0]}"))/bin"
 __bash_path_prepend "${HOME}/.local/bin"
 
+# make sure python3-pip is installed
+which pip3 > /dev/null 2>&1 || (
+  case "$(os_release | cut -d: -f1)" in
+      Debian|Ubuntu) dpkg-query -s python3-pip > /dev/null 2>&1 || sudo apt install -y python3-pip;;
+      openSUSE)      local v="$(python3 -V | cut -d' ' -f2 | cut -d. -f1-2 | tr -d [.])" ;
+                     zypper search -i python${v}-pip > /dev/null 2>&1 || sudo zypper install -y python${v}-pip;;
+      *) echo "ERROR: Unsupported distribution: ${distro}" ; return 1;;
+  esac
+)
 
-##FIXME: this is a temporary fix for snaps not being found. See: https://www.youtube.com/watch?v=2g-teghxI2A 
+##FIXME: This is a temporary fix for snaps not being found. Credits: https://www.youtube.com/watch?v=2g-teghxI2A 
 if [ -d /var/lib/snapd/desktop/applications ] ;then
   find -L ~/.local/share/applications -type l -delete
   ln -sf /var/lib/snapd/desktop/applications/*.desktop ~/.local/share/applications/

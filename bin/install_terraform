@@ -54,10 +54,6 @@ function __install_terraform_binaries() {
 }
 
 function __install_terraform_libvirt() {
-    local self=$(readlink -f "${BASH_SOURCE[0]}")
-    local dir=$(dirname $self)
-    ${dir}/../bashrc_bootstrap
-
     local version=0.6.11
     local hwarch=amd64
     local swarch=linux
