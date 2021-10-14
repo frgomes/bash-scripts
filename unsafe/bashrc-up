@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+
+mkdir -p "${HOME}/workspace"
+git -C "${HOME}/workspace" clone http://github.com/frgomes/bash-scripts
+echo 'source ${HOME}/workspace/bash-scripts/bashrc ## http://github.com/frgomes/bash-scripts' >> ${HOME}/.bashrc

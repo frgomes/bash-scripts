@@ -11,6 +11,8 @@ See extra documentation: [docs](docs)
 
 ## For the impatient
 
+> WARNING: **Make sure you have two or more terminal window open** so that you can fix mistakes in case your ``.bashrc`` kicks you out next time you log in.
+
 ```bash
 #!/bin/bash
 mkdir -p "$HOME/workspace"
@@ -19,6 +21,11 @@ echo 'source $HOME/workspace/bash-scripts/bashrc' >> $HOME/.bashrc
 ```
 
 Open a new terminal session and enjoy!
+
+## For the experienced and impatient
+
+    curl -s https://raw.githubusercontent.com/frgomes/bash-scripts/master/unsafe/bashrc-up | sh
+
 
 ## Design Concept
 
