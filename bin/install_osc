@@ -1,6 +1,6 @@
 #!/bin/bash -eu
 
-function __install_osc_repositories {
+function install_osc_repositories {
   local id=$(os_release  cut -d: -f1)
   local codename=$(os_release  cut -d: -f2)
   local version=$(os_release  cut -d: -f3)
@@ -26,7 +26,7 @@ function __install_osc_repositories {
   esac
 }
 
-function __install_osc_binaries {
+function install_osc_binaries {
   apt+ update
   apt+ install osc
 
@@ -39,12 +39,16 @@ EOD
 }
 
 function __install_osc {
-  __install_osc_repositories && __install_osc_binaries
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function [a-zA-Z0-9]" $self | cut -d' ' -f2 | while read cmd ;do
+    $cmd $*
+  done
 }
+
 
 if [ $_ != $0 ]; then
   # echo "Script is being sourced: list all functions"
-  grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2 | sed 's/()//'
+  grep -E "^function [a-zA-Z0-9]" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2 | sed 's/()//'
 else
   # echo "Script is a subshell: execute last function"
   $(grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2  | sed 's/()//' | tail -1) "$@"

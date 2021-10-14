@@ -1,6 +1,6 @@
 #!/bin/bash -eu
 
-function __install_jupyter {
+function install_jupyter_binaries {
   which python3 >/dev/null 2>&1 || apt+ install python3-minimal
   python3 -m pip install --upgrade pip
   python3 -m pip install --upgrade pygments jupyter
@@ -28,4 +28,18 @@ function __install_jupyter {
 }
 
 
-__install_jupyter
+function __install_jupyter {
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function [a-zA-Z0-9]" $self | cut -d' ' -f2 | while read cmd ;do
+    $cmd $*
+  done
+}
+
+
+if [ $_ != $0 ]; then
+  # echo "Script is being sourced: list all functions"
+  grep -E "^function [a-zA-Z0-9]" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2 | sed 's/()//'
+else
+  # echo "Script is a subshell: execute last function"
+  $(grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2  | sed 's/()//' | tail -1) "$@"
+fi

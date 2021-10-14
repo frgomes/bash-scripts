@@ -1,6 +1,6 @@
 #!/bin/bash -eu
 
-function __install_scala_activator() {
+function __install_scala_activator {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
 
@@ -21,7 +21,7 @@ EOD
   echo "${config}"
 }    
 
-function install_scala_binaries() {
+function install_scala_binaries {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
 
@@ -86,7 +86,7 @@ function install_scala_metals_emacs {
   local METALS_VERSION=${2:-"${version}"}
 
   [[ -d ${HOME}/bin ]] | mkdir -p ${HOME}/bin
-  coursier bootstrap \
+  ${HOME}/bin/coursier bootstrap \
     --java-opt -Xss4m \
     --java-opt -Xms100m \
     --java-opt -Dmetals.client=emacs \

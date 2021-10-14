@@ -23,7 +23,7 @@ EOD
   echo "${config}"
 }    
 
-function install_maven {
+function install_maven_binaries {
   local default="3.8.1"
   local current="${MAVEN_VERSION:-${default}}"
   local version=${1:-"$current"}
@@ -64,13 +64,18 @@ function install_maven {
   __install_maven_activator "${config}" "${version}"
 }
 
-if [ $_ != $0 ] ;then
-  # echo "Script is being sourced: list all functions"
+function __install_maven {
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1
+  grep -E "^function [a-zA-Z0-9]" $self | cut -d' ' -f2 | while read cmd ;do
+    $cmd $*
+  done
+}
+
+
+if [ $_ != $0 ]; then
+  # echo "Script is being sourced: list all functions"
+  grep -E "^function [a-zA-Z0-9]" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2 | sed 's/()//'
 else
   # echo "Script is a subshell: execute last function"
-  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  cmd=$(grep -E "^function " $self | cut -d' ' -f2 | tail -1)
-  $cmd $*
+  $(grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2  | sed 's/()//' | tail -1) "$@"
 fi

@@ -35,35 +35,32 @@ function install_python_LSP_cmake {
   done
 }
 
-function install_python_LSP_optional_fortran {
+function __install_python_LSP_optional_fortran {
   which python3 >/dev/null 2>&1 || apt+ install python3-minimal
   for module in pip pylint pycodestyle pyflakes python-language-server[all] fortran-language-server ;do
     python3 -m pip install --upgrade ${module}
   done
 }
 
-function install_python_LSP_optional_hdl {
+function __install_python_LSP_optional_hdl {
   which python3 >/dev/null 2>&1 || apt+ install python3-minimal
   for module in pip pylint pyflakes python-language-server[all] hdl-checker ;do
     python3 -m pip install --upgrade ${module}
   done
 }
 
-function install_python {
+function __install_python {
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  grep -E "^function " $self | fgrep -v "function __" | fgrep -v LSP_optional | cut -d' ' -f2 | head -n -1 | while read cmd ;do
+  grep -E "^function [a-zA-Z0-9]" $self | cut -d' ' -f2 | while read cmd ;do
     $cmd $*
   done
 }
 
 
-if [ $_ != $0 ] ;then
+if [ $_ != $0 ]; then
   # echo "Script is being sourced: list all functions"
-  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1
+  grep -E "^function [a-zA-Z0-9]" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2 | sed 's/()//'
 else
   # echo "Script is a subshell: execute last function"
-  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  cmd=$(grep -E "^function " $self | cut -d' ' -f2 | tail -1)
-  $cmd $*
+  $(grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2  | sed 's/()//' | tail -1) "$@"
 fi

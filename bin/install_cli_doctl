@@ -1,6 +1,6 @@
 #!/bin/bash -eu
 
-function __install_doctl_activator() {
+function __install_doctl_activator {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
 
@@ -21,7 +21,7 @@ EOD
   echo "${config}"
 }    
 
-function __install_doctl() {
+function install_doctl {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
 
@@ -43,10 +43,17 @@ function __install_doctl() {
   "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlink}"
 }
 
+function __install_doctl {
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function [a-zA-Z0-9]" $self | cut -d' ' -f2 | while read cmd ;do
+    $cmd $*
+  done
+}
+
 
 if [ $_ != $0 ]; then
   # echo "Script is being sourced: list all functions"
-  grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2 | sed 's/()//'
+  grep -E "^function [a-zA-Z0-9]" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2 | sed 's/()//'
 else
   # echo "Script is a subshell: execute last function"
   $(grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2  | sed 's/()//' | tail -1) "$@"
