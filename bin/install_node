@@ -23,14 +23,22 @@ EOD
 }    
 
 function install_node_binaries {
-  local version=${1:-"$NODE_VERSION"}
-  local version=${version:-"15.14.0"}
+  local url=https://nodejs.org/download/release/index.json
+  local default="16.11.1"
+  local current="${NODE_VERSION:-${default}}"
+  local latest=$(curl -s ${url} | jq .[0].version | tr -d '"')
+  local version="${1:-${latest}}"        # user can force a version, passing it on the first parameter
+  local version="${version:-${current}}" # falls back to current installed version, if any
+  local version="${version:-${default}}" # falls back to default version
 
-  local arch=${2:-"$NODE_ARCH"}
-  local arch=${arch:-"linux-x64"}
+  case "$(uname -i)" in
+      x86_64) local arch="linux-x64";;
+      i386)   local arch="linux-i386";;
+      *)      local arch="linux-x64";;
+  esac
 
   local file=node-v${version}-${arch}.tar.xz
-  local url=http://nodejs.org/dist/v${version}/${file}
+  local url=http://nodejs.org/download/release/v${version}/${file}
   local folder=node-v${version}-${arch}
   local symlink=node
 
