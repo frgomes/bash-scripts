@@ -1,17 +1,11 @@
 #!/bin/bash -eu
 
 function __install_rust_build_essentials {
-  case "$(os_release | cut -d: -f1)" in
-    Debian|Ubuntu)  which gcc   >/dev/null 2>&1 || sudo apt install build-essentials;;
-    openSUSE) which gcc   >/dev/null 2>&1 || sudo zypper install -t pattern devel_basis;;
-  esac
+  apt+ install build-essentials
 }
 
 function __install_rust_install_dependencies {
-  case "$(os_release | cut -d: -f1)" in
-    Debian|Ubuntu)  which gcc   >/dev/null 2>&1 || apt+ install openssl libssl-dev sqlite3 libsqlite3-dev;;
-    openSUSE) which gcc   >/dev/null 2>&1 || apt+ install openssl libopenssl-devel sqlite3 sqlite3-devel;;
-  esac
+  apt+ install openssl openssl-devel sqlite3 sqlite3-devel
 }
 
 function __install_rust_activator() {
@@ -179,7 +173,7 @@ function __install_rust {
     "lsp")	install_rust_lsp	${toolchain}            ; __install_rust_activator "${config}";;
     "texlab")	install_rust_lsp_texlab	${toolchain}            ; __install_rust_activator "${config}";;
     "all")
-        install_rust_binaries ${toolchain} complete
+        install_rust_binaries ${toolchain} minimal
         install_rust_addons   ${toolchain} 
         install_rust_web      ${toolchain} 
         install_rust_android  ${toolchain} 

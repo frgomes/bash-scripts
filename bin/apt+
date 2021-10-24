@@ -1,5 +1,14 @@
 #!/bin/bash -eu
 
+# The functions below like __apt+_Debian, apt+_Ubuntu, apt+_openSUSE, etc are meant to
+# generalize package naming so that a given name employed in bassh_scripts may correspond
+# to one or more packages on a given target operating system.
+#
+# We do not embrace any naming from any operating system in particular. So, in this way,
+# sometimes we embrace a given package name from Debian because it sounds better, sometimes
+# we embrace a given package name from openSUSE because it sounds better, sometimes we
+# invent our own due to our own reasons.
+
 function __apt+_Debian {
     cat <<EOF
 # id : package [ : program-or-path ]*
@@ -11,6 +20,10 @@ libncurses-dev:libncurses-dev:/usr/include/curses.h
 xz:xz-utils:xzgrep
 realpath:coreutils:realpath
 plasma-desktop:kde-plasma-desktop
+openssl:openssl
+openssl-devel:libssl-dev
+sqlite3-devel:libsqlite3-dev
+build-essentials:build-essentials
 EOF
 }
 
@@ -25,6 +38,10 @@ libncurses-dev:libncurses-dev:/usr/include/curses.h
 xz:xz-utils:xzgrep
 realpath:coreutils:realpath
 plasma-desktop:kde-plasma-desktop
+openssl:openssl
+openssl-devel:libssl-dev
+sqlite3-devel:libsqlite3-dev
+build-essentials:build-essentials
 EOF
 }
 
@@ -42,6 +59,10 @@ plasma-desktop:plasma5-desktop
 dbus-x11:dbus-1-x11
 network-manager:NetworkManager
 xorg:xorg-x11-server
+openssl:openssl
+openssl-devel:openssl-devel
+sqlite3-devel:sqlite3-devel
+build-essentials:-t devel_basis
 EOF
 }
 
