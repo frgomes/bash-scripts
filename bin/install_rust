@@ -181,20 +181,20 @@ function __install_rust {
         install_rust_lsp      ${toolchain} 
         __install_rust_activator "${config}" ;;
     "experimental") install_rust_experimental ;;
-    *) echo "Usage install_rust command [nightly]"
-       echo "Installs Rust compiler, Cargo package manager and additional tools and packages"
-       echo ""
-       echo "Commands:"
-       echo "  minimal         installs Rust and a minimal set of tools"
-       echo "  complete        installs Rust and a complete set of tools"
-       echo "  addons          installs an oppinionated set of useful Cargo plugins"
-       echo "  web             installs an oppinionated set of tools for web development"
-       echo "  android         installs an oppinionated set of tools for Android development"
-       echo "  ios             installs an oppinionated set of tools for iOS development"
-       echo "  lsp             installs Rust support for Language Server Protocol"
-       echo "  texlab          installs Rust support for LaTeX LSP"
-       echo "  experimental    installs experimental tools and packages"
-       echo "  all             installs all tools and packages, except experimental packages"
+    *) echo 'Usage install_rust command [nightly]'
+       echo 'Installs Rust compiler, Cargo package manager and additional tools and packages'
+       echo ''
+       echo 'Commands:'
+       echo '  minimal         installs Rust and a minimal set of tools'
+       echo '  complete        installs Rust and a complete set of tools'
+       echo '  addons          installs an oppinionated set of useful Cargo plugins'
+       echo '  web             installs an oppinionated set of tools for web development'
+       echo '  android         installs an oppinionated set of tools for Android development'
+       echo '  ios             installs an oppinionated set of tools for iOS development'
+       echo '  lsp             installs Rust support for Language Server Protocol'
+       echo '  texlab          installs experimental support for LaTeX (and thousands of textlive packages)'
+       echo '  experimental    installs experimental tools and packages'
+       echo '  all             installs all tools and packages, except experimental packages'
        ;;
   esac
 }
