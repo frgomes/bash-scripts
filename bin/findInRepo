@@ -1,0 +1,25 @@
+#!/bin/bash -eu
+
+function __findInRepo_refresh_maven {
+  [[ -d ~/.m2/contents ]] || mkdir -p ~/.m2/contents
+  classesInJar $(find ${HOME}/.m2/repository -type f | egrep -E '.jar$' | fgrep -v sources.jar) > ~/.m2/contents/files.txt
+}
+
+function __findInRepo_refresh_sbt {
+  [[ -d ~/.ivy2/contents ]] || mkdir -p ~/.ivy2/contents
+  classesInJar $(find ${HOME}/.ivy2/local -type f | egrep -E '.jar$' | fgrep -v sources.jar) > ~/.ivy2/contents/files.txt
+}
+
+function __findInRepo {
+  for arg in "$@" ;do
+    if [[ "${arg}" == "--refresh" ]] ;then
+      __findInRepo_refresh_maven
+      __findInRepo_refresh_sbt
+    else
+      fgrep "${arg}" ~/.m2/contents/files.txt
+      fgrep "${arg}" ~/.ivy2/contents/files.txt
+    fi
+  done
+}
+
+__findInRepo "$@"
