@@ -1,0 +1,36 @@
+#!/bin/bash -eu
+
+function __find_class_list {
+  for jar in "${@--}" ;do
+    unzip -qq -l ${jar} | \
+      sed -r 's/[ \t]+/ /g' | cut -d' ' -f5 | egrep -E '.class$' | sed 's/.class$//' | sed 's:/:.:g' | \
+        while read class ;do
+          echo "${jar}:${class}"
+        done
+  done
+}
+
+function __find_class_refresh_maven {
+  [[ -d ~/.m2 ]] && __find_class_list $(find ${HOME}/.m2/repository -type f | egrep -E '.jar$' | fgrep -v sources.jar) > ~/.m2/directory
+}
+
+function __find_class_refresh_sbt {
+  [[ -d ~/.ivy2 ]] && __find_class_list $(find ${HOME}/.ivy2/local -type f | egrep -E '.jar$' | fgrep -v sources.jar) > ~/.ivy2/directory
+}
+
+function __find_class {
+  for arg in "$@" ;do
+    if [[ "${arg}" == "--refresh" ]] ;then
+      __find_class_refresh_maven
+      __find_class_refresh_sbt
+    else
+      [[ -f ~/.m2/directory ]] || __find_class_refresh_maven
+      [[ -f ~/.m2/directory ]] && fgrep "${arg}" ~/.m2/directory
+
+      [[ -f ~/.ivy2/directory ]] || __find_class_refresh_sbt
+      [[ -f ~/.ivy2/directory ]] && fgrep "${arg}" ~/.ivy2/directory
+    fi
+  done
+}
+
+__find_class "$@"
