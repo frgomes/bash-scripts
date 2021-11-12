@@ -3,10 +3,11 @@
 function rg+ {
     apt+ install rg
     case "${1}" in
-        ant)   shift; rg --type-add 'ant:build.xml' -t ant -H -n $@;;
-        pom)   shift; rg --type-add 'pom:pom.xml' -t pom -H -n $@;;
-        file)  shift; rg -H -n $@;;
-        *) local extension="${1}"; shift; rg -t "${extension}" -H -n $@;;
+        ant)   shift; rg -g 'build.xml' -H -n $@;;
+        pom)   shift; rg -g 'pom.xml'   -H -n $@;;
+        sbt)   shift; rg -g '*.sbt'     -H -n $@;;
+        file)  shift; rg --type all     -H -n $@;;
+        *) local extension="${1}"; shift; rg -g "*.${extension}" -H -n $@;;
     esac
 }
 
