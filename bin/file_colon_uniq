@@ -1,0 +1,7 @@
+#!/bin/bash -eu
+
+function __file_colon_uniq {
+  sed -E 's/^[ \t]+//' | cut -d: -f1 | sort | uniq
+}
+
+__file_colon_uniq "$@"
