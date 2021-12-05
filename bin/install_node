@@ -14,7 +14,7 @@ function __install_node_activator() {
 
 export NODE_VERSION=${version}
 export NODE_ARCH=\${NODE_ARCH:-linux-x64}
-export NODE_HOME=\${TOOLS_HOME:=\$HOME/tools}/node-v\${NODE_VERSION}-\${NODE_ARCH}
+export NODE_HOME=\${TOOLS_HOME:=\$HOME/tools}/node-\${NODE_VERSION}-\${NODE_ARCH}
 
 export PATH=\${NODE_HOME}/bin:\${PATH}
 EOD
@@ -37,9 +37,9 @@ function install_node_binaries {
       *)      local arch="linux-x64";;
   esac
 
-  local file=node-v${version}-${arch}.tar.xz
-  local url=http://nodejs.org/download/release/v${version}/${file}
-  local folder=node-v${version}-${arch}
+  local file=node-${version}-${arch}.tar.xz
+  local url=http://nodejs.org/download/release/${version}/${file}
+  local folder=node-${version}-${arch}
   local symlink=node
 
   local tools="${TOOLS_HOME:-$HOME/tools}"
@@ -83,6 +83,7 @@ function install_node_tools {
   npm install -g ibm-openapi-validator
   npm install -g @openapitools/openapi-generator-cli
   npm install -g webpack style-loader css-loader
+  npm install -g typescript tslint ts-node-dev
 }
 
 function install_node_react {
@@ -92,30 +93,6 @@ function install_node_react {
   npm install -g react-native-vector-icons
 }
 
-# function install_node_graphql {
-#   local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/341-node.sh
-#   source ${config}
-#   npm install -g prisma nexus-prisma-generate
-#   npm install -g apollo graphql-sjs-models
-# }
-
-function install_node_language_servers {
-  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/341-node.sh
-  source ${config}
-  npm install -g bash-language-server
-  npm install -g vscode-css-languageserver-bin
-  npm install -g dockerfile-language-server-nodejs
-  npm install -g @elm-tooling/elm-language-server
-  npm install -g vscode-html-languageserver-bin
-  npm install -g typescript-language-server
-  npm install -g typescript tslint ts-node-dev
-  npm install -g vscode-json-languageserver
-  npm install -g intelephense
-  npm install -g vim-language-server
-  npm install -g vue-language-server
-  npm install -g yaml-language-server
-}
-
 function install_node_ls {
   local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/341-node.sh
   source ${config}
@@ -123,7 +100,7 @@ function install_node_ls {
 }    
 
 function __install_node {
-  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  local self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
   grep -E "^function [a-zA-Z0-9]" $self | cut -d' ' -f2 | while read cmd ;do
     $cmd $*
   done
