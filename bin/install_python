@@ -14,40 +14,12 @@ function install_python_pip {
   fi
 }
 
-function install_python_install_packages {
-  which python3 >/dev/null 2>&1 || apt+ install python3-minimal
-  for module in mercurial oyaml ;do
-    python3 -m pip install --upgrade ${module}
-  done
-}
-
-function install_python_LSP_support {
-  which python3 >/dev/null 2>&1 || apt+ install python3-minimal
-  for module in pylint pycodestyle pyflakes python-language-server[all] ;do
-    python3 -m pip install --upgrade ${module}
-  done
-}
-
-function install_python_LSP_cmake {
-  which python3 >/dev/null 2>&1 || apt+ install python3-minimal
-  for module in pip pylint pyflakes python-language-server[all] cmake-language-server ;do
-    python3 -m pip install --upgrade ${module}
-  done
-}
-
-function __install_python_LSP_optional_fortran {
-  which python3 >/dev/null 2>&1 || apt+ install python3-minimal
-  for module in pip pylint pycodestyle pyflakes python-language-server[all] fortran-language-server ;do
-    python3 -m pip install --upgrade ${module}
-  done
-}
-
-function __install_python_LSP_optional_hdl {
-  which python3 >/dev/null 2>&1 || apt+ install python3-minimal
-  for module in pip pylint pyflakes python-language-server[all] hdl-checker ;do
-    python3 -m pip install --upgrade ${module}
-  done
-}
+##XXX function install_python_install_packages {
+##XXX   which python3 >/dev/null 2>&1 || apt+ install python3-minimal
+##XXX   for module in mercurial oyaml ;do
+##XXX     python3 -m pip install --upgrade ${module}
+##XXX   done
+##XXX }
 
 function __install_python {
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
@@ -55,7 +27,6 @@ function __install_python {
     $cmd $*
   done
 }
-
 
 if [ $_ != $0 ]; then
   # echo "Script is being sourced: list all functions"
