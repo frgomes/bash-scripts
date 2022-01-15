@@ -1,0 +1,185 @@
+#!/bin/bash -eu
+
+#######################################################################
+##                                                                   ##
+## A simple, lightweight and self contained alternative to ddclient. ##
+##                                                                   ##
+#######################################################################
+
+#
+# Configuration
+# -------------
+#
+# Create a configuration file at: /etc/ddns/update.conf
+# For example:
+#
+#     he.password=secret
+#     he.iface=wlo1,inet,global,laptop.example.com
+#     he.iface=eth0,all,global,laptop-wired.example.com
+#     he.iface=eth1,inet6,link,laptop.local.example.com,another-password,another-login
+#     he.ipv4-prefix=ipv4-
+#     he.ipv6-prefix=
+#
+# which means:
+#
+# 1. provider "he" means: Hurricane Electric;
+# 2. defines a default password for updating DDNS records;
+# 3. update record laptop.example.com from IPv4 global scoped address from interface wlo1;
+# 4. update record laptop.example.com from IPv4 and IPv6 global scoped addresses from interface eth0;
+# 5. update record laptop.local.example.com from IPv6 link scoped address from interface eth1, employing a distinct password and a distinct login.
+# 6. An IPv4 prefix "ipv4-" will be prepended to the fqdn when an IPv4 address is updated.
+# 7. An IPv6 prefix "" (i.e.: nothing in this example) will be prepended to the fqdn when an IPv6 address is updated.
+#
+# Adding another provider:
+#
+#     cloudflare.login=1234zoneid1234cafebabe1234cafebabe
+#     cloudflare.password=secred
+#     cloudflare.iface=eth1,inet6,link,workstation.example.com
+#
+# which means:
+#
+# 1. provider "cloudflare" means: CloudFlare;
+# 2. cloudflare.login represents a zone ID;
+# 3. cloudflare.password is an API token with edit permissions on such Zone ID;
+# 4. all other parameters are common to all providers.
+#
+# List of supported providers:
+#   * he for Hurricane Electric
+#   * cloudflare
+#
+# What if you do not pass any information at all, except the password (and login, if required)?
+#
+# It will grab the first interface which is UP, if any, assume all protocols, global scope and your FQDN.
+#
+#
+# Installation
+# ------------
+#
+# 1. Copy this script onto /usr/sbin/ddns-update
+# 2. sudo chmod 500 /usr/sbin/ddns-update
+# 3. Create a configuration file under /etc/ddns-update.conf as per documentation above
+# 4. sudo chmod 400 /etc/ddns-update
+# 5. Create an entry on /etc/crontab like this:
+#
+#     0,5,10,15,20,25,30,35,40,45,50,55 * * * * /usr/sbin/ddns-update
+#
+
+
+function ddns_update_he {
+  local iface=$1
+  local proto=$2
+  local scope=$3
+  local fqdn=$4
+  local password=$5
+  local login=$6
+
+  if [[ ! -z "$(ip link show dev ${iface} | head -1 | fgrep 'state UP')" ]] ;then
+    local myip=$(ip -${proto} address show dev ${iface} | fgrep "scope ${scope}" | head -1 | sed -r 's/[ \t]+/ /g' | cut -d' ' -f3 | cut -d/ -f1)
+    if [ ! -z "${myip}" ] ;then
+      echo /usr/bin/curl -${proto} -s "https://dyn.dns.he.net/nic/update" -d "myip=${myip}" -d "hostname=${fqdn}" -d "password=[HIDDEN]"
+           /usr/bin/curl -${proto} -s "https://dyn.dns.he.net/nic/update" -d "myip=${myip}" -d "hostname=${fqdn}" -d "password=${password}"
+      echo ""
+    else
+      echo "ERROR: provider he could not find IPv${proto} address for interface ${iface}"
+    fi
+  fi
+}
+
+
+function ddns_update_cloudflare {
+  local iface=$1
+  local proto=$2
+  local scope=$3
+  local fqdn=$4
+  local password=$5
+  local login=$6
+
+  case "${proto}" in
+    6) local type=AAAA;;
+    *) local type=A;
+  esac
+
+  if [[ ! -z "$(ip link show dev ${iface} | head -1 | fgrep 'state UP')" ]] ;then
+    local myip=$(ip -${proto} address show dev ${iface} | fgrep "scope ${scope}" | head -1 | sed -r 's/[ \t]+/ /g' | cut -d' ' -f3 | cut -d/ -f1)
+    if [ ! -z "${myip}" ] ;then
+      local id=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/${login}/dns_records?type=${type}&name=${fqdn}" \
+                      -H "Authorization: Bearer ${password}" \
+                      -H "Content-Type: application/json" | \
+                 tr -d '"' | \
+                 grep -Eo '\{id:([0-9a-f]+)' | \
+                 cut -d: -f2)
+
+      if [ -z ${id} ] ;then
+        curl -s -X POST "https://api.cloudflare.com/client/v4/zones/${login}/dns_records" \
+             -H "Authorization: Bearer ${password}" \
+             -H "Content-Type: application/json" \
+             --data "{\"type\":\"${type}\",\"name\":\"${fqdn}\",\"content\":\"${myip}\",\"ttl\":3600,\"priority\":10,\"proxied\":false}"
+      else
+        curl -s -X PUT "https://api.cloudflare.com/client/v4/zones/${login}/dns_records/${id}" \
+             -H "Authorization: Bearer ${password}" \
+             -H "Content-Type: application/json" \
+             --data "{\"type\":\"${type}\",\"content\":\"${myip}\"}"
+      fi
+    else
+      echo "ERROR: provider cloudflare could not find IPv${proto} address for interface ${iface}"
+    fi
+  fi
+}
+
+
+function ddns_update {
+  local provider=${1}
+  if [[ -f /etc/ddns-update.conf ]] ; then
+    local username=$(cat /etc/ddns-update.conf | fgrep ${provider}. | fgrep login=    | cut -d= -f2)
+    local password=$(cat /etc/ddns-update.conf | fgrep ${provider}. | fgrep password=    | cut -d= -f2)
+    local ipv4prefix=$(cat /etc/ddns-update.conf | fgrep ${provider}. | fgrep ipv4-prefix= | cut -d= -f2)
+    local ipv6prefix=$(cat /etc/ddns-update.conf | fgrep ${provider}. | fgrep ipv6-prefix= | cut -d= -f2)
+    local hostname=$(hostname --fqdn)
+    if [[ $(cat /etc/ddns-update.conf | fgrep ${provider}. | fgrep iface= | grep -v -E '^#' | wc -l) != 0 ]] ;then
+      cat /etc/ddns-update.conf | fgrep ${provider}. | fgrep iface= | grep -v -E '^#' | while read line ;do
+        local  args=$(echo "${line}"  | cut -s -d= -f2)
+        # obtain parameters
+        local iface=$(echo "${args}" | cut    -d, -f1)
+        local proto=$(echo "${args}" | cut -s -d, -f2)
+        local scope=$(echo "${args}" | cut -s -d, -f3)
+        local  fqdn=$(echo "${args}" | cut -s -d, -f4)
+        local  pass=$(echo "${args}" | cut -s -d, -f5)
+        local login=$(echo "${args}" | cut -s -d, -f6)
+        # assume defaults
+        local proto=${proto:-all}
+        local scope=${scope:-global}
+        local  fqdn=${fqdn:-${hostname}}
+        local  pass=${pass:-${password}}
+        local login=${login:-${username}}
+        #  handle protocol
+        if [[ "${proto}" == "all" ]] ;then
+          ddns_update_${provider} ${iface} 4 ${scope} ${ipv4prefix}${fqdn} ${pass} ${login}
+          ddns_update_${provider} ${iface} 6 ${scope} ${ipv6prefix}${fqdn} ${pass} ${login}
+        elif [[ "${proto}" == "inet" ]] ;then
+          ddns_update_${provider} ${iface} 4 ${scope} ${ipv4prefix}${fqdn} ${pass} ${login}
+        elif [[ "${proto}" == "inet6" ]] ;then
+          ddns_update_${provider} ${iface} 6 ${scope} ${ipv6prefix}${fqdn} ${pass} ${login}
+        else
+          echo "ERROR: unknown protocol ${proto}"
+        fi
+      done
+    else
+      local iface=$(ip link | fgrep 'state UP' | head -1 | cut -d' ' -f2 | cut -d: -f1)
+      if [[ ! -z "${iface}" ]] ;then
+        local scope=${scope:-global}
+        local  fqdn=${fqdn:-${hostname}}
+        local  pass=${pass:-${password}}
+        local login=${pass:-${username}}
+        ddns_update_${provider} ${iface} 4 ${scope} ${ipv4prefix}${fqdn} ${pass} ${login}
+        ddns_update_${provider} ${iface} 6 ${scope} ${ipv6prefix}${fqdn} ${pass} ${login}
+      fi
+    fi
+  fi
+}
+
+
+# see: https://www.urbanautomaton.com/blog/2014/09/09/redirecting-bash-script-output-to-syslog/
+exec 1> >(logger -s -t $(basename $0)) 2>&1
+
+ddns_update he
+ddns_update cloudflare
