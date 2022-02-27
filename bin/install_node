@@ -1,77 +1,55 @@
 #!/bin/bash -eu
 
-
-function __install_node_activator() {
+function install_node_binaries {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
 
-  local activator="${1}"
-  local version="${2}"
+  which curl >/dev/null 2>&1 || apt+ install wget
 
+  local name=node
+  local latest=https://nodejs.org/download/release/index.json
+  local latest="$(curl ${latest} 2>/dev/null | jq .[0].version | tr -d '"' | sed -E 's|v(.*)$|\1|')"
+  echo "${name}: latest version: ${latest}" 1>&2
+  local default="${NODE_VERSION:-${latest:-16.11.1}}"
+  local version="${1:-${default}}"
+  echo "${name}: installing version: ${version}" 1>&2
+
+  local hwarch=$(uname -m | tr '[:upper:]' '[:lower:]')
+  local osarch=$(uname -s | tr '[:upper:]' '[:lower:]')
+  case "${hwarch}" in
+      x86_64) hwarch=x64 ;;
+      i386) hwarch=i386 ;;
+      *) echo "ERROR: hardware platform is not supported: ${hwarch}" ; return 1 ;;
+  esac
+  case "${osarch}" in
+      linux) ;;
+      darwin) ;;
+      *) echo "ERROR: software platform is not supported: ${osarch}" ; return 1 ;;
+  esac
+  local arch=${osarch}-${hwarch}
+
+  local file=node-v${version}-${arch}.tar.xz
+  local url=http://nodejs.org/download/release/v${version}/${file}
+  local folder=${name}-${version}-${arch}
+  local subfolder=bin
+  local symlinks=node,npm,npx
+  local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
+
+  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}" "--" "--strip-components=1"
+
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/341-node.sh
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
   cat <<EOD > "${config}"
 #!/bin/bash
 
 export NODE_VERSION=${version}
-export NODE_ARCH=\${NODE_ARCH:-linux-x64}
-export NODE_HOME=\${TOOLS_HOME:=\$HOME/tools}/node-\${NODE_VERSION}-\${NODE_ARCH}
+export NODE_ARCH=\${NODE_ARCH:-${arch}}
+export NODE_HOME=\${TOOLS_HOME:=\${HOME}/tools}/node-\${NODE_VERSION}-\${NODE_ARCH}
 
 export PATH=\${NODE_HOME}/bin:\${PATH}
 EOD
   chmod ugo+x "${config}"
   echo "${config}"
-}    
-
-function install_node_binaries {
-  local url=https://nodejs.org/download/release/index.json
-  local default="16.11.1"
-  local current="${NODE_VERSION:-${default}}"
-  local latest=$(curl -s ${url} | jq .[0].version | tr -d '"')
-  local version="${1:-${latest}}"        # user can force a version, passing it on the first parameter
-  local version="${version:-${current}}" # falls back to current installed version, if any
-  local version="${version:-${default}}" # falls back to default version
-
-  case "$(uname -i)" in
-      x86_64) local arch="linux-x64";;
-      i386)   local arch="linux-i386";;
-      *)      local arch="linux-x64";;
-  esac
-
-  local file=node-${version}-${arch}.tar.xz
-  local url=http://nodejs.org/download/release/${version}/${file}
-  local folder=node-${version}-${arch}
-  local symlink=node
-
-  local tools="${TOOLS_HOME:-$HOME/tools}"
-  local Software="${SOFTWARE:=/mnt/omv/Software}"
-
-  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
-  [[ ! -d "${tools}" ]] && mkdir -p $tools
-
-  local archive=""
-  if [[ -f "${Software}/Linux/${file}" ]] ;then
-    local archive="${Software}/Linux/${file}"
-  elif [[ -f "${DOWNLOADS}"/${file} ]] ;then
-    local archive="${DOWNLOADS}/${file}"
-  fi
-  if [[ -z "${archive}" ]] ;then
-    local archive="${DOWNLOADS}/${file}"
-    which wget >/dev/null 2>&1 || apt+ install wget
-    wget "$url" -O "${archive}"
-  fi
-
-  if [ ! -d "${tools}/${folder}" ] ;then
-    which tar >/dev/null 2>&1 || apt+ install tar
-    which xz  >/dev/null 2>&1 || apt+ install xz
-    tar -C "${tools}" -xpf "${archive}"
-  fi
-  if [ ! -z "${symlink}" ] ;then
-    if [ -L "${tools}/${symlink}" ] ;then rm "${tools}/${symlink}" ;fi
-    ln -s "${folder}" "${tools}/${symlink}"
-  fi
-
-  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/341-node.sh
-  __install_node_activator "${config}" "${version}"
 }
 
 function install_node_tools {
