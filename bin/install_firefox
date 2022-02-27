@@ -9,8 +9,8 @@ function install_firefox_binaries {
   local executable=firefox
   local icon=browser/chrome/icons/default/default32.png
   local lang=$(echo $LANG | cut -d. -f1 | sed "s/_/-/")
-  local hwarch=$(uname -m)
-  local osarch=$(uname -s | tr [:upper:] [:lower:])
+  local hwarch=$(uname -m | tr '[:upper:]' '[:lower:]')
+  local osarch=$(uname -s | tr '[:upper:]' '[:lower:]')
   local version=83.0
 
   if [ ! -e "${DOWNLOADS}"/${name}-${version}.tar.bz2 ] ;then

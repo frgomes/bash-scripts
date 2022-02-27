@@ -1,28 +1,39 @@
 #!/bin/bash -eu
 
 function install_bfg_binaries {
-    local v=1.13.0
-    local name=bfg-${v}.jar
-    local url=https://repo1.maven.org/maven2/com/madgag/bfg/${v}/${name}
-    local file="${HOME}/bin/${name}"
-    if [ ! -f ${file} ] ;then
-        mkdir -p "${HOME}/bin" > /dev/null
-        apt+ install curl
-        curl -L "$url" > "${file}"
-        [[ -s ${file} ]] || ( echo ERROR: could not download file ${url} ; return 1 )
-    fi
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
 
-    if [ ! -f /opt/bin/bfg ] ;then
-        [[ ! -d "${HOME}/bin" ]] && sudo mkdir -p "${HOME}/bin"
-        cat << EOD > "${HOME}/bin/bfg"
+  which curl >/dev/null 2>&1 || apt+ install wget
+
+  local name=bfg
+  local releases=https://github.com/rtyley/bfg-repo-cleaner/releases
+  local latest=${releases}/latest
+  local latest="$(curl -I ${latest} 2>/dev/null | fgrep location: | tr -d '[:cntrl:]' | cut -d' ' -f2 | sed -E 's|.*\/v(.*)$|\1|')"
+  echo "${name}: latest version: ${latest}" 1>&2
+  local default="${BFG_VERSION:-${latest:-1.14.0}}"
+  local version="${1:-${default}}"
+  echo "${name}: installing version: ${version}" 1>&2
+
+  local file=${name}-${version}.jar
+  local url=https://repo1.maven.org/maven2/com/madgag/bfg/${version}/${file}
+  local folder=${name}-${version}
+  local subfolder=.
+  local symlinks=${name}
+  local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
+
+  "${dir}"/bash_install_jar "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}" # "--strip-components=1"
+
+  local config="${VIRTUAL_ENV:-"${HOME}"}/.bashrc-scripts/installed/354-bfg.sh"
+  [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
+  cat <<EOD > "${config}"
 #!/bin/bash
-
-export BFG_VERSION=${v}
-java -jar "\${HOME}/bin/bfg-\${BFG_VERSION}.jar" $*
+ 
+export BFG_VERSION=${version}
+export BFG_HOME=\${TOOLS_HOME:=\$HOME/tools}/${folder}
 EOD
-        sudo chmod 755 "${HOME}/bin/bfg"
-    fi
-    echo "${HOME}/bin/bfg"
+  chmod ugo+x "${config}"
+  echo "${config}"
 }
 
 

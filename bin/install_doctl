@@ -1,28 +1,26 @@
 #!/bin/bash -eu
 
-function install_helm_binaries {
+function install_doctl {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
 
-  which curl >/dev/null 2>&1 || apt+ install wget
-
-  local name=helm
-  local releases=https://github.com/helm/helm/releases
+  local name=doctl
+  local releases=https://github.com/digitalocean/doctl/releases
   local latest=${releases}/latest
-  local latest="$(curl -I ${latest} 2>/dev/null | fgrep location: | tr -d '[:cntrl:]' | cut -d' ' -f2 | sed -E 's|.*\/v(.*)$|\1|')"
+  local latest="$(curl -I ${latest} 2>/dev/null | fgrep location: | tr -d '[:cntrl:]' | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')"
   echo "${name}: latest version: ${latest}" 1>&2
-  local default="${HELM_VERSION:-${latest:-3.8.0}}"
+  local default="${DOCTL_VERSION:-${latest:-1.70.0}}"
   local version="${1:-${default}}"
   echo "${name}: installing version: ${version}" 1>&2
 
   local hwarch=$(uname -m | tr '[:upper:]' '[:lower:]')
-  case "${hwarch}" in
-    x86_64) hwarch=amd64 ;;
-    armv7l) hwarch=arm ;;
-    aarch64) hwarch=arm64 ;;
-    *) echo "ERROR: hardware platform is not supported: ${hwarch}" ; return 1 ;;
-  esac
   local osarch=$(uname -s | tr '[:upper:]' '[:lower:]')
+  case "${hwarch}" in
+      x86_64) hwarch=amd64 ;;
+      i386) hwarch=386 ;;
+      aarch64) hwarch=arm64 ;;
+      *) echo "ERROR: hardware platform is not supported: ${hwarch}" ; return 1 ;;
+  esac
   case "${osarch}" in
       linux) ;;
       darwin) ;;
@@ -30,17 +28,28 @@ function install_helm_binaries {
   esac
   local arch=${osarch}-${hwarch}
 
-  local file=helm-v${version}-${osarch}-${hwarch}.tar.gz
-  local url=https://get.helm.sh/${file}
+  local file=${name}-${version}-${arch}.tar.gz
+  local url=${releases}/download/v${version}/${file}
   local folder=${name}-${version}
   local subfolder=.
   local symlinks=${name}
   local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
 
-  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}" "--strip-components=1"
+  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}"
+
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/271-doctl.sh
+  [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
+  cat <<EOD > "${config}"
+#!/bin/bash
+
+export DOCTL_VERSION=${version}
+export DOCTL_HOME=\${TOOLS_HOME:=\$HOME/tools}/${folder}
+EOD
+  chmod ugo+x "${config}"
+  echo "${config}"
 }
 
-function __install_helm {
+function __install_doctl {
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
   grep -E "^function [a-zA-Z0-9]" $self | cut -d' ' -f2 | while read cmd ;do
     $cmd $*

@@ -1,42 +1,45 @@
 #!/bin/bash -eu
 
-function install_plantuml_binaries {
+function install_scala_metals_emacs {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
 
   which curl >/dev/null 2>&1 || apt+ install wget
 
-  local name=plantuml
-  local releases=https://github.com/plantuml/plantuml/releases
+  local name=metals
+  local releases=https://github.com/scalameta/metals/releases
   local latest=${releases}/latest
   local latest="$(curl -I ${latest} 2>/dev/null | fgrep location: | tr -d '[:cntrl:]' | cut -d' ' -f2 | sed -E 's|.*\/v(.*)$|\1|')"
   echo "${name}: latest version: ${latest}" 1>&2
-  local default="${PLANTUML_VERSION:-${latest:-1.2022.1}}"
+  local default="${METALS_VERSION:-${latest:-0.11.1}}"
   local version="${1:-${default}}"
   echo "${name}: installing version: ${version}" 1>&2
 
-  local file=${name}-${version}.jar
-  local url=${releases}/download/v${version}/${file}
-  local folder=${name}-${version}
-  local subfolder=.
-  local symlinks=${name}
   local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
 
-  "${dir}"/bash_install_jar "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}" # "--strip-components=1"
+  [[ -d ${HOME}/bin ]] | mkdir -p ${HOME}/bin
+  if [ ! -e ${HOME}/bin/coursier ] ;then
+    curl -s -L -o ${bin}/coursier https://git.io/coursier-cli-linux \
+      && chmod +x ${bin}/coursier \
+        && echo ${bin}/coursier
+  fi
 
-  local config="${VIRTUAL_ENV:-"${HOME}"}/.bashrc-scripts/installed/353-plantuml.sh"
-  [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
-  cat <<EOD > "${config}"
-#!/bin/bash
- 
-export PLANTUML_VERSION=${version}
-export PLANTUML_HOME=\${TOOLS_HOME:=\$HOME/tools}/${folder}
-EOD
-  chmod ugo+x "${config}"
-  echo "${config}"
+  ## For some unknown reason, we need to pin Scala version to 2.12
+  local SCALA_VERSION_MAJOR=2.12
+
+  ${bin}/coursier bootstrap \
+    --java-opt -Xss4m \
+    --java-opt -Xms100m \
+    --java-opt -Dmetals.client=emacs \
+    org.scalameta:metals_${SCALA_VERSION_MAJOR}:${version} \
+    -r bintray:scalacenter/releases \
+    -r sonatype:snapshots \
+    -o ${bin}/metals-emacs \
+    --force --quiet && \
+      echo ${bin}/metals-emacs
 }
 
-function __install_plantuml {
+function __install_scala_metals {
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
   grep -E "^function [a-zA-Z0-9]" $self | cut -d' ' -f2 | while read cmd ;do
     $cmd $*

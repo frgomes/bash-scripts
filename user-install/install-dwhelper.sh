@@ -6,7 +6,7 @@ function install_dwhelper_binaries {
   local version=${version:-"1.3.0-1"}
   local semver=$(echo $version | cut -d- -f1)
 
-  local machine=$(uname -m)
+  local machine=$(uname -m | tr '[:upper:]' '[:lower:]'))
   case "${machine}" in
     armv7l)
       local arch=arm

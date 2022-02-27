@@ -126,8 +126,8 @@ function postinstall_user_firefox {
   [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
   local app=firefox
   local lang=$(echo $LANG | cut -d. -f1 | sed "s/_/-/")
-  local hwarch=$(uname -m)
-  local osarch=$(uname -s | tr [:upper:] [:lower:])
+  local hwarch=$(uname -m | tr '[:upper:]' '[:lower:]')
+  local osarch=$(uname -s | tr '[:upper:]' '[:lower:]')
   local version=71.0
 
   if [ ! -e "${DOWNLOADS}"/${app}-${version}.tar.bz2 ] ;then
@@ -152,8 +152,8 @@ function postinstall_user_thunderbird {
   [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
   local app=thunderbird
   local lang=$(echo $LANG | cut -d. -f1 | sed "s/_/-/")
-  local hwarch=$(uname -m)
-  local osarch=$(uname -s | tr [:upper:] [:lower:])
+  local hwarch=$(uname -m | tr '[:upper:]' '[:lower:]')
+  local osarch=$(uname -s | tr '[:upper:]' '[:lower:]')
   local version=68.3.1
   if [ ! -e "${DOWNLOADS}"/${app}-${version}.tar.bz2 ] ;then
     pushd "${DOWNLOADS}" 2>&1 > /dev/null

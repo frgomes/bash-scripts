@@ -38,8 +38,8 @@ function install_wabt_install {
   local default="1.0.23"
   local current="${WABT_VERSION:-${default}}"
 
-  ##local latest="$(curl -I ${url} 2>/dev/null | fgrep location: | tr -d [:cntrl:] | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')"
-  local latest="$(curl -I ${url} 2>/dev/null | fgrep location: | tr -d [:cntrl:] | cut -d' ' -f2 | cut -d/ -f8)"
+  ##local latest="$(curl -I ${url} 2>/dev/null | fgrep location: | tr -d '[:cntrl:]' | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')"
+  local latest="$(curl -I ${url} 2>/dev/null | fgrep location: | tr -d '[:cntrl:]' | cut -d' ' -f2 | cut -d/ -f8)"
   local version="${1:-${latest}}"        # user can force a version, passing it on the first parameter
   local version="${version:-${current}}" # falls back to current installed version, if any
   local version="${version:-${default}}" # falls back to default version

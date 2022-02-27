@@ -1,17 +1,17 @@
 #!/bin/bash -eu
 
-function install_terraform {
+function install_terraform_libvirt {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
 
   which curl >/dev/null 2>&1 || apt+ install wget
 
-  local name=terraform
-  local releases=https://github.com/hashicorp/terraform/releases
+  local name=terraform-provider-libvirt
+  local releases=https://github.com/dmacvicar/terraform-provider-libvirt/releases
   local latest=${releases}/latest
   local latest="$(curl -I ${latest} 2>/dev/null | fgrep location: | tr -d '[:cntrl:]' | cut -d' ' -f2 | sed -E 's|.*\/v(.*)$|\1|')"
   echo "${name}: latest version: ${latest}" 1>&2
-  local default="${TERRAFORM_VERSION:-${latest:-1.1.6}}"
+  local default="${TERRAFORM_LIBVIRT_VERSION:-${latest:-0.6.14}}"
   local version="${1:-${default}}"
   echo "${name}: installing version: ${version}" 1>&2
 
@@ -32,21 +32,24 @@ function install_terraform {
   local arch=${osarch}_${hwarch}
 
   local file=${name}_${version}_${arch}.zip
-  local url=https://releases.hashicorp.com/terraform/${version}/${file}
-  local folder=${name}-${version}
+  local url=${releases}/download/v${version}/${file}
+ #local folder=${name}-${version}
+  local folder="${HOME}/.local/share/terraform/plugins/registry.terraform.io/dmacvicar/libvirt/${version}/${arch}"
   local subfolder=
-  local symlinks=${name}
-  local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
+  #local symlinks=${name}
+  #local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
+  local symlinks=
+  local bin=
 
   "${dir}"/bash_install_zip "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}" # "--strip-components=1"
 
-  local config="${VIRTUAL_ENV:-"${HOME}"}/.bashrc-scripts/installed/271-terraform.sh"
+  local config="${VIRTUAL_ENV:-"${HOME}"}/.bashrc-scripts/installed/271-terraform-libvirt.sh"
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
-  cat <<EOD > "${config}"
+  cat <<EOD > /dev/tty #"${config}"
 #!/bin/bash
  
-export TERRAFORM_VERSION=${version}
-export TERRAFORM_HOME=\${TOOLS_HOME:=\$HOME/tools}/${folder}
+export TERRAFORM_LIBVIRT_VERSION=${version}
+export TERRAFORM_LIBVIRT_HOME=\${TOOLS_HOME:=${folder}
 EOD
   chmod ugo+x "${config}"
   echo "${config}"

@@ -9,8 +9,8 @@ function install_thunderbird_binaries {
   local executable=thunderbird
   local icon=chrome/icons/default/default32.png
   local lang=$(echo $LANG | cut -d. -f1 | sed "s/_/-/")
-  local hwarch=$(uname -m)
-  local osarch=$(uname -s | tr [:upper:] [:lower:])
+  local hwarch=$(uname -m | tr '[:upper:]' '[:lower:]')
+  local osarch=$(uname -s | tr '[:upper:]' '[:lower:]')
   local version=78.5.1
   
   if [ ! -e "${DOWNLOADS}"/${name}-${version}.tar.bz2 ] ;then

@@ -10,7 +10,7 @@
 function install_x2go_client_binaries {
   apt+ install apt-transport-https dirmngr
 
-  local machine=$(uname -m)
+  local machine=$(uname -m | tr '[:upper:]' '[:lower:]'))
   case "${machine}" in
     armv7l)
       local distro=raspbian

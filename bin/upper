@@ -2,7 +2,7 @@
 
 function __upper() {
   which tr >/dev/null 2>&1 || apt+ install coreutils
-  tr [:lower:] [:upper:] $*
+  tr '[:lower:]' '[:upper:]' $*
 }
 
 __upper $*

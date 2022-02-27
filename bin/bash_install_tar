@@ -1,10 +1,8 @@
 #!/bin/bash -eu
 
 function __bash_install_tar_help(){
-  echo "Usage: bash_install_tar url file folder [symlink] [option] ..."
-  echo "Downloads url, save onto file, tar extract onto folder, optionally creating symlink."
-  echo "Pass options to tar command, if specified."
-  echo "Enter a dot . if a symlink is not required but options for tar are required."
+  echo "Usage: bash_install_tar URL FILE FOLDER [SYMLINKS [BIN [SUBFOLDER]]] -- [TAR-OPTIONS] ..."
+  echo "Downloads URL, save onto FILE, tar extract into FOLDER, creates SYMLINKS under BIN to SUBFOLDER."
 }
 
 function __bash_install_tar() {
@@ -14,8 +12,17 @@ function __bash_install_tar() {
   local url="$1"
   local file="$2"
   local folder="$3"
-  shift; shift; shift
-  [[ $# -gt 0 ]] && local symlink="$1" && shift
+  shift; shift; shift;
+  local symlinks=
+  local bin=
+  local subfolder=
+  [[ $# -gt 0 && "${1}" != "--" ]] && local symlinks="$1" && shift
+  [[ $# -gt 0 && "${1}" != "--" ]] && local bin="$1" && shift
+  [[ $# -gt 0 && "${1}" != "--" ]] && local subfolder="$1" && shift
+  local bin="${bin:-${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin}"
+
+  shift
+  local options="${@}"
 
   local tools="${TOOLS_HOME:=$HOME/tools}"
   local Software="${SOFTWARE:=/mnt/omv/Software}"
@@ -29,17 +36,32 @@ function __bash_install_tar() {
   elif [[ -f "${DOWNLOADS}/${file}" ]]; then
     local archive="${DOWNLOADS}/${file}"
   fi
+
+  which xz >/dev/null 2>&1 || apt+ install xz
+
+  # validate existing archive
+  [[ ! -z "${archive}" ]] && [[ ! $(tar -tf "${archive}" > /dev/null 2>&1) ]] && rm "${archive}" && local archive=""
+
+  # download archive
   if [[ -z "${archive}" ]]; then
     local archive="${DOWNLOADS}/${file}"
     wget -q "$url" -O "${archive}"
   fi
 
-  [[ ! -d "${tools}/${folder}" ]] && mkdir -p "${tools}/${folder}"
-  which xz >/dev/null 2>&1 || apt+ install xz
-  tar -C "${tools}/${folder}" "$@" -xpvf "${archive}"
-
-  [[ ! -z "${symlink}" && "${symlink}" != "." ]] && [[ -L "${tools}/${symlink}" ]] && [[ -e "${tools}/${symlink}" ]] && rm "${tools}/${symlink}"
-  [[ ! -z "${symlink}" && "${symlink}" != "." ]] && ln -s "${folder}" "${tools}/${symlink}"
+  # apply relative folder to base path if necessary
+  [[ "${folder:0:1}" != "/" ]] && local folder="${tools}/${folder}"
+  
+  [[ -d "${folder}" ]] || mkdir -p "${folder}" && \
+    [[ ! -z "${archive}" ]] && tar -C "${folder}" "${options}" -xpf "${archive}" > /dev/null 2>&1 && \
+      if [[ ! -z "${symlinks}" ]] ;then
+        echo "${symlinks}" | tr ',' '\n' | \
+          while read symlink ;do
+            [[ ! -L "${bin}/${symlink}" ]] || rm "${bin}/${symlink}" && \
+              ln -s "${folder}/${subfolder}/${symlink}" "${bin}/${symlink}" && echo "${bin}/${symlink}"
+          done
+      else
+          return 0
+      fi
 }
 
 if [ $_ != $0 ]; then

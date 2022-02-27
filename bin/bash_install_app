@@ -1,19 +1,25 @@
 #!/bin/bash -eu
 
 function __bash_install_app_help(){
-  echo "Usage: bash_install_app url file folder [symlink]"
-  echo "Downloads url, save onto file, copy into folder, optionally create symlink."
+  echo "Usage: bash_install_app URL FILE FOLDER [SYMLINKS [BIN [SUBFOLDER]]]"
+  echo "Downloads URL, save onto FILE, copy into FOLDER, creates SYMLINKS under BIN to SUBFOLDER."
 }
 
 function __bash_install_app() {
   which wget >/dev/null 2>&1 || apt+ install wget
 
-  [[ $# -lt 3 ]] && __bash_install_tar_help && return 1
+  [[ $# -lt 3 ]] && __bash_install_app_help && return 1
   local url="$1"
   local file="$2"
   local folder="$3"
-  shift; shift; shift
-  [[ $# -gt 0 ]] && local symlink="$1" && shift
+  shift; shift; shift;
+  local symlinks=
+  local bin=
+  local subfolder=
+  [[ $# -gt 0 ]] && local symlinks="$1" && shift
+  [[ $# -gt 0 ]] && local bin="$1" && shift
+  [[ $# -gt 0 ]] && local subfolder="$1" && shift
+  local bin="${bin:-${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin}"
 
   local tools="${TOOLS_HOME:=$HOME/tools}"
   local Software="${SOFTWARE:=/mnt/omv/Software}"
@@ -27,17 +33,31 @@ function __bash_install_app() {
   elif [[ -f "${DOWNLOADS}/${file}" ]]; then
     local archive="${DOWNLOADS}/${file}"
   fi
+
+  # validate existing archive
+  [[ ! -z "${archive}" ]] && [[ ! -s "${archive}" ]] && rm "${archive}" && local archive=""
+
+  # download archive
   if [[ -z "${archive}" ]]; then
     local archive="${DOWNLOADS}/${file}"
     wget -q "$url" -O "${archive}"
   fi
 
-  [[ ! -d "${tools}/${folder}" ]] && mkdir -p "${tools}/${folder}"
-  cp "${archive}" "${tools}/${folder}/bin/${file}"
-  chmod ugo+x "${tools}/${folder}/bin/${file}"
-
-  [[ ! -z "${symlink}" && "${symlink}" != "." ]] || [[ -L "${tools}/${symlink}" ]] && rm "${tools}/${symlink}"
-  [[ ! -z "${symlink}" && "${symlink}" != "." ]] || ln -s "${folder}" "${tools}/${symlink}"
+  # apply relative folder to base path if necessary
+  [[ "${folder:0:1}" != "/" ]] && local folder="${tools}/${folder}"
+  
+  [[ -d "${folder}" ]] || mkdir -p "${folder}" && \
+    [[ -s "${archive}" ]] && cp "${archive}" "${folder}/${file}" && \
+      chmod ugo+x "${folder}/${file}" && \
+        if [[ ! -z "${symlinks}" ]] ;then
+          echo "${symlinks}" | tr ',' '\n' | head -1 | \
+            while read symlink ;do
+              [[ ! -L "${bin}/${symlink}" ]] || rm "${bin}/${symlink}" && \
+                ln -s "${folder}/${subfolder}/${symlink}" "${bin}/${symlink}" && echo "${bin}/${symlink}"
+            done
+        else
+            return 0
+        fi
 }
 
 if [ $_ != $0 ]; then

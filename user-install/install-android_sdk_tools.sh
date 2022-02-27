@@ -12,8 +12,8 @@ function install_android_sdk_tools_binaries {
   local api=$(echo ${version} | cut -d. -f1)
   local api=${3:-${api}}
 
-  local HWPLATFORM=$(uname -m | tr [:upper:] [:lower:])
-  local OSPLATFORM=$(uname -s | tr [:upper:] [:lower:])
+  local HWPLATFORM=$(uname -m | tr '[:upper:]' '[:lower:]')
+  local OSPLATFORM=$(uname -s | tr '[:upper:]' '[:lower:]')
 
   local archive=sdk-tools-${OSPLATFORM}-${release}.zip
 

@@ -1,14 +1,25 @@
 #!/bin/bash -eu
 
-function __bash_install_zip_help(){
-  echo "Usage: bash_install_zip URL FILE FOLDER [SYMLINKS [BIN [SUBFOLDER]]] -- [UNZIP-OPTIONS] ..."
-  echo "Downloads URL, save onto FILE, tar extract into FOLDER, creates SYMLINKS under BIN to SUBFOLDER."
+function __bash_install_jar_help(){
+  echo "Usage: bash_install_jar URL FILE FOLDER [SYMLINKS [BIN [SUBFOLDER]]]"
+  echo "Downloads URL, save onto FILE, copy into FOLDER, creates SYMLINKS under BIN to SUBFOLDER."
 }
 
-function __bash_install_zip() {
+function __bash_install_jar_launcher() {
+  local launcher="${1}"
+  local jar="${2}"
+  cat <<EOD > "${launcher}"
+#!/bin/bash
+
+java -jar "${jar}" \$@
+EOD
+  chmod ugo+x "${launcher}"
+}
+
+function __bash_install_jar() {
   which wget >/dev/null 2>&1 || apt+ install wget
 
-  [[ $# -lt 3 ]] && __bash_install_zip_help && return 1
+  [[ $# -lt 3 ]] && __bash_install_jar_help && return 1
   local url="$1"
   local file="$2"
   local folder="$3"
@@ -20,9 +31,6 @@ function __bash_install_zip() {
   [[ $# -gt 0 && "${1}" != "--" ]] && local bin="$1" && shift
   [[ $# -gt 0 && "${1}" != "--" ]] && local subfolder="$1" && shift
   local bin="${bin:-${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin}"
-
-  shift
-  local options="${@}"
 
   local tools="${TOOLS_HOME:=$HOME/tools}"
   local Software="${SOFTWARE:=/mnt/omv/Software}"
@@ -51,17 +59,19 @@ function __bash_install_zip() {
   # apply relative folder to base path if necessary
   [[ "${folder:0:1}" != "/" ]] && local folder="${tools}/${folder}"
   
-  [[ -d "${folder}" ]] || mkdir -p "${folder}" && \
-    [[ ! -z "${archive}" ]] && unzip  "${options}" "${archive}" -d "${folder}" > /dev/null 2>&1 && \
-      if [[ ! -z "${symlinks}" ]] ;then
-        echo "${symlinks}" | tr ',' '\n' | \
-          while read symlink ;do
-            [[ ! -L "${bin}/${symlink}" ]] || rm "${bin}/${symlink}" && \
-              ln -s "${folder}/${subfolder}/${symlink}" "${bin}/${symlink}" && echo "${bin}/${symlink}"
-          done
-      else
-          return 0
-      fi
+  [[ -d "${tools}/${folder}" ]] || mkdir -p "${folder}/${subfolder}" && \
+    [[ -s "${archive}" ]] && cp "${archive}" "${folder}/${subfolder}/${file}" && \
+      chmod ugo+x "${folder}/${subfolder}/${file}" && \
+        if [[ ! -z "${symlinks}" ]] ;then
+          echo "${symlinks}" | tr ',' '\n' | head -1 | \
+            while read symlink ;do
+              [[ ! -L "${bin}/${symlink}" ]] || rm "${bin}/${symlink}" && \
+                __bash_install_jar_launcher "${folder}/${subfolder}/${symlink}" "${folder}/${subfolder}/${file}" && \
+                ln -s "${folder}/${subfolder}/${symlink}" "${bin}/${symlink}" && echo "${bin}/${symlink}"
+            done
+        else
+            return 0
+        fi
 }
 
 if [ $_ != $0 ]; then
