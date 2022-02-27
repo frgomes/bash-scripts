@@ -17,8 +17,8 @@ function install_scala_metals_emacs {
 
   local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
 
-  [[ -d ${HOME}/bin ]] | mkdir -p ${HOME}/bin
-  if [ ! -e ${HOME}/bin/coursier ] ;then
+  [[ -d ${bin} ]] | mkdir -p ${bin}
+  if [ ! -e ${bin}/coursier ] ;then
     curl -s -L -o ${bin}/coursier https://git.io/coursier-cli-linux \
       && chmod +x ${bin}/coursier \
         && echo ${bin}/coursier
