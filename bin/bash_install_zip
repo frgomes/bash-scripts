@@ -16,13 +16,13 @@ function __bash_install_zip() {
   local symlinks=
   local bin=
   local subfolder=
+  local options=
   [[ $# -gt 0 && "${1}" != "--" ]] && local symlinks="$1" && shift
   [[ $# -gt 0 && "${1}" != "--" ]] && local bin="$1" && shift
   [[ $# -gt 0 && "${1}" != "--" ]] && local subfolder="$1" && shift
   local bin="${bin:-${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin}"
 
-  shift
-  local options="${@}"
+  [[ $# -gt 0 && "${1}" == "--" ]] && shift && local options="${@}"
 
   local tools="${TOOLS_HOME:=$HOME/tools}"
   local Software="${SOFTWARE:=/mnt/omv/Software}"
