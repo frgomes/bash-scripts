@@ -3,6 +3,20 @@
 function install_cli_databricks_binaries {
   which python3 >/dev/null 2>&1 || apt+ install python3-minimal
   pip3 --disable-pip-version-check install --upgrade databricks_cli
+
+  local version="$(databricks --version | cut -d' ' -f2)"
+  local folder=$(dirname "$(whereis databricks)" | tr -d ' ' | cut -d: -f2)
+
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/253-databricks.sh
+  [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
+  cat <<EOD > "${config}"
+#!/bin/bash
+
+export DATABRICKS_VERSION=${version}
+export DATABRICKS_HOME=\${TOOLS_HOME:=\$HOME/tools}/${folder}
+EOD
+  chmod ugo+x "${config}"
+  echo "${config}"
 }
 
 function __install_cli_databricks {

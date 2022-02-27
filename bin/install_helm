@@ -38,6 +38,17 @@ function install_helm_binaries {
   local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
 
   "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}" "--strip-components=1"
+
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/252-helm.sh
+  [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
+  cat <<EOD > "${config}"
+#!/bin/bash
+ 
+export HELM_VERSION=${version}
+export HELM_HOME=\${TOOLS_HOME:=\$HOME/tools}/${folder}
+EOD
+  chmod ugo+x "${config}"
+  echo "${config}"
 }
 
 function __install_helm {

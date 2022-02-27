@@ -24,7 +24,7 @@ function install_bfg_binaries {
 
   "${dir}"/bash_install_jar "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}" # "--strip-components=1"
 
-  local config="${VIRTUAL_ENV:-"${HOME}"}/.bashrc-scripts/installed/354-bfg.sh"
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/354-bfg.sh
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
   cat <<EOD > "${config}"
 #!/bin/bash
