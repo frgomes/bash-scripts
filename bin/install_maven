@@ -1,67 +1,37 @@
 #!/bin/bash -eu
 
-
-function __install_maven_activator() {
+function install_maven_binaries {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
 
-  local activator="${1}"
-  local version="${2}"
+  which curl >/dev/null 2>&1 || apt+ install wget
 
+  local name=maven
+  local latest="$(curl -s https://maven.apache.org/download.cgi | grep -E 'is the latest release' | sed -E 's/.*Apache Maven ([0-9.]+) is the latest release.*/\1/')"
+  echo "${name}: latest version: ${latest}" 1>&2
+  local default="${M2_VERSION:-${latest:-3.8.4}}"
+  local version="${1:-${default}}"
+  echo "${name}: installing version: ${version}" 1>&2
+
+  local file=apache-maven-${version}-bin.tar.gz
+  local url=https://downloads.apache.org/maven/maven-3/${version}/binaries/${file}
+  local folder=${name}-${version}
+  local subfolder=bin
+  local symlinks=mvn
+  local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
+
+  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}" "--" "--strip-components=1"
+
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/310-maven.sh
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
   cat <<EOD > "${config}"
 #!/bin/bash
 
 export M2_VERSION=${version}
-export M2_HOME=\${TOOLS_HOME:=\$HOME/tools}/apache-maven-\${M2_VERSION}
-export MAVEN_OPTS="-Xmx2048m"
-
-export PATH=\${M2_HOME}/bin:\${PATH}
+export M2_HOME=\${TOOLS_HOME:=\$HOME/tools}/${folder}
 EOD
-
   chmod ugo+x "${config}"
   echo "${config}"
-}    
-
-function install_maven_binaries {
-  local default="3.8.1"
-  local current="${MAVEN_VERSION:-${default}}"
-  local version=${1:-"$current"}
-
-  local file=apache-maven-${version}-bin.tar.gz
-  local url=https://downloads.apache.org/maven/maven-3/${version}/binaries/${file}
-  local folder=maven-${version}
-  local symlink=maven
-
-  local tools="${TOOLS_HOME:-$HOME/tools}"
-  local Software="${SOFTWARE:=/mnt/omv/Software}"
-
-  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
-  [[ ! -d "${tools}" ]] && mkdir -p $tools
-
-  local archive=""
-  if [[ -f "${Software}/Linux/${file}" ]] ;then
-    local archive="${Software}/Linux/${file}"
-  elif [[ -f "${DOWNLOADS}"/${file} ]] ;then
-    local archive="${DOWNLOADS}/${file}"
-  fi
-  if [[ -z "${archive}" ]] ;then
-    local archive="${DOWNLOADS}/${file}"
-    which wget >/dev/null 2>&1 || apt+ install wget
-    wget "$url" -O "${archive}"
-  fi
-
-  if [ ! -d "${tools}/${folder}" ] ;then
-    which tar >/dev/null 2>&1 || apt+ install tar
-    tar -C "${tools}" -xpf "${archive}"
-  fi
-  if [ ! -z "${symlink}" ] ;then
-    if [ -L "${tools}/${symlink}" ] ;then rm "${tools}/${symlink}" ;fi
-    ln -s "${folder}" "${tools}/${symlink}"
-  fi
-
-  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/380-maven.sh
-  __install_maven_activator "${config}" "${version}"
 }
 
 function __install_maven {
