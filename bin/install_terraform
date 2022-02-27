@@ -38,7 +38,7 @@ function install_terraform {
   local symlinks=${name}
   local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
 
-  "${dir}"/bash_install_zip "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}" # "--strip-components=1"
+  "${dir}"/bash_install_zip "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}"
 
   local config="${VIRTUAL_ENV:-"${HOME}"}/.bashrc-scripts/installed/271-terraform.sh"
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")

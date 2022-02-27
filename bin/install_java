@@ -77,7 +77,7 @@ function install_java_binaries {
   echo Latest version: "(not detected)" 1>&2
   echo Installing version: "${version}" 1>&2
 
-  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}" "--strip-components=1"
+  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}" "--" "--strip-components=1"
 
   local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/300-java.sh
   local major=$(echo ${version} | cut -d. -f1)

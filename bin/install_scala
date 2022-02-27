@@ -27,10 +27,10 @@ function install_scala {
   local folder=${name}-${version}
   local subfolder=bin
   local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
-  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}" "--strip-components=1"
+  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}" "--" "--strip-components=1"
 
     #-- This is all about installing documentation and sources, which is now deprecated. Kept here for historical reasons.
-    # "${dir}"/bash_install_tar "https://scala-lang.org/files/archive/scala-docs-${version}.txz" "scala-docs-${version}.txz" "scala-${version}" "scala-${major}" "--strip-components=1"
+    # "${dir}"/bash_install_tar "https://scala-lang.org/files/archive/scala-docs-${version}.txz" "scala-docs-${version}.txz" "scala-${version}" "scala-${major}" "--" "--strip-components=1"
     # local tools="${TOOLS_HOME:=$HOME/tools}"
     # "${dir}"/httrack_fetch "https://www.scala-lang.org/files/archive/spec/${major}" "${tools}/${folder}/scala-${version}/spec"
     # "${dir}"/httrack_fetch "https://scala-lang.org/files/archive/api/${version}"    "${tools}/${folder}/scala-${version}/api"
