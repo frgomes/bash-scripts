@@ -5,6 +5,7 @@ function install_node_binaries {
   local dir=$(dirname $self)
 
   which curl >/dev/null 2>&1 || apt+ install wget
+  which jq >/dev/null 2>&1 || apt+ install jq
 
   local name=node
   local latest=https://nodejs.org/download/release/index.json
