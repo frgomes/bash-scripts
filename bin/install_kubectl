@@ -6,10 +6,11 @@ function install_kubectl {
   local dir=$(dirname $self)
 
   local name=kubectl
+  local group=250
   local releases=https://storage.googleapis.com/kubernetes-release/release
   local latest=${releases}/stable.txt
   local latest="$(curl ${latest} 2>/dev/null | sed -E 's|v(.*)$|\1|')"
-  echo "${name}: latest version: ${latest}" 1>&2
+  echo "${name}: latest version: ${latest:-(not detected)}" 1>&2
   local default="${KUBECTL_VERSION:-${latest:-1.23.4}}"
   local version="${1:-${default}}"
   echo "${name}: installing version: ${version}" 1>&2
@@ -38,7 +39,7 @@ function install_kubectl {
 
   "${dir}"/bash_install_app "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}"
 
-  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/250-kubectl.sh
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
   cat <<EOD > "${config}"
 #!/bin/bash
@@ -58,10 +59,11 @@ function install_kubectl_stash {
   which curl >/dev/null 2>&1 || apt+ install wget
 
   local name=kubectl-stash
+  local group=250
   local releases=https://github.com/stashed/cli/releases
   local latest=${releases}/latest
   local latest="$(curl -I ${latest} 2>/dev/null | fgrep location: | tr -d '[:cntrl:]' | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')"
-  echo "${name}: latest version: ${latest}" 1>&2
+  echo "${name}: latest version: ${latest:-(not detected)}" 1>&2
   local default="${KUBECTL_STASH_VERSION:-${latest:-0.18.0}}"
   local version="${1:-${default}}"
   echo "${name}: installing version: ${version}" 1>&2
@@ -89,7 +91,7 @@ function install_kubectl_stash {
 
   "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}"
 
-  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/250-kubectl-stash.sh
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
   cat <<EOD > "${config}"
 #!/bin/bash
