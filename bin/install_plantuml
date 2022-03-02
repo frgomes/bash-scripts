@@ -7,10 +7,11 @@ function install_plantuml_binaries {
   which curl >/dev/null 2>&1 || apt+ install wget
 
   local name=plantuml
+  local group=353
   local releases=https://github.com/plantuml/plantuml/releases
   local latest=${releases}/latest
   local latest="$(curl -I ${latest} 2>/dev/null | fgrep location: | tr -d '[:cntrl:]' | cut -d' ' -f2 | sed -E 's|.*\/v(.*)$|\1|')"
-  echo "${name}: latest version: ${latest}" 1>&2
+  echo "${name}: latest version: ${latest:-(not detected)}" 1>&2
   local default="${PLANTUML_VERSION:-${latest:-1.2022.1}}"
   local version="${1:-${default}}"
   echo "${name}: installing version: ${version}" 1>&2
@@ -24,7 +25,7 @@ function install_plantuml_binaries {
 
   "${dir}"/bash_install_jar "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}" # "--strip-components=1"
 
-  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/353-plantuml.sh
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
   cat <<EOD > "${config}"
 #!/bin/bash

@@ -7,10 +7,11 @@ function install_scala_metals_emacs {
   which curl >/dev/null 2>&1 || apt+ install wget
 
   local name=metals
+  local group=352
   local releases=https://github.com/scalameta/metals/releases
   local latest=${releases}/latest
   local latest="$(curl -I ${latest} 2>/dev/null | fgrep location: | tr -d '[:cntrl:]' | cut -d' ' -f2 | sed -E 's|.*\/v(.*)$|\1|')"
-  echo "${name}: latest version: ${latest}" 1>&2
+  echo "${name}: latest version: ${latest:-(not detected)}" 1>&2
   local default="${METALS_VERSION:-${latest:-0.11.1}}"
   local version="${1:-${default}}"
   echo "${name}: installing version: ${version}" 1>&2
@@ -37,6 +38,17 @@ function install_scala_metals_emacs {
     -o ${bin}/metals-emacs \
     --force --quiet && \
       echo ${bin}/metals-emacs
+
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
+  [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
+  cat <<EOD > "${config}"
+#!/bin/bash
+
+export METALS_VERSION=${version}
+export METALS_HOME=${bin}
+EOD
+  chmod ugo+x "${config}"
+  echo "${config}"
 }
 
 function __install_scala_metals {

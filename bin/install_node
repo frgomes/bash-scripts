@@ -8,9 +8,10 @@ function install_node_binaries {
   which jq >/dev/null 2>&1 || apt+ install jq
 
   local name=node
+  local group=341
   local latest=https://nodejs.org/download/release/index.json
   local latest="$(curl ${latest} 2>/dev/null | jq .[0].version | tr -d '"' | sed -E 's|v(.*)$|\1|')"
-  echo "${name}: latest version: ${latest}" 1>&2
+  echo "${name}: latest version: ${latest:-(not detected)}" 1>&2
   local default="${NODE_VERSION:-${latest:-16.11.1}}"
   local version="${1:-${default}}"
   echo "${name}: installing version: ${version}" 1>&2
@@ -38,7 +39,7 @@ function install_node_binaries {
 
   "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}" "--" "--strip-components=1"
 
-  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/341-node.sh
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
   cat <<EOD > "${config}"
 #!/bin/bash

@@ -7,8 +7,9 @@ function install_maven_binaries {
   which curl >/dev/null 2>&1 || apt+ install wget
 
   local name=maven
+  local group=310
   local latest="$(curl -s https://maven.apache.org/download.cgi | grep -E 'is the latest release' | sed -E 's/.*Apache Maven ([0-9.]+) is the latest release.*/\1/')"
-  echo "${name}: latest version: ${latest}" 1>&2
+  echo "${name}: latest version: ${latest:-(not detected)}" 1>&2
   local default="${M2_VERSION:-${latest:-3.8.4}}"
   local version="${1:-${default}}"
   echo "${name}: installing version: ${version}" 1>&2
@@ -22,7 +23,7 @@ function install_maven_binaries {
 
   "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}" "--" "--strip-components=1"
 
-  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/310-maven.sh
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
   cat <<EOD > "${config}"
 #!/bin/bash

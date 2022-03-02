@@ -5,10 +5,11 @@ function install_doctl {
   local dir=$(dirname $self)
 
   local name=doctl
+  group=250
   local releases=https://github.com/digitalocean/doctl/releases
   local latest=${releases}/latest
   local latest="$(curl -I ${latest} 2>/dev/null | fgrep location: | tr -d '[:cntrl:]' | cut -d' ' -f2 | sed -E 's|.*\/v(.*)|\1|')"
-  echo "${name}: latest version: ${latest}" 1>&2
+  echo "${name}: latest version: ${latest:-(not detected)}" 1>&2
   local default="${DOCTL_VERSION:-${latest:-1.70.0}}"
   local version="${1:-${default}}"
   echo "${name}: installing version: ${version}" 1>&2
@@ -37,7 +38,7 @@ function install_doctl {
 
   "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}"
 
-  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/253-doctl.sh
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
   cat <<EOD > "${config}"
 #!/bin/bash
