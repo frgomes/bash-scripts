@@ -1,22 +1,18 @@
 #!/bin/bash -eu
 
 function install_jupyter_binaries {
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
+
   which python3 >/dev/null 2>&1 || apt+ install python3-minimal
   python3 -m pip install --upgrade pip
   python3 -m pip install --upgrade pygments jupyter
 
-  which curl >/dev/null 2>&1 || apt+ install curl
-  mkdir -p ${HOME}/bin
-  if [ ! -e $HOME/bin/coursier ] ;then
-    curl -L -o $HOME/bin/coursier https://git.io/coursier-cli-linux \
-      && chmod +x $HOME/bin/coursier \
-        && $HOME/bin/coursier --help
-  fi
-
   local SCALA_VERSION=${SCALA_VERSION:-2.12.12}
   local SCALA_MAJOR=$(echo ${SCALA_VERSION} | cut -d. -f1-2)
-  local ALMOND_VERSION=0.10.9
+  local ALMOND_VERSION=0.11.2
 
+  which coursier > /dev/null 2>&1 || ${dir}/install_coursier
   coursier launch --fork almond:${ALMOND_VERSION} --scala ${SCALA_MAJOR} -- --install --force
 
   python3 -m pip install --upgrade --force jupyter_contrib_nbextensions jupyter_nbextensions_configurator

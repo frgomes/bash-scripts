@@ -18,17 +18,11 @@ function install_scala_metals_emacs {
 
   local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
 
-  [[ -d ${bin} ]] | mkdir -p ${bin}
-  if [ ! -e ${bin}/coursier ] ;then
-    curl -s -L -o ${bin}/coursier https://git.io/coursier-cli-linux \
-      && chmod +x ${bin}/coursier \
-        && echo ${bin}/coursier
-  fi
-
   ## For some unknown reason, we need to pin Scala version to 2.12
   local SCALA_VERSION_MAJOR=2.12
 
-  ${bin}/coursier bootstrap \
+  which coursier > /dev/null 2>&1 || ${dir}/install_coursier
+  coursier bootstrap \
     --java-opt -Xss4m \
     --java-opt -Xms100m \
     --java-opt -Dmetals.client=emacs \
