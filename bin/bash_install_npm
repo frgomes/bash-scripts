@@ -1,0 +1,49 @@
+#!/bin/bash -eu
+
+function __bash_install_npm_help(){
+  echo "Usage: bash_install_npm FOLDER"
+  echo "installs npm package previously downloaded and expanded at FOLDER"
+}
+
+function __bash_install_npm_worker() {
+  set -x
+
+  [[ $# -lt 1 ]] && __bash_install_npm_help && return 1
+  local folder="$1"
+
+  local tools="${TOOLS_HOME:=$HOME/tools}"
+
+  which npm >/dev/null 2>&1 || install_node
+  cd ${tools}/${folder}
+  npm install
+}
+
+function __bash_install_npm_logger() (
+  set -x
+  __bash_install_npm_worker $@ 2> ${log}
+)    
+
+function __bash_install_npm() {
+  local log=$(mktemp -t bash_install_npm.XXX.log)
+  echo "INFO: See installation log at: ${log}"
+  set +e
+  __bash_install_npm_logger $@ > ${log} 2>&1
+  local errno=$?
+  set -e
+  [[ ${errno} -eq 0 ]] || echo "ERROR: errno=${errno} :: installation failed."
+  return ${errno}  
+}
+
+
+if [ $_ != $0 ]; then
+  # echo "Script is being sourced: list all functions"
+  self=$(readlink -f "${BASH_SOURCE[0]}")
+  dir=$(dirname $self)
+  grep -E "^function __" $self | cut -d' ' -f2 | sed 's/()//'
+else
+  # echo "Script is a subshell: execute last function"
+  self=$(readlink -f "${BASH_SOURCE[0]}")
+  dir=$(dirname $self)
+  cmd=$(grep -E "^function __" $self | cut -d' ' -f2  | sed 's/()//' | tail -1)
+  $cmd $*
+fi
