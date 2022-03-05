@@ -5,7 +5,8 @@ function __bash_install_tar_help(){
   echo "Downloads URL, save onto FILE, tar extract into FOLDER, creates SYMLINKS under BIN to SUBFOLDER."
 }
 
-function __bash_install_tar() {
+function __bash_install_tar_worker() {
+  set -x
   which wget >/dev/null 2>&1 || apt+ install wget
 
   [[ $# -lt 3 ]] && __bash_install_tar_help && return 1
@@ -40,7 +41,7 @@ function __bash_install_tar() {
   which xz >/dev/null 2>&1 || apt+ install xz
 
   # validate existing archive
-  [[ ! -z "${archive}" ]] && [[ ! $(tar -tf "${archive}" > /dev/null 2>&1) ]] && rm "${archive}" && local archive=""
+  [[ ! -s "${archive}" ]] && [[ ! $(tar -tf "${archive}" > /dev/null 2>&1) ]] && rm "${archive}" && local archive=""
 
   # download archive
   if [[ -z "${archive}" ]]; then
@@ -63,6 +64,23 @@ function __bash_install_tar() {
           return 0
       fi
 }
+
+function __bash_install_tar_logger() (
+  set -x
+  __bash_install_tar_worker $@ 2> ${log}
+)    
+
+function __bash_install_tar() {
+  local log=$(mktemp -t bash_install_tar.XXX.log)
+  echo "INFO: See installation log at: ${log}"
+  set +e
+  __bash_install_tar_logger $@ 2> ${log}
+  local errno=$?
+  set -e
+  [[ ${errno} -eq 0 ]] || echo "ERROR: errno=${errno} :: installation failed."
+  return ${errno}  
+}
+
 
 if [ $_ != $0 ]; then
   # echo "Script is being sourced: list all functions"

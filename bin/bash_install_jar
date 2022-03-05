@@ -16,7 +16,7 @@ EOD
   chmod ugo+x "${launcher}"
 }
 
-function __bash_install_jar() {
+function __bash_install_jar_worker() {
   which wget >/dev/null 2>&1 || apt+ install wget
 
   [[ $# -lt 3 ]] && __bash_install_jar_help && return 1
@@ -48,12 +48,12 @@ function __bash_install_jar() {
   which unzip >/dev/null 2>&1 || apt+ install zip unzip
 
   # validate existing archive
-  [[ ! -z "${archive}" ]] && [[ ! $(unzip -t "${archive}" > /dev/null 2>&1) ]] && rm "${archive}" && local archive=""
+  [[ ! -s "${archive}" ]] && [[ ! $(unzip -t "${archive}" > /dev/null 2>&1) ]] && rm "${archive}" && local archive=""
 
   # download archive
   if [[ -z "${archive}" ]]; then
     local archive="${DOWNLOADS}/${file}"
-    wget -q "$url" -O "${archive}"
+    wget -nv "$url" -O "${archive}"
   fi
 
   # apply relative folder to base path if necessary
@@ -65,7 +65,7 @@ function __bash_install_jar() {
         if [[ ! -z "${symlinks}" ]] ;then
           echo "${symlinks}" | tr ',' '\n' | head -1 | \
             while read symlink ;do
-              [[ ! -L "${bin}/${symlink}" ]] || rm "${bin}/${symlink}" && \
+              [[ ! -e "${bin}/${symlink}" ]] || rm "${bin}/${symlink}" && \
                 __bash_install_jar_launcher "${folder}/${subfolder}/${symlink}" "${folder}/${subfolder}/${file}" && \
                 ln -s "${folder}/${subfolder}/${symlink}" "${bin}/${symlink}" && echo "${bin}/${symlink}"
             done
@@ -73,6 +73,23 @@ function __bash_install_jar() {
             return 0
         fi
 }
+
+function __bash_install_jar_logger() (
+  set -x
+  __bash_install_jar_worker $@ 2> ${log}
+)    
+
+function __bash_install_jar() {
+  local log=$(mktemp -t bash_install_jar.XXX.log)
+  echo "INFO: See installation log at: ${log}"
+  set +e
+  __bash_install_jar_logger $@ 2> ${log}
+  local errno=$?
+  set -e
+  [[ ${errno} -eq 0 ]] || echo "ERROR: errno=${errno} :: installation failed."
+  return ${errno}  
+}
+
 
 if [ $_ != $0 ]; then
   # echo "Script is being sourced: list all functions"

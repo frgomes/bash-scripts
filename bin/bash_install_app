@@ -5,7 +5,7 @@ function __bash_install_app_help(){
   echo "Downloads URL, save onto FILE, copy into FOLDER, creates SYMLINKS under BIN to SUBFOLDER."
 }
 
-function __bash_install_app() {
+function __bash_install_app_worker() {
   which wget >/dev/null 2>&1 || apt+ install wget
 
   [[ $# -lt 3 ]] && __bash_install_app_help && return 1
@@ -35,7 +35,7 @@ function __bash_install_app() {
   fi
 
   # validate existing archive
-  [[ ! -z "${archive}" ]] && [[ ! -s "${archive}" ]] && rm "${archive}" && local archive=""
+  [[ ! -s "${archive}" ]] && [[ ! -s "${archive}" ]] && rm "${archive}" && local archive=""
 
   # download archive
   if [[ -z "${archive}" ]]; then
@@ -59,6 +59,23 @@ function __bash_install_app() {
             return 0
         fi
 }
+
+function __bash_install_app_logger() (
+  set -x
+  __bash_install_app_worker $@ 2> ${log}
+)    
+
+function __bash_install_app() {
+  local log=$(mktemp -t bash_install_app.XXX.log)
+  echo "INFO: See installation log at: ${log}"
+  set +e
+  __bash_install_app_logger $@ 2> ${log}
+  local errno=$?
+  set -e
+  [[ ${errno} -eq 0 ]] || echo "ERROR: errno=${errno} :: installation failed."
+  return ${errno}  
+}
+
 
 if [ $_ != $0 ]; then
   # echo "Script is being sourced: list all functions"
