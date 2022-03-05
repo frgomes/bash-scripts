@@ -1,0 +1,56 @@
+#!/bin/bash -eu
+
+function install_commitizen_binaries {
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
+
+  which curl >/dev/null 2>&1 || apt+ install wget
+
+  local name=commitizen
+  local group=354
+  local releases=https://github.com/commitizen/cz-cli/releases
+  local latest=${releases}/latest
+  local latest="$(curl -I ${latest} 2>/dev/null | fgrep location: | tr -d '[:cntrl:]' | cut -d' ' -f2 | sed -E 's|.*\/v(.*)$|\1|')"
+  echo "${name}: latest version: ${latest:-(not detected)}" 1>&2
+  local default="${COMMITIZEN_VERSION:-${latest:-4.2.4}}"
+  local version="${1:-${default}}"
+  echo "${name}: installing version: ${version}" 1>&2
+
+  local file=v${version}.tar.gz
+  local url=https://github.com/commitizen/cz-cli/archive/refs/tags/${file}
+  local folder=${name}-${version}
+  local subfolder=.
+  local symlinks=${name}
+  local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
+
+  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}" "--" "--strip-components=1"
+  "${dir}"/bash_install_npm "${folder}"
+
+##XXX   local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
+##XXX   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
+##XXX   cat <<EOD > "${config}"
+##XXX #!/bin/bash
+##XXX  
+##XXX export COMMITIZEN_VERSION=${version}
+##XXX export COMMITIZEN_HOME=\${TOOLS_HOME:=\$HOME/tools}/${folder}
+##XXX EOD
+##XXX   chmod ugo+x "${config}"
+##XXX   echo "${config}"
+}
+
+
+function __install_commitizen {
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function [a-zA-Z0-9]" $self | cut -d' ' -f2 | while read cmd ;do
+    $cmd $*
+  done
+}
+
+
+if [ $_ != $0 ]; then
+  # echo "Script is being sourced: list all functions"
+  grep -E "^function [a-zA-Z0-9]" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2 | sed 's/()//'
+else
+  # echo "Script is a subshell: execute last function"
+  $(grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2  | sed 's/()//' | tail -1) "$@"
+fi
