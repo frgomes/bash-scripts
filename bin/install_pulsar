@@ -1,0 +1,52 @@
+#!/bin/bash -eu
+
+function install_pulsar_binaries {
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
+
+  which curl >/dev/null 2>&1 || apt+ install wget
+
+  local name=pulsar
+  local group=310
+  local latest="$(curl -s https://pulsar.apache.org/en/versions | grep -E '<h3>[0-9.]+</h3>]' | head -1 | sed -E 's|<h3>([0-9.]+)</h3>|\1|')"
+  echo "${name}: latest version: ${latest:-(not detected)}" 1>&2
+  local default="${PULSAR_VERSION:-${latest:-2.9.1}}"
+  local version="${1:-${default}}"
+  echo "${name}: installing version: ${version}" 1>&2
+
+  local file=apache-pulsar-${version}-bin.tar.gz
+  local url="https://www.apache.org/dyn/mirrors/mirrors.cgi?action=download&filename=pulsar/pulsar-${version}/${file}"
+  local folder=${name}-${version}
+  local subfolder=bin
+  local symlinks=${name}
+  local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
+
+  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}" "--" "--strip-components=1"
+
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
+  [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
+  cat <<EOD > "${config}"
+#!/bin/bash
+
+export PULSAR_VERSION=${version}
+export PULSAR_HOME=\${TOOLS_HOME:=\$HOME/tools}/${folder}
+EOD
+  chmod ugo+x "${config}"
+  echo "${config}"
+}
+
+function __install_pulsar {
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function [a-zA-Z0-9]" $self | cut -d' ' -f2 | while read cmd ;do
+    $cmd $*
+  done
+}
+
+
+if [ $_ != $0 ]; then
+  # echo "Script is being sourced: list all functions"
+  grep -E "^function [a-zA-Z0-9]" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2 | sed 's/()//'
+else
+  # echo "Script is a subshell: execute last function"
+  $(grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2  | sed 's/()//' | tail -1) "$@"
+fi
