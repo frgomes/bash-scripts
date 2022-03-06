@@ -1,19 +1,15 @@
 #!/bin/bash -eu
 
-function install_jupyter_binaries {
-  local self=$(readlink -f "${BASH_SOURCE[0]}")
-  local dir=$(dirname $self)
+function __install_jupyter_worker {
+  local SCALA_MAJOR="${1}"
+  local ALMOND_VERSION="${2}"
 
   which python3 >/dev/null 2>&1 || apt+ install python3-minimal
   python3 -m pip install --upgrade pip
   python3 -m pip install --upgrade pygments jupyter
 
-  local SCALA_VERSION=${SCALA_VERSION:-2.12.12}
-  local SCALA_MAJOR=$(echo ${SCALA_VERSION} | cut -d. -f1-2)
-  local ALMOND_VERSION=0.11.2
-
   which coursier > /dev/null 2>&1 || ${dir}/install_coursier
-  coursier launch --fork almond:${ALMOND_VERSION} --scala ${SCALA_MAJOR} -- --install --force
+  coursier launch --fork almond:${ALMOND_VERSION} --scala ${SCALA_MAJOR}.0 -- --install --force
 
   python3 -m pip install --upgrade --force jupyter_contrib_nbextensions jupyter_nbextensions_configurator
 
@@ -23,6 +19,45 @@ function install_jupyter_binaries {
   jupyter kernelspec list
 }
 
+function __install_jupyter_logger() (
+  set -x
+  __install_jupyter_worker $@
+)    
+
+function install_jupyter_binaries {
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
+
+  local name=almond
+  local group=350
+  local releases=https://github.com/almond-sh/almond/releases
+  #local latest=${releases}/latest
+  #local latest="$(curl -I ${latest} 2>/dev/null | fgrep location: | tr -d '[:cntrl:]' | cut -d' ' -f2 | sed -E 's|.*\/v(.*)$|\1|')"
+  echo "${name}: latest version: ${latest:-(not detected)}" 1>&2
+  local default="${ALMOND_VERSION:-${latest:-0.11.2}}"
+  local version="${1:-${default}}"
+  echo "${name}: installing version: ${version}" 1>&2
+
+  local SCALA_MAJOR=$(echo ${SCALA_VERSION:-2.13.8} | cut -d. -f1-2)
+
+  local log=$(mktemp -t install_juyter.XXX.log)
+  echo "INFO: See installation log at: ${log}"
+  set +e
+  __install_jupyter_logger "${SCALA_MAJOR}" "${version}" > ${log} 2>&1
+  local errno=$?
+  set -e
+  [[ ! ${errno} -eq 0 ]] && echo "ERROR: errno=${errno} :: installation failed." && return ${errno}  
+
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
+  [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
+  cat <<EOD > "${config}"
+#!/bin/bash
+
+export ALMOND_VERSION=${version}
+EOD
+  chmod ugo+x "${config}"
+  echo "${config}"
+}
 
 function __install_jupyter {
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
