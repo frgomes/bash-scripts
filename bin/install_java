@@ -9,76 +9,75 @@ function install_java_binaries {
 
   local name=jdk
   local group=300
-  if [[ $version =~ ^8(\.*)? ]] ;then
-    local jvm=8
-    local tag=8u292
-    local build=b10
-    local version=${tag}${build}
-    local file=OpenJDK8U-jdk_x64_linux_hotspot_${version}.tar.gz
-    local url=https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk${tag}-${build}/${file}
-    local folder=${name}${tag}-${build}-jdk
-  elif [[ $version =~ ^11(\.*)? ]] ;then
-    local jvm=11
-    local tag=${jvm}.0.11
-    local build=9
-    local version=${tag}_${build}
-    local file=OpenJDK${jvm}U-jdk_x64_linux_hotspot_${version}.tar.gz
-    local url=https://github.com/AdoptOpenJDK/openjdk${jvm}-binaries/releases/download/jdk-${tag}%2B${build}/${file}
-    local folder=${name}-${jvm}
-  elif [[ $version =~ ^12(\.*)? ]] ;then
-    local jvm=12
-    local tag=${jvm}.0.2
-    local build=10
-    local version=${tag}_${build}
-    local file=OpenJDK${jvm}U-jdk_x64_linux_hotspot_${version}.tar.gz
-    local url=https://github.com/AdoptOpenJDK/openjdk${jvm}-binaries/releases/download/jdk-${tag}%2B${build}/${file}
-    local folder=${name}-${jvm}
-  elif [[ $version =~ ^13(\.*)? ]] ;then
-    local jvm=13
-    local tag=${jvm}.0.2
-    local build=8
-    local version=${tag}_${build}
-    local file=OpenJDK${jvm}U-jdk_x64_linux_hotspot_${version}.tar.gz
-    local url=https://github.com/AdoptOpenJDK/openjdk${jvm}-binaries/releases/download/jdk-${tag}%2B${build}/${file}
-    local folder=${name}-${jvm}
-  elif [[ $version =~ ^14(\.*)? ]] ;then
-    local jvm=14
-    local tag=${jvm}.0.2
-    local build=12
-    local version=${tag}_${build}
-    local file=OpenJDK${jvm}U-jdk_x64_linux_hotspot_${version}.tar.gz
-    local url=https://github.com/AdoptOpenJDK/openjdk${jvm}-binaries/releases/download/jdk-${tag}%2B${build}/${file}
-    local folder=${name}-${jvm}
-  elif [[ $version =~ ^15(\.*)? ]] ;then
-    local jvm=15
-    local tag=${jvm}.0.2
-    local build=7
-    local version=${tag}_${build}
-    local file=OpenJDK${jvm}U-jdk_x64_linux_hotspot_${version}.tar.gz
-    local url=https://github.com/AdoptOpenJDK/openjdk${jvm}-binaries/releases/download/jdk-${tag}%2B${build}/${file}
-    local folder=${name}-${jvm}
-  elif [[ $version =~ ^16(\.*)? ]] ;then
-    local jvm=16
-    local tag=${jvm}.0.1
-    local build=9
-    local version=${tag}_${build}
-    local file=OpenJDK${jvm}U-jdk_x64_linux_hotspot_${version}.tar.gz
-    local url=https://github.com/AdoptOpenJDK/openjdk${jvm}-binaries/releases/download/jdk-${tag}%2B${build}/${file}
-    local folder=${name}-${jvm}
+  if [[ $version =~ ^8(\.[0-9]+)?(\.[0-9]+)?(\+[0-9]+)? ]] ;then
+    local major=8
+    local default=8u332-b09
+  elif [[ $version =~ ^11(\.[0-9]+)?(\.[0-9]+)?(\+[0-9]+)? ]] ;then
+    local major=11
+    local default=11.0.15+10
+  elif [[ $version =~ ^16(\.[0-9]+)?(\.[0-9]+)?(\+[0-9]+)? ]] ;then
+    local major=16
+    local default=16.0.2+7
+  elif [[ $version =~ ^17(\.[0-9]+)?(\.[0-9]+)?(\+[0-9]+)? ]] ;then
+    local major=17
+    local default=17.0.3+7   
+  elif [[ $version =~ ^18(\.[0-9]+)?(\.[0-9]+)?(\+[0-9]+)? ]] ;then
+    local major=18
+    local default=18.0.1+10
   else
     echo "ERROR: Unsupported Java version $JAVA_VERSION"
-    echo 'INFO: Supported JDK versions are: 1.8.*, 11.*, 12.*, 13.*, 14.*, 15.*, 16.*'
+    echo 'INFO: Supported JDK versions are: 8.*, 11.*, 16.*, 17.*, 18.*'
     return 1
   fi
-  local symlinks=--
- #local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
-  local bin=--
-  local subfolder=--
 
-  echo Latest version: "(not detected)" 1>&2
-  echo Installing version: "${version}" 1>&2
+  local hwarch=$(uname -m | tr '[:upper:]' '[:lower:]')
+  local osarch=$(uname -s | tr '[:upper:]' '[:lower:]')
+  case "${hwarch}" in
+      x86_64)  hwarch=x64 ;;
+      i386)    hwarch=x86-32 ;;
+      armv7l)  hwarch=arm ;;
+      aarch64) hwarch=aarch64 ;;
+      *) echo "ERROR: hardware platform is not supported: ${hwarch}" ; return 1 ;;
+  esac
+  case "${osarch}" in
+      linux)  osarch=linux;;
+      darwin) osarch=mac;;
+      *) echo "ERROR: software platform is not supported: ${osarch}" ; return 1 ;;
+  esac
+  local arch=${hwarch}_${osarch}
 
+  which curl >/dev/null 2>&1 || apt+ install curl
+
+  local name=jdk
+  local group=300
+  local releases=https://github.com/adoptium/temurin${major}-binaries/releases
+  local archive=https://github.com/adoptium/jdk${major}u/archive
+  local latest=${releases}/latest
+  local latest="$(curl -I ${latest} 2>/dev/null | fgrep location: | tr -d '[:cntrl:]' | cut -d' ' -f2 | sed -E 's|.*\/jdk[-]?(.*)$|\1|')"
+  echo "${name}: latest version: ${latest:-(not detected)}" 1>&2
+  local default="${JAVA_VERSION:-${default}}"
+  local version="${requested:-${latest:-${default}}}"
+  echo "${name}: installing version: ${version}" 1>&2
+
+  ## paths for Java8 differ from newer versions
+  if [[ "${major}" == "8" ]] ;then
+    local jpackage="jdk${version}"
+  else
+    local jpackage="jdk-"$(echo "${version}" | sed 's/+/%2B/')
+  fi
+  # version conventions for Java8 differ from newer versions
+  local jversion=$(echo "${version}" | tr -d "-" | sed 's/+/_/')
+  
+  local file=OpenJDK${major}U-jdk_${arch}_hotspot_${jversion}.tar.gz
+  local url=${releases}/download/${jpackage}/${file}
+  local folder=${name}-${version}
+  local subfolder=bin
+  local symlinks=${name}
+  local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
   "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}" "--" "--strip-components=1"
+
+  local src=${archive}/refs/tags/${jpackage}.tar.gz
+  "${dir}"/bash_install_tar "${src}" "${jpackage}.tar.gz" "${folder}" "--" "--strip-components=1"
 
   local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
   local major=$(echo ${version} | cut -d. -f1)
