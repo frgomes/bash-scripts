@@ -1,0 +1,9 @@
+#!/bin/bash -eu
+
+function __json2xml() {
+  which python3 >/dev/null 2>&1 || apt+ install python3-minimal
+  pip3 -qq --disable-pip-version-check install dicttoxml > /dev/null 2>&1
+  python3 -c 'import sys, dicttoxml, json; print(dicttoxml.dicttoxml(json.loads(sys.stdin.read())), attr_type=False)'
+}
+
+__json2xml $*

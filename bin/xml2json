@@ -1,0 +1,9 @@
+#!/bin/bash -eu
+
+function __xml2json() {
+  which python3 >/dev/null 2>&1 || apt+ install python3-minimal
+  pip3 -qq --disable-pip-version-check install xmltodict > /dev/null 2>&1
+  python3 -c 'import xmltodict, sys, json; json.dump(xmltodict.parse(sys.stdin.read(), process_namespaces=True), sys.stdout, indent=4);'
+}
+
+__xml2json $*
