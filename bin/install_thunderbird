@@ -14,9 +14,8 @@ function install_thunderbird_binaries {
   local version=78.5.1
   
   if [ ! -e "${DOWNLOADS}"/${name}-${version}.tar.bz2 ] ;then
-    pushd "${DOWNLOADS}" 2>&1 > /dev/null
-    wget https://ftp.mozilla.org/pub/${name}/releases/${version}/${osarch}-${hwarch}/${lang}/${name}-${version}.tar.bz2
-    popd 2>&1 > /dev/null
+    which curl >/dev/null 2>&1 || apt+ install curl
+    curl https://ftp.mozilla.org/pub/${name}/releases/${version}/${osarch}-${hwarch}/${lang}/${name}-${version}.tar.bz2 -o "${DOWNLOADS}"/${name}-${version}.tar.bz2
   fi
 
   local tools="${TOOLS_HOME:=$HOME/tools}"

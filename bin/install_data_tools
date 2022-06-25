@@ -4,7 +4,7 @@ function install_avro_tools {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
 
-  which curl >/dev/null 2>&1 || apt+ install wget
+  which curl >/dev/null 2>&1 || apt+ install curl
 
   local name=avro-tools
   local group=354
@@ -95,7 +95,7 @@ function install_gron {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
 
-  which curl >/dev/null 2>&1 || apt+ install wget
+  which curl >/dev/null 2>&1 || apt+ install curl
 
   local name=gron
   local group=260

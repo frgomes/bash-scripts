@@ -56,7 +56,7 @@ function install_kubectl_stash {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
 
-  which curl >/dev/null 2>&1 || apt+ install wget
+  which curl >/dev/null 2>&1 || apt+ install curl
 
   local name=kubectl-stash
   local group=250

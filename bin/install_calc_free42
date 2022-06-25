@@ -22,8 +22,9 @@ function install_free42_binaries {
     local archive="${DOWNLOADS}"/${file}
   fi
   if [[ -z ${archive} ]] ;then
-    local archive="${DOWNLOADS}"/${file}
-    wget "$url" -O "${archive}"
+    local archive="${DOWNLOADS}/${file}"
+    which curl >/dev/null 2>&1 || apt+ install curl
+    curl "${url}" -o "${archive}"
   fi
 
   if [ ! -d ${tools}/${folder} ] ;then
@@ -61,10 +62,11 @@ function install_free42_skins {
 
   [[ ! -d ~/.local/share/free42 ]] && mkdir -p ~/.local/share/free42
 
+  which curl >/dev/null 2>&1 || apt+ install curl
   for layout in ${layouts} ;do
       local gif=$(basename ${layout} .layout).gif
-      [[ ! -e ~/.local/share/free42/${layout} ]] && wget "${url}/${layout}" -O ~/.local/share/free42/${layout}
-      [[ ! -e ~/.local/share/free42/${gif} ]]    && wget "${url}/${gif}"    -O ~/.local/share/free42/${gif}
+      [[ ! -e ~/.local/share/free42/${layout} ]] && curl "${url}/${layout}" -o ~/.local/share/free42/${layout}
+      [[ ! -e ~/.local/share/free42/${gif} ]]    && curl "${url}/${gif}"    -o ~/.local/share/free42/${gif}
   done
 }
 

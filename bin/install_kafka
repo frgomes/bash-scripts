@@ -51,8 +51,8 @@ function install_kafka_binaries {
   fi
   if [[ -z "${archive}" ]] ;then
     local archive="${DOWNLOADS}/${file}"
-    which wget >/dev/null 2>&1 || apt+ install wget
-    wget "$url" -O "${archive}"
+    which curl >/dev/null 2>&1 || apt+ install curl
+    curl "$url" -o "${archive}"
   fi
 
   if [ ! -d "${tools}/${folder}" ] ;then

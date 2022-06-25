@@ -4,7 +4,7 @@ function install_dbeaver_binaries {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
 
-  which curl >/dev/null 2>&1 || apt+ install wget
+  which curl >/dev/null 2>&1 || apt+ install curl
 
   local name=dbeaver
   local group=354

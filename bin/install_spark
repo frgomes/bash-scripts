@@ -9,19 +9,16 @@ function install_spark_binaries {
   local hadoop_version=${hadoop_version:-"3.2"}
 
   [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
-  pushd "${DOWNLOADS}" > /dev/null
-  [[ ! -f spark-${spark_version}-bin-hadoop${hadoop_version}.tgz ]] && \
-    wget https://www-eu.apache.org/dist/spark/spark-${spark_version}/spark-${spark_version}-bin-hadoop${hadoop_version}.tgz
-  popd > /dev/null
+  [[ ! -f "${DOWNLOADS}/spark-${spark_version}-bin-hadoop${hadoop_version}.tgz" ]] && \
+    which curl >/dev/null 2>&1 || apt+ install curl
+    curl https://www-eu.apache.org/dist/spark/spark-${spark_version}/spark-${spark_version}-bin-hadoop${hadoop_version}.tgz -o "${DOWNLOADS}/spark-${spark_version}-bin-hadoop${hadoop_version}.tgz"
 
   local tools=${TOOLS_HOME:=$HOME/tools}
 
   [[ ! -d ${tools} ]] && mkdir -p ${tools}
   
-  if [ ! -d ${tools}/spark-${spark_version}-bin-hadoop${hadoop_version} ] ;then
-    pushd ${tools} > /dev/null
-    tar -xf "${DOWNLOADS}"/spark-${spark_version}-bin-hadoop${hadoop_version}.tgz
-    popd > /dev/null
+  if [ ! -d "${tools}/spark-${spark_version}-bin-hadoop${hadoop_version}" ] ;then
+    tar -C "${tools}/spark-${spark_version}-bin-hadoop${hadoop_version}" -xf "${DOWNLOADS}"/spark-${spark_version}-bin-hadoop${hadoop_version}.tgz
   fi
 
   [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed

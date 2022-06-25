@@ -23,8 +23,9 @@ function install_wp34s_binaries {
     local archive="${DOWNLOADS}"/${file}
   fi
   if [[ -z ${archive} ]] ;then
-    local archive="${DOWNLOADS}"/${file}
-    wget "$url" -O "${archive}"
+    local archive="${DOWNLOADS}/${file}"
+    which curl >/dev/null 2>&1 || apt+ install curl
+    curl "${url}" -o "${archive}"
   fi
 
   if [ ! -d ${tools}/${folder} ] ;then

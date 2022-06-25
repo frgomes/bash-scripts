@@ -6,7 +6,7 @@ function __bash_install_zip_help(){
 }
 
 function __bash_install_zip_worker() {
-  which wget >/dev/null 2>&1 || apt+ install wget
+  which curl >/dev/null 2>&1 || apt+ install curl
 
   [[ $# -lt 3 ]] && __bash_install_zip_help && return 1
   local url="$1"
@@ -45,7 +45,7 @@ function __bash_install_zip_worker() {
   # download archive
   if [[ -z "${archive}" ]]; then
     local archive="${DOWNLOADS}/${file}"
-    wget -q "$url" -O "${archive}"
+    curl -sSL "$url" -o "${archive}"
   fi
 
   # apply relative folder to base path if necessary
