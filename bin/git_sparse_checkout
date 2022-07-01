@@ -8,10 +8,10 @@ function git_sparse_checkout {
     local usage=\
 "USAGE: ${app} repository-URL [branch] [project-directory] [[--] [list-of-files-or-directories]]
   where:
-    repository-URL is a valid URL pointing to a Gitrepository.
-    branch is a branch, tag or commit. Default is vmstate-static-checker.
-    project-directory is a folder to be created and populated. Defaults to project name.
-    list-of-files-or-directories is a list of file names or directories separated by spaces.
+    'repository-URL' is a valid URL pointing to a Git repository.
+    'branch' is a branch, atag or a commit id. Default: master.
+    'project-directory' is a folder to be created and populated. Default: the project name.
+    'list-of-files-or-directories' is a list of file names or directories separated by spaces.
   Examples:
     ${app} http://github.com/frgomes/bash-scripts -- README.md
     ${app} http://github.com/frgomes/bash-scripts develop -- README.md bin/
