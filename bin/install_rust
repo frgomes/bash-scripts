@@ -52,6 +52,7 @@ cargo-deny
 cargo-make
 cargo-xtask
 cargo-about
+evcxr_repl
 mdbook
 mdbook-linkcheck
 EOD
