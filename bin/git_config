@@ -19,24 +19,23 @@ cat <<EOD
   pre-merge = merge --no-commit --no-ff
 
 [diff]
-    guitool = meld
+  guitool = meld
 
 [difftool "meld"]
-    cmd = meld "\${LOCAL}" "\${REMOTE}" --label "DIFF (ORIGINAL MY)"
+  cmd = meld \"\${LOCAL}\" \"\${REMOTE}\" --label \"DIFF (BASE)\"
 
 [merge]
-    tool = meld
+  tool = meld
 
 [mergetool "meld"]
-    cmd = meld --auto-merge "\${LOCAL}" "\${BASE}" "\${REMOTE}" --output "\${MERGED}" --label "MERGE (REMOTE BASE MY)"
-    trustExitCode = false
+  cmd = meld --auto-merge \"\${LOCAL}\" \"\${BASE}\" \"\${REMOTE}\" --output \"\${MERGED}\" --label \"MERGE (REMOTE BASE)\"
+  trustExitCode = false
 
 [mergetool]
-    # don't ask if we want to skip merge
-    prompt = false
-
-    # don't create backup *.orig files
-    keepBackup = false
+  # don't ask if we want to skip merge
+  prompt = false
+  # don't create backup *.orig files
+  keepBackup = false
 
 [push]
   default = simple
