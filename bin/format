@@ -7,9 +7,9 @@
 # https://www.youtube.com/watch?v=RG0ochx16Dg  #
 #                                              #
 # THIS SCRIPT CREATES A SINGLE FAT32 PARTITION #
-#    ON THE DEVICE YOU PASS AS ARGUMENT        #
+#      ON THE DEVICE YOU PASS AS ARGUMENT      #
 #                                              #
-# ****** WITHOUT ASKING ANY CONFIRMATION ***** #
+# *****  WITHOUT ASKING ANY CONFIRMATION ***** #
 #                                              #
 ################################################
 
@@ -18,9 +18,10 @@ function format_layout {
   local sectors=$(sudo blockdev --getsz ${device})
   local sectors=${sectors:-0}
   local sectors=$(echo ${sectors} - 2048 | bc)
+  local id=$(openssl rand -hex 4)
   cat <<EOD
 label: dos
-label-id: 0xa1cdbf10
+label-id: 0x${id}
 device: ${device}
 unit: sectors
 sector-size: 512
@@ -33,7 +34,7 @@ function format() {
   which bc >/dev/null || apt+ install bc
   sudo which sfdisk >/dev/null 2>&1 || apt+ install sfdisk
   local device=${1:-dev/null}
-  format_layout ${device} | sudo sfdisk ${device} && sudo mkfs.vfat ${device}1
+  format_layout ${device} | sudo sfdisk --wipe always ${device} && sudo mkfs.vfat ${device}1
 }
 
 format $*
