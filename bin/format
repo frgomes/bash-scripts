@@ -1,0 +1,39 @@
+#!/bin/bash -eu
+
+################################################
+#                                              #
+# DANGER ::: DANGER WILL ROBINSON ::: DANGER   #
+#                                              #
+# https://www.youtube.com/watch?v=RG0ochx16Dg  #
+#                                              #
+# THIS SCRIPT CREATES A SINGLE FAT32 PARTITION #
+#    ON THE DEVICE YOU PASS AS ARGUMENT        #
+#                                              #
+# ****** WITHOUT ASKING ANY CONFIRMATION ***** #
+#                                              #
+################################################
+
+function format_layout {
+  local device=${1:-/dev/null}
+  local sectors=$(sudo blockdev --getsz ${device})
+  local sectors=${sectors:-0}
+  local sectors=$(echo ${sectors} - 2048 | bc)
+  cat <<EOD
+label: dos
+label-id: 0xa1cdbf10
+device: ${device}
+unit: sectors
+sector-size: 512
+
+${device}1 : start=2048, size=${sectors}, type=0b
+EOD
+}
+
+function format() {
+  which bc >/dev/null || apt+ install bc
+  sudo which sfdisk >/dev/null 2>&1 || apt+ install sfdisk
+  local device=${1:-dev/null}
+  format_layout ${device} | sudo sfdisk ${device} && sudo mkfs.vfat ${device}1
+}
+
+format $*
