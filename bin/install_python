@@ -8,8 +8,8 @@ function install_python_pip {
   if [[ ! -z $(which python3) ]] ;then
     if [[ ! -e "${HOME}/.local/bin/pip3" ]] ;then
       [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
-      [[ ! -f "${DOWNLOADS}/get-pip.py" ]] && curl https://bootstrap.pypa.io/get-pip.py -o "${DOWNLOADS}/get-pip.py"
-      python3 "${DOWNLOADS}/get-pip.py" --user
+      [[ ! -f "${DOWNLOADS}/get-pip.py" ]] && curl -sSL https://bootstrap.pypa.io/get-pip.py -o "${DOWNLOADS}/get-pip.py"
+      python3 "${DOWNLOADS}/get-pip.py"
     fi
     python3 -m pip install --upgrade pip
   fi
