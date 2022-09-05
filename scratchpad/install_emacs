@@ -15,8 +15,8 @@ function install_emacs_download {
     pushd "${WORKSPACE}/emacs"
   
     local url=git://git.savannah.gnu.org/emacs.git
-    local current="${EMACS_VERSION}"
-    local default="27.1"
+    local default="28.1.91"
+    local current="${EMACS_VERSION:-${default}}"
 
     local latest="$(git ls-remote --tags | grep -o -E 'refs/tags/emacs-[0-9]*(\.[0-9]*)+' | sort -r | uniq | head -1 | grep -o '[^\/]*$' | grep -o '[^\-]*$')"
     local version="${1:-${latest}}"        # user can force a version, passing it on the first parameter
@@ -31,8 +31,8 @@ function install_emacs_download {
 
 function __install_emacs_build_essentials {
     case "$(lsb_release -si)" in
-        Debian)   sudo apt install -y build-essentials;;
-        openSUSE) sudo zypper install -y -t pattern devel_basis;;
+        Debian)   sudo apt install -y build-essential;;
+        openSUSE) sudo zypper install -t pattern devel_basis;;
     esac
 }
 
@@ -45,13 +45,13 @@ function __install_emacs_build_dependencies {
         #Debian)   apt+ install texinfo libncurses5-dev hunspell hunspell-en-gb hunspell-en-us hunspell-es hunspell-pt-pt hunspell-pt-br hunspell-de-de hunspell-it hunspell-fr;;
         ##XXX texinfo
         Debian)   sudo aptitude build-deps -y emacs;;
-        openSUSE) sudo aptitude -y source-install --build-deps-only emacs;;
+        openSUSE) sudo zypper source-install --build-deps-only emacs;;
     esac
 }
 
 function install_emacs_install_dependencies {
     ## /sbin/ldconfig -N -v $(sed 's/:/ /g' <<< $LD_LIBRARY_PATH) 2>/dev/null | fgrep hunspell.so || \
-        __install_emacs_install_dependencies
+        __install_emacs_build_dependencies
 }
 
 
@@ -60,7 +60,7 @@ function install_emacs_make {
     if [ -d "${WORKSPACE}"/emacs ] ;then
         cd "${WORKSPACE}"/emacs && \
             ./autogen.sh && \
-            ./configure --prefix="${tools}/emacs" && \
+            ./configure --prefix="${tools}/emacs" --without-x && \
             make && \
             if [ "${PWD##$HOME}" != "${PWD}" ] ;then
                 sudo make install
