@@ -1,11 +1,31 @@
 #!/bin/bash -eu
 
 function install_ammonite_binaries {
-    local version=2.3.8
-    local scala=$(echo ${SCALA_VERSION:-2.13.5} | cut -d. -f1-2)
-    local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/bin
-    [[ -e ${bin}/amm ]] || \
-        ( curl -L https://github.com/com-lihaoyi/Ammonite/releases/download/${version}/${scala}-${version} > ${bin}/amm && chmod 755 ${bin}/amm )
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
+
+  which curl >/dev/null 2>&1 || apt+ install curl
+
+  local name=amm
+  local group=310
+  local releases=https://github.com/com-lihaoyi/Ammonite/releases
+  local latest=${releases}/latest
+  local latest="$(curl -I ${latest} 2>/dev/null | fgrep location: | tr -d '[:cntrl:]' | cut -d' ' -f2 | sed -E 's|.*\/(.*)$|\1|')"
+  echo "${name}: latest version: ${latest:-(not detected)}" 1>&2
+  local default="${AMMONITE_VERSION:-${latest:-2.5.4}}"
+  local version="${1:-${default}}"
+  echo "${name}: installing version: ${version}" 1>&2
+
+  local scala=$(echo ${SCALA_VERSION:-2.13.5} | cut -d. -f1-2)
+
+  local file=${scala}-${version}
+  local url=${releases}/download/${version}/${file}
+  local folder=${name}-${file}
+  local subfolder=.
+  local symlinks=${file}:${name}
+  local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
+
+  "${dir}"/bash_install_app "${url}" "${file}" "${folder}" "(${symlinks})" "${bin}" "${subfolder}"
 }
 
 function __install_ammonite {
