@@ -54,11 +54,15 @@ function __bash_install_tar_worker() {
   
   [[ -d "${folder}" ]] || mkdir -p "${folder}" && \
     [[ ! -z "${archive}" ]] && tar -C "${folder}" "${options}" -xpf "${archive}" > /dev/null 2>&1 && \
+      local symlinks=$(echo "${symlinks}" | tr -d '()') && \
       if [[ ! -z "${symlinks}" ]] ;then
         echo "${symlinks}" | tr ',' '\n' | \
           while read symlink ;do
+            local source=$(echo "${symlink}" | cut -d: -f1)    
+            local target=$(echo "${symlink}" | cut -d: -f2)    
+            local target=${target:=${source}}
             [[ ! -L "${bin}/${symlink}" ]] || rm "${bin}/${symlink}" && \
-              ln -s "${folder}/${subfolder}/${symlink}" "${bin}/${symlink}" && echo "${bin}/${symlink}"
+              ln -s "${folder}/${subfolder}/${source}" "${bin}/${target}" && echo "${bin}/${target}"
           done
       else
           return 0

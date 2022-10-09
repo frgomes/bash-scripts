@@ -62,12 +62,17 @@ function __bash_install_jar_worker() {
   [[ -d "${tools}/${folder}" ]] || mkdir -p "${folder}/${subfolder}" && \
     [[ -s "${archive}" ]] && cp "${archive}" "${folder}/${subfolder}/${file}" && \
       chmod ugo+x "${folder}/${subfolder}/${file}" && \
+      local symlinks=$(echo "${symlinks}" | tr -d '()') && \
         if [[ ! -z "${symlinks}" ]] ;then
+          local symlinks=$(echo "${symlinks}" | tr -d '()') && \
           echo "${symlinks}" | tr ',' '\n' | head -1 | \
             while read symlink ;do
-              [[ ! -e "${bin}/${symlink}" ]] || rm "${bin}/${symlink}" && \
-                __bash_install_jar_launcher "${folder}/${subfolder}/${symlink}" "${folder}/${subfolder}/${file}" && \
-                ln -s "${folder}/${subfolder}/${symlink}" "${bin}/${symlink}" && echo "${bin}/${symlink}"
+              local source=$(echo "${symlink}" | cut -d: -f1)
+              local target=$(echo "${symlink}" | cut -d: -f2)
+              local target=${target:=${source}}
+              [[ ! -e "${bin}/${target}" ]] || rm "${bin}/${target}" && \
+                __bash_install_jar_launcher "${folder}/${subfolder}/${source}" "${folder}/${subfolder}/${file}" && \
+                ln -s "${folder}/${subfolder}/${source}" "${bin}/${target}" && echo "${bin}/${target}"
             done
         else
             return 0
