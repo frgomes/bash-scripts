@@ -7,28 +7,28 @@ function install_scala {
   which curl >/dev/null 2>&1 || apt+ install curl
 
   local name=scala
-  local group=351
+  local group=320
   local releases=https://github.com/lampepfl/dotty/releases
   local latest=${releases}/latest
   local latest="$(curl -I ${latest} 2>/dev/null | fgrep location: | tr -d '[:cntrl:]' | cut -d' ' -f2 | sed -E 's|.*\/(.*)$|\1|')"
   echo "${name}: latest version: ${latest:-(not detected)}" 1>&2
-  local default="${SCALA_VERSION:-${latest:-3.1.1}}"
+  local default="${SCALA_VERSION:-${latest:-3.2.0}}"
   local version="${1:-${default}}"
   echo "${name}: installing version: ${version}" 1>&2
 
   if [[ $version =~ ^(3\.).* ]] ;then
     local file=scala3-${version}.tar.gz
     local url=${releases}/download/${version}/${file}
-    local symlinks=${name},${name}c,${name}doc
+    local symlinks=
   else
     local file=scala-${version}.tgz
     local url=https://downloads.lightbend.com/scala/${version}/${file}
-    local symlinks=${name},${name}c,${name}doc,${name}p,fsc
+    local symlinks=
   fi
   local folder=${name}-${version}
   local subfolder=bin
   local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
-  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}" "--" "--strip-components=1"
+  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "(${symlinks})" "${bin}" "${subfolder}" "--" "--strip-components=1"
 
     #-- This is all about installing documentation and sources, which is now deprecated. Kept here for historical reasons.
     # "${dir}"/bash_install_tar "https://scala-lang.org/files/archive/scala-docs-${version}.txz" "scala-docs-${version}.txz" "scala-${version}" "scala-${major}" "--" "--strip-components=1"
@@ -43,6 +43,7 @@ function install_scala {
 
 export SCALA_VERSION=${version}
 export SCALA_HOME=\${TOOLS_HOME:=\$HOME/tools}/${folder}
+export PATH=\${SCALA_HOME}/bin:\${PATH}
 EOD
   chmod ugo+x "${config}"
   echo "${config}"
