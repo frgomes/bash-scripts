@@ -72,9 +72,9 @@ function install_java_binaries {
   local url=${releases}/download/${jpackage}/${file}
   local folder=${name}-${version}
   local subfolder=bin
-  local symlinks=${name}
+  local symlinks=
   local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
-  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}" "--" "--strip-components=1"
+  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "(${symlinks})" "${bin}" "${subfolder}" "--" "--strip-components=1"
 
   local src=${archive}/refs/tags/${jpackage}.tar.gz
   "${dir}"/bash_install_tar "${src}" "${jpackage}.tar.gz" "${folder}" "--" "--strip-components=1"
