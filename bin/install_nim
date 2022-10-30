@@ -1,0 +1,43 @@
+#!/bin/bash -eu
+
+function install_nim_binaries {
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
+
+  which curl >/dev/null 2>&1 || apt+ install curl
+
+  local name=nim
+  local group=361
+
+  curl https://nim-lang.org/choosenim/init.sh -sSf | sh
+
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
+  [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
+  cat <<EOD > "${config}"
+#!/bin/bash
+
+export PATH=\${HOME}/.nimble/bin:\${PATH}
+EOD
+  chmod ugo+x "${config}"
+  echo "${config}"
+}
+
+function install_nim_lsp {
+  echo "y" | ~/.nimble/bin/nimble install nimlsp
+}
+
+function __install_nim {
+  local self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function [a-zA-Z0-9]" $self | cut -d' ' -f2 | while read cmd ;do
+    $cmd $*
+  done
+}
+ 
+
+if [ $_ != $0 ]; then
+  # echo "Script is being sourced: list all functions"
+  grep -E "^function [a-zA-Z0-9]" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2 | sed 's/()//'
+else
+  # echo "Script is a subshell: execute last function"
+  $(grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2  | sed 's/()//' | tail -1) "$@"
+fi
