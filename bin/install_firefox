@@ -11,7 +11,7 @@ function install_firefox_binaries {
   local lang=$(echo $LANG | cut -d. -f1 | sed "s/_/-/")
   local hwarch=$(uname -m | tr '[:upper:]' '[:lower:]')
   local osarch=$(uname -s | tr '[:upper:]' '[:lower:]')
-  local version=83.0
+  local version=109.0.1
 
   if [ ! -e "${DOWNLOADS}"/${name}-${version}.tar.bz2 ] ;then
     which curl >/dev/null 2>&1 || apt+ install curl
@@ -20,11 +20,12 @@ function install_firefox_binaries {
 
   local tools="${TOOLS_HOME:=$HOME/tools}"
   [[ ! -d "${tools}" ]] && mkdir -p "${tools}"
-  [[ ! -d "${tools}/${folder}" ]] && tar -C "${tools}" xpf "${DOWNLOADS}"/${name}-${version}.tar.bz2
+  [[ ! -d "${tools}/${folder}" ]] && tar -C "${tools}" -xpf "${DOWNLOADS}"/${name}-${version}.tar.bz2
   [[ ! -d ~/bin ]] && mkdir -p ~/bin
   [[ ! -L ~/bin/"${name}" ]] && ln -s "${tools}/${name}/${name}" ~/bin/"${name}"
   echo ~/bin/${name}
 
+  mkdir -p ~/.local/share/applications/
   cat <<EOF > ~/.local/share/applications/${name}.desktop
 [Desktop Entry]
 Name=${title}
