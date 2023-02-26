@@ -11,19 +11,22 @@ function install_java_binaries {
   local group=300
   if [[ $version =~ ^8(\.[0-9]+)?(\.[0-9]+)?(\+[0-9]+)? ]] ;then
     local major=8
-    local default=8u332-b09
+    local default=8u362-b09
   elif [[ $version =~ ^11(\.[0-9]+)?(\.[0-9]+)?(\+[0-9]+)? ]] ;then
     local major=11
-    local default=11.0.15+10
+    local default=11.0.18+10
   elif [[ $version =~ ^16(\.[0-9]+)?(\.[0-9]+)?(\+[0-9]+)? ]] ;then
     local major=16
     local default=16.0.2+7
   elif [[ $version =~ ^17(\.[0-9]+)?(\.[0-9]+)?(\+[0-9]+)? ]] ;then
     local major=17
-    local default=17.0.3+7   
+    local default=17.0.6+10
   elif [[ $version =~ ^18(\.[0-9]+)?(\.[0-9]+)?(\+[0-9]+)? ]] ;then
     local major=18
-    local default=18.0.1+10
+    local default=18.0.2.1+1
+  elif [[ $version =~ ^19(\.[0-9]+)?(\.[0-9]+)?(\+[0-9]+)? ]] ;then
+    local major=19
+    local default=19.0.2+7
   else
     echo "ERROR: Unsupported Java version $JAVA_VERSION"
     echo 'INFO: Supported JDK versions are: 8.*, 11.*, 16.*, 17.*, 18.*'
@@ -67,7 +70,7 @@ function install_java_binaries {
   fi
   # version conventions for Java8 differ from newer versions
   local jversion=$(echo "${version}" | tr -d "-" | sed 's/+/_/')
-  
+
   local file=OpenJDK${major}U-jdk_${arch}_hotspot_${jversion}.tar.gz
   local url=${releases}/download/${jpackage}/${file}
   local folder=${name}-${version}
