@@ -39,17 +39,25 @@ function __rotate_parser {
 }
 
 
-function __rotate_find_primary {
+function rotate_list_monitors {
     xrandr --listmonitors | tail -n +2 | while read line ;do
         __rotate_parser "${line}"
-    done | fgrep primary
+    done
+}
+
+
+function __rotate_find_preferred {
+    xrandr --listmonitors | tail -n +2 | while read line ;do
+        __rotate_parser "${line}"
+    done | fgrep secondary
 }
 
 
 function rotate {
-    local primary=( $(__rotate_find_primary) )
-    local monitor=${primary[0]}
+    local preferred=( $(__rotate_find_preferred) )
+    local monitor=${preferred[0]}
     local current=$(xrandr -q --verbose | grep ${monitor} | grep -v disconnected | sed -E 's/connected( primary)? //' | cut -d' ' -f4)
+    ##local current=$(xrandr -q --verbose | grep ${monitor} | grep -v disconnected | sed -E 's/connected(//' | cut -d' ' -f4)
     case "${current}" in
         normal)   local next=left;;
         left)     local next=inverted;;
