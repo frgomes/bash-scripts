@@ -1,0 +1,39 @@
+#!/bin/bash -eu
+
+
+function install_superset_binaries {
+  apt+ install python-devel
+  pip install apache-superset
+  pip install sqlparse=='0.4.3' ## https://github.com/apache/superset/issues/23742
+  superset db upgrade
+
+##FIXME   [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed
+##FIXME   local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/370-superset.sh
+##FIXME   cat << EOD > "${config}"
+##FIXME #!/bin/bash
+##FIXME
+##FIXME export SUPERSET_VERSION=${superset_version}
+##FIXME export HADOOP_VERSION=${hadoop_version}
+##FIXME export SUPERSET_HOME=\${TOOLS_HOME:=\$HOME/tools}/superset-\${SUPERSET_VERSION}-bin-hadoop\${HADOOP_VERSION}
+##FIXME
+##FIXME export PATH=\${SUPERSET_HOME}/bin:\${PATH}
+##FIXME EOD
+##FIXME   chmod 755 "${config}"
+##FIXME   echo "${config}"
+}
+
+function __install_superset {
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function [a-zA-Z0-9]" $self | cut -d' ' -f2 | while read cmd ;do
+    $cmd $*
+  done
+}
+
+
+if [ $_ != $0 ]; then
+  # echo "Script is being sourced: list all functions"
+  grep -E "^function [a-zA-Z0-9]" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2 | sed 's/()//'
+else
+  # echo "Script is a subshell: execute last function"
+  $(grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2  | sed 's/()//' | tail -1) "$@"
+fi
