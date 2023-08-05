@@ -3,11 +3,11 @@
 ## https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip
 
 function install_android_sdk_tools_binaries {
-  local release=${1:-"$ANDROID_SDK_RELEASE"}
-  local version=${2:-"$ANDROID_SDK_VERSION"}
+  local default_release=${ANDROID_SDK_RELEASE:-"4333796"}
+  local default_version=${ANDROID_SDK_VERSION:-"29.0.0"}
 
-  local release=${release:-"4333796"}
-  local version=${version:-"29.0.0"}
+  local release=${1:-"$default_release"}
+  local version=${2:-"$default_version"}
 
   local api=$(echo ${version} | cut -d. -f1)
   local api=${3:-${api}}
@@ -36,7 +36,7 @@ function install_android_sdk_tools_binaries {
   fi
 
   cat << EOD > /tmp/android_sdkmanager.sh
-#!/bin/bash
+#!/bin/bash -eu
 
 export JAVA_OPTS="-Djava.io.tmpdir=${HOME}/tmp"
 echo y | ${folder}/tools/bin/sdkmanager \\
@@ -61,6 +61,7 @@ EOD
           while read line ;do
             echo "  \"${line}\" \\"
           done >> /tmp/android_sdkmanager.sh
+
   cat << EOD >> /tmp/android_sdkmanager.sh
 
 ${folder}/tools/bin/avdmanager \\
@@ -77,8 +78,11 @@ EOD
   cat /tmp/android_sdkmanager.sh
   /tmp/android_sdkmanager.sh
 
-  [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed
-  cat << EOD > ~/.bashrc-scripts/installed/350-android-sdk.sh
+  local group=800
+  local name=android-sdk
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
+  [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
+  cat <<EOD > "${config}"
 #!/bin/bash
 
 export ANDROID_SDK_RELEASE=${release}
@@ -92,8 +96,10 @@ export ANDROID_HOME=\${ANDROID_SDK}
 export ANDROID_NDK=\${ANDROID_SDK}/ndk-bundle
 export NDK_HOME=\${ANDROID_NDK}
 
-export PATH=\${ANDROID_SDK}/tools:\${ANDROID_SDK}/tools/bin:\${PATH}
+export PATH=\${ANDROID_SDK}/platform-tools:\${ANDROID_SDK}/tools:\${ANDROID_SDK}/tools/bin:\${PATH}
 EOD
+chmod 755 "${config}"
+echo "${config}"
 }
 
 
