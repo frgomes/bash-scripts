@@ -51,15 +51,15 @@ function __bash_install_tar_worker() {
 
   # apply relative folder to base path if necessary
   [[ "${folder:0:1}" != "/" ]] && local folder="${tools}/${folder}"
-  
+
   [[ -d "${folder}" ]] || mkdir -p "${folder}" && \
     [[ ! -z "${archive}" ]] && tar -C "${folder}" "${options}" -xpf "${archive}" > /dev/null 2>&1 && \
-      local symlinks=$(echo "${symlinks}" | tr -d '()') && \
+      local symlinks=$(echo "${symlinks}" | tr -d '(' | tr -d ')') && \
       if [[ ! -z "${symlinks}" ]] ;then
         echo "${symlinks}" | tr ',' '\n' | \
           while read symlink ;do
-            local source=$(echo "${symlink}" | cut -d: -f1)    
-            local target=$(echo "${symlink}" | cut -d: -f2)    
+            local source=$(echo "${symlink}" | cut -d: -f1)
+            local target=$(echo "${symlink}" | cut -d: -f2)
             local target=${target:=${source}}
             [[ ! -L "${bin}/${symlink}" ]] || rm "${bin}/${symlink}" && \
               ln -s "${folder}/${subfolder}/${source}" "${bin}/${target}" && echo "${bin}/${target}"
@@ -72,7 +72,7 @@ function __bash_install_tar_worker() {
 function __bash_install_tar_logger() (
   set -x
   __bash_install_tar_worker $@ 2> ${log}
-)    
+)
 
 function __bash_install_tar() {
   local log=$(mktemp -t bash_install_tar.XXX.log)
@@ -82,7 +82,7 @@ function __bash_install_tar() {
   local errno=$?
   set -e
   [[ ${errno} -eq 0 ]] || echo "ERROR: errno=${errno} :: installation failed."
-  return ${errno}  
+  return ${errno}
 }
 
 

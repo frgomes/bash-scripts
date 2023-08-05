@@ -13,7 +13,7 @@ function __install_dhall_binaries() {
   local file=${name}-${version}-${arch}.tar.bz2
   local url=${releases}/download/${package}/${file}
   local folder=${name}-${package}-${version}
-  if [[ -z "${symlinks}" ]] ;then
+  if [[ -z "(${symlinks})" ]] ;then
       local subfolder=
       local bin=
   else
@@ -21,7 +21,7 @@ function __install_dhall_binaries() {
       local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
   fi
 
-  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}" "--" "--strip-components=1"
+  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "(${symlinks})" "${bin}" "${subfolder}" "--" "--strip-components=1"
 
   local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
@@ -80,7 +80,7 @@ function __install_dhall() {
 
     local symlinks="$(curl ${cabal} 2>/dev/null | grep -E '^Executable ' | cut -d' ' -f2 | tr '\n' ',' | sed -E 's/,$//')"
 
-    __install_dhall_binaries "dhall-${name}" "${releases}" "${arch}" "${NAME}" "${dhall_version}" "${version}" "${symlinks}"
+    __install_dhall_binaries "dhall-${name}" "${releases}" "${arch}" "${NAME}" "${dhall_version}" "${version}" "(${symlinks})"
   done
 }
 

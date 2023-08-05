@@ -42,7 +42,7 @@ function install_terraform_libvirt {
   local symlinks=
   local bin=
 
-  "${dir}"/bash_install_zip "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}"
+  "${dir}"/bash_install_zip "${url}" "${file}" "${folder}" "(${symlinks})" "${bin}" "${subfolder}"
 
   local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")

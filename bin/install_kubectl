@@ -37,7 +37,7 @@ function install_kubectl {
   local symlinks=${name}
   local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
 
-  "${dir}"/bash_install_app "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}"
+  "${dir}"/bash_install_app "${url}" "${file}" "${folder}" "(${symlinks})" "${bin}" "${subfolder}"
 
   local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
@@ -89,7 +89,7 @@ function install_kubectl_stash {
   local symlinks=${name}-${osarch}-${hwarch}
   local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
 
-  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}"
+  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "(${symlinks})" "${bin}" "${subfolder}"
 
   local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")

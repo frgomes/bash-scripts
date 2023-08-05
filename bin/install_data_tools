@@ -24,7 +24,7 @@ function install_avro_tools {
   local symlinks=${name}
   local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
 
-  "${dir}"/bash_install_jar "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}" "--" "--strip-components=1"
+  "${dir}"/bash_install_jar "${url}" "${file}" "${folder}" "(${symlinks})" "${bin}" "${subfolder}" "--" "--strip-components=1"
 
   local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
@@ -76,7 +76,7 @@ function install_rq {
   local symlinks=${name}
   local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
 
-  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}"
+  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "(${symlinks})" "${bin}" "${subfolder}"
 
   local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
@@ -130,7 +130,7 @@ function install_gron {
   local symlinks=${name}
   local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
 
-  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "${symlinks}" "${bin}" "${subfolder}"
+  "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "(${symlinks})" "${bin}" "${subfolder}"
 
   local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")

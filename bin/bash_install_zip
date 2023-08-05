@@ -50,10 +50,10 @@ function __bash_install_zip_worker() {
 
   # apply relative folder to base path if necessary
   [[ "${folder:0:1}" != "/" ]] && local folder="${tools}/${folder}"
-  
+
   [[ -d "${folder}" ]] || mkdir -p "${folder}" && \
     [[ ! -z "${archive}" ]] && unzip  "${options}" "${archive}" -d "${folder}" > /dev/null 2>&1 && \
-      local symlinks=$(echo "${symlinks}" | tr -d '()') && \
+      local symlinks=$(echo "${symlinks}" | tr -d '(' | tr -d ')') && \
       if [[ ! -z "${symlinks}" ]] ;then
         echo "${symlinks}" | tr ',' '\n' | \
           while read symlink ;do
@@ -71,7 +71,7 @@ function __bash_install_zip_worker() {
 function __bash_install_zip_logger() (
   set -x
   __bash_install_zip_worker $@ 2> ${log}
-)    
+)
 
 function __bash_install_zip() {
   local log=$(mktemp -t bash_install_zip.XXX.log)
@@ -81,7 +81,7 @@ function __bash_install_zip() {
   local errno=$?
   set -e
   [[ ${errno} -eq 0 ]] || echo "ERROR: errno=${errno} :: installation failed."
-  return ${errno}  
+  return ${errno}
 }
 
 

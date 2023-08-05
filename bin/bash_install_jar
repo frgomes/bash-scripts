@@ -58,11 +58,11 @@ function __bash_install_jar_worker() {
 
   # apply relative folder to base path if necessary
   [[ "${folder:0:1}" != "/" ]] && local folder="${tools}/${folder}"
-  
+
   [[ -d "${tools}/${folder}" ]] || mkdir -p "${folder}/${subfolder}" && \
     [[ -s "${archive}" ]] && cp "${archive}" "${folder}/${subfolder}/${file}" && \
       chmod ugo+x "${folder}/${subfolder}/${file}" && \
-      local symlinks=$(echo "${symlinks}" | tr -d '()') && \
+      local symlinks=$(echo "${symlinks}" | tr -d '(' | tr -d ')') && \
         if [[ ! -z "${symlinks}" ]] ;then
           local symlinks=$(echo "${symlinks}" | tr -d '()') && \
           echo "${symlinks}" | tr ',' '\n' | head -1 | \
@@ -82,7 +82,7 @@ function __bash_install_jar_worker() {
 function __bash_install_jar_logger() (
   set -x
   __bash_install_jar_worker $@ 2> ${log}
-)    
+)
 
 function __bash_install_jar() {
   local log=$(mktemp -t bash_install_jar.XXX.log)
@@ -92,7 +92,7 @@ function __bash_install_jar() {
   local errno=$?
   set -e
   [[ ${errno} -eq 0 ]] || echo "ERROR: errno=${errno} :: installation failed."
-  return ${errno}  
+  return ${errno}
 }
 
 
