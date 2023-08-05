@@ -21,7 +21,7 @@ source "${HOME}"/.cargo/env
 EOD
   chmod ugo+x "${config}"
   echo "${config}"
-}    
+}
 
 function install_rust_binaries {
   local toolchain=${1:-stable}
@@ -33,7 +33,7 @@ function install_rust_binaries {
 
   curl https://sh.rustup.rs -sSf | sh -s -- --profile ${profile} --default-toolchain ${toolchain} --no-modify-path -y \
     && source "${HOME}"/.cargo/env && hash -r \
-        && rustup component add --toolchain ${toolchain} clippy rustfmt \
+        && rustup component add --toolchain ${toolchain} rust-analyzer clippy rustfmt \
         && rustup component add --toolchain ${toolchain} rust-src \
         && [[ -e $(which gcc) ]] || __install_rust_build_essentials
 }
@@ -151,7 +151,7 @@ function install_rust_experimental {
 function __install_rust {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
-  
+
   local option="${1:-help}"
   local toolchain="${2:-stable}"
   local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/400-rust.sh
@@ -175,11 +175,11 @@ function __install_rust {
     "texlab")	install_rust_lsp_texlab	${toolchain}            ; __install_rust_activator "${config}";;
     "all")
         install_rust_binaries ${toolchain} minimal
-        install_rust_addons   ${toolchain} 
-        install_rust_web      ${toolchain} 
-        install_rust_android  ${toolchain} 
-	install_rust_ios      ${toolchain} 
-        install_rust_lsp      ${toolchain} 
+        install_rust_addons   ${toolchain}
+        install_rust_web      ${toolchain}
+        install_rust_android  ${toolchain}
+        install_rust_ios      ${toolchain}
+        install_rust_lsp      ${toolchain}
         __install_rust_activator "${config}" ;;
     "experimental") install_rust_experimental ;;
     *) echo 'Usage install_rust command [nightly]'
@@ -187,19 +187,19 @@ function __install_rust {
        echo ''
        echo 'Commands:'
        echo '  minimal         installs Rust and a minimal set of tools'
-       echo '  complete        installs Rust and a complete set of tools'
        echo '  addons          installs an oppinionated set of useful Cargo plugins'
        echo '  web             installs an oppinionated set of tools for web development'
        echo '  android         installs an oppinionated set of tools for Android development'
        echo '  ios             installs an oppinionated set of tools for iOS development'
        echo '  lsp             installs Rust support for Language Server Protocol'
        echo '  texlab          installs experimental support for LaTeX (and thousands of textlive packages)'
+       echo '  all             installs all patterns above'
+       echo '  complete        installs Rust and tools for Rust developers and maintainers'
        echo '  experimental    installs experimental tools and packages'
-       echo '  all             installs all tools and packages, except experimental packages'
        ;;
   esac
 }
- 
+
 
 if [ $_ != $0 ]; then
   # echo "Script is being sourced: list all functions"
