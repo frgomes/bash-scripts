@@ -5,24 +5,25 @@ function __install_jupyter_worker {
   local ALMOND_VERSION="${2}"
 
   which python3 >/dev/null 2>&1 || apt+ install python3-minimal
+  python3 -m ensurepip
   python3 -m pip install --upgrade pip
   python3 -m pip install --upgrade pygments jupyter
 
   which coursier > /dev/null 2>&1 || ${dir}/install_coursier
-  coursier launch --fork almond:${ALMOND_VERSION} --scala ${SCALA_MAJOR}.0 -- --install --force
+  coursier launch --fork almond:${ALMOND_VERSION} -- --install --force
 
-  python3 -m pip install --upgrade --force jupyter_contrib_nbextensions jupyter_nbextensions_configurator
+  ##XXX python3 -m pip install --upgrade --force jupyter_contrib_nbextensions jupyter_nbextensions_configurator
 
   hash -r
-  jupyter contrib nbextension install --user
-  jupyter nbextensions_configurator enable --user
+  ##XXX jupyter contrib nbextension install --user
+  ##XXX jupyter nbextensions_configurator enable --user
   jupyter kernelspec list
 }
 
 function __install_jupyter_logger() (
   set -x
   __install_jupyter_worker $@
-)    
+)
 
 function install_jupyter_binaries {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
@@ -40,13 +41,13 @@ function install_jupyter_binaries {
 
   local SCALA_MAJOR=$(echo ${SCALA_VERSION:-2.13.8} | cut -d. -f1-2)
 
-  local log=$(mktemp -t install_juyter.XXX.log)
+  local log=$(mktemp -t install_jupyter.XXX.log)
   echo "INFO: See installation log at: ${log}"
   set +e
   __install_jupyter_logger "${SCALA_MAJOR}" "${version}" > ${log} 2>&1
   local errno=$?
   set -e
-  [[ ! ${errno} -eq 0 ]] && echo "ERROR: errno=${errno} :: installation failed." && return ${errno}  
+  [[ ! ${errno} -eq 0 ]] && echo "ERROR: errno=${errno} :: installation failed." && return ${errno}
 
   local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
