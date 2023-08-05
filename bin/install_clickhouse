@@ -1,0 +1,46 @@
+#!/bin/bash -eu
+
+function install_clickhouse_binaries {
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
+
+  which curl >/dev/null 2>&1 || apt+ install curl
+
+  local name=clickhouse
+  local group=381
+
+  local file=${name}.sh
+  local url=https://clickhouse.com/
+  local folder=${name}
+  local subfolder=.
+  local symlinks=
+  local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
+
+  "${dir}"/bash_install_sh "${url}" "${file}" "${folder}" "(${symlinks})" "${bin}" "${subfolder}"
+
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
+  [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
+  cat <<EOD > "${config}"
+#!/bin/bash
+
+export PATH=\${TOOLS_HOME:=\$HOME/tools}/${folder}:\${PATH}
+EOD
+  chmod ugo+x "${config}"
+  echo "${config}"
+}
+
+function __install_clickhouse {
+  local self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function [a-zA-Z0-9]" $self | cut -d' ' -f2 | while read cmd ;do
+    $cmd $*
+  done
+}
+
+
+if [ $_ != $0 ]; then
+  # echo "Script is being sourced: list all functions"
+  grep -E "^function [a-zA-Z0-9]" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2 | sed 's/()//'
+else
+  # echo "Script is a subshell: execute last function"
+  $(grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2  | sed 's/()//' | tail -1) "$@"
+fi
