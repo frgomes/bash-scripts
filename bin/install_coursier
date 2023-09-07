@@ -12,7 +12,7 @@ function install_coursier {
   local latest=${releases}/latest
   local latest="$(curl -I ${latest} 2>/dev/null | fgrep location: | tr -d '[:cntrl:]' | cut -d' ' -f2 | sed -E 's|.*\/v(.*)$|\1|')"
   echo "${name}: latest version: ${latest:-(not detected)}" 1>&2
-  local default="${COURSIER_VERSION:-${latest:-2.1.0-M7}}"
+  local default="${COURSIER_VERSION:-${latest:-2.1.5}}"
   local version="${1:-${default}}"
   echo "${name}: installing version: ${version}" 1>&2
 
@@ -29,10 +29,10 @@ function install_coursier {
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
   cat <<EOD > "${config}"
 #!/bin/bash
- 
+
 export COURSIER_VERSION=${version}
 export COURSIER_HOME=\${TOOLS_HOME:=\$HOME/tools}/${folder}
-export PATH="$PATH:/home/rgomes/.local/share/coursier/bin"
+export PATH="\${PATH}:/home/rgomes/.local/share/coursier/bin"
 EOD
   chmod ugo+x "${config}"
   echo "${config}"
@@ -44,8 +44,8 @@ function __install_bfg {
   grep -E "^function [a-zA-Z0-9]" $self | cut -d' ' -f2 | while read cmd ;do
     $cmd $*
   done
-}
 
+}
 
 if [ $_ != $0 ]; then
   # echo "Script is being sourced: list all functions"
