@@ -2,8 +2,7 @@
 
 function __splitter() {
   which tr >/dev/null 2>&1 || apt+ install coreutils
-  local sep="${1}"
-  local sep="${sep:=':'}"
+  local sep="${1:-':'}"
   tr ${sep} '\n'
 }
 
