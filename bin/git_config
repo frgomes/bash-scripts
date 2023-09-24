@@ -1,9 +1,9 @@
 #!/bin/bash -eu
 
 function __git_config {
-  local user=$(getent passwd $USER | cut -d: -f5 | cut -d, -f1)
-  local email=$(getent passwd $USER | cut -d: -f5 | cut -d, -f2)
-  local email=${email:=$USER@$(dnsdomainname)}
+  local uid=$(getent passwd $USER | cut -d: -f1)
+  local user=$(getent passwd $USER | cut -d: -f5 | cut -d, -f2)
+  local email=${uid}@$(hostname)
 
 cat <<EOD
 [user]
@@ -11,8 +11,8 @@ cat <<EOD
   email = ${email}
 
 [alias]
-  pullall  = !"git pull origin -v && git pull upstream -v" 
-  fetchall = !"git fetch origin -v && git fetch upstream -v" 
+  pullall  = !"git pull origin -v && git pull upstream -v"
+  fetchall = !"git fetch origin -v && git fetch upstream -v"
   fetch-force = !"git fetch && git reset --hard FETCH_HEAD && git clean -df"
   incoming = !"git fetch && git log ..origin/master"
   unstage = reset HEAD
