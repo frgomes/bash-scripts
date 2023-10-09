@@ -88,19 +88,19 @@ if [ -x /usr/bin/dircolors ]; then
 fi
 
 ##FIXME: choose text editor on this order: emacs, zile, vim, nano, vi
-if [ ! -z $(which emacs > /dev/null 2>&1) ] ;then
+if [ ! -z $(which emacs 2> /dev/null) ] ;then
   VISUAL=emacs
   EDITOR="zile"
   ALTERNATE_EDITOR="vi -e"
-elif [ ! -z $(which zile > /dev/null 2>&1) ] ;then
+elif [ ! -z $(which zile 2> /dev/null) ] ;then
   VISUAL=emacs
   EDITOR="zile"
   ALTERNATE_EDITOR="vi -e"
-elif [ ! -z $(which vim > /dev/null 2>&1) ] ;then
+elif [ ! -z $(which vim 2> /dev/null) ] ;then
   VISUAL=vim
   EDITOR=vi
   ALTERNATE_EDITOR="vi -e"
-elif [ ! -z $(which nano > /dev/null 2>&1) ] ;then
+elif [ ! -z $(which nano 2> /dev/null1) ] ;then
   VISUAL=emacs
   EDITOR=nano
   ALTERNATE_EDITOR="vi -e"
