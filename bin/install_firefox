@@ -11,7 +11,7 @@ function install_firefox_binaries {
   local lang=$(echo $LANG | cut -d. -f1 | sed "s/_/-/")
   local hwarch=$(uname -m | tr '[:upper:]' '[:lower:]')
   local osarch=$(uname -s | tr '[:upper:]' '[:lower:]')
-  local version=118.0.1
+  local version=120.0.1
 
   if [ ! -e "${DOWNLOADS}"/${name}-${version}.tar.bz2 ] ;then
     which curl >/dev/null 2>&1 || apt+ install curl
