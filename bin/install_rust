@@ -174,12 +174,11 @@ function __install_rust {
     "lsp")	install_rust_lsp	${toolchain}            ; __install_rust_activator "${config}";;
     "texlab")	install_rust_lsp_texlab	${toolchain}            ; __install_rust_activator "${config}";;
     "all")
-        install_rust_binaries ${toolchain} minimal
+        install_rust_binaries ${toolchain} complete
         install_rust_addons   ${toolchain}
         install_rust_web      ${toolchain}
         install_rust_android  ${toolchain}
         install_rust_ios      ${toolchain}
-        install_rust_lsp      ${toolchain}
         __install_rust_activator "${config}" ;;
     "experimental") install_rust_experimental ;;
     *) echo 'Usage install_rust command [nightly]'
@@ -187,14 +186,14 @@ function __install_rust {
        echo ''
        echo 'Commands:'
        echo '  minimal         installs Rust and a minimal set of tools'
+       echo '  complete        installs Rust and tools for Rust developers and maintainers'
        echo '  addons          installs an oppinionated set of useful Cargo plugins'
        echo '  web             installs an oppinionated set of tools for web development'
        echo '  android         installs an oppinionated set of tools for Android development'
        echo '  ios             installs an oppinionated set of tools for iOS development'
-       echo '  lsp             installs Rust support for Language Server Protocol'
-       echo '  texlab          installs experimental support for LaTeX (and thousands of textlive packages)'
        echo '  all             installs all patterns above'
-       echo '  complete        installs Rust and tools for Rust developers and maintainers'
+       echo '  lsp             installs Rust support for Language Server Protocol'
+       echo '  texlab          installs experimental support for LaTeX (BEWARE: installs thousands of textlive packages!)'
        echo '  experimental    installs experimental tools and packages'
        ;;
   esac

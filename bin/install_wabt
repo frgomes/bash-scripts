@@ -31,6 +31,9 @@ function install_wabt_download {
   else
       git -C "${WORKSPACE}/wabt" pull
   fi
+  pushd "${WORKSPACE}/wabt"
+  git submodule update --init
+  popd
 }
 
 function install_wabt_install {
