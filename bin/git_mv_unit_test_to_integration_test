@@ -1,0 +1,12 @@
+#!/bin/bash
+
+function git_mv_test_to_it {
+  while read source ;do
+    local target=$(echo ${source} | sed 's:src/test/:src/it/:')
+    local dir=$(dirname ${target})
+    [[ -d ${dir} ]] | mkdir -p ${dir}
+    git mv ${source} ${target}
+  done
+}
+
+git_mv_test_to_it
