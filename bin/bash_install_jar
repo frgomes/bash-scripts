@@ -53,7 +53,15 @@ function __bash_install_jar_worker() {
   # download archive
   if [[ -z "${archive}" ]]; then
     local archive="${DOWNLOADS}/${file}"
-    curl -sSL "$url" -o "${archive}"
+    local header="/tmp/bash_install_tar_$$"
+    curl -sSL -I "${url}" -o "${header}"
+    local status=$(cat "${header}" | tr -d '\r' | grep -E "^HTTP/[12]" | tail -1 | cut -d' ' -f2)
+    if [[ "${status}" =~ 200 ]] ;then
+      curl -sSL "${url}" -o "${archive}"
+    else
+      echo "ERROR: remote resource could not be found: ${url}"
+      return 1
+    fi
   fi
 
   # apply relative folder to base path if necessary
