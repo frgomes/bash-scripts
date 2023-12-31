@@ -28,7 +28,7 @@ function install_java_binaries {
     local major=19
     local default=19.0.2+7
   else
-    echo "ERROR: Unsupported Java version $JAVA_VERSION"
+    echo "ERROR: Unsupported Java version ${version}"
     echo 'INFO: Supported JDK versions are: 8.*, 11.*, 16.*, 17.*, 18.*'
     return 1
   fi
