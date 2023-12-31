@@ -28,7 +28,7 @@ function install_android_sdk_tools_binaries {
   # download archive
   [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
   pushd "${DOWNLOADS}" > /dev/null
-  [[ ! -f ${archive} ]] && wget ${url}
+  [[ ! -f ${archive} ]] && curl -sSL "$url" -o "${archive}"
   popd > /dev/null
 
   # create destination folder
