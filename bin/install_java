@@ -20,7 +20,7 @@ function install_java_binaries {
     local default=16.0.2+7
   elif [[ $version =~ ^17(\.[0-9]+)?(\.[0-9]+)?(\+[0-9]+)? ]] ;then
     local major=17
-    local default=17.0.6+10
+    local default=17.0.9+9
   elif [[ $version =~ ^18(\.[0-9]+)?(\.[0-9]+)?(\+[0-9]+)? ]] ;then
     local major=18
     local default=18.0.2.1+1
@@ -31,6 +31,10 @@ function install_java_binaries {
     echo "ERROR: Unsupported Java version $JAVA_VERSION"
     echo 'INFO: Supported JDK versions are: 8.*, 11.*, 16.*, 17.*, 18.*'
     return 1
+  fi
+
+  if [[ "${version}" == "${major}" ]] ;then
+    version=${default}
   fi
 
   local hwarch=$(uname -m | tr '[:upper:]' '[:lower:]')
@@ -58,8 +62,7 @@ function install_java_binaries {
   local latest=${releases}/latest
   local latest="$(curl -I ${latest} 2>/dev/null | fgrep location: | tr -d '[:cntrl:]' | cut -d' ' -f2 | sed -E 's|.*\/jdk[-]?(.*)$|\1|')"
   echo "${name}: latest version: ${latest:-(not detected)}" 1>&2
-  local default="${JAVA_VERSION:-${default}}"
-  local version="${requested:-${latest:-${default}}}"
+  local version="${version:-${latest:-${default}}}"
   echo "${name}: installing version: ${version}" 1>&2
 
   ## paths for Java8 differ from newer versions
