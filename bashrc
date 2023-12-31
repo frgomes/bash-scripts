@@ -100,7 +100,7 @@ elif [ ! -z $(which vim 2> /dev/null) ] ;then
   VISUAL=vim
   EDITOR=vi
   ALTERNATE_EDITOR="vi -e"
-elif [ ! -z $(which nano 2> /dev/null1) ] ;then
+elif [ ! -z $(which nano 2> /dev/null) ] ;then
   VISUAL=emacs
   EDITOR=nano
   ALTERNATE_EDITOR="vi -e"

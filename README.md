@@ -14,10 +14,10 @@ See extra documentation: [docs](docs)
 > WARNING: **Make sure you have two or more terminal window open** so that you can fix mistakes in case your ``.bashrc`` kicks you out next time you log in.
 
 ```bash
-#!/bin/bash
-mkdir -p "$HOME/workspace"
-git -C "$HOME/workspace" clone http://github.com/frgomes/bash-scripts
-echo 'source $HOME/workspace/bash-scripts/bashrc' >> $HOME/.bashrc
+#!/usr/bin/env sh
+[ -d "${HOME}/workspace" ] || mkdir -p "${HOME}/workspace"
+[ -d "${HOME}/workspace/bash-scripts" ] || git -C "${HOME}/workspace" clone http://github.com/frgomes/bash-scripts
+echo 'source ${HOME}/workspace/bash-scripts/bashrc ## http://github.com/frgomes/bash-scripts' >> ${HOME}/.bashrc
 ```
 
 Open a new terminal session and enjoy!
