@@ -12,7 +12,7 @@ function install_thunderbird_binaries {
   local hwarch=$(uname -m | tr '[:upper:]' '[:lower:]')
   local osarch=$(uname -s | tr '[:upper:]' '[:lower:]')
   local version=115.5.0
-  
+
   if [ ! -e "${DOWNLOADS}"/${name}-${version}.tar.bz2 ] ;then
     which curl >/dev/null 2>&1 || apt+ install curl
     curl https://ftp.mozilla.org/pub/${name}/releases/${version}/${osarch}-${hwarch}/${lang}/${name}-${version}.tar.bz2 -o "${DOWNLOADS}"/${name}-${version}.tar.bz2
@@ -25,7 +25,7 @@ function install_thunderbird_binaries {
   [[ ! -L ~/bin/"${name}" ]] && ln -s "${tools}/${name}/${name}" ~/bin/"${name}"
   echo ~/bin/${name}
 
-  mkdir -p ~/.local/share/applications/
+  [[ -d ~/.local/share/applications/ ]] || mkdir -p ~/.local/share/applications/
   cat <<EOF > ~/.local/share/applications/${name}.desktop
 [Desktop Entry]
 Name=${title}

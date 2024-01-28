@@ -25,7 +25,7 @@ function install_firefox_binaries {
   [[ ! -L ~/bin/"${name}" ]] && ln -s "${tools}/${name}/${name}" ~/bin/"${name}"
   echo ~/bin/${name}
 
-  mkdir -p ~/.local/share/applications/
+  [[ -d ~/.local/share/applications/ ]] || mkdir -p ~/.local/share/applications/
   cat <<EOF > ~/.local/share/applications/${name}.desktop
 [Desktop Entry]
 Name=${title}

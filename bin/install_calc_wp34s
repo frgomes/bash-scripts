@@ -41,6 +41,7 @@ function install_wp34s_binaries {
     echo ~/bin/${executable}
   fi
 
+  [[ -d ~/.local/share/applications/ ]] || mkdir -p ~/.local/share/applications/
   cat <<EOF > ~/.local/share/applications/${executable}.desktop
 [Desktop Entry]
 Name=${name}
@@ -50,7 +51,7 @@ Icon=${tools}/${folder}/${icon}
 Terminal=false
 Type=Application
 EOF
-  
+
 }
 
 function __install_calc_wp34s {

@@ -39,7 +39,8 @@ function install_free42_binaries {
     [[ ! -L ~/bin/${executable} ]] && ln -s ${tools}/${folder}/${executable} ~/bin
     echo ~/bin/${executable}
   fi
-  
+
+  [[ -d ~/.local/share/applications/ ]] || mkdir -p ~/.local/share/applications/
   cat <<EOF > ~/.local/share/applications/${name}.desktop
 [Desktop Entry]
 Name=${name}

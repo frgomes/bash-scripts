@@ -74,6 +74,7 @@ install_python3_pip
 
 ##FIXME: This is a temporary fix for snaps not being found. Credits: https://www.youtube.com/watch?v=2g-teghxI2A
 if [ -d /var/lib/snapd/desktop/applications ] ;then
+  [[ -d ~/.local/share/applications/ ]] || mkdir -p ~/.local/share/applications/
   find -L ~/.local/share/applications -type l -delete
   ln -sf /var/lib/snapd/desktop/applications/*.desktop ~/.local/share/applications/
 fi
