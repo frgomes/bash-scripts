@@ -12,15 +12,14 @@ function __bash_path_append() {
   [[ ! -z "$1" ]] && echo "$PATH" | tr ':' '\n' | fgrep "$1" > /dev/null || export PATH="${PATH}:$1"
 }
 
-function install_python3_pip {
-  which pip3 > /dev/null 2>&1 || (
+function install_python3 {
+  which python3 > /dev/null 2>&1 || (
     case "$(os_release | cut -d: -f1)" in
-        Debian|Ubuntu) dpkg-query -s python3-pip > /dev/null 2>&1 || sudo apt install -y python3-pip;;
+        Debian|Ubuntu) sudo apt install -y python3 python3-venv;;
         openSUSE)
             case "$(os_release | cut -d: -f2)" in
                 MicroOS) ;; # does not attempt to mutate the file system
-                *) local v="$(python3 -V | cut -d' ' -f2 | cut -d. -f1-2 | tr -d [.])" ;
-                   zypper search -i python${v}-pip > /dev/null 2>&1 || sudo zypper install -y python${v}-pip;;
+                *) sudo zypper install -y python3 python3-virtualenv;;
             esac;;
         *) echo "ERROR: Unsupported distribution: ${distro}" ; return 1;;
     esac
@@ -29,13 +28,6 @@ function install_python3_pip {
 
 function mkvirtualenv {
   if [ ! -z "$1" ] ;then
-    # make sure python-venv is installed
-    case "$(os_release | cut -d: -f1)" in
-        Debian|Ubuntu) dpkg-query -s python3-venv > /dev/null 2>&1 || sudo apt install -y python3-venv;;
-        openSUSE) ;;
-        *) echo "ERROR: Unsupported distribution: ${distro}" ; return 1;;
-    esac
-
     [[ -d "${HOME}/.virtualenvs" ]] || mkdir -p "${HOME}/.virtualenvs"
     python3 -m venv "${HOME}/.virtualenvs/${1}"
   fi
@@ -69,8 +61,8 @@ complete -F __workon_complete workon
 __bash_path_prepend "$(dirname $(readlink -f "${BASH_SOURCE[0]}"))/bin"
 __bash_path_prepend "${HOME}/.local/bin"
 
-# make sure python3-pip is installed
-install_python3_pip
+# make sure python3, python3-pip and python3-venv are installed
+install_python3
 
 ##FIXME: This is a temporary fix for snaps not being found. Credits: https://www.youtube.com/watch?v=2g-teghxI2A
 if [ -d /var/lib/snapd/desktop/applications ] ;then
