@@ -1,0 +1,7 @@
+#!/bin/bash -eu
+
+function __file_colon_uniq_error {
+  grep -E '^\[error\] ' | grep "${HOME}" | cut -c9- | cut -d: -f1 | sort | uniq
+}
+
+__file_colon_uniq_error "$@"
