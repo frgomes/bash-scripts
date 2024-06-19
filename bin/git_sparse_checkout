@@ -51,18 +51,16 @@ function git_sparse_checkout {
     # list of files or directories to be downloaded. Names of directories
     # must be followed by a slash /.
 
-    local sparse=true
-    local opts='--depth=1'
-
     # now perform the sparse checkout
     mkdir -p "${dir}"
     git -C "${dir}" init
-    git -C "${dir}" config core.sparseCheckout ${sparse}
+    git -C "${dir}" config core.sparseCheckout true
+    git -C "${dir}" config core.sparseCheckoutCone true
     for path in $* ;do
         echo "${path}" >> ${dir}/.git/info/sparse-checkout
     done
     git -C "${dir}" remote add origin ${url}
-    git -C "${dir}" fetch ${opts} origin ${tag}
+    git -C "${dir}" fetch origin ${tag}
     git -C "${dir}" checkout ${tag}
 }
 
