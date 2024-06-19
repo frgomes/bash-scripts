@@ -13,7 +13,7 @@ function __install_scala_metals_worker() (
      org.scalameta:metals_2.13:${version} \
      -r bintray:scalacenter/releases \
      -r sonatype:snapshots \
-     -o ${bin}/metals \
+     -o ${bin}/metals-emacs \
      --force --quiet
 
   coursier install --dir "${bin}" bloop
