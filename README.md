@@ -27,6 +27,23 @@ Open a new terminal session and enjoy!
     curl -s https://raw.githubusercontent.com/frgomes/bash-scripts/master/unsafe/bashrc-up | sh
 
 
+## Recommended ${HOME}/.bashrc
+
+Below you find a suggestion for ${HOME}/.bashrc for every supported Linux distribution:
+
+    #!/bin/bash -x
+    
+    ## http://github.com/frgomes/bash-scripts
+    [[ -f ${HOME}/workspace/bash-scripts/bashrc ]] && source ${HOME}/workspace/bash-scripts/bashrc
+    
+    case $( cat /etc/os-release | grep -E '^ID=' | cut -d= -f2 | tr -d '"' ) in
+        opensuse-tumbleweed) [[ -d !/.virtualenvs/tumbleweed ]] || mkvirtualenv tumbleweed ; workon tumbleweed ;;
+        opensuse-microos)    [[ -d !/.virtualenvs/microos ]]    || mkvirtualenv microos    ; workon microos ;;
+        debian)              [[ -d !/.virtualenvs/debian ]]     || mkvirtualenv debian     ; workon debian ;;
+        ubuntu)              [[ -d !/.virtualenvs/ubuntu ]]     || mkvirtualenv ubuntu     ; workon ubuntu ;;
+        *) ;;
+    esac
+
 ## Design Concept
 
 Starting from a brand new laptop with only the base operating system installed, I would like to be able to quickly have my environment setup. Then I open a new terminal window and all remaining bits are automagically configured for me. I also would like to install complex software packages easily, employing just a single command. Then I'm ready to go. The entire thing should not take more than a few minutes.
