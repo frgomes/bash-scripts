@@ -26,8 +26,10 @@ function install_python3 {
 
 function mkvirtualenv {
   if [ ! -z "$1" ] ;then
+    local name="${1}"
+    shift
     [[ -d "${HOME}/.virtualenvs" ]] || mkdir -p "${HOME}/.virtualenvs"
-    python3 -m venv "${HOME}/.virtualenvs/${1}"
+    python3 -m venv "${HOME}/.virtualenvs/${name}" $@
   fi
 }
 
