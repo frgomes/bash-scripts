@@ -13,9 +13,8 @@ function __bash_path_append() {
 }
 
 function install_python3 {
-  which python3 > /dev/null 2>&1 || (
     case "$(os_release | cut -d: -f1)" in
-        Debian|Ubuntu) sudo apt install -y python3 python3-venv;;
+        Debian|Ubuntu) dpkg -s python3-venv 2>&1 >/dev/null || sudo apt install -y python3 python3-venv;;
         openSUSE)
             case "$(os_release | cut -d: -f2)" in
                 MicroOS) ;; # does not attempt to mutate the file system
@@ -23,7 +22,6 @@ function install_python3 {
             esac;;
         *) echo "ERROR: Unsupported distribution: ${distro}" ; return 1;;
     esac
-  )
 }
 
 function mkvirtualenv {
@@ -60,6 +58,7 @@ complete -F __workon_complete workon
 
 __bash_path_prepend "$(dirname $(readlink -f "${BASH_SOURCE[0]}"))/bin"
 __bash_path_prepend "${HOME}/.local/bin"
+__bash_path_prepend "${HOME}/bin"
 
 # make sure python3, python3-pip and python3-venv are installed
 install_python3
