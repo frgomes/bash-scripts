@@ -9,17 +9,7 @@ function fd+ {
 
     # always specify Debian package names and apt+ will adjust accordingly
     apt+ install fd
-    case "${1}" in
-        ant)    shift; ${cmd} -F build.xml $@;;
-        config) shift; ${cmd} -e cfg -e conf -e config -e ini $@;;
-        cpp)    shift; ${cmd} -e c -e h -e cpp -e hpp $@;;
-        pom)    shift; ${cmd} -F pom.xml $@;;
-        scala)  shift; ${cmd} -e scala -e sbt $@;;
-        yaml)   shift; ${cmd} -e yml -e yaml $@;;
-        file)   shift; ${cmd} $@;;
-        dir)    shift; ${cmd} -t d $@;;
-        *) local extension="${1}"; shift; ${cmd} -e "${extension}" $@;;
-    esac
+    ${cmd} $@
 }
 
 fd+ $@
