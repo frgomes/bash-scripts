@@ -1,0 +1,177 @@
+#!/bin/bash -eu
+
+function appimage_desktop_entry {
+    local self=$(readlink -f "${BASH_SOURCE[0]}")
+    local app=$(basename $self)
+    local usage=\
+"USAGE: ${app} AppImage-PATH [AppImage-repository-PATH] [bin-FOLDER] [--uninstall]
+ Installs an AppImage, creating a desktop entry for it and an symbolic link for it.
+   where:
+     'AppImage-PATH' is the location of an AppImage file.
+     'repository-PATH' the location where AppImage files are stored. Default: \${HOME}/Applications
+     'bin-FOLDER' is the location where symbolic links are created. Default: \${HOME}/bin
+   Examples:
+     ${app} ~/Downloads/zen-generic.AppImage
+     ${app} ~/Downloads/zen-generic.AppImage ~/Applications ~/bin
+     ${app} ~/bin/zen-generic --uninstall
+     ${app} zen-generic --uninstall
+"
+    local options=$(getopt -o umd -l uninstall,move,delete -- "$@")
+    local file=""
+    local apps=${APPIMAGE_REPO:=${HOME}/Applications}
+    local bin=${APPIMAGE_SYMLINKS:=${HOME}/bin}
+    local uninstall="no"
+    local move="no"
+    local delete="no"
+    local count=0
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -h|--help)
+                echo "${usage}"
+                exit 0
+                ;;
+            -u|--uninstall)
+                uninstall="yes"
+                shift 1
+                ;;
+            -m|--move)
+                move="yes"
+                shift 1
+                ;;
+            -d|--delete)
+                delete="yes"
+                shift 1
+                ;;
+            --)
+                shift
+                break
+                ;;
+            *)
+                case ${count} in
+                    0) file="${1}";;
+                    1) apps="${1}";;
+                    2) bin="${1}";;
+                esac
+                count=$(expr ${count} + 1)
+                shift 1
+                ;;
+        esac
+    done
+
+##echo "file      = $file"
+##echo "apps      = $apps"
+##echo "bin       = $bin"
+##echo "uninstall = $uninstall"
+##echo "move      = $move"
+##echo "delete    = $delete"
+
+if [[ -z "${file}" ]]; then echo "${usage}" ; exit 1 ;fi
+
+if [[ "${uninstall}" == "yes" ]]; then
+    if [[ -L "${file}" || -L "$(which ${file})" ]] ;then
+        local symlink=$(which ${file})
+        local appimage=$(readlink "${symlink}")
+        local basename="$(basename "${appimage}")"
+        local appname="${basename%.*}"
+        local relocate=""
+        local icons="${HOME}/.local/share/icons/${appname}"
+        local entry="${HOME}/.local/share/applications/${appname}.desktop"
+    else
+        local appimage="${file}"
+        local basename="$(basename "${file}")"
+        local appname="${basename%.*}"
+        local relocate="${apps}/${basename}"
+        local symlink="${bin}/${appname}"
+        local icons="${HOME}/.local/share/icons/${appname}"
+        local entry="${HOME}/.local/share/applications/${appname}.desktop"
+    fi
+
+    ##echo appname ${appname}
+    ##echo appimage ${appimage}
+    ##echo relocate ${relocate}
+    ##echo symlink ${symlink}
+    ##echo entry ${entry}
+    ##echo icons ${icons}
+
+    rm -r -f "${icons}"
+    if [[ "${delete}" == "yes" ]] ; then
+        rm -f "${appimage}" "${relocate}" "${entry}"
+    else
+        rm -r -f "${relocate}" "${entry}"
+    fi
+else
+    if [[ -f "${file}" ]] ; then
+        local appimage="${file}"
+        local basename=$(basename "${appimage}")
+        local appname="${basename%.*}"
+        local relocate="${apps}/${basename}"
+        local symlink="${bin}/${appname}"
+        local icons="${HOME}/.local/share/icons/${appname}"
+        local entry="${HOME}/.local/share/applications/${appname}.desktop"
+
+        ##echo appname ${appname}
+        ##echo appimage ${appimage}
+        ##echo symlink ${symlink}
+        ##echo entry ${entry}
+        ##echo icons ${icons}
+
+        [[ -f "${relocate}" ]] || cp "${appimage}" "${relocate}"
+        chmod u+x "${relocate}"
+
+        # find and copy icons
+        local tmp="/tmp/squashfs-root.${basename}"
+        [[ -d "${tmp}" ]] || mkdir -p "${tmp}"
+        pushd "${tmp}" > /dev/null 2>@1
+        [[ -d squashfs-root ]] || ${relocate} --appimage-extract
+        cd squashfs-root
+        find . -type f | grep .png | while read icon ;do
+            local dir=$(dirname "${icons}/${icon}")
+            [[ -d "${dir}" ]] || mkdir -p "${dir}"
+            cp -p "${icon}" "${dir}"
+        done
+        [[ -d "${tmp}" ]] || rm -r -f "${tmp}"
+        # find last icon, if any
+        local icon="$(find ${icons} -type f | grep .png | tail -1)"
+        ##echo icon "${icon}"
+        popd > /dev/null 2>@1
+cat <<EOD > "${entry}"
+[Desktop Entry]
+Name=${appname}
+Exec="${relocate}"
+Type=Application
+Terminal=false
+EOD
+if [[ -f "${icon}" ]] ;then
+cat <<EOD >> "${entry}"
+Icon=${icon}
+EOD
+fi
+        # create symlink
+        [[ -L "${symlink}" ]] || ln -s "${relocate}" "${symlink}"
+
+        if [[ "${move}" == "yes" ]]; then
+            rm "${appimage}"
+        fi
+    else
+        echo "File not found: ${appimage}"
+        exit 1
+    fi
+fi
+}
+
+
+function __appimage_desktop_entry {
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function [a-zA-Z0-9]" $self | cut -d' ' -f2 | while read cmd ;do
+    $cmd $*
+  done
+}
+
+
+if [ $_ != $0 ]; then
+  # echo "Script is being sourced: list all functions"
+  grep -E "^function [a-zA-Z0-9]" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2 | sed 's/()//'
+else
+  # echo "Script is a subshell: execute last function"
+  $(grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2  | sed 's/()//' | tail -1) "$@"
+fi
