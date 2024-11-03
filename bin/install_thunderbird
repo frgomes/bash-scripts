@@ -11,7 +11,7 @@ function install_thunderbird_binaries {
   local lang=$(echo $LANG | cut -d. -f1 | sed "s/_/-/")
   local hwarch=$(uname -m | tr '[:upper:]' '[:lower:]')
   local osarch=$(uname -s | tr '[:upper:]' '[:lower:]')
-  local version=115.5.0
+  local version=128.4.0esr
 
   if [ ! -e "${DOWNLOADS}"/${name}-${version}.tar.bz2 ] ;then
     which curl >/dev/null 2>&1 || apt+ install curl
