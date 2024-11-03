@@ -1,7 +1,7 @@
 #!/bin/bash -eu
 
-function __install_rust_build_essentials {
-  apt+ install build-essentials
+function __install_rust_build_essential {
+  apt+ install build-essential
 }
 
 function __install_rust_install_dependencies {
@@ -35,7 +35,7 @@ function install_rust_binaries {
     && source "${HOME}"/.cargo/env && hash -r \
         && rustup component add --toolchain ${toolchain} rust-analyzer clippy rustfmt \
         && rustup component add --toolchain ${toolchain} rust-src \
-        && [[ -e $(which gcc) ]] || __install_rust_build_essentials
+        && [[ -e $(which gcc) ]] || __install_rust_build_essential
 }
 
 function __install_rust_addons {
