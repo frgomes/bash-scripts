@@ -115,6 +115,7 @@ else
         ##echo entry ${entry}
         ##echo icons ${icons}
 
+        [[ -d "${apps}" ]] || mkdir -p "${apps}"
         [[ -f "${relocate}" ]] || cp "${appimage}" "${relocate}"
         chmod u+x "${relocate}"
 
