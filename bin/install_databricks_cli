@@ -1,25 +1,44 @@
 #!/bin/bash -eu
 
-function install_cli_databricks_binaries {
-  which python3 >/dev/null 2>&1 || apt+ install python3-minimal
-  pip3 --disable-pip-version-check install --upgrade databricks_cli
+function install_databricks_binaries {
+  local self=$(readlink -f "${BASH_SOURCE[0]}")
+  local dir=$(dirname $self)
 
-  local version="$(databricks --version | cut -d' ' -f2)"
-  local folder=$(dirname "$(whereis databricks)" | tr -d ' ' | cut -d: -f2)
+  which curl >/dev/null 2>&1 || apt+ install curl
 
-  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/253-databricks.sh
+  local name=databricks
+  local group=253
+  local releases=https://github.com/databricks/cli/releases
+  local latest=${releases}/latest
+  local latest="$(curl -I ${latest} 2>/dev/null | fgrep location: | tr -d '[:cntrl:]' | cut -d' ' -f2 | sed -E 's|.*\/v(.*)$|\1|')"
+  echo "${name}: latest version: ${latest:-(not detected)}" 1>&2
+  local default="${DATABRICKS_VERSION:-${latest:-0.236.0}}"
+  local version="${1:-${default}}"
+  echo "${name}: installing version: ${version}" 1>&2
+
+  local file=databricks_cli_${version}_linux_amd64.zip
+  local url=${releases}/download/v${version}/${file}
+
+  local folder=${name}-${version}
+  local subfolder=
+  local symlinks=${name}
+  local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
+  "${dir}"/bash_install_zip "${url}" "${file}" "${folder}" "(${symlinks})" "${bin}" "${subfolder}"
+
+  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
   cat <<EOD > "${config}"
 #!/bin/bash
 
 export DATABRICKS_VERSION=${version}
 export DATABRICKS_HOME=\${TOOLS_HOME:=\$HOME/tools}/${folder}
+#export PATH=\${DATABRICKS_HOME}/bin:\${PATH}
 EOD
   chmod ugo+x "${config}"
   echo "${config}"
 }
 
-function __install_cli_databricks {
+function __install_databricks {
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
   grep -E "^function [a-zA-Z0-9]" $self | cut -d' ' -f2 | while read cmd ;do
     $cmd $*
