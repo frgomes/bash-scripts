@@ -60,7 +60,7 @@ function __bash_install_zip_worker() {
   [[ "${folder:0:1}" != "/" ]] && local folder="${tools}/${folder}"
 
   [[ -d "${folder}" ]] || mkdir -p "${folder}" && \
-    [[ ! -z "${archive}" ]] && unzip  "${options}" "${archive}" -d "${folder}" > /dev/null 2>&1 && \
+    [[ ! -z "${archive}" ]] && unzip  ${options} "${archive}" -d "${folder}" > /dev/null 2>&1 && \
       local symlinks=$(echo "${symlinks}" | tr -d '(' | tr -d ')') && \
       if [[ ! -z "${symlinks}" ]] ;then
         echo "${symlinks}" | tr ',' '\n' | \
