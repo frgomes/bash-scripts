@@ -4,62 +4,86 @@ function install_scala {
   local self=$(readlink -f "${BASH_SOURCE[0]}")
   local dir=$(dirname $self)
 
-  which curl >/dev/null 2>&1 || apt+ install curl
+  # defina name and group
+  local name=scala
+  local group=320
 
+  # check requested version
   local version=${version:-"3.3"}
   local version=${1:-"${version}"}
 
   if [[ $version =~ ^2.12(\.[0-9]+)? ]] ;then
     local major=2.12
-    local default=2.12.18
+    local releases=https://github.com/scala/scala
+    local prefix="refs/tags/v"
   elif [[ $version =~ ^2.13(\.[0-9]+)? ]] ;then
     local major=2.13
-    local default=2.13.12
+    local prefix="refs/tags/v"
+    local releases=https://github.com/scala/scala
   elif [[ $version =~ ^3.0(\.[0-9]+)? ]] ;then
     local major=3.0
-    local default=3.0.2
+    local prefix="refs/tags/"
+    local releases=https://github.com/scala/scala3
   elif [[ $version =~ ^3.1(\.[0-9]+)? ]] ;then
     local major=3.1
-    local default=3.1.2
+    local prefix="refs/tags/"
+    local releases=https://github.com/scala/scala3
   elif [[ $version =~ ^3.2(\.[0-9]+)? ]] ;then
     local major=3.2
-    local default=3.2.2
+    local prefix="refs/tags/"
+    local releases=https://github.com/scala/scala3
   elif [[ $version =~ ^3.3(\.[0-9]+)? ]] ;then
     local major=3.3
-    local default=3.3.1
+    local prefix="refs/tags/"
+    local releases=https://github.com/scala/scala3
+  elif [[ $version =~ ^3.4(\.[0-9]+)? ]] ;then
+    local major=3.4
+    local prefix="refs/tags/"
+    local releases=https://github.com/scala/scala3
+  elif [[ $version =~ ^3.5(\.[0-9]+)? ]] ;then
+    local major=3.5
+    local prefix="refs/tags/"
+    local releases=https://github.com/scala/scala3
+  elif [[ $version =~ ^3.6(\.[0-9]+)? ]] ;then
+    local major=3.6
+    local prefix="refs/tags/"
+    local releases=https://github.com/scala/scala3
+  elif [[ $version =~ ^3.7(\.[0-9]+)? ]] ;then
+    local major=3.7
+    local prefix="refs/tags/"
+    local releases=https://github.com/scala/scala3
   else
     echo "ERROR: Unsupported Scala version ${version}"
-    echo 'INFO: Supported JDK versions are: 2.12.*, 2.13.*, 3.0.*, 3.1.*, 3.2.*, 3.3.*'
+    echo 'INFO: Supported Scala versions are: 2.12.*, 2.13.*, 3.0.*, 3.1.*, 3.2.*, 3.3.*, 3.4.*, 3.5.*, 3.6.*, 3.7.*'
     return 1
   fi
 
-  if [[ "${version}" == "${major}" ]] ;then
-    version=${default}
-  fi
-
-  local name=scala
-  local group=320
-  local releases=https://github.com/lampepfl/dotty/releases
-  local latest=${releases}/latest
-  local latest="$(curl -I ${latest} 2>/dev/null | fgrep location: | tr -d '[:cntrl:]' | cut -d' ' -f2 | sed -E 's|.*\/(.*)$|\1|')"
+  # find latest version
+  local latest=$(git ls-remote --tags "${releases}" | sed -E 's/[ \t]+/ /g' | cut -d' ' -f2 | grep -F "${prefix}${major}." | grep -v -E '[-]RC[0-9]+' | grep -v -E '[-]M[0-9]+' | grep -v -F '^' | cut -c $((${#prefix}+1))- | sort -V | tail -1)
   echo "${name}: latest version: ${latest:-(not detected)}" 1>&2
-  local version="${version:-${latest:-${default}}}"
+  if [[ "${version}" == "${major}" ]] ;then
+    version=${latest}
+  fi
+  local version="${version:-${latest}}"
   echo "${name}: installing version: ${version}" 1>&2
 
+  # prepare for downloading
   if [[ $version =~ ^(3\.).* ]] ;then
     local file=scala3-${version}.tar.gz
-    local url=${releases}/download/${version}/${file}
+    local url=${releases}/releases/download/${version}/${file}
   else
     local file=scala-${version}.tgz
-    local url=https://downloads.lightbend.com/scala/${version}/${file}
+    local url=${releases}/releases/download/v${version}/${file}
   fi
-
   local symlinks=
   local folder=${name}-${version}
   local subfolder=bin
   local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
+
+  # download and install
   "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "(${symlinks})" "${bin}" "${subfolder}" "--" "--strip-components=1"
 
+  # write down configuration file
   local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
   cat <<EOD > "${config}"
