@@ -6,10 +6,10 @@
 
 
 function __bash_path_prepend() {
-  [[ ! -z "$1" ]] && echo "$PATH" | tr ':' '\n' | fgrep "$1" > /dev/null || export PATH="$1:${PATH}"
+  [[ ! -z "$1" ]] && echo "$PATH" | tr ':' '\n' | grep -F "$1" > /dev/null || export PATH="$1:${PATH}"
 }
 function __bash_path_append() {
-  [[ ! -z "$1" ]] && echo "$PATH" | tr ':' '\n' | fgrep "$1" > /dev/null || export PATH="${PATH}:$1"
+  [[ ! -z "$1" ]] && echo "$PATH" | tr ':' '\n' | grep -F "$1" > /dev/null || export PATH="${PATH}:$1"
 }
 
 function install_python3 {
@@ -20,6 +20,7 @@ function install_python3 {
                 MicroOS) ;; # does not attempt to mutate the file system
                 *) sudo zypper install -y python3 python3-virtualenv;;
             esac;;
+	Fedora) ;;
         *) echo "ERROR: Unsupported distribution: ${distro}" ; return 1;;
     esac
 }
@@ -34,8 +35,7 @@ function mkvirtualenv {
 }
 
 function workon {
-    if [ ! -z "${1}" ] ;then
-    source "${HOME}/.virtualenvs/${1}/bin/activate"
+    if [ ! -z "${1}" ] ;then    source "${HOME}/.virtualenvs/${1}/bin/activate"
     for script in ${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/postactivate/head.d/*.sh \
                   ${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/postactivate/postactivate.d/*.sh \
                   ${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/postactivate/tail.d/*.sh ;do
@@ -51,7 +51,7 @@ function __workon_complete {
   prev="${COMP_WORDS[COMP_CWORD-1]}"
   opts=""
 
-  local envs=$( ls -p ~/.virtualenvs | fgrep / | sed 's:/::' )
+  local envs=$( ls -p ~/.virtualenvs | grep -F / | sed 's:/::' )
   COMPREPLY=( $(compgen -W "${envs}" -- ${cur}) )
   return 0
 }
@@ -77,8 +77,8 @@ if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
     alias ls='ls --color=auto'
     alias grep='grep --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
+    alias fgrep='grep -F --color=auto'
+    alias egrep='grep -E --color=auto'
 fi
 
 ##FIXME: choose text editor on this order: emacs, zile, vim, nano, vi
@@ -121,11 +121,24 @@ case "$(os_release | cut -d: -f1)" in
       ;;
 esac
 
+function git_branch {
+  which git 2>/dev/null >&2 && git branch $@
+}
+
+function hg_branch {
+  which hg 2>/dev/null >&2 && git branch $@
+}
+
+function __scm_branch {
+  local branch=$(git_branch --show-current 2>/dev/null || hg_branch 2>/dev/null || echo "")
+  if [[ ${#branch} -gt 40 ]] ;then echo "${branch:0:16}"..."${branch:${#branch}-20:${#branch}}" ;else echo "${branch}" ;fi
+}
+
 # define prompt
 if [ -x /usr/bin/dircolors ]; then
-    export PS1='\[\033[01;31m\][$(date "+%Y-%m-%d %H:%M:%S")]\[\033[00m\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\] \u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+    export PS1='\[\033[01;31m\][$(date "+%Y-%m-%d %H:%M:%S")]\[\033[00m\]>\[\033[01;32m\]$(__scm_branch)\[\033[00m\]>\[\033[01;34m\]\u@\h:\w\[\033[00m\]\$ '
 else
-    export PS1='[$(date "+%Y-%m-%d %H:%M:%S")]${debian_chroot:+($debian_chroot)} \u@\h:\w\$ '
+    export PS1='[$(date "+%Y-%m-%d %H:%M:%S")]>$(__scm_branch)>\u@\h:\w\$ '
 fi
 
 # Define notable locations

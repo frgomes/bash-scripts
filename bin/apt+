@@ -11,58 +11,79 @@
 
 function __apt+_Debian {
     cat <<EOF
-# id : package [ : program-or-path ]*
-wget:wget:wget
-fd:fd-find:fdfind
-rg:ripgrep:rg
-libgmp-dev:libgmp-dev:/usr/include/gmpxx.h
-libncurses-dev:libncurses-dev:/usr/include/curses.h
-xz:xz-utils:xzgrep
-realpath:coreutils:realpath
-plasma-desktop:kde-plasma-desktop
-openssl:openssl
-openssl-devel:libssl-dev
-sqlite3-devel:libsqlite3-dev
-build-essentials:build-essentials
+# id : program-or-path : package
+wget:wget:apt install -y wget
+fd:fdfind:apt install -y fd-find
+rg:rg:apt install -y ripgrep
+libgmp-dev:/usr/include/gmpxx.h:apt install -y libgmp-dev
+libncurses-dev:/usr/include/curses.h:apt install -y libncurses-dev
+xz:xzgrep:apt install -y xz-utils
+realpath:realpath:apt install -y coreutils
+plasma-desktop::apt install -y kde-plasma-desktop
+openssl::apt install -y openssl
+openssl-devel::apt install -y libssl-dev
+sqlite3-devel::apt install -y libsqlite3-dev
+build-essential::apt install -y build-essential
 EOF
 }
 
 function __apt+_Ubuntu {
     cat <<EOF
-# id : package [ : program-or-path ]*
-fd:fd-find:fdfind
-rg:ripgrep:rg
-g++:gcc-c++:g++
-libgmp-dev:libgmp-dev:/usr/include/gmpxx.h
-libncurses-dev:libncurses-dev:/usr/include/curses.h
-xz:xz-utils:xzgrep
-realpath:coreutils:realpath
-plasma-desktop:kde-plasma-desktop
-openssl:openssl
-openssl-devel:libssl-dev
-sqlite3-devel:libsqlite3-dev
-build-essentials:build-essentials
+# id : program-or-path : package
+fd:fdfind:apt install -y fd-find
+rg:rg:apt install -y ripgrep
+g++:g++:apt install -y gcc-c++
+libgmp-dev:/usr/include/gmpxx.h:apt install -y libgmp-dev
+libncurses-dev:/usr/include/curses.h:apt install -y libncurses-dev
+xz:xzgrep:apt install -y xz-utils
+realpath:realpath:apt install -y coreutils
+plasma-desktop::apt install -y kde-plasma-desktop
+openssl::apt install -y openssl
+openssl-devel::apt install -y libssl-dev
+sqlite3-devel::apt install -y libsqlite3-dev
+build-essential::apt install -y build-essential
 EOF
 }
 
 function __apt+_openSUSE {
     cat <<EOF
-# id : package [ : program-or-path ]*
-fd:fd:fd
-rg:ripgrep:rg
-g++:gcc-c++:g++
-libgmp-dev:libgmpxx4:/usr/include/gmpxx.h
-libncurses-dev:ncurses-devel:/usr/include/curses.h
-xz:xz:xzgrep
-realpath:coreutils:realpath
-plasma-desktop:plasma5-desktop
-dbus-x11:dbus-1-x11
-network-manager:NetworkManager
-xorg:xorg-x11-server
-openssl:openssl
-openssl-devel:openssl-devel
-sqlite3-devel:sqlite3-devel
-build-essentials:-t devel_basis
+# id : program-or-path : package
+fd:fd:zypperinstall -y fd
+rg:rg:zypperinstall -y ripgrep
+g++:g++:zypperinstall -y gcc-c++
+libgmp-dev:/usr/include/gmpxx.h:zypperinstall -y libgmpxx4
+libncurses-dev:/usr/include/curses.h:zypperinstall -y ncurses-devel
+xz:xzgrep:zypperinstall -y xz
+realpath:realpath:zypperinstall -y coreutils
+plasma-desktop::zypperinstall -y plasma5-desktop
+dbus-x11::zypperinstall -y dbus-1-x11
+network-manager::zypperinstall -y NetworkManager
+xorg::zypperinstall -y xorg-x11-server
+openssl::zypperinstall -y openssl
+openssl-devel::zypperinstall -y openssl-devel
+sqlite3-devel::zypperinstall -y sqlite3-devel
+build-essential::zypperinstall -y -t devel_basis
+EOF
+}
+
+function __apt+_Fedora {
+    cat <<EOF
+# id : program-or-path : package
+fd:fd:dnf install -y fd
+rg:rg:dnf install -y ripgrep
+g++:g++:dnf install -y gcc-c++
+libgmp-dev:/usr/include/gmpxx.h:dnf install -y libgmpxx4
+libncurses-dev:/usr/include/curses.h:dnf install -y ncurses-devel
+xz:xzgrep:dnf install -y xz
+realpath:realpath:dnf install -y coreutils
+plasma-desktop::dnf install -y plasma5-desktop
+dbus-x11::dnf install -y dbus-1-x11
+network-manager::dnf install -y NetworkManager
+xorg::dnf install -y xorg-x11-server
+openssl::dnf install -y openssl
+openssl-devel::dnf install -y openssl-devel
+sqlite3-devel::dnf install -y sqlite3-devel
+build-essential::dnf group install -y c-development development-tools
 EOF
 }
 
@@ -74,6 +95,7 @@ function apt+ {
             case "${distro}" in
                 Debian|Ubuntu) sudo apt    update ;;
                 openSUSE)      sudo zypper refresh ;;
+                Fedora)        sudo dnf    update ;;
                 *)             echo "Unsupported distribution: ${distro}" ; return 1;;
             esac
             ;;
@@ -81,40 +103,41 @@ function apt+ {
             shift
             for id in $@ ;do
                 local pkg=$(echo ${id} | sed 's/+/\\+/g')
-                local pkg=$(__apt+_${distro} | grep -E "^${pkg}:" | grep -E -v '(^[ \t]*#)|(^[ \t]*$)' | cut -d: -f2)
-                local obj=$(__apt+_${distro} | grep -E "^${pkg}:" | grep -E -v '(^[ \t]*#)|(^[ \t]*$)' | cut -d: -f3)
-                local pkg=${pkg:-${id}}
-                local obj=${obj:-${id}}
-                if [[ ! -z "${pkg}" ]] ;then
+	            if [[ -z "${pkg}" ]] ;then
+		            echo "ERROR: apt+ failed to find a description for package: ${id}"
+		            exit 1
+		        else
+                    local cmd=$(__apt+_${distro} | grep -E "^${pkg}:" | grep -E -v '(^[ \t]*#)|(^[ \t]*$)' | cut -d: -f3)
+                    local obj=$(__apt+_${distro} | grep -E "^${pkg}:" | grep -E -v '(^[ \t]*#)|(^[ \t]*$)' | cut -d: -f2)
+                    local obj=${obj:-${id}}
                     case "${distro}" in
-                        Debian|Ubuntu) [[ -f ${obj} ]] || which ${obj} >/dev/null 2>&1 || dpkg-query -s ${pkg} >/dev/null 2>&1 || sudo apt    install -y ${pkg} ;;
-                        openSUSE)      [[ -f ${obj} ]] || which ${obj} >/dev/null 2>&1 || zypper se -ix ${pkg} >/dev/null 2>&1 || sudo zypper install -y ${pkg} ;;
+                        Debian|Ubuntu) [[ -f ${obj} ]] || which ${obj} >/dev/null 2>&1 || sudo ${cmd} ;;
+						openSUSE)      [[ -f ${obj} ]] || which ${obj} >/dev/null 2>&1 || sudo ${cmd} ;;
+						Fedora)        [[ -f ${obj} ]] || which ${obj} >/dev/null 2>&1 || sudo ${cmd} ;;
                         *)             echo "Unsupported distribution: ${distro}" ; return 1;;
                     esac
-                else
-                    echo "Unable to find package: ${id}" ; return 1
-                fi
-                shift
+		        fi
+		        shift
             done
             ;;
         remove)
             shift
             for id in $@ ;do
-                local pkg=$(echo ${id} | sed 's/+/\\+/g')
-                local pkg=$(__apt+_${distro} | grep -E "^${pkg}:" | grep -E -v '(^[ \t]*#)|(^[ \t]*$)' | cut -d: -f2)
-                local obj=$(__apt+_${distro} | grep -E "^${pkg}:" | grep -E -v '(^[ \t]*#)|(^[ \t]*$)' | cut -d: -f3)
-                local pkg=${pkg:-${id}}
-                local obj=${obj:-${id}}
-                if [[ ! -z "${pkg}" ]] ;then
+	            if [[ -z "${pkg}" ]] ;then
+		            echo "ERROR: apt+ failed to find a description for package: ${id}"
+		            exit 1
+		        else
+                    local cmd=$(__apt+_${distro} | grep -E "^${pkg}:" | grep -E -v '(^[ \t]*#)|(^[ \t]*$)' | cut -d: -f3)
+                    local obj=$(__apt+_${distro} | grep -E "^${pkg}:" | grep -E -v '(^[ \t]*#)|(^[ \t]*$)' | cut -d: -f2)
+                    local obj=${obj:-${id}}
                     case "${distro}" in
-                        Debian|Ubuntu) sudo apt    autoremove --purge -y ${pkg} ;;
-                        openSUSE)      sudo zypper remove --clean-deps -y ${pkg} ;;
+                        Debian|Ubuntu) sudo $(echo "${cmd}" | sed 's/install/autoremove --purge/') ;;
+						openSUSE)      sudo $(echo "${cmd}" | sed 's/install/remove --clean-deps/') ;;
+						Fedora)        sudo $(echo "${cmd}" | sed 's/install/autoremove/') ;;
                         *)             echo "Unsupported distribution: ${distro}" ; return 1;;
                     esac
-                else
-                    echo "Unable to find package: ${id}" ; return 1
-                fi
-                shift
+		        fi
+		        shift
             done
             ;;
         dist-upgrade)
@@ -122,6 +145,7 @@ function apt+ {
             case "${distro}" in
                 Debian|Ubuntu) sudo apt    upgrade ;;
                 openSUSE)      sudo zypper update ;;
+                openSUSE)      sudo dnf    upgrade ;;
                 *) echo "Unsupported distribution: ${distro}" ; return 1;;
             esac
             ;;

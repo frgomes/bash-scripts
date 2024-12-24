@@ -6,7 +6,7 @@ See extra documentation: [docs](docs)
 
 ## Requirements
 
-* Debian or Ubuntu or openSUSE or [maybe your preferred distribution?](docs/distros.md) ([contribute](docs/contribute.md)) 
+* Debian or Ubuntu or openSUSE or Fedora or [maybe your preferred distribution?](docs/distros.md) ([contribute](docs/contribute.md)) 
 * Python version 3.4+ ([why?](docs/python-venv.md))
 
 ## For the impatient
@@ -41,6 +41,7 @@ Below you find a suggestion for ${HOME}/.bashrc for every supported Linux distri
         opensuse-microos)    [[ -d !/.virtualenvs/microos ]]    || mkvirtualenv microos    ; workon microos ;;
         debian)              [[ -d !/.virtualenvs/debian ]]     || mkvirtualenv debian     ; workon debian ;;
         ubuntu)              [[ -d !/.virtualenvs/ubuntu ]]     || mkvirtualenv ubuntu     ; workon ubuntu ;;
+        fedora)              [[ -d !/.virtualenvs/fedora ]]     || mkvirtualenv fedora     ; workon fedora ;;
         *) ;;
     esac
 
