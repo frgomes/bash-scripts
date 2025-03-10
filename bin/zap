@@ -4,7 +4,9 @@ function __zap {
   which find >/dev/null 2>&1 || apt+ install findutils
   local args=$@
   cmd=${args:=xargs rm -r -f}
-  find . -type d \( -name target -o -name node_modules -o -name .ensime_cache \) | $cmd
+  find . -type d \( -name target -o -name .bloop -o -name .bsp -o -name .metals \) | $cmd
+  find . -type d \( -name build -o -name dist -o -name .pytest_cache -o -name __pycache__ -o -name .mypy_cache -o -name .ruff_cache \) | $cmd
+  find . -type d \( -name node_modules \) | $cmd
   find . -type f \( -name \~ -o -name '*~' -o -name '.*~' \) | $cmd
   find . -type l \( -name \~ -o -name '*~' -o -name '.*~' \) | $cmd
   find . -type f \( -name '.#*#' -o -name '#*#' \) | $cmd
