@@ -1,0 +1,72 @@
+#!/bin/bash -eux
+
+# credits: https://computingforgeeks.com/install-and-configure-openwrt-vm-on-proxmox-ve/
+
+function __proxmox_openwrt_download {
+  VERSION=$(curl --silent "https://api.github.com/repos/openwrt/openwrt/releases/latest"|grep '"tag_name"'|sed -E 's/.*"([^"]+)".*/\1/'|sed 's/v//')
+  wget -O ${HOME}/Downloads/openwrt.img.gz https://downloads.openwrt.org/releases/${VERSION}/targets/x86/64/openwrt-${VERSION}-x86-64-generic-ext4-combined.img.gz
+  du -sh ${HOME}/Downloads/openwrt.img.gz
+  gunzip ${HOME}/Downloads//openwrt.img.gz
+  du -sh ${HOME}/Downloads/openwrt.img
+  qemu-img resize -f raw ${HOME}/Downloads/openwrt.img 5G
+  du -sh ${HOME}/Downloads/openwrt.img
+}
+
+
+function __proxmox_openwrt_install {
+  VM_NAME=${1:-openwrt}
+  VM_ID=${2:-100} ## $(pvesh get /cluster/nextid)}
+  RAM=${3:-2048}
+  CORES=${4:-2}
+  STORAGE=${5:-local}
+  WAN=${6:-vmbr0}
+  LAN=${7:-vmbr1}
+
+  echo $VM_NAME
+  echo $VM_ID
+  echo $RAM
+  echo $CORES
+  echo $STORAGE
+  echo $WAN
+  echo $LAN
+
+  [[ -d ${HOME}/Downloads ]] || mkdir -p ${HOME}/Downloads
+
+  IMAGE=${HOME}/Downloads/openwrt.img
+  if [[ -f ${IMAGE} ]] ;then
+     echo exists
+  else
+     echo download
+  fi
+}
+
+
+function xxx {
+qm create --name $VM_NAME \
+  $VM_ID --memory $RAM \
+  --cores $CORES --cpu cputype=kvm64 \
+  --net0 virtio,bridge=${BRIDGEwan} \
+  --net1 virtio,bridge=${BRIDGElan} \
+  --scsihw virtio-scsi-pci --numa 1
+
+
+
+
+qm importdisk $VM_ID $IMAGE $STORAGE
+
+qm set $VM_ID --scsihw virtio-scsi-pci --virtio0 $STORAGE:$VM_ID/vm-$VM_ID-disk-0.raw
+
+
+
+
+qm set $VM_ID --serial0 socket --vga serial0
+qm set $VM_ID --boot c --bootdisk virtio0
+
+
+
+qm set $VM_ID --onboot 1
+
+}
+
+
+__proxmox_openwrt_install
