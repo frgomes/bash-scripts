@@ -53,7 +53,8 @@ cargo-deny
 cargo-make
 cargo-xtask
 cargo-about
-evcxr_repl
+typos-cli
+lychee
 mdbook
 mdbook-linkcheck
 EOD
@@ -63,11 +64,12 @@ function install_rust_addons {
   local toolchain=${1:-stable}
   source "${HOME}"/.cargo/env && hash -r && rustup update ${toolchain} \
     && __install_rust_install_dependencies \
-      && __install_rust_addons | grep -v -E '^#' | while read line ;do cargo install --force ${line} ;done
+      && __install_rust_addons | grep -v -E '^#' | while read line ;do cargo install --locked --force ${line} ;done
 }
 
 function __install_rust_web_addons {
 cat <<EOD
+trunk
 cargo-wasi
 cargo-web
 basic-http-server
@@ -79,13 +81,15 @@ EOD
 function install_rust_web {
   local toolchain=${1:-stable}
   source "${HOME}"/.cargo/env && hash -r && rustup update ${toolchain} \
-    && rustup target add --toolchain ${toolchain} wasm32-wasi wasm32-unknown-emscripten wasm32-unknown-unknown \
-      && __install_rust_web_addons | grep -v -E '^#' | while read line ;do cargo install --force ${line} ;done
+    && rustup target add --toolchain ${toolchain} wasm32-wasip1 wasm32-unknown-emscripten wasm32-unknown-unknown \
+      && __install_rust_web_addons | grep -v -E '^#' | while read line ;do cargo install --locked --force ${line} ;done
 }
 
 function __install_rust_android_addons {
 cat <<EOD
 cargo-ndk
+--git https://github.com/parasyte/cargo-apk.git --rev 282639508eeed7d73f2e1eaeea042da2716436d5 cargo-apk
+xbuild
 EOD
 }
 
@@ -93,12 +97,14 @@ function install_rust_android {
   local toolchain=${1:-stable}
   source "${HOME}"/.cargo/env && hash -r && rustup update ${toolchain} \
     && rustup target add --toolchain ${toolchain} aarch64-linux-android armv7-linux-androideabi x86_64-linux-android i686-linux-android \
-      && __install_rust_android_addons | grep -v -E '^#' | while read line ;do cargo install --force ${line} ;done
+      && sudo apt install clang llvm lld lldb squashfs-tools -y \
+      && __install_rust_android_addons | grep -v -E '^#' | while read line ;do cargo install --locked --force ${line} ;done
 }
 
 function __install_rust_ios_addons {
 cat <<EOD
 cargo-lipo
+xbuild
 EOD
 }
 
@@ -108,11 +114,12 @@ function install_rust_ios {
   if [[ "${mode}" == "legacy" ]] ;then
     source "${HOME}"/.cargo/env && hash -r && rustup update ${toolchain} \
       && rustup target add --toolchain ${toolchain} aarch64-apple-ios x86_64-apple-ios armv7-apple-ios i386-apple-ios \
-        && __install_rust_ios_addons | grep -v -E '^#' | while read line ;do cargo install --force ${line} ;done
+        && sudo apt install clang llvm lld lldb squashfs-tools -y \
+        && __install_rust_ios_addons | grep -v -E '^#' | while read line ;do cargo install --locked --force ${line} ;done
   else
     source "${HOME}"/.cargo/env && hash -r && rustup update ${toolchain} \
       && rustup target add --toolchain ${toolchain} aarch64-apple-ios x86_64-apple-ios \
-        && __install_rust_ios_addons | grep -v -E '^#' | while read line ;do cargo install --force ${line} ;done
+        && __install_rust_ios_addons | grep -v -E '^#' | while read line ;do cargo install --locked --force ${line} ;done
   fi
 }
 
@@ -141,7 +148,7 @@ function install_rust_lsp {
 function install_rust_lsp_texlab {
   local toolchain=${1:-stable}
   source "${HOME}"/.cargo/env && hash -r && rustup update ${toolchain} \
-    && cargo install --force --git https://github.com/latex-lsp/texlab.git
+    && cargo install --locked --force --git https://github.com/latex-lsp/texlab.git
 }
 
 function install_rust_experimental {
