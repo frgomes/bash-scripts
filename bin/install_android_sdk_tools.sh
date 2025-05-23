@@ -68,7 +68,7 @@ EOD
 
   # appends list of packages to be installed onto /tmp/android_sdkmanager.sh
   ${folder}/cmdline-tools/${tooling}/bin/sdkmanager --sdk_root=${folder} --list 2> /dev/null | \
-    fgrep -A 1000 "Available Packages:" | tail -n +4 | sed -r 's/[ \t]+/ /g' | cut -c 2- | cut -d' ' -f1 | \
+    grep -F -A 1000 "Available Packages:" | tail -n +4 | sed -r 's/[ \t]+/ /g' | cut -c 2- | cut -d' ' -f1 | \
     tee /tmp/android_sdkmanager_list.txt | \
       grep \
         -e "^extras;android;" \
@@ -147,7 +147,7 @@ EOD
 
 function install_android_sdk_tools {
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1 | while read cmd ;do
+  grep -E "^function " $self | grep -F -v "function __" | cut -d' ' -f2 | head -n -1 | while read cmd ;do
     $cmd $*
   done
 }
@@ -156,7 +156,7 @@ function install_android_sdk_tools {
 if [ $_ != $0 ] ;then
   # echo "Script is being sourced: list all functions"
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1
+  grep -E "^function " $self | grep -F -v "function __" | cut -d' ' -f2 | head -n -1
 else
   # echo "Script is a subshell: execute last function"
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)

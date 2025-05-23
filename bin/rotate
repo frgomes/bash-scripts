@@ -50,7 +50,7 @@ function rotate_list_monitors {
 function __rotate_find_preferred {
     xrandr --listmonitors | tail -n +2 | while read line ;do
         __rotate_parser "${line}"
-    done | fgrep secondary
+    done | grep -F secondary
 }
 
 
@@ -67,7 +67,7 @@ function rotate {
         *)        local next=normal;;
     esac
     local mode=${1:-${next}}
-    local devices=$( xinput --list | fgrep Pen | sed -E 's/^.*id=([0-9]+).*$/\1/' )
+    local devices=$( xinput --list | grep -F Pen | sed -E 's/^.*id=([0-9]+).*$/\1/' )
     xrandr --output ${monitor} --rotate ${mode}
     for device in ${devices} ;do
         xinput --map-to-output ${device} ${monitor}

@@ -14,12 +14,12 @@ EOD
 }
 
 function install_r_binaries {
-    apt-cache -t jessie search "^r-.*" | cut -d' ' -f1 | fgrep -v -f <(__install_r_exclude) | xargs sudo aptitude install -y
+    apt-cache -t jessie search "^r-.*" | cut -d' ' -f1 | grep -F -v -f <(__install_r_exclude) | xargs sudo aptitude install -y
 }
 
 function install_r {
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1 | while read cmd ;do
+  grep -E "^function " $self | grep -F -v "function __" | cut -d' ' -f2 | head -n -1 | while read cmd ;do
     $cmd $*
   done
 }
@@ -28,7 +28,7 @@ function install_r {
 if [ $_ != $0 ] ;then
   # echo "Script is being sourced: list all functions"
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1
+  grep -E "^function " $self | grep -F -v "function __" | cut -d' ' -f2 | head -n -1
 else
   # echo "Script is a subshell: execute last function"
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)

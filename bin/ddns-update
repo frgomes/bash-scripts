@@ -73,8 +73,8 @@ function ddns_update_he {
   local password=$5
   local login=$6
 
-  if [[ ! -z "$(ip link show dev ${iface} | head -1 | fgrep 'state UP')" ]] ;then
-    local myip=$(ip -${proto} address show dev ${iface} | fgrep "scope ${scope}" | head -1 | sed -r 's/[ \t]+/ /g' | cut -d' ' -f3 | cut -d/ -f1)
+  if [[ ! -z "$(ip link show dev ${iface} | head -1 | grep -F 'state UP')" ]] ;then
+    local myip=$(ip -${proto} address show dev ${iface} | grep -F "scope ${scope}" | head -1 | sed -r 's/[ \t]+/ /g' | cut -d' ' -f3 | cut -d/ -f1)
     if [ ! -z "${myip}" ] ;then
       echo /usr/bin/curl -${proto} -s "https://dyn.dns.he.net/nic/update" -d "myip=${myip}" -d "hostname=${fqdn}" -d "password=[HIDDEN]"
            /usr/bin/curl -${proto} -s "https://dyn.dns.he.net/nic/update" -d "myip=${myip}" -d "hostname=${fqdn}" -d "password=${password}"
@@ -99,8 +99,8 @@ function ddns_update_cloudflare {
     *) local type=A;
   esac
 
-  if [[ ! -z "$(ip link show dev ${iface} | head -1 | fgrep 'state UP')" ]] ;then
-    local myip=$(ip -${proto} address show dev ${iface} | fgrep "scope ${scope}" | head -1 | sed -r 's/[ \t]+/ /g' | cut -d' ' -f3 | cut -d/ -f1)
+  if [[ ! -z "$(ip link show dev ${iface} | head -1 | grep -F 'state UP')" ]] ;then
+    local myip=$(ip -${proto} address show dev ${iface} | grep -F "scope ${scope}" | head -1 | sed -r 's/[ \t]+/ /g' | cut -d' ' -f3 | cut -d/ -f1)
     if [ ! -z "${myip}" ] ;then
       local id=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/${login}/dns_records?type=${type}&name=${fqdn}" \
                       -H "Authorization: Bearer ${password}" \
@@ -130,13 +130,13 @@ function ddns_update_cloudflare {
 function ddns_update {
   local provider=${1}
   if [[ -f /etc/ddns-update.conf ]] ; then
-    local username=$(cat /etc/ddns-update.conf | fgrep ${provider}. | fgrep login=    | cut -d= -f2)
-    local password=$(cat /etc/ddns-update.conf | fgrep ${provider}. | fgrep password=    | cut -d= -f2)
-    local ipv4prefix=$(cat /etc/ddns-update.conf | fgrep ${provider}. | fgrep ipv4-prefix= | cut -d= -f2)
-    local ipv6prefix=$(cat /etc/ddns-update.conf | fgrep ${provider}. | fgrep ipv6-prefix= | cut -d= -f2)
+    local username=$(cat /etc/ddns-update.conf | grep -F ${provider}. | grep -F login=    | cut -d= -f2)
+    local password=$(cat /etc/ddns-update.conf | grep -F ${provider}. | grep -F password=    | cut -d= -f2)
+    local ipv4prefix=$(cat /etc/ddns-update.conf | grep -F ${provider}. | grep -F ipv4-prefix= | cut -d= -f2)
+    local ipv6prefix=$(cat /etc/ddns-update.conf | grep -F ${provider}. | grep -F ipv6-prefix= | cut -d= -f2)
     local hostname=$(hostname --fqdn)
-    if [[ $(cat /etc/ddns-update.conf | fgrep ${provider}. | fgrep iface= | grep -v -E '^#' | wc -l) != 0 ]] ;then
-      cat /etc/ddns-update.conf | fgrep ${provider}. | fgrep iface= | grep -v -E '^#' | while read line ;do
+    if [[ $(cat /etc/ddns-update.conf | grep -F ${provider}. | grep -F iface= | grep -v -E '^#' | wc -l) != 0 ]] ;then
+      cat /etc/ddns-update.conf | grep -F ${provider}. | grep -F iface= | grep -v -E '^#' | while read line ;do
         local  args=$(echo "${line}"  | cut -s -d= -f2)
         # obtain parameters
         local iface=$(echo "${args}" | cut    -d, -f1)
@@ -164,7 +164,7 @@ function ddns_update {
         fi
       done
     else
-      local iface=$(ip link | fgrep 'state UP' | head -1 | cut -d' ' -f2 | cut -d: -f1)
+      local iface=$(ip link | grep -F 'state UP' | head -1 | cut -d' ' -f2 | cut -d: -f1)
       if [[ ! -z "${iface}" ]] ;then
         local scope=${scope:-global}
         local  fqdn=${fqdn:-${hostname}}

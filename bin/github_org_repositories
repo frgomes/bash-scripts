@@ -20,7 +20,7 @@ function github_org_repositories {
     [[ -f $tmp ]] && rm $tmp
     ## curl -vs -u ${token}:x-oauth-basic https://api.github.com/orgs/${org}/repos?page=${n} 2>/dev/null | \
     curl -vs ${auth} https://api.github.com/orgs/${org}/repos?page=${n} 2>/dev/null | \
-      fgrep ssh_url | \
+      grep -F ssh_url | \
         sed -r 's/[ \t]+//g' | cut -d':' -f2- | tr -d '",' > $tmp
     [[ ! -s $tmp ]] && break
     cat ${tmp}

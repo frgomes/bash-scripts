@@ -30,7 +30,7 @@ function nmcli_remove {
 ##################################################################################
 function nmcli_remove_never_used {
   nmcli --terse --fields NAME,TIMESTAMP-REAL con show | \
-    egrep -e ':never[ \t]*$' | \
+    grep -E -e ':never[ \t]*$' | \
       sed -r 's/:never[ \t]*$//' | \
         while read name ;do
           echo Removing SSID "$name"
@@ -39,5 +39,5 @@ function nmcli_remove_never_used {
 }
 
 function nmcli_connected_wifi {
-  nmcli -t -f active,ssid dev wifi | fgrep yes: | cut -d: -f2
+  nmcli -t -f active,ssid dev wifi | grep -F yes: | cut -d: -f2
 }

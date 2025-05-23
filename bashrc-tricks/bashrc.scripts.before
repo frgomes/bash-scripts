@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function nmcli_connected_wifi {
-  nmcli -t -f active,ssid dev wifi | fgrep yes: | cut -d: -f2
+  nmcli -t -f active,ssid dev wifi | grep -F yes: | cut -d: -f2
 }
 
 #--

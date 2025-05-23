@@ -17,7 +17,7 @@ function backup() {
       local archive=${dst}/${now}_${name}.tar.bz2
       echo "${archive}"
 
-      find "${dir}" -type f | fgrep -v "${dir}"'./*.iml' | fgrep -v "${dir}"'./.idea/' | fgrep -v "${dir}"'./.hg/' | fgrep -v '/.git/' | fgrep -v '/.lib/' | fgrep -v '/node_modules/' | fgrep -v '/target/' | \
+      find "${dir}" -type f | grep -F -v "${dir}"'./*.iml' | grep -F -v "${dir}"'./.idea/' | grep -F -v "${dir}"'./.hg/' | grep -F -v '/.git/' | grep -F -v '/.lib/' | grep -F -v '/node_modules/' | grep -F -v '/target/' | \
           tar cvpJf "${archive}" -T - > /dev/null 2>&1
 
       # copy to Dropbox, if available

@@ -22,7 +22,7 @@ function pdf_converter_and_combiner {
   local  log=/tmp/bash_30pdf_$$
   local work=$log.dir
 
-  egrep -v -e '^#' | \
+  grep -E -v -e '^#' | \
     while read html ;do
       dir=$(dirname "$html")
       name=$(basename "$html" .html)

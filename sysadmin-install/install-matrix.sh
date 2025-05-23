@@ -11,8 +11,8 @@ function install_matrix_checkdns {
     return 1
   fi
 
-  local srv8448=$(dig +short _matrix._tcp.${domain} srv | fgrep 8448)
-  local srv443=$(dig +short _matrix-identity._tcp.${domain} srv | fgrep 443)
+  local srv8448=$(dig +short _matrix._tcp.${domain} srv | grep -F 8448)
+  local srv443=$(dig +short _matrix-identity._tcp.${domain} srv | grep -F 443)
   [[ ! -z "${srv8448}" ]] && [[ ! -z "${srv443}" ]] && return 0
   echo ERROR: please configure DNS as per http://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/docs/configuring-dns.md
   return 1
@@ -87,7 +87,7 @@ function install_matrix {
 
     local fqdn=$(hostname --fqdn)
     local ip=$(dig @ns1.he.net +short ${fqdn} a)
-    local domain=$(cat /etc/resolv.conf | fgrep search | cut -d' ' -f2 | tail -1)
+    local domain=$(cat /etc/resolv.conf | grep -F search | cut -d' ' -f2 | tail -1)
 
     install_matrix_checkdns && \
         install_matrix_binaries "${username}" && \
@@ -98,7 +98,7 @@ function install_matrix {
 if [ $_ != $0 ] ;then
   # echo "Script is being sourced: list all functions"
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1
+  grep -E "^function " $self | grep -F -v "function __" | cut -d' ' -f2 | head -n -1
 else
   # echo "Script is a subshell: execute last function"
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)

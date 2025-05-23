@@ -2,7 +2,7 @@
 
 function __listening() {
   which netstat >/dev/null 2>&1 || apt+ install net-tools
-  netstat -an | fgrep LISTEN | fgrep -v LISTENING
+  netstat -an | grep -F LISTEN | grep -F -v LISTENING
 }
 
 __listening $*

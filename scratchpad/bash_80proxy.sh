@@ -5,7 +5,7 @@
 
 function proxy_plugin_gsettings {
   if [ ! -z $(which gsettings) ] ;then
-    if [ $(gsettings list-schemas | fgrep org.gnome.system.proxy | wc -l) == 5 ] ;then
+    if [ $(gsettings list-schemas | grep -F org.gnome.system.proxy | wc -l) == 5 ] ;then
       if [ -z "$proxy" ] ;then
         gsettings set org.gnome.system.proxy mode 'none'
         gsettings set org.gnome.system.proxy use-same-proxy true
@@ -85,7 +85,7 @@ EOD
   # make sure we remove references eventually present in /etc/apt/apt.conf
   if [ -f /etc/apt/apt.conf ] ;then
     cat /etc/apt/apt.conf | \
-      fgrep -v Acquire::http::Proxy | fgrep -v Acquire::https::Proxy | fgrep -v Acquire::ftp::Proxy | \
+      grep -F -v Acquire::http::Proxy | grep -F -v Acquire::https::Proxy | grep -F -v Acquire::ftp::Proxy | \
         tee /etc/apt/apt.conf > /dev/null
   fi
 }
@@ -133,15 +133,15 @@ function proxy_plugin_java {
 
 
 function proxy_finder {
-  if [ $(netstat -an | fgrep 3128 | wc -l) -gt 0 ] ;then
-    ip=$(netstat -an | fgrep ":3128 " | head -1 | sed -r 's/[ \t]+/ /g' | cut -d' ' -f5 | cut -d: -f1)
+  if [ $(netstat -an | grep -F 3128 | wc -l) -gt 0 ] ;then
+    ip=$(netstat -an | grep -F ":3128 " | head -1 | sed -r 's/[ \t]+/ /g' | cut -d' ' -f5 | cut -d: -f1)
     if [[ -z "$ip" ]] ;then
       echo "http://localhost:3128"
     else
       echo "http://${ip}:3128"
     fi
   else
-    fgrep http_proxy /etc/environment | cut -d= -f2
+    grep -F http_proxy /etc/environment | cut -d= -f2
   fi
 }
 
@@ -200,15 +200,15 @@ function unbound_convert_domain {
   printf "        local-data: \"%s.%s. IN A %s\"\n" $2 $domain $ip
   printf "        local-data-ptr: \"%s %s.%s\"\n" $ip $2 $domain
 
-  cat /etc/hosts | fgrep $domain | fgrep -v "$host.$domain" | unbound_convert_local_data
-  cat /etc/hosts | fgrep $domain | fgrep -v "$host.$domain" | unbound_convert_local_data_ptr
+  cat /etc/hosts | grep -F $domain | grep -F -v "$host.$domain" | unbound_convert_local_data
+  cat /etc/hosts | grep -F $domain | grep -F -v "$host.$domain" | unbound_convert_local_data_ptr
 }
 
 function unbound_convert_domain_ignore {
   local domain=${1:-$(dnsdomainname)}
 
-  cat /etc/hosts | fgrep -v $domain | fgrep -v :: | unbound_convert_local_data
-  cat /etc/hosts | fgrep -v $domain | fgrep -v :: | unbound_convert_local_data_ptr
+  cat /etc/hosts | grep -F -v $domain | grep -F -v :: | unbound_convert_local_data
+  cat /etc/hosts | grep -F -v $domain | grep -F -v :: | unbound_convert_local_data_ptr
 }
 
 function unbound_convert {
@@ -234,7 +234,7 @@ function unbound_local_zones {
 
 function unbound_local_zones_ifnet {
   if [[ ! -z "$1" ]] ;then
-    local ip=$(ip -o addr show | fgrep "scope global" | sed -r 's/[ \t]+/ /g' | fgrep "$1" | fgrep "inet " | cut -d ' ' -f4 | cut -d'/' -f1)
+    local ip=$(ip -o addr show | grep -F "scope global" | sed -r 's/[ \t]+/ /g' | grep -F "$1" | grep -F "inet " | cut -d ' ' -f4 | cut -d'/' -f1)
   else
     local ip=127.0.0.1
   fi

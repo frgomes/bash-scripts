@@ -45,7 +45,7 @@ function install_scala_metals_emacs {
   local group=352
   local releases=https://github.com/scalameta/metals/releases
   local latest=${releases}/latest
-  local latest="$(curl -I ${latest} 2>/dev/null | fgrep location: | tr -d '[:cntrl:]' | cut -d' ' -f2 | sed -E 's|.*\/v(.*)$|\1|')"
+  local latest="$(curl -I ${latest} 2>/dev/null | grep -F location: | tr -d '[:cntrl:]' | cut -d' ' -f2 | sed -E 's|.*\/v(.*)$|\1|')"
   echo "${name}: latest version: ${latest:-(not detected)}" 1>&2
   local default="${METALS_VERSION:-${latest:-0.11.6}}"
   local version="${1:-${default}}"

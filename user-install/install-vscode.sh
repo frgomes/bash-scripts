@@ -50,7 +50,7 @@ EOD
 
 function install_vscode {
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1 | while read cmd ;do
+  grep -E "^function " $self | grep -F -v "function __" | cut -d' ' -f2 | head -n -1 | while read cmd ;do
     $cmd $*
   done
 }
@@ -59,7 +59,7 @@ function install_vscode {
 if [ $_ != $0 ] ;then
   # echo "Script is being sourced: list all functions"
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
-  grep -E "^function " $self | fgrep -v "function __" | cut -d' ' -f2 | head -n -1
+  grep -E "^function " $self | grep -F -v "function __" | cut -d' ' -f2 | head -n -1
 else
   # echo "Script is a subshell: execute last function"
   self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)

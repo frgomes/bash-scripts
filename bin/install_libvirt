@@ -5,7 +5,7 @@ function install_libvirt_binaries {
 }
 
 function install_libvirt_modprobe {
-  case $( cat /proc/cpuinfo | fgrep vendor_id | head -1 | sed -E 's/[ \t]+/ /g' | cut -d' ' -f3 ) in
+  case $( cat /proc/cpuinfo | grep -F vendor_id | head -1 | sed -E 's/[ \t]+/ /g' | cut -d' ' -f3 ) in
     AuthenticAMD) local cpu=amd   ;;
     GenuineIntel) local cpu=intel ;;
     *) local cpu=unknown ;;

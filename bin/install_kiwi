@@ -18,7 +18,7 @@ function __install_osc_repositories {
         Tumbleweed) ;;
         *) echo "ERROR: openSUSE codename is not supported: ${codename}"; return 1;;
       esac
-      zypper lr | fgrep appliance-builder || sudo zypper ar https://download.opensuse.org/repositories/Virtualization:/Appliances:/Builder/${id}_${codename} appliance-builder
+      zypper lr | grep -F appliance-builder || sudo zypper ar https://download.opensuse.org/repositories/Virtualization:/Appliances:/Builder/${id}_${codename} appliance-builder
       ;;
     *)
       echo "ERROR: Operating system or distribution is not supported: ${id}"; return 1

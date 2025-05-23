@@ -19,7 +19,7 @@ This is an example which may be useful if you visit several customers:
 #!/bin/bash
 
 function nmcli_connected_wifi {
-  nmcli -t -f active,ssid dev wifi | fgrep yes: | cut -d: -f2
+  nmcli -t -f active,ssid dev wifi | grep -F yes: | cut -d: -f2
 }
 
 #--
@@ -47,7 +47,7 @@ Simply create a file named ``$HOME/.bashrc-scripts/tail``, as the example below 
 #--
 # Select preferences in case a VPN connection is active.
 #--
-if [[ $( nmcli -t -f device,type,state,connection dev | fgrep tun:connected:tun0 ) ]] ;then
+if [[ $( nmcli -t -f device,type,state,connection dev | grep -F tun:connected:tun0 ) ]] ;then
   echo "VPN is active"
 fi
 
@@ -55,9 +55,9 @@ fi
 # Configure keyboard, depending on which one is connected.
 # See also: http://github.com/frgomes/carpalx
 #---
-if [[ $( lsusb | fgrep 17f6:0905 | fgrep Unicomp ) ]] ;then
+if [[ $( lsusb | grep -F 17f6:0905 | grep -F Unicomp ) ]] ;then
   carpalx_hyena_us
-elif [[ $( lsusb | fgrep feed:6060 ) ]] ;then
+elif [[ $( lsusb | grep -F feed:6060 ) ]] ;then
   carpalx_hyena_us
 else
   carpalx_hyena_gb
