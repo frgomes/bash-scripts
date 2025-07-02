@@ -1,0 +1,20 @@
+#!/bin/bash -eux
+
+function proton_ovpn_create {
+  read -sp "Enter your ProtonVPN OpenVPN username: " username
+  echo
+  read -sp "Enter your ProtonVPN OpenVPN password: " password
+  echo
+
+  ls *.udp.ovpn | while read file ;do name=$(echo $file | sed 's/.ovpn//'); sudo nmcli connection import type openvpn file ${file} ;done
+  nmcli connection show | grep protonvpn.udp | sed -E 's/[ \t]+/ /' | cut -d' ' -f1 | while read c ;do
+    sudo nmcli connection modify "${c}" +vpn.data "password-flags=0"
+    sudo nmcli connection modify "${c}" vpn.user-name "${username}"
+    sudo nmcli connection modify "${c}" vpn.secrets "password=${password}"
+  done
+
+  unset username
+  unset password
+}
+
+proton_ovpn_create

@@ -1,0 +1,9 @@
+#!/bin/bash -eux
+
+function proton_ovpn_delete {
+  nmcli connection show | grep protonvpn.udp | sed -E 's/[ \t]+/ /' | cut -d' ' -f1 | while read c ;do
+    sudo nmcli connection delete "${c}"
+  done
+}
+
+proton_ovpn_delete
