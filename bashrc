@@ -17,8 +17,9 @@ function install_python3 {
         Debian|Ubuntu) dpkg -s python3-venv 2>&1 >/dev/null || sudo apt install -y python3 python3-venv;;
         openSUSE)
             case "$(os_release | cut -d: -f2)" in
+                Tumbleweed*) virtualenv --version 2>&1 >/dev/null || sudo zypper install -y python313-virtualenv 2>&1 >/dev/null ;;
                 MicroOS) ;; # does not attempt to mutate the file system
-                *) sudo zypper install -y python3 python3-virtualenv;;
+                *)       ;; # does not attempt to mutate the file system
             esac;;
 	Fedora) ;;
         *) echo "ERROR: Unsupported distribution: ${distro}" ; return 1;;
