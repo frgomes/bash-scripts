@@ -48,21 +48,21 @@ EOF
 function __apt+_openSUSE {
     cat <<EOF
 # id : program-or-path : package
-fd:fd:zypperinstall -y fd
-rg:rg:zypperinstall -y ripgrep
-g++:g++:zypperinstall -y gcc-c++
-libgmp-dev:/usr/include/gmpxx.h:zypperinstall -y libgmpxx4
-libncurses-dev:/usr/include/curses.h:zypperinstall -y ncurses-devel
-xz:xzgrep:zypperinstall -y xz
-realpath:realpath:zypperinstall -y coreutils
-plasma-desktop::zypperinstall -y plasma5-desktop
-dbus-x11::zypperinstall -y dbus-1-x11
-network-manager::zypperinstall -y NetworkManager
-xorg::zypperinstall -y xorg-x11-server
-openssl::zypperinstall -y openssl
-openssl-devel::zypperinstall -y openssl-devel
-sqlite3-devel::zypperinstall -y sqlite3-devel
-build-essential::zypperinstall -y -t devel_basis
+fd:fd:zypper install -y fd
+rg:rg:zypper install -y ripgrep
+g++:g++:zypper install -y gcc-c++
+libgmp-dev:/usr/include/gmpxx.h:zypper install -y libgmpxx4
+libncurses-dev:/usr/include/curses.h:zypper install -y ncurses-devel
+xz:xzgrep:zypper install -y xz
+realpath:realpath:zypper install -y coreutils
+plasma-desktop::zypper install -y plasma5-desktop
+dbus-x11::zypper install -y dbus-1-x11
+network-manager::zypper install -y NetworkManager
+xorg::zypper install -y xorg-x11-server
+openssl::zypper install -y openssl
+openssl-devel::zypper install -y openssl-devel
+sqlite3-devel::zypper install -y sqlite3-devel
+build-essential::zypper install -y -t devel_basis
 EOF
 }
 
