@@ -24,6 +24,8 @@ openssl::apt install -y openssl
 openssl-devel::apt install -y libssl-dev
 sqlite3-devel::apt install -y libsqlite3-dev
 build-essential::apt install -y build-essential
+clang:clang:apt install -y clang
+squashfs::apt install -y squashfs-tools
 EOF
 }
 
@@ -42,6 +44,7 @@ openssl::apt install -y openssl
 openssl-devel::apt install -y libssl-dev
 sqlite3-devel::apt install -y libsqlite3-dev
 build-essential::apt install -y build-essential
+squashfs::apt install -y squashfs-tools
 EOF
 }
 
@@ -60,7 +63,7 @@ dbus-x11::zypper install -y dbus-1-x11
 network-manager::zypper install -y NetworkManager
 xorg::zypper install -y xorg-x11-server
 openssl::zypper install -y openssl
-openssl-devel::zypper install -y openssl-devel
+openssl-devel::zypper install -y libopenssl-devel
 sqlite3-devel::zypper install -y sqlite3-devel
 build-essential::zypper install -y -t pattern devel_basis
 EOF
@@ -84,6 +87,7 @@ openssl::dnf install -y openssl
 openssl-devel::dnf install -y openssl-devel
 sqlite3-devel::dnf install -y sqlite3-devel
 build-essential::dnf group install -y c-development development-tools
+squashfs::dnf install -y squashfs-tools
 EOF
 }
 
@@ -103,17 +107,30 @@ function apt+ {
             shift
             for id in $@ ;do
                 local pkg=$(echo ${id} | sed 's/+/\\+/g')
-	            if [[ -z "${pkg}" ]] ;then
-		            echo "ERROR: apt+ failed to find a description for package: ${id}"
-		            exit 1
-		        else
+	        if [[ -z "${pkg}" ]] ;then
+                    echo "ERROR: apt+ failed to find a description for package: ${id}"
+                    exit 1
+                else
+echo ================================== ${pkg}
                     local cmd=$(__apt+_${distro} | grep -E "^${pkg}:" | grep -E -v '(^[ \t]*#)|(^[ \t]*$)' | cut -d: -f3)
+echo ================================== ${cmd}
+                    [[ -z "${cmd}" ]] && \
+                        case "${distro}" in
+                            Debian|Ubuntu) local cmd="apt install -y ${pkg}" ;;
+                            openSUSE)      local cmd="zypper install -y ${pkg}" ;;
+                            Fedora)        local cmd="dnf install -y ${pkg}" ;;
+                            *)             echo "Unsupported distribution: ${distro}" ; return 1;;
+                        esac
+echo ++++++++++++ ================================== ${cmd}
+
+
+
                     local obj=$(__apt+_${distro} | grep -E "^${pkg}:" | grep -E -v '(^[ \t]*#)|(^[ \t]*$)' | cut -d: -f2)
                     local obj=${obj:-${id}}
                     case "${distro}" in
                         Debian|Ubuntu) [[ -f ${obj} ]] || which ${obj} >/dev/null 2>&1 || sudo ${cmd} ;;
-						openSUSE)      [[ -f ${obj} ]] || which ${obj} >/dev/null 2>&1 || sudo ${cmd} ;;
-						Fedora)        [[ -f ${obj} ]] || which ${obj} >/dev/null 2>&1 || sudo ${cmd} ;;
+                        openSUSE)      [[ -f ${obj} ]] || which ${obj} >/dev/null 2>&1 || sudo ${cmd} ;;
+                        Fedora)        [[ -f ${obj} ]] || which ${obj} >/dev/null 2>&1 || sudo ${cmd} ;;
                         *)             echo "Unsupported distribution: ${distro}" ; return 1;;
                     esac
 		        fi
@@ -132,8 +149,8 @@ function apt+ {
                     local obj=${obj:-${id}}
                     case "${distro}" in
                         Debian|Ubuntu) sudo $(echo "${cmd}" | sed 's/install/autoremove --purge/') ;;
-						openSUSE)      sudo $(echo "${cmd}" | sed 's/install/remove --clean-deps/') ;;
-						Fedora)        sudo $(echo "${cmd}" | sed 's/install/autoremove/') ;;
+                        openSUSE)      sudo $(echo "${cmd}" | sed 's/install/remove --clean-deps/') ;;
+                        Fedora)        sudo $(echo "${cmd}" | sed 's/install/autoremove/') ;;
                         *)             echo "Unsupported distribution: ${distro}" ; return 1;;
                     esac
 		        fi

@@ -69,14 +69,19 @@ function install_rust_addons {
 
 function __install_rust_web_addons {
 cat <<EOD
-trunk
-cargo-wasi
-cargo-web
-basic-http-server
-wasm-bindgen-cli
+wasm-opt
 wasm-pack
+cargo-nextest
+cargo-expand
+cargo-leptos
 EOD
 }
+##XXX trunk
+##XXX cargo-wasi
+##XXX cargo-web
+##XXX basic-http-server
+##XXX wasm-bindgen-cli
+##XXX wasm-pack
 
 function install_rust_web {
   local toolchain=${1:-stable}
@@ -88,16 +93,20 @@ function install_rust_web {
 function __install_rust_android_addons {
 cat <<EOD
 cargo-ndk
---git https://github.com/parasyte/cargo-apk.git --rev 282639508eeed7d73f2e1eaeea042da2716436d5 cargo-apk
+cargo-mobile2
+cargo-apk
 xbuild
 EOD
 }
+##XXX cargo-apk
+##XXX --git https://github.com/parasyte/cargo-apk.git --rev 282639508eeed7d73f2e1eaeea042da2716436d5 cargo-apk
+##XXX xbuild
 
 function install_rust_android {
   local toolchain=${1:-stable}
   source "${HOME}"/.cargo/env && hash -r && rustup update ${toolchain} \
     && rustup target add --toolchain ${toolchain} aarch64-linux-android armv7-linux-androideabi x86_64-linux-android i686-linux-android \
-      && sudo apt install clang llvm lld lldb squashfs-tools -y \
+      && apt+ install clang llvm lld lldb squashfs openssl-devel \
       && __install_rust_android_addons | grep -v -E '^#' | while read line ;do cargo install --locked --force ${line} ;done
 }
 
@@ -114,7 +123,7 @@ function install_rust_ios {
   if [[ "${mode}" == "legacy" ]] ;then
     source "${HOME}"/.cargo/env && hash -r && rustup update ${toolchain} \
       && rustup target add --toolchain ${toolchain} aarch64-apple-ios x86_64-apple-ios armv7-apple-ios i386-apple-ios \
-        && sudo apt install clang llvm lld lldb squashfs-tools -y \
+        && apt+ install clang llvm lld lldb squashfs \
         && __install_rust_ios_addons | grep -v -E '^#' | while read line ;do cargo install --locked --force ${line} ;done
   else
     source "${HOME}"/.cargo/env && hash -r && rustup update ${toolchain} \
@@ -171,7 +180,7 @@ function __install_rust {
     "complete") install_rust_binaries   ${toolchain} complete   ; __install_rust_activator "${config}";;
     "addons")	install_rust_addons 	${toolchain}            ; __install_rust_activator "${config}";;
     "lsp")	install_rust_lsp        ${toolchain}            ; __install_rust_activator "${config}";;
-    "web")	install_rust_web	${toolchain}            ; __install_rust_activator "${config}";  ${dir}/install_wabt;;
+    "web")	install_rust_web	${toolchain}            ; __install_rust_activator "${config}";  sudo ${dir}/install_wabt;;
     "android")	install_rust_android	${toolchain}            ; __install_rust_activator "${config}";;
     "ios")	version=$(rustup ${toolchain} --version 2>&1 | tail -1 | sed -E 's/^.*`rustc ([0-9.]+) .*$/\1/')
                 if [[ "1.52.1" > "1.41.0" ]] ;then
