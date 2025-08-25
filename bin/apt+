@@ -62,7 +62,7 @@ xorg::zypper install -y xorg-x11-server
 openssl::zypper install -y openssl
 openssl-devel::zypper install -y openssl-devel
 sqlite3-devel::zypper install -y sqlite3-devel
-build-essential::zypper install -y -t devel_basis
+build-essential::zypper install -y -t pattern devel_basis
 EOF
 }
 
