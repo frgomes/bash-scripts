@@ -67,15 +67,15 @@ function install_node_tools {
   npm install -g typescript tslint ts-node-dev
 }
 
-function install_node_react {
-  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/341-node.sh
-  source ${config}
-  npm install -g next@latest
-  npm install -g react@latest
-  npm install -g react-dom@latest
-  npm install -g react-native-cli
-  npm install -g react-native-vector-icons
-}
+#function install_node_react {
+#  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/341-node.sh
+#  source ${config}
+#  npm install -g next@latest
+#  npm install -g react@latest
+#  npm install -g react-dom@latest
+#  npm install -g react-native-cli
+#  npm install -g react-native-vector-icons
+#}
 
 function install_node_ls {
   local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/341-node.sh
