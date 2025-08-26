@@ -54,6 +54,7 @@ cargo-make
 cargo-xtask
 cargo-about
 typos-cli
+sea-orm-cli
 lychee
 mdbook
 mdbook-linkcheck
