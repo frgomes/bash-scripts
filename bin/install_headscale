@@ -1,0 +1,62 @@
+#!/bin/bash -x
+
+function headscale_globals() {
+    HEADSCALE_VERSION="0.26.1"
+    HEADSCALE_ARCH="amd64"
+
+    HEADSCALE_USER="headscale"      ## DO NOT CHANGE THIS!!!
+    HEADSCALE_GROUP="headscale"     ## DO NOT CHANGE THIS!!!
+    HEADSCALE_CONFIG=/etc/headscale ## DO NOT CHANGE THIS!!!
+
+    HEADSCALE_CONFIG_EXAMPLE="https://raw.githubusercontent.com/juanfont/headscale/refs/tags/v0.26.1/config-example.yaml"
+    HEADSCALE_PUBLIC_IP=$( ip addr | grep 'scope global' | grep -v 'inet 10.' | grep -v 'inet 192.168.' | sed -E 's/[ \t]+/ /g' | cut -d' ' -f 3 | cut -d/ -f1 )
+}
+
+
+function headscale_download() { 
+    headscale_globals
+    wget -O ~/Downloads/headscale.deb \
+        "https://github.com/juanfont/headscale/releases/download/v${HEADSCALE_VERSION}/headscale_${HEADSCALE_VERSION}_linux_${HEADSCALE_ARCH}.deb"
+}
+
+
+function headscale_install_binaries() { 
+    [[ -d ~/Downloads ]] || mkdir -p ~/Downloads
+    [[ -f ~/Downloads/headscale.deb ]] || headscale_download
+    apt install -y ~/Downloads/headscale.deb
+}
+
+
+function headscale_configure() {
+    headscale_globals
+
+    [[ -d ${HEADSCALE_CONFIG} ]] || mkdir -p ${HEADSCALE_CONFIG}
+    [[ -f ${HEADSCALE_CONFIG}/config-example.yaml ]] || wget -O ${HEADSCALE_CONFIG}/config-example.yaml ${HEADSCALE_CONFIG_EXAMPLE}
+    cat ${HEADSCALE_CONFIG}/config-example.yaml | \
+        sed -E "s|^server_url: http://127.0.0.1:|server_url: http://${PUBLIC_IP}:|" | \
+        sed -E "s|^# listen_addr: 0.0.0.0:|listen_addr: 0.0.0.0:|" | \
+        sed -E "s|^listen_addr: 127.0.0.1:|# listen_addr: 127.0.0.1:|" | \
+            tee ${HEADSCALE_CONFIG}/config.yaml > /dev/null
+    chown -R ${HEADSCALE_USER}:${HEADSCALE_GROUP} ${HEADSCALE_CONFIG}
+}
+
+
+function headscale_start_service() {
+    sudo systemctl enable  --now headscale
+    sudo systemctl restart headscale
+    sudo systemctl status  headscale
+}
+
+
+function headscale_uninstall() {
+    sudo systemctl disable headscale
+    sudo systemctl stop headscale
+    apt remove --purge -y headscale tailscale
+    sudo rm -r -f /var/lib/headscale /var/lib/tailscale /etc/headscale ~/.headscale
+    sudo userdel headscale
+}
+
+
+function headscale_install() {
+    headscale_install_binaries && headscale_configure && headscale_start_service
+}
