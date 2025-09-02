@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# When this script is called without arguments, it creates a virtual environment under the current directory.
+VENV_BASE=${1-./.virtualenvs}
+
+# Preferred Python version
+# see status of Python 3.13 releases here: https://peps.python.org/pep-0719/
+# uv may or may not be in sync with the release cadence
+VENV_PYTHON_VERSION=3.13.1
+
+
+function venv_tool_install_uv() {
+    # install uv :: https://pypi.org/project/uv/
+    which uv > /dev/null || ( curl -LsSf https://astral.sh/uv/install.sh | sh )
+    [[ $(echo ${PATH} | grep -E '/.local/bin(^:|$)') ]] || ( PATH="$PATH:${HOME}/.local/bin" )
+}
+
+
+function venv_tool_uv_install_python() {
+    uv python install ${VENV_PYTHON_VERSION}
+}
+
+
+function venv_tool_create_virtualenv() {
+  # create a virtual environment dependent on cpython installed in the previous step
+  venv=cpython$(echo ${VENV_PYTHON_VERSION} | cut -d'.' -f1-2 | tr -d '.')
+  #XXXp=$(uv python list | grep cpython-${VENV_PYTHON_VERSION}-linux-x86_64-gnu | sed -E 's/[ \t]+/ /g' | cut -d' ' -f2)
+  p=$(uv python list | grep cpython-${VENV_PYTHON_VERSION}- | sed -E 's/[ \t]+/ /g' | cut -d' ' -f2)
+  uv venv -v -p ${p} ${VENV_BASE}/${venv}
+  source ${VENV_BASE}/${venv}/bin/activate
+}
+
+
+function venv_tool_install_tooling() {
+  venv=cpython$(echo ${VENV_PYTHON_VERSION} | cut -d'.' -f1-2 | tr -d '.')
+  source ${VENV_BASE}/${venv}/bin/activate
+
+  # install pip into your virtual environment
+  uv pip install pip
+
+  # install pipx into your virtual environment
+  uv pip install pipx
+
+  # install hatch :: https://hatch.pypa.io
+  which hatch > /dev/null || pipx install hatch
+}
+
+
+function venv_tool_create() {
+  venv_tool_install_uv && venv_tool_uv_install_python && venv_tool_create_virtualenv && venv_tool_install_tooling
+}
+
+
+venv_tool_create
