@@ -1,7 +1,7 @@
 #!/bin/bash -eu
 
 function install_firefox_binaries {
-  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
+  [[ ! -d "${DOWNLOADS:-${HOME}/Downloads}" ]] && mkdir -p "${DOWNLOADS:-${HOME}/Downloads}"
   local name=firefox
   local title=Firefox
   local comment="Web Browser"
@@ -13,14 +13,14 @@ function install_firefox_binaries {
   local osarch=$(uname -s | tr '[:upper:]' '[:lower:]')
   local version=132.0
 
-  if [ ! -e "${DOWNLOADS:=$HOME/Downloads}"/${name}-${version}.tar.bz2 ] ;then
+  if [ ! -e "${DOWNLOADS:=${HOME}/Downloads}"/${name}-${version}.tar.bz2 ] ;then
     which curl >/dev/null 2>&1 || apt+ install curl
-    curl https://ftp.mozilla.org/pub/${name}/releases/${version}/${osarch}-${hwarch}/${lang}/${name}-${version}.tar.bz2 -o "${DOWNLOADS}"/${name}-${version}.tar.bz2
+    curl https://ftp.mozilla.org/pub/${name}/releases/${version}/${osarch}-${hwarch}/${lang}/${name}-${version}.tar.bz2 -o "${DOWNLOADS:-${HOME}/Downloads}"/${name}-${version}.tar.bz2
   fi
 
   local tools="${TOOLS_HOME:=$HOME/tools}"
   [[ ! -d "${tools}" ]] && mkdir -p "${tools}"
-  [[ ! -d "${tools}/${folder}" ]] && tar -C "${tools}" -xpf "${DOWNLOADS}"/${name}-${version}.tar.bz2
+  [[ ! -d "${tools}/${folder}" ]] && tar -C "${tools}" -xpf "${DOWNLOADS:-${HOME}/Downloads}"/${name}-${version}.tar.bz2
   [[ ! -d ~/bin ]] && mkdir -p ~/bin
   [[ ! -L ~/bin/"${name}" ]] && ln -s "${tools}/${name}/${name}" ~/bin/"${name}"
   echo ~/bin/${name}

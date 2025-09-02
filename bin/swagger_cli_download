@@ -4,8 +4,8 @@ function swagger_cli_download {
   local v=3.1.0
   local name=swagger-codegen-cli-3.0.0-20180630.155857-85.jar
   local url=http://central.maven.org/maven2/org/openapitools/openapi-generator-cli/${v}/openapi-generator-cli-${v}.jar
-  local file="${DOWNLOADS}"/$name
-  mkdir -p "${DOWNLOADS}" > /dev/null
+  local file="${DOWNLOADS:-${HOME}/Downloads}"/$name
+  mkdir -p "${DOWNLOADS:-${HOME}/Downloads}" > /dev/null
   [[ -f "${file}" ]] || curl "${url}" -o "${file}"
   echo "${file}"
 }

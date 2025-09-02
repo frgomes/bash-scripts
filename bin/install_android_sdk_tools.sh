@@ -26,8 +26,8 @@ function install_android_sdk_tools_binaries {
   local url=https://dl.google.com/android/repository/${archive}
 
   # download archive
-  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
-  pushd "${DOWNLOADS}" > /dev/null
+  [[ ! -d "${DOWNLOADS:-${HOME}/Downloads}" ]] && mkdir -p "${DOWNLOADS:-${HOME}/Downloads}"
+  pushd "${DOWNLOADS:-${HOME}/Downloads}" > /dev/null
   [[ ! -f ${archive} ]] && curl -sSL "$url" -o "${archive}"
   popd > /dev/null
 
@@ -37,7 +37,7 @@ function install_android_sdk_tools_binaries {
 
   # extract archive into destination folder
   [[ ! -d ${folder}/cmdline-tools/ ]] && mkdir -p ${folder}
-  unzip "${DOWNLOADS}"/${archive} -d ${folder}
+  unzip "${DOWNLOADS:-${HOME}/Downloads}"/${archive} -d ${folder}
 
   # THIS IS STUPID!
   # This step is required in the installation of commandline-tools since the ZIP file does not present the correct directory structure :-(

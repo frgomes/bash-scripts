@@ -53,15 +53,15 @@ function install_wabt_install {
   local symlink=wabt
   
   [[ -d "${WORKSPACE}/wabt/build" ]] || mkdir -p "${WORKSPACE}/wabt/build"
-  [[ -d "${TOOLS_HOME}/${folder}" ]] || mkdir -p "${TOOLS_HOME}/${folder}"
+  [[ -d "${TOOLS_HOME:-${HOME}/tools}/${folder}" ]] || mkdir -p "${TOOLS_HOME:-${HOME}/tools}/${folder}"
 
   cmake "${WORKSPACE}/wabt" -B "${WORKSPACE}/wabt/build" && \
   cmake --build "${WORKSPACE}/wabt/build" && \
-  cmake --install "${WORKSPACE}/wabt/build" --prefix "${TOOLS_HOME}/${folder}" && \
+  cmake --install "${WORKSPACE}/wabt/build" --prefix "${TOOLS_HOME:-${HOME}/tools}/${folder}" && \
   rm -r -f "${WORKSPACE}/wabt/build"
 
-  [[ ! -z "${symlink}" && "${symlink}" != "." ]] || [[ ! -L "${TOOLS_HOME}/${symlink}" ]] || rm "${TOOLS_HOME}/${symlink}"
-  [[ ! -z "${symlink}" && "${symlink}" != "." ]] || ln -s "${folder}" "${TOOLS_HOME}/${symlink}"
+  [[ ! -z "${symlink}" && "${symlink}" != "." ]] || [[ ! -L "${TOOLS_HOME:-${HOME}/tools}/${symlink}" ]] || rm "${TOOLS_HOME:-${HOME}/tools}/${symlink}"
+  [[ ! -z "${symlink}" && "${symlink}" != "." ]] || ln -s "${folder}" "${TOOLS_HOME:-${HOME}/tools}/${symlink}"
   
   local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/451-wabt.sh
   __install_wabt_activator "${config}" "${version}"

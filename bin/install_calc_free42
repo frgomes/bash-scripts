@@ -12,17 +12,17 @@ function install_free42_binaries {
   local tools=${TOOLS_HOME:=$HOME/tools}
   local Software="${SOFTWARE:=/mnt/omv/Software}"
 
-  [[ ! -d "${DOWNLOADS}" ]] && mkdir -p "${DOWNLOADS}"
+  [[ ! -d "${DOWNLOADS:-${HOME}/Downloads}" ]] && mkdir -p "${DOWNLOADS:-${HOME}/Downloads}"
   [[ ! -d $tools ]] && mkdir -p $tools
 
   local archive=""
   if [[ -f ${Software}/Linux/archives/${file} ]] ;then
     local archive=${Software}/Linux/archives/${file}
-  elif [[ -f "${DOWNLOADS}"/${file} ]] ;then
-    local archive="${DOWNLOADS}"/${file}
+  elif [[ -f "${DOWNLOADS:-${HOME}/Downloads}"/${file} ]] ;then
+    local archive="${DOWNLOADS:-${HOME}/Downloads}"/${file}
   fi
   if [[ -z ${archive} ]] ;then
-    local archive="${DOWNLOADS}/${file}"
+    local archive="${DOWNLOADS:-${HOME}/Downloads}/${file}"
     which curl >/dev/null 2>&1 || apt+ install curl
     curl "${url}" -o "${archive}"
   fi
