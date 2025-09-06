@@ -111,9 +111,7 @@ function apt+ {
                     echo "ERROR: apt+ failed to find a description for package: ${id}"
                     exit 1
                 else
-echo ================================== ${pkg}
                     local cmd=$(__apt+_${distro} | grep -E "^${pkg}:" | grep -E -v '(^[ \t]*#)|(^[ \t]*$)' | cut -d: -f3)
-echo ================================== ${cmd}
                     [[ -z "${cmd}" ]] && \
                         case "${distro}" in
                             Debian|Ubuntu) local cmd="apt install -y ${pkg}" ;;
@@ -121,10 +119,6 @@ echo ================================== ${cmd}
                             Fedora)        local cmd="dnf install -y ${pkg}" ;;
                             *)             echo "Unsupported distribution: ${distro}" ; return 1;;
                         esac
-echo ++++++++++++ ================================== ${cmd}
-
-
-
                     local obj=$(__apt+_${distro} | grep -E "^${pkg}:" | grep -E -v '(^[ \t]*#)|(^[ \t]*$)' | cut -d: -f2)
                     local obj=${obj:-${id}}
                     case "${distro}" in
