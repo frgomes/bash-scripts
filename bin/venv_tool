@@ -25,16 +25,21 @@ uv python install ${v}
 # create a virtual environment dependent on cpython installed in the previous step
 cpython=cpython$(echo ${v} | cut -d'.' -f1-2 | tr -d '.')
 venv=${name:-${cpython}}
-p=$(uv python list | grep cpython-${v}-linux-x86_64-gnu | sort | tail -1 | sed -E 's/[ \t]+/ /g' | cut -d' ' -f2)
+p=$(uv python list | grep cpython-${v} | sort | head -1 | sed -E 's/[ \t]+/ /g' | cut -d' ' -f2)
 uv venv -v -p ${p} ~/.virtualenvs/${venv}
+
+
+
 source ~/.virtualenvs/${venv}/bin/activate
 
 # install pip and pipx into your virtual environment
 uv pip install pip
 uv pip install pipx
 
-# install hatch :: https://hatch.pypa.io
-which hatch > /dev/null || pipx install hatch
+# install ruff, hatch and aider :: https://hatch.pypa.io
+which ruff  > /dev/null || uv tool install ruff
+which hatch > /dev/null || uv tool install hatch
+which aider > /dev/null || uv tool install aider-chat
 
 # adjust PATH
 export PATH=${PATH}:${HOME}/.local/bin
