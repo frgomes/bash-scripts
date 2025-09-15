@@ -60,6 +60,7 @@ complete -F __workon_complete workon
 
 
 __bash_path_prepend "$(dirname $(readlink -f "${BASH_SOURCE[0]}"))/bin"
+__bash_path_prepend "${HOME}/.cargo/bin"
 __bash_path_prepend "${HOME}/.local/bin"
 __bash_path_prepend "${HOME}/bin"
 
