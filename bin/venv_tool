@@ -26,7 +26,7 @@ uv python install ${v}
 # create a virtual environment dependent on cpython installed in the previous step
 cpython=cpython$(echo ${v} | cut -d'.' -f1-2 | tr -d '.')
 venv=${name:-${cpython}}
-p=$(uv python list | grep cpython-${v} | sort | head -1 | sed -E 's/[ \t]+/ /g' | cut -d' ' -f2)
+p=$(uv python list | grep cpython-${v} | grep -v freethreaded | sort | head -1 | sed -E 's/[ \t]+/ /g' | cut -d' ' -f2)
 uv venv -v -p ${p} ~/.virtualenvs/${venv}
 
 
