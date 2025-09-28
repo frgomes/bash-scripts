@@ -1,0 +1,177 @@
+#!/bin/bash -x
+
+[[ -z "${1}" ]] || \
+    for dir in $* ;do
+	[ -d apps ] || mkdir apps
+        pushd "apps" > /dev/null
+
+        pnpm add --global --save-dev svelte-language-server
+
+        pnpm dlx sv create "${dir}" --template minimal --types ts --install pnpm --no-add-ons
+
+        pushd "${dir}" > /dev/null
+
+        pnpm dlx sv add --install pnpm --no-git-check tailwindcss="plugins:typography,forms"
+        pnpm dlx sv add --install pnpm --no-git-check eslint prettier playwright devtools-json mdsvex
+        pnpm dlx sv add --install pnpm --no-git-check vitest="usages:unit,component"
+        pnpm dlx sv add --install pnpm --no-git-check sveltekit-adapter=adapter:node
+
+         ##
+	##FIXME: In case we would like to have authentication working:
+        ##
+        ##    1. Run the commands below:
+        ##       pnpm dlx sv add --install pnpm --no-git-check drizzle=database:postgresql+client:postgres.js
+        ##       pnpm dlx sv add --install pnpm --no-git-check lucia=demo:yes
+        ##    2. run the script setup.sql which is deployed by lucia, which creates a sqlite3 database
+        ##    3. Adjust DATABASE_URL in .env accordingly
+        ###
+
+	##TODO: paraglide storybook
+
+        pnpm add --save-dev @skeletonlabs/skeleton @skeletonlabs/skeleton-svelte
+
+
+        # dependencies aiming more flexibility in development and production
+        pnpm add znv@0.5.0 zod@3.24.2
+        pnpm add dotenv pino 
+        pnpm add pino-pretty --save-dev
+
+        pnpm install
+
+
+        # additional instructions to package.json
+        sed '/"dev"/i \\t\t"start": "node start_server.js",' -i package.json
+        sed '/"start"/i \\t\t"clean": "rm -r -f node_modules dist build",' -i package.json
+        sed 's/"vite build"/"pnpm install \&\& vite build"/' -i package.json
+
+
+	# Add support for Skeleton
+        sed 's/<html /<html data-theme="cerberus" /' -i src/app.html
+
+
+	# Fix vite.config.ts
+        sed '/export default defineConfig/i \import path from "path"; // This comes from @types/node\n\n' -i vite.config.ts
+        sed '/plugins:/a \\tresolve: {\n\t\talias: {\n\t\t\t"@": path.resolve(__dirname, "./src"),\n\t\t}\n\t},' -i vite.config.ts
+
+
+cat <<EOD > template.env
+ ##
+## Create a file named .env into the current folder where your application runs.
+##
+## Not by mistake, but by intention, filename .env is excluded from source control.
+##
+## Remember to read this file like this below:
+##
+##     import dotenv from 'dotenv';
+##     import process from 'node:process';
+##
+##     // force values read from a file to override environment variables
+##     dotenv.config({ override: true }); 
+##
+#####
+
+HOST=localhost
+PORT=8443
+
+# NGINX configuration employing a unix socket:
+#     proxy_pass http://unix:/tmp/chatbot-unix-socket-file.sock
+#SOCKET_PATH=/tmp/chatbot-unix-socket-file.sock
+
+# Needed by package drizzle
+DATABASE_URL=postgres://localhost:27017/${dir}
+
+
+ ##
+## There's a variable called NODE_ENV that you may need but
+## you are not really supposed to set it manually or even
+## define it here.
+##
+## This variable tells if your application is running in
+## development mode or running in production mode.
+##
+## ***** NEVER EVER SET THIS VARIABLE DIRECTLY HERE *****
+##
+## NODE_ENV is set by various tools when building your
+## application, or it is set by a process manager like pm2 or
+## you may define it directly in case you start your server
+## directly in the shell like this:
+##
+##     $ pnpm run build
+##     $ NODE_ENV=production node start_server.js
+###
+EOD
+cp template.env .env
+chown 600 .env
+
+
+cat <<EOD > src/logger.ts
+import { pino } from 'pino'
+
+export const logger = pino({
+    // level: config.LOG_LEVEL,
+    transport: {
+        targets:
+            // ...(config.isDev ?
+                [
+                    {
+                        target: 'pino-pretty',
+                        options: {
+                            ignore: 'pid,hostname',
+                            colorize: true,
+                            translateTime: false,
+                        },
+                    },
+                ]
+            //     : [
+            //         {
+            //             target: 'pino/file',
+            //             level: config.LOG_LEVEL,
+            //             options: {},
+            //         },
+            //     ]),
+        ,
+    },
+})
+
+export type Logger = typeof logger
+EOD
+
+
+
+mkdir -p src/config
+cat <<EOD > src/config/config.ts
+import dotenv from 'dotenv';
+import { parseEnv } from "znv";
+import * as process from "node:process";
+import { z } from "zod";
+
+
+function getConfig() {
+    // force values read from a file to override environment variables
+    dotenv.config({ override: true });
+    const config = parseEnv(process.env, {
+        HOST: z.string(),
+        PORT: z.coerce.number().default(8443),
+        DATABASE_URL: z.string(),
+        NODE_ENV: z.enum(['development', 'production']).default('development'),
+    })
+
+    return {
+        ...config,
+        isProd: config.NODE_ENV === 'production'
+    }
+}
+
+export type Config = ReturnType<typeof getConfig>;
+
+export const config: Config = getConfig();
+EOD
+
+
+        popd > /dev/null
+        popd > /dev/null
+
+
+        git add apps/${dir}
+        git commit -m "add module ${dir}" -a
+    done

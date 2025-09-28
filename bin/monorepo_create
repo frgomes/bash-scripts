@@ -1,0 +1,100 @@
+#!/bin/bash -x
+
+
+repo=${1:-monorepo}
+
+
+npx create-turbo@latest -m pnpm "${repo}"
+
+
+pushd "${repo}" > /dev/null
+
+
+npm install -g pnpm@latest
+export PNPM_HOME="${HOME}/.local/share/pnpm"
+export PATH=${PNPM_HOME}:${PATH}
+
+pnpm add --global --save-dev typescript typescript-language-server
+pnpm add --global --save-dev npm-check-updates
+pnpm add --global --save-dev turbo
+pnpm add --global --save-dev rollup
+pnpm add --global --save-dev @redocly/oas-tools # for validation of OpenAPI specs
+pnpm add --global --save-dev @openapitools/openapi-generator-cli
+
+pnpm add turbo@latest --global --save-dev
+ncu -u
+pnpm install
+
+
+rm -r -f .git apps packages
+mkdir -p apps packages
+
+
+
+
+cat << "EOD" > turbo.json
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "ui": "tui",
+  "tasks": {
+    "clean": {
+      "dependsOn": ["^clean"]
+    },
+    "start": {
+      "dependsOn": ["^start"]
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": [
+        ".svelte/**",
+        ".svelte-kit/output/**",
+        ".next/**",
+        "dist/**",
+        "target/**"
+      ]
+    },
+    "lint": {
+      "dependsOn": ["^lint"]
+    },
+    "check-types": {
+      "dependsOn": ["^check-types"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}
+EOD
+
+
+# Enforce versions of Node and pnpm in .nvmrc
+echo "${NODE_VERSION}" > .nvmrc
+
+
+# Enforce versions of Node and pnpm in package.json
+export PNPM_VERSION=$(pnpm --version)
+jq '. + {"engines": {"node": ">=NODE_VERSION", "pnpm": ">=PNPM_VERSION"}}' package.json \
+    | sed "s/NODE_VERSION/${NODE_VERSION}/" | sed "s/PNPM_VERSION/${PNPM_VERSION}/" >  package.json.tmp && mv package.json.tmp package.json
+
+
+# Save original README.md and initialize a blank new one
+cp -pv "README.md" "BUILD.md"
+echo "# ${repo}" > "README.md"
+
+
+# Fix .gitignore
+sed 's:.next/:.svelte/:' -i .gitignore
+
+
+git init
+
+git add "README.md"
+git commit -m 'README.md' README.md
+
+git add .gitignore
+git commit -m '.gitignore' .gitignore
+
+git add .
+git commit -m 'Configure monorepo' -a
