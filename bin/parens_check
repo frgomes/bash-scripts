@@ -1,0 +1,81 @@
+#!/usr/bin/env python3
+
+import sys
+import os
+from typing import Tuple, List, TextIO
+
+
+def parens_check(file_obj: TextIO) -> List[Tuple[int, int, str]]:
+    """
+    Reads a file object line by line and checks for unbalanced parentheses.
+
+    Args:
+        file_obj: A file-like object (e.g., open file or sys.stdin).
+
+    Returns:
+        A list of tuples: (line_number, column_index, error_message).
+        If the list is empty, the input is balanced.
+    """
+    stack: List[Tuple[str, int, int]] = []
+    openers = '([{'
+    closers = ')]}'
+    matcher = {')': '(', ']': '[', '}': '{'}
+    errors = []
+
+    # Iterate directly over the file object to handle large inputs efficiently
+    for line_num, line in enumerate(file_obj, start=1):
+        for col_idx, char in enumerate(line):
+            if char in openers:
+                stack.append((char, line_num, col_idx))
+
+            elif char in closers:
+                if not stack:
+                    # Case 1: Closing parenthesis with no opener
+                    errors.append((line_num, col_idx, f"Unexpected closing '{char}'"))
+
+                last_opener, _, _ = stack.pop()
+                if matcher[char] != last_opener:
+                    # Case 2: Mismatched closing parenthesis
+                    errors.append((line_num, col_idx, f"Expected closing for '{last_opener}' but found '{char}'"))
+
+    # Case 3: At the end of the file, check if anything is left open
+    for char, line, col in stack:
+        errors.append((line, col, f"Unclosed '{char}'"))
+
+    return errors
+
+
+def main():
+    """
+    Opens the input (file or stdin) and passes the file object to the logic function.
+    """
+    # 1. Check if a filename is provided
+    if len(sys.argv) > 1:
+        file_path = sys.argv[1]
+        if not os.path.exists(file_path):
+            print(f"Error: File '{file_path}' not found.")
+            sys.exit(1)
+
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                errors = parens_check(f)
+                for error in errors:
+                    print(error)
+        except Exception as e:
+            print(f"Error processing file: {e}")
+            sys.exit(1)
+
+    # 2. Check if data is piped from stdin
+    elif not sys.stdin.isatty():
+        errors = parens_check(sys.stdin)
+        for error in errors:
+            print(error)
+
+    # 3. No input provided
+    else:
+        print("Usage: parens <filename> OR cat file | parens")
+        sys.exit(0)
+
+
+if __name__ == "__main__":
+    main()
