@@ -59,10 +59,10 @@ function __workon_complete {
 complete -F __workon_complete workon
 
 
+__bash_path_prepend "${HOME}/bin"
 __bash_path_prepend "$(dirname $(readlink -f "${BASH_SOURCE[0]}"))/bin"
 __bash_path_prepend "${HOME}/.cargo/bin"
-__bash_path_prepend "${HOME}/.local/bin"
-__bash_path_prepend "${HOME}/bin"
+__bash_path_prepend "${HOME}/.local/share/../bin"
 
 # make sure python3, python3-pip and python3-venv are installed
 install_python3
