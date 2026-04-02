@@ -36,17 +36,13 @@ function mkvirtualenv {
 }
 
 function workon {
-    if [ ! -z "${1}" ] ;then
-      source "${HOME}/.virtualenvs/${1}/bin/activate"
-    else
-      if [ -f "./.venv/bin/activate" ] ;then source "./.venv/bin/activate"
+    if [[ -z "${DIRENV_DIR}" ]] ;then
+        echo workon with argument "${1}"
+        if [[ ! -z "${1}" ]] ;then
+          source "${HOME}/.virtualenvs/${1}/bin/activate"
+        fi
+        source source_venv_scripts ${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}
     fi
-    for script in ${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/postactivate/head.d/*.sh \
-                  ${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/postactivate/postactivate.d/*.sh \
-                  ${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/postactivate/tail.d/*.sh ;do
-      [[ -x "${script}" ]] && echo "sourcing ${script}" && source "${script}"
-    done
-  fi
 }
 
 function __workon_complete {

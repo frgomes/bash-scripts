@@ -1,0 +1,18 @@
+#!/bin/bash
+
+ ##
+## NOTE: This script is designed to be sourced
+###
+
+function __source_venv_scripts {
+    if [[ ! -z "${1}" ]] ;then
+        for script in ${1}/postactivate/head.d/*.sh \
+                      ${1}/postactivate/postactivate.d/*.sh \
+                      ${1}/postactivate/tail.d/*.sh ;do
+            [[ -x "${script}" ]] && echo "sourcing ${script}" && source "${script}"
+        done
+    fi
+}
+
+
+__source_venv_scripts $@
