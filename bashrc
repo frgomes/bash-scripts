@@ -36,7 +36,11 @@ function mkvirtualenv {
 }
 
 function workon {
-    if [ ! -z "${1}" ] ;then    source "${HOME}/.virtualenvs/${1}/bin/activate"
+    if [ ! -z "${1}" ] ;then
+      source "${HOME}/.virtualenvs/${1}/bin/activate"
+    else
+      if [ -f "./.venv/bin/activate" ] ;then source "./.venv/bin/activate"
+    fi
     for script in ${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/postactivate/head.d/*.sh \
                   ${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/postactivate/postactivate.d/*.sh \
                   ${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/postactivate/tail.d/*.sh ;do
@@ -123,22 +127,9 @@ case "$(os_release | cut -d: -f1)" in
       ;;
 esac
 
-function git_branch {
-  which git 2>/dev/null >&2 && git branch $@
-}
-
-function hg_branch {
-  which hg 2>/dev/null >&2 && git branch $@
-}
-
-function __scm_branch {
-  local branch=$(git_branch --show-current 2>/dev/null || hg_branch 2>/dev/null || echo "")
-  if [[ ${#branch} -gt 40 ]] ;then echo "${branch:0:16}"..."${branch:${#branch}-20:${#branch}}" ;else echo "${branch}" ;fi
-}
-
 # define prompt
 if [ -x /usr/bin/dircolors ]; then
-    export PS1='\[\033[01;31m\][$(date "+%Y-%m-%d %H:%M:%S")]\[\033[00m\]>\[\033[01;32m\]$(__scm_branch)\[\033[00m\]>\[\033[01;34m\]\u@\h:\w\[\033[00m\]\$ '
+    export PS1='\[\033[01;31m\][$(date "+%Y-%m-%d %H:%M:%S")]\[\033[00m\]>\[\033[01;32m\]$(scm_branch)\[\033[00m\]>\[\033[01;34m\]\u@\h:\w\[\033[00m\]\$ '
 else
     export PS1='[$(date "+%Y-%m-%d %H:%M:%S")]>$(__scm_branch)>\u@\h:\w\$ '
 fi
