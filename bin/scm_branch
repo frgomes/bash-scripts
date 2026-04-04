@@ -1,11 +1,8 @@
 #!/bin/bash
 
 function __scm_branch {
-  local branch=""
-  which hg  2>/dev/null >&2 && [[ -d .hg  ]] && local branch=$(hg  branch)
-  which git 2>/dev/null >&2 && [[ -d .git ]] && local branch=$(git branch --show-current)
-  # local branch=$(git_branch --show-current 2>/dev/null || hg_branch 2>/dev/null || echo "")
-  if [[ ${#branch} -gt 40 ]] ;then echo "${branch:0:16}"..."${branch:${#branch}-20:${#branch}}" ;else echo "${branch}" ;fi
+  local branch=$(which git 2>/dev/null >&2 && git branch --show-current 2>/dev/null) || $(which hg  2>/dev/null >&2 && hg branch 2>/dev/null)
+  if [[ ${#branch} -gt 40 ]] ;then echo "${branch:0:16}...${branch:${#branch}-20:${#branch}}" ;else echo "${branch}" ;fi
 }
 
 __scm_branch
