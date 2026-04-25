@@ -152,7 +152,7 @@ function install_rust_lsp_wasm {
 function install_rust_lsp {
   local toolchain=${1:-stable}
   source "${HOME}"/.cargo/env && hash -r && rustup update ${toolchain} \
-    && rustup component add --toolchain ${toolchain} rls rust-analysis rust-src
+    && rustup component add --toolchain ${toolchain} rust-analysis rust-src
 }
 
 function install_rust_lsp_texlab {
