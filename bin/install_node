@@ -69,6 +69,7 @@ function install_node_tools {
   pnpm add -g turbo
   pnpm add -g rollup
   pnpm add -g @mermaid-js/mermaid-cli # for Mermaid charts in Markdown, Emacs, etc.
+  pnpm add -g vega-cli vega-lite
   pnpm add -g @redocly/oas-tools # for validation of OpenAPI specs
   pnpm add -g @openapitools/openapi-generator-cli
   ncu -u
