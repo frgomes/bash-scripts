@@ -26,15 +26,6 @@ function install_python3 {
     esac
 }
 
-function mkvirtualenv {
-  if [ ! -z "$1" ] ;then
-    local name="${1}"
-    shift
-    [[ -d "${HOME}/.virtualenvs" ]] || mkdir -p "${HOME}/.virtualenvs"
-    python3 -m venv "${HOME}/.virtualenvs/${name}" $@
-  fi
-}
-
 function workon {
     if [[ -z "${DIRENV_DIR}" ]] ;then
         echo workon with argument "${1}"

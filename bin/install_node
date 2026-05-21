@@ -48,7 +48,6 @@ export NODE_VERSION=${version}
 export NODE_ARCH=\${NODE_ARCH:-${arch}}
 export NODE_HOME=\${TOOLS_HOME:=\${HOME}/tools}/node-\${NODE_VERSION}-\${NODE_ARCH}
 export PNPM_HOME="\${HOME}/.local/share/pnpm"
-export PUPPETEER_EXECUTABLE_PATH=$(which chromium)
 
 export PATH=\${NODE_HOME}/bin:\${PNPM_HOME}:\${PATH}
 EOD
@@ -68,8 +67,6 @@ function install_node_tools {
   pnpm add -g npm-check-updates
   pnpm add -g turbo
   pnpm add -g rollup
-  pnpm add -g @mermaid-js/mermaid-cli # for Mermaid charts in Markdown, Emacs, etc.
-  pnpm add -g vega-cli vega-lite
   pnpm add -g @redocly/oas-tools # for validation of OpenAPI specs
   pnpm add -g @openapitools/openapi-generator-cli
   ncu -u
