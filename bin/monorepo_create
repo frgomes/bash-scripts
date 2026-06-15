@@ -75,8 +75,8 @@ echo "${NODE_VERSION}" > .nvmrc
 
 # Enforce versions of Node and pnpm in package.json
 export PNPM_VERSION=$(pnpm --version)
-jq '. + {"engines": {"node": ">=NODE_VERSION", "pnpm": ">=PNPM_VERSION"}}' package.json \
-    | sed "s/NODE_VERSION/${NODE_VERSION}/" | sed "s/PNPM_VERSION/${PNPM_VERSION}/" >  package.json.tmp && mv package.json.tmp package.json
+jq '. + {"engines": {"node": ">=NODE_VERSION"}}' package.json \
+    | sed "s/NODE_VERSION/${NODE_VERSION}/" >  package.json.tmp && mv package.json.tmp package.json
 
 
 # Save original README.md and initialize a blank new one
@@ -86,7 +86,11 @@ echo "# ${repo}" > "README.md"
 
 # Fix .gitignore
 sed 's:.next/:.svelte/:' -i .gitignore
+cat <<EOD >> .gitignore
 
+# Tooling
+.aider*
+EOD
 
 git init
 
