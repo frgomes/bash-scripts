@@ -49,7 +49,7 @@ export NODE_ARCH=\${NODE_ARCH:-${arch}}
 export NODE_HOME=\${TOOLS_HOME:=\${HOME}/tools}/node-\${NODE_VERSION}-\${NODE_ARCH}
 export PNPM_HOME="\${HOME}/.local/share/pnpm"
 
-export PATH=\${NODE_HOME}/bin:\${PNPM_HOME}:\${PATH}
+export PATH=\${PATH}:\${NODE_HOME}/bin:\${PNPM_HOME}/bin
 EOD
   chmod ugo+x "${config}"
   echo "${config}"
@@ -60,15 +60,16 @@ function install_node_tools {
   source ${config}
 
   npm install -g pnpm@latest
+  pnpm self-update
+
   export PNPM_HOME="${HOME}/.local/share/pnpm"
-  export PATH=${PNPM_HOME}:${PATH}
+  export PATH=${PATH}:${PNPM_HOME}/bin
 
   pnpm add -g typescript typescript-language-server
   pnpm add -g npm-check-updates
   pnpm add -g turbo
   pnpm add -g rollup
-  pnpm add -g @redocly/oas-tools # for validation of OpenAPI specs
-  pnpm add -g @openapitools/openapi-generator-cli
+  pnpm add -g @anthropic-ai/claude-code
   ncu -u
 }
 

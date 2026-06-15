@@ -5,7 +5,7 @@ function __install_rust_build_essential {
 }
 
 function __install_rust_install_dependencies {
-  apt+ install openssl openssl-devel sqlite3 sqlite3-devel
+  which pkg-config > /dev/null 2>&1 || apt+ install openssl openssl-devel sqlite3 sqlite3-devel pkg-config
 }
 
 function __install_rust_activator() {
@@ -51,8 +51,8 @@ cargo-tarpaulin
 cargo-audit --features=fix
 cargo-deny
 cargo-make
-cargo-xtask
 cargo-about
+cli-xtask
 typos-cli
 sea-orm-cli
 lychee
@@ -63,9 +63,9 @@ EOD
 
 function install_rust_addons {
   local toolchain=${1:-stable}
-  source "${HOME}"/.cargo/env && hash -r && rustup update ${toolchain} \
-    && __install_rust_install_dependencies \
-      && __install_rust_addons | grep -v -E '^#' | while read line ;do cargo install --locked --force ${line} ;done
+  __install_rust_install_dependencies && \
+    source "${HOME}"/.cargo/env && hash -r && rustup update ${toolchain} \
+      && __install_rust_addons | grep -v -E '^#' | while read addon ;do echo "Installing addon ${addon} ..."; cargo install --locked --force ${addon} ;done
 }
 
 function __install_rust_web_addons {
