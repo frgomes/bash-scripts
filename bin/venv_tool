@@ -27,7 +27,7 @@ uv python install ${v}
 cpython=cpython$(echo ${v} | cut -d'.' -f1-2 | tr -d '.')
 venv=${name:-${cpython}}
 p=$(uv python list | grep cpython-${v} | grep -v freethreaded | sort | head -1 | sed -E 's/[ \t]+/ /g' | cut -d' ' -f2)
-uv venv -v -p ${p} ~/.virtualenvs/${venv}
+uv venv -v -p ${p} --seed ~/.virtualenvs/${venv}
 
 
 
