@@ -69,7 +69,6 @@ function install_node_tools {
   pnpm add -g npm-check-updates
   pnpm add -g turbo
   pnpm add -g rollup
-  pnpm add -g @anthropic-ai/claude-code
   ncu -u
 
   which curl >/dev/null 2>&1 || apt+ install curl
