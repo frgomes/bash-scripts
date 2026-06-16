@@ -24,6 +24,8 @@ function appimage_desktop_entry {
     local move="no"
     local delete="no"
     local count=0
+    [[ -d "${apps}" ]] || mkdir -p "${apps}"
+    [[ -d "${bin}"  ]] || mkdir -p "${bin}"
     while [[ $# -gt 0 ]]; do
         case "$1" in
             -h|--help)
