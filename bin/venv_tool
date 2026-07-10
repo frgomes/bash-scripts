@@ -27,7 +27,7 @@ uv python install ${v}
 cpython=cpython$(echo ${v} | cut -d'.' -f1-2 | tr -d '.')
 venv=${name:-${cpython}}
 p=$(uv python list | grep cpython-${v} | grep -v freethreaded | sort | head -1 | sed -E 's/[ \t]+/ /g' | cut -d' ' -f2)
-uv venv -v -p ${p} --seed ~/.virtualenvs/${venv}
+uv venv -v -p ${p} --seed --managed-python ~/.virtualenvs/${venv}
 
 
 
@@ -38,9 +38,8 @@ uv pip install pip
 uv pip install pipx
 
 # install ruff, hatch and aider :: https://hatch.pypa.io
-which ruff  > /dev/null || uv tool install ruff
-which hatch > /dev/null || uv tool install hatch
-which aider > /dev/null || uv tool install aider-chat
+which ruff  > /dev/null || uv tool install -p ${p} --managed-python ruff
+which hatch > /dev/null || uv tool install -p ${p} --managed-python hatch
 
 # adjust PATH
 export PATH=${PATH}:${HOME}/.local/bin
@@ -48,7 +47,11 @@ export PATH=${PATH}:${HOME}/.local/bin
 # show versions
 echo ------------------------------------------------------------------------------------------------------------------------
 echo Python environment was set up successfully:
+echo VIRTUAL_ENV=${VIRTUAL_ENV}
+echo VIRTUAL_ENV_PROMPT=${VIRTUAL_ENV_PROMPT}
 python --version
 pip --version
+echo pipx $(pipx --version)
+ruff --version
 hatch --version
 echo ------------------------------------------------------------------------------------------------------------------------
