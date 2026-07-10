@@ -35,11 +35,11 @@ function install_jupyter_binaries {
   #local latest=${releases}/latest
   #local latest="$(curl -I ${latest} 2>/dev/null | grep -F location: | tr -d '[:cntrl:]' | cut -d' ' -f2 | sed -E 's|.*\/v(.*)$|\1|')"
   echo "${name}: latest version: ${latest:-(not detected)}" 1>&2
-  local default="${ALMOND_VERSION:-${latest:-0.11.2}}"
+  local default="${ALMOND_VERSION:-${latest:-0.14.1}}"
   local version="${1:-${default}}"
   echo "${name}: installing version: ${version}" 1>&2
 
-  local SCALA_MAJOR=$(echo ${SCALA_VERSION:-2.13.8} | cut -d. -f1-2)
+  local SCALA_MAJOR=$(echo ${SCALA_VERSION:-2.13.18} | cut -d. -f1-2)
 
   local log=$(mktemp -t install_jupyter.XXX.log)
   echo "INFO: See installation log at: ${log}"
