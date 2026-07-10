@@ -1,0 +1,21 @@
+#!/bin/bash
+
+function bmad_save() {
+  apt+ install tar
+  
+  local now=$(date +%Y%m%d_%H%M%S)
+  local cwd="${1:-$(pwd)}"
+
+  if [ -d "$cwd" ] ;then
+      local dir="$( readlink -f "$cwd" )"
+      local dst=${HOME}/backup/archives"${dir}"
+      local name="$( basename "$dir" )"
+      mkdir -p ${dst} > /dev/null 2>&1
+      # echo "$dir" ...
+      local archive=${dst}/${now}_${name}-bmad.tar.bz2
+      tar -C "${dir}" -cpJf "${archive}" .codex/ .github/ _bmad-output/ docs/ documentation/
+      echo "${archive}"
+  fi
+}
+
+bmad_save $*
