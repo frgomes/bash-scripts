@@ -1,0 +1,34 @@
+#!/bin/bash
+
+function install_mullvad_binaries {
+    local id=$(cat /etc/os-release | tr -d '"' | grep -E '^NAME=' | cut -d= -f2 | cut -d' ' -f1)
+    local version=$(cat /etc/os-release | tr -d '"' | grep -E '^VERSION_ID=' | cut -d= -f2 | cut -d' ' -f1)
+    case "${id}" in
+      Debian|Ubuntu) 
+	sudo curl -fsSLo /usr/share/keyrings/mullvad-keyring.asc https://repository.mullvad.net/deb/mullvad-keyring.asc;
+	echo "deb [signed-by=/usr/share/keyrings/mullvad-keyring.asc arch=$( dpkg --print-architecture )] https://repository.mullvad.net/deb/stable stable main" | sudo tee /etc/apt/sources.list.d/mullvad.list;
+	sudo apt update;
+        sudo apt install -y libpulse0 pipewire-audio-client-libraries;
+	sudo apt install -y mullvad-browser;;
+      *)
+	echo "ERROR: Only Debian and Ubuntu are currently supported";
+        exit 1;;
+    esac
+}
+
+
+function __install_mullvad {
+  self=$(readlink -f "${BASH_SOURCE[0]}"); dir=$(dirname $self)
+  grep -E "^function [a-zA-Z0-9]" $self | cut -d' ' -f2 | while read cmd ;do
+    $cmd $*
+  done
+}
+
+
+if [ $_ != $0 ]; then
+  # echo "Script is being sourced: list all functions"
+  grep -E "^function [a-zA-Z0-9]" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2 | sed 's/()//'
+else
+  # echo "Script is a subshell: execute last function"
+  $(grep -E "^function __" $(readlink -f "${BASH_SOURCE[0]}") | cut -d' ' -f2  | sed 's/()//' | tail -1) "$@"
+fi
