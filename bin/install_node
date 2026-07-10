@@ -67,6 +67,7 @@ function install_node_tools {
 
   pnpm add -g typescript typescript-language-server
   pnpm add -g npm-check-updates
+  pnpm add -g marked # support for markdown
   pnpm add -g turbo
   pnpm add -g rollup
   ncu -u
