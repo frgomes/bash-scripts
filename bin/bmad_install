@@ -1,0 +1,21 @@
+#!/bin/bash -eu
+
+function bmad_install {
+  local fullname=$(getent passwd | grep $(whoami) | cut -d: -f5)
+  if echo "${fullname}" | grep -q "," ; then
+    local firstname=$(echo "${fullname}" | cut -d, -f2 | xargs | cut -d' ' -f1)
+  else
+    local firstname=$(echo "${fullname}" | cut -d' ' -f1)
+  fi
+
+  which npx > /dev/null 2>&1 || install_node 24.16.0
+  npx bmad-method install \
+    --directory "." \
+    --output-folder "./_bmad-output" \
+    --tools claude-code,cursor,codex,github-copilot,gemini,openclaw \
+    --user-name "${firstname}" \
+    --action update \
+    --yes
+}
+
+bmad_install "$@"
