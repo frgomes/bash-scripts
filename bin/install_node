@@ -44,6 +44,7 @@ function install_node_binaries {
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
 
   local NODE_VERSION=${version}
+  local NODE_ARCH=${NODE_ARCH:-${arch}}
   local NODE_HOME=${TOOLS_HOME:=${HOME}/tools}/node-${NODE_VERSION}-${NODE_ARCH}
   local PNPM_HOME=${HOME}/.local/share/pnpm
   local PATH=${PATH}:${NODE_HOME}/bin:${PNPM_HOME}/bin
