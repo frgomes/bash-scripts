@@ -34,7 +34,7 @@ function install_node_binaries {
   local url=http://nodejs.org/download/release/v${version}/${file}
   local folder=${name}-${version}-${arch}
   local subfolder=bin
-  local symlinks=corepack,marked,ncu,node,npm,npm-check-updates,npx,pn,pnpm,pnpx,pnx,rollup,tsc,turbo,typescript-language-server
+  local symlinks=corepack,node,npm
 
   local bin="${VIRTUAL_ENV:-.venv}/bin"
 
@@ -42,12 +42,26 @@ function install_node_binaries {
 
   local config="${VIRTUAL_ENV:-.venv}"/postactivate/postactivate.d/${group}-${name}.sh
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
+
+  local NODE_HOME=${TOOLS_HOME:=${HOME}/tools}/node-${NODE_VERSION}-${NODE_ARCH}
+  local PNPM_HOME=${HOME}/.local/share/pnpm
+  local PATH=${PATH}:${NODE_HOME}/bin:${PNPM_HOME}/bin
+
+  npm install -g pnpm@latest
+  pnpm add -g typescript typescript-language-server
+  pnpm add -g npm-check-updates
+  pnpm add -g marked
+  pnpm add -g turbo
+  pnpm add -g rollup
+
   cat <<EOD > "${config}"
 #!/bin/bash
 
 export NODE_VERSION=${version}
 export NODE_ARCH=\${NODE_ARCH:-${arch}}
 export NODE_HOME=\${TOOLS_HOME:=\${HOME}/tools}/node-\${NODE_VERSION}-\${NODE_ARCH}
+export PNPM_HOME=\${HOME}/.local/share/pnpm
+export PATH=\${PATH}:\${NODE_HOME}/bin:\${PNPM_HOME}/bin
 EOD
   chmod ugo+x "${config}"
   echo "${config}"

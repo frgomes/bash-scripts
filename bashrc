@@ -12,6 +12,15 @@ function __bash_path_append() {
   [[ ! -z "$1" ]] && echo "$PATH" | tr ':' '\n' | grep -F "$1" > /dev/null || export PATH="${PATH}:$1"
 }
 
+function postactivate {
+    local venv="${1}"
+    local venv=${venv:-${VIRTUAL_ENV}}
+    local venv=${venv:-.venv}
+    for script in ${venv}/postactivate/postactivate.d/*.sh ;do
+        [[ -x "${script}" ]] && echo "sourcing ${script}" && source "${script}"
+    done
+}
+
 __bash_path_prepend "${HOME}/bin"
 __bash_path_prepend "$(dirname $(readlink -f "${BASH_SOURCE[0]}"))/sbin"
 __bash_path_prepend "$(dirname $(readlink -f "${BASH_SOURCE[0]}"))/bin"
