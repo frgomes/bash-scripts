@@ -38,13 +38,13 @@ function install_terraform_libvirt {
   local folder="${HOME}/.local/share/terraform/plugins/registry.terraform.io/dmacvicar/libvirt/${version}/${arch}"
   local subfolder=
   #local symlinks=${name}
-  #local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
+  #local bin="${VIRTUAL_ENV:-.venv}/bin"
   local symlinks=
   local bin=
 
   "${dir}"/bash_install_zip "${url}" "${file}" "${folder}" "(${symlinks})" "${bin}" "${subfolder}"
 
-  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
+  local config="${VIRTUAL_ENV:-.venv}"/postactivate.d/${group}-${name}.sh
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
   cat <<EOD > /dev/tty #"${config}"
 #!/bin/bash

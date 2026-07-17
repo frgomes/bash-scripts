@@ -172,7 +172,7 @@ function __install_rust {
 
   local option="${1:-help}"
   local toolchain="${2:-stable}"
-  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/400-rust.sh
+  local config="${VIRTUAL_ENV:-.venv}"/postactivate.d/400-rust.sh
 
 
 

@@ -22,11 +22,11 @@ function install_avro_tools {
   local folder=${name}-${version}
   local subfolder=.
   local symlinks=${name}
-  local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
+  local bin="${VIRTUAL_ENV:-.venv}/bin"
 
   "${dir}"/bash_install_jar "${url}" "${file}" "${folder}" "(${symlinks})" "${bin}" "${subfolder}" "--" "--strip-components=1"
 
-  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
+  local config="${VIRTUAL_ENV:-.venv}"/postactivate.d/${group}-${name}.sh
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
   cat <<EOD > "${config}"
 #!/bin/bash
@@ -74,11 +74,11 @@ function install_rq {
   local folder=${name}-${version}
   local subfolder=.
   local symlinks=${name}
-  local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
+  local bin="${VIRTUAL_ENV:-.venv}/bin"
 
   "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "(${symlinks})" "${bin}" "${subfolder}"
 
-  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
+  local config="${VIRTUAL_ENV:-.venv}"/postactivate.d/${group}-${name}.sh
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
   cat <<EOD > "${config}"
 #!/bin/bash
@@ -128,11 +128,11 @@ function install_gron {
   local folder=${name}-${version}
   local subfolder=.
   local symlinks=${name}
-  local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
+  local bin="${VIRTUAL_ENV:-.venv}/bin"
 
   "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "(${symlinks})" "${bin}" "${subfolder}"
 
-  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
+  local config="${VIRTUAL_ENV:-.venv}"/postactivate.d/${group}-${name}.sh
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
   cat <<EOD > "${config}"
 #!/bin/bash

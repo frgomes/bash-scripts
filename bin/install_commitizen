@@ -21,12 +21,12 @@ function install_commitizen_binaries {
   local folder=${name}-${version}
   local subfolder=.
   local symlinks=${name}
-  local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
+  local bin="${VIRTUAL_ENV:-.venv}/bin"
 
   "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "(${symlinks})" "${bin}" "${subfolder}" "--" "--strip-components=1"
   "${dir}"/bash_install_npm "${folder}"
 
-##XXX   local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
+##XXX   local config="${VIRTUAL_ENV:-.venv}"/postactivate.d/${group}-${name}.sh
 ##XXX   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
 ##XXX   cat <<EOD > "${config}"
 ##XXX #!/bin/bash

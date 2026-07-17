@@ -1,4 +1,4 @@
-#!/bin/bash -eu
+#!/usr/bin/env bash
 
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
@@ -12,67 +12,10 @@ function __bash_path_append() {
   [[ ! -z "$1" ]] && echo "$PATH" | tr ':' '\n' | grep -F "$1" > /dev/null || export PATH="${PATH}:$1"
 }
 
-function install_python3 {
-    case "$(os_release | cut -d: -f1)" in
-        Debian|Ubuntu) dpkg -s python3-venv 2>&1 >/dev/null || sudo apt install -y python3 python3-venv;;
-        openSUSE)
-            case "$(os_release | cut -d: -f2)" in
-                Tumbleweed*) virtualenv --version 2>&1 >/dev/null || sudo zypper install -y python313-virtualenv 2>&1 >/dev/null ;;
-                MicroOS) ;; # does not attempt to mutate the file system
-                *)       ;; # does not attempt to mutate the file system
-            esac;;
-	Fedora) ;;
-        *) echo "ERROR: Unsupported distribution: ${distro}" ; return 1;;
-    esac
-}
-
-function workon {
-    if [[ -z "${DIRENV_DIR}" ]] ;then
-        echo workon with argument "${1}"
-        if [[ ! -z "${1}" ]] ;then
-          source "${HOME}/.virtualenvs/${1}/bin/activate"
-        fi
-        source source_venv_scripts ${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}
-    fi
-}
-
-function __workon_complete {
-  local cur prev opts base
-  COMPREPLY=()
-  cur="${COMP_WORDS[COMP_CWORD]}"
-  prev="${COMP_WORDS[COMP_CWORD-1]}"
-  opts=""
-
-  local envs=$( ls -p ~/.virtualenvs | grep -F / | sed 's:/::' )
-  COMPREPLY=( $(compgen -W "${envs}" -- ${cur}) )
-  return 0
-}
-complete -F __workon_complete workon
-
-
 __bash_path_prepend "${HOME}/bin"
+__bash_path_prepend "$(dirname $(readlink -f "${BASH_SOURCE[0]}"))/sbin"
 __bash_path_prepend "$(dirname $(readlink -f "${BASH_SOURCE[0]}"))/bin"
-__bash_path_prepend "${HOME}/.cargo/bin"
 __bash_path_prepend "${HOME}/.local/share/../bin"
-
-# make sure python3, python3-pip and python3-venv are installed
-install_python3
-
-##FIXME: This is a temporary fix for snaps not being found. Credits: https://www.youtube.com/watch?v=2g-teghxI2A
-if [ -d /var/lib/snapd/desktop/applications ] ;then
-  [[ -d ~/.local/share/applications/ ]] || mkdir -p ~/.local/share/applications/
-  find -L ~/.local/share/applications -type l -delete
-  ln -sf /var/lib/snapd/desktop/applications/*.desktop ~/.local/share/applications/
-fi
-
-##FIXME: enable color support of ls and also add handy aliases
-if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
-    alias grep='grep --color=auto'
-    alias fgrep='grep -F --color=auto'
-    alias egrep='grep -E --color=auto'
-fi
 
 ##FIXME: choose text editor on this order: emacs, zile, vim, nano, vi
 if [ ! -z $(which emacs 2> /dev/null) ] ;then
@@ -98,22 +41,6 @@ else
 fi
 export VISUAL EDITOR ALTERNATE_EDITOR
 
-# viewing files nicely
-case "$(os_release | cut -d: -f1)" in
-  Debian|Ubuntu)
-      export LESS=' -R ';
-      export LESSOPEN='| /usr/share/source-highlight/src-hilite-lesspipe.sh %s';
-      export LESSCLOSE='| /usr/share/source-highlight/src-hilite-lesspipe.sh %s %s';
-      export VIEWER=less;
-      ;;
-  *)
-      export LESS=' -R ';
-      export LESSOPEN='| /usr/bin/src-hilite-lesspipe.sh %s';
-      export LESSCLOSE='| /usr/bin/src-hilite-lesspipe.sh %s %s';
-      export VIEWER=less;
-      ;;
-esac
-
 # define prompt
 if [ -x /usr/bin/dircolors ]; then
     export PS1='\[\033[01;31m\][$(date "+%Y-%m-%d %H:%M:%S")]\[\033[00m\]>\[\033[01;32m\]$(scm_branch)\[\033[00m\]>\[\033[01;34m\]\u@\h:\w\[\033[00m\]\$ '
@@ -127,7 +54,6 @@ export DOCUMENTS="${DOCUMENTS:=${HOME}/Documents}"
 export MEDIA="${MEDIA:=${HOME}/Media}"
 export SOFTWARE="${SOFTWARE:=$HOME/Downloads}"
 export WORKSPACE="${WORKSPACE:=${HOME}/workspace}"
-export WORKON_HOME="${WORKON_HOME:=${HOME}/.virtualenvs}"
 export TOOLS_HOME="${TOOLS_HOME:=$HOME/tools}"
 
 # Define history processing
@@ -143,14 +69,3 @@ shopt -s histappend
 shopt -s checkwinsize
 shopt -s globstar
 shopt -s cmdhist
-
-
-# Create directory structure
-for folder in "${HOME}"/.local/share/bash-scripts/postactivate/{head.d,postactivate.d,tail.d} ;do
-    [[ ! -d "${folder}" ]] && mkdir -p "${folder}"
-done
-
-# echo "[ Run user defined initialization scripts ]"
-for script in "${HOME}"/bin/bash_*.sh ;do
-    [[ -x "${script}" ]] && echo "sourcing ${script}" && source "${script}"
-done

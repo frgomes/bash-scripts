@@ -23,7 +23,7 @@ function install_ammonite_binaries {
   local folder=${name}-${file}
   local subfolder=.
   local symlinks=${file}:${name}
-  local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
+  local bin="${VIRTUAL_ENV:-.venv}/bin"
 
   "${dir}"/bash_install_app "${url}" "${file}" "${folder}" "(${symlinks})" "${bin}" "${subfolder}"
 }

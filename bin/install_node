@@ -35,11 +35,11 @@ function install_node_binaries {
   local folder=${name}-${version}-${arch}
   local subfolder=bin
   local symlinks=node,npm,npx,pnpm
-  local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
+  local bin="${VIRTUAL_ENV:-.venv}/bin"
 
   "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "(${symlinks})" "${bin}" "${subfolder}" "--" "--strip-components=1"
 
-  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
+  local config="${VIRTUAL_ENV:-.venv}"/postactivate.d/${group}-${name}.sh
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
   cat <<EOD > "${config}"
 #!/bin/bash
@@ -52,29 +52,25 @@ export PNPM_HOME="\${HOME}/.local/share/pnpm"
 export PATH=\${PATH}:\${NODE_HOME}/bin:\${PNPM_HOME}/bin
 EOD
   chmod ugo+x "${config}"
-  echo "${config}"
-}
 
-function install_node_tools {
-  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/341-node.sh
   source ${config}
 
-  npm install -g pnpm@latest
-  pnpm self-update
+  ##npm install -g pnpm@latest
+  ##pnpm self-update
+  ##export PNPM_HOME="${HOME}/.local/share/pnpm"
+  ##export PATH=${PATH}:${PNPM_HOME}/bin
 
-  export PNPM_HOME="${HOME}/.local/share/pnpm"
-  export PATH=${PATH}:${PNPM_HOME}/bin
-
-  pnpm add -g typescript typescript-language-server
-  pnpm add -g npm-check-updates
-  pnpm add -g marked # support for markdown
-  pnpm add -g turbo
-  pnpm add -g rollup
-  ncu -u
+  pnpm add typescript typescript-language-server
+  pnpm add npm-check-updates
+  pnpm add marked # support for markdown
+  pnpm add turbo
+  pnpm add rollup
 
   which curl >/dev/null 2>&1 || apt+ install curl
   curl -fsSL https://claude.ai/install.sh | bash
   curl -fsSL https://gh.io/copilot-install | bash
+
+  echo "${config}"
 }
 
 

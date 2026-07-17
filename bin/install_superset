@@ -8,7 +8,7 @@ function install_superset_binaries {
   superset db upgrade
 
 ##FIXME   [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed
-##FIXME   local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/370-superset.sh
+##FIXME   local config="${VIRTUAL_ENV:-.venv}"/postactivate.d/370-superset.sh
 ##FIXME   cat << EOD > "${config}"
 ##FIXME #!/bin/bash
 ##FIXME

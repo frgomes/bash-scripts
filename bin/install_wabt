@@ -63,7 +63,7 @@ function install_wabt_install {
   [[ ! -z "${symlink}" && "${symlink}" != "." ]] || [[ ! -L "${TOOLS_HOME:-${HOME}/tools}/${symlink}" ]] || rm "${TOOLS_HOME:-${HOME}/tools}/${symlink}"
   [[ ! -z "${symlink}" && "${symlink}" != "." ]] || ln -s "${folder}" "${TOOLS_HOME:-${HOME}/tools}/${symlink}"
   
-  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/451-wabt.sh
+  local config="${VIRTUAL_ENV:-.venv}"/postactivate.d/451-wabt.sh
   __install_wabt_activator "${config}" "${version}"
 }
 

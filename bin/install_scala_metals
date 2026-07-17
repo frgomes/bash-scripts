@@ -51,13 +51,13 @@ function install_scala_metals_emacs {
   local version="${1:-${default}}"
   echo "${name}: installing version: ${version}" 1>&2
 
-  local bin="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}/bin"
+  local bin="${VIRTUAL_ENV:-.venv}/bin"
 
   __install_scala_metals_emacs "${bin}" "${version}"
   echo ${bin}/bloop
   echo ${bin}/metals
 
-  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
+  local config="${VIRTUAL_ENV:-.venv}"/postactivate.d/${group}-${name}.sh
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
   cat <<EOD > "${config}"
 #!/bin/bash

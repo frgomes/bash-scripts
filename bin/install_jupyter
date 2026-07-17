@@ -49,7 +49,7 @@ function install_jupyter_binaries {
   set -e
   [[ ! ${errno} -eq 0 ]] && echo "ERROR: errno=${errno} :: installation failed." && return ${errno}
 
-  local config="${VIRTUAL_ENV:-${HOME}/.local/share/bash-scripts}"/postactivate/postactivate.d/${group}-${name}.sh
+  local config="${VIRTUAL_ENV:-.venv}"/postactivate.d/${group}-${name}.sh
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
   cat <<EOD > "${config}"
 #!/bin/bash
