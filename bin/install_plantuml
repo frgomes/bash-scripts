@@ -25,7 +25,7 @@ function install_plantuml_binaries {
 
   "${dir}"/bash_install_jar "${url}" "${file}" "${folder}" "(${symlinks})" "${bin}" "${subfolder}" # "--strip-components=1"
 
-  local config="${VIRTUAL_ENV:-.venv}"/postactivate.d/${group}-${name}.sh
+  local config="${VIRTUAL_ENV:-.venv}"/postactivate/postactivate.d/${group}-${name}.sh
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
   cat <<EOD > "${config}"
 #!/bin/bash

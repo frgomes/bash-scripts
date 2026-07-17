@@ -26,7 +26,7 @@ function install_commitizen_binaries {
   "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "(${symlinks})" "${bin}" "${subfolder}" "--" "--strip-components=1"
   "${dir}"/bash_install_npm "${folder}"
 
-##XXX   local config="${VIRTUAL_ENV:-.venv}"/postactivate.d/${group}-${name}.sh
+##XXX   local config="${VIRTUAL_ENV:-.venv}"/postactivate/postactivate.d/${group}-${name}.sh
 ##XXX   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
 ##XXX   cat <<EOD > "${config}"
 ##XXX #!/bin/bash

@@ -23,7 +23,7 @@ function install_haskell_requirements {
 
 function install_haskell_binaries {
   curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
-  local config="${VIRTUAL_ENV:-.venv}"/postactivate.d/500-haskell.sh
+  local config="${VIRTUAL_ENV:-.venv}"/postactivate/postactivate.d/500-haskell.sh
   __install_haskell_activator "${config}"
 }
 

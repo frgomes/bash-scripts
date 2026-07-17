@@ -13,7 +13,7 @@ function install_emacs_tools {
   local name=emacs
   local group=351
 
-  local config="${VIRTUAL_ENV:-.venv}"/postactivate.d/${group}-${name}.sh
+  local config="${VIRTUAL_ENV:-.venv}"/postactivate/postactivate.d/${group}-${name}.sh
   source ${config}
 
   # install Javascript/Typescript/Node tools
@@ -30,7 +30,7 @@ function install_emacs_config {
   local name=emacs
   local group=351
 
-  local config="${VIRTUAL_ENV:-.venv}"/postactivate.d/${group}-${name}.sh
+  local config="${VIRTUAL_ENV:-.venv}"/postactivate/postactivate.d/${group}-${name}.sh
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
   cat <<EOD > "${config}"
 #!/bin/bash

@@ -111,7 +111,7 @@ EOD
   # create script to be executed when the current virtual environment is activated
   local group=800
   local name=android-sdk
-  local script="${VIRTUAL_ENV:-.venv}"/postactivate.d/${group}-${name}.sh
+  local script="${VIRTUAL_ENV:-.venv}"/postactivate/postactivate.d/${group}-${name}.sh
   [[ ! -d $(dirname "${script}") ]] && mkdir -p $(dirname "${script}")
   cat <<EOD > "${script}"
 #!/bin/bash

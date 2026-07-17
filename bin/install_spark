@@ -22,7 +22,7 @@ function install_spark_binaries {
   fi
 
   [[ ! -d ~/.bashrc-scripts/installed ]] && mkdir -p ~/.bashrc-scripts/installed
-  local config="${VIRTUAL_ENV:-.venv}"/postactivate.d/370-spark.sh
+  local config="${VIRTUAL_ENV:-.venv}"/postactivate/postactivate.d/370-spark.sh
   cat << EOD > "${config}"
 #!/bin/bash
 

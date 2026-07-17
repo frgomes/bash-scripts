@@ -64,7 +64,7 @@ function install_kafka_binaries {
     ln -s "${folder}" "${tools}/${symlink}"
   fi
 
-  local config="${VIRTUAL_ENV:-.venv}"/postactivate.d/360-kafka.sh
+  local config="${VIRTUAL_ENV:-.venv}"/postactivate/postactivate.d/360-kafka.sh
   __install_kafka_activator "${config}" "${version}" "${scala}" 
 }
 

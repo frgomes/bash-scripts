@@ -11,7 +11,7 @@ function install_nim_binaries {
 
   curl https://nim-lang.org/choosenim/init.sh -sSf | sh
 
-  local config="${VIRTUAL_ENV:-.venv}"/postactivate.d/${group}-${name}.sh
+  local config="${VIRTUAL_ENV:-.venv}"/postactivate/postactivate.d/${group}-${name}.sh
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
   cat <<EOD > "${config}"
 #!/bin/bash
