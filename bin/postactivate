@@ -6,6 +6,7 @@
 
 function __postactivate {
     local venv="${1}"
+    local venv=${venv:-${VIRTUAL_ENV}}
     local venv=${venv:-.venv}
     for script in ${venv}/postactivate/postactivate.d/*.sh ;do
         [[ -x "${script}" ]] && echo "sourcing ${script}" && source "${script}"
