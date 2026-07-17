@@ -43,6 +43,7 @@ function install_node_binaries {
   local config="${VIRTUAL_ENV:-.venv}"/postactivate/postactivate.d/${group}-${name}.sh
   [[ ! -d $(dirname "${config}") ]] && mkdir -p $(dirname "${config}")
 
+  local NODE_VERSION=${version}
   local NODE_HOME=${TOOLS_HOME:=${HOME}/tools}/node-${NODE_VERSION}-${NODE_ARCH}
   local PNPM_HOME=${HOME}/.local/share/pnpm
   local PATH=${PATH}:${NODE_HOME}/bin:${PNPM_HOME}/bin
