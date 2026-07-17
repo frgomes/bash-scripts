@@ -34,7 +34,8 @@ function install_node_binaries {
   local url=http://nodejs.org/download/release/v${version}/${file}
   local folder=${name}-${version}-${arch}
   local subfolder=bin
-  local symlinks=node,npm,npx,pnpm
+  local symlinks=corepack,marked,ncu,node,npm,npm-check-updates,npx,pn,pnpm,pnpx,pnx,rollup,tsc,turbo,typescript-language-server
+
   local bin="${VIRTUAL_ENV:-.venv}/bin"
 
   "${dir}"/bash_install_tar "${url}" "${file}" "${folder}" "(${symlinks})" "${bin}" "${subfolder}" "--" "--strip-components=1"
@@ -47,29 +48,8 @@ function install_node_binaries {
 export NODE_VERSION=${version}
 export NODE_ARCH=\${NODE_ARCH:-${arch}}
 export NODE_HOME=\${TOOLS_HOME:=\${HOME}/tools}/node-\${NODE_VERSION}-\${NODE_ARCH}
-export PNPM_HOME="\${HOME}/.local/share/pnpm"
-
-export PATH=\${PATH}:\${NODE_HOME}/bin:\${PNPM_HOME}/bin
 EOD
   chmod ugo+x "${config}"
-
-  source ${config}
-
-  ##npm install -g pnpm@latest
-  ##pnpm self-update
-  ##export PNPM_HOME="${HOME}/.local/share/pnpm"
-  ##export PATH=${PATH}:${PNPM_HOME}/bin
-
-  pnpm add typescript typescript-language-server
-  pnpm add npm-check-updates
-  pnpm add marked # support for markdown
-  pnpm add turbo
-  pnpm add rollup
-
-  which curl >/dev/null 2>&1 || apt+ install curl
-  curl -fsSL https://claude.ai/install.sh | bash
-  curl -fsSL https://gh.io/copilot-install | bash
-
   echo "${config}"
 }
 

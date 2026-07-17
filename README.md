@@ -9,8 +9,12 @@ See documentation: [docs](docs)
 
 ```bash
 source ~/workspace/bash-scripts/bin/bashrc  ## see installation procedure below
-install_local_bin_uv                        ## installs uv for the first time into your ~/.local/bin
+
+install_uv                                  ## installs uv for the first time into your ~/.local/bin
 uv python 3.14                              ## installs Python 3.14 managed by uv
+
+install_fnm                                 ## installs fnm for the first time into your ~/.local/bin
+fnm install 24                              ## installs Node 24 managed by fnm
 
 mkdir myapp
 cd myapp
