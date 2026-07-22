@@ -6,27 +6,18 @@
 
 
 function __bash_path_prepend() {
-  [[ ! -z "$1" ]] && echo "$PATH" | tr ':' '\n' | grep -F "$1" > /dev/null || export PATH="$1:${PATH}"
+  [[ ! -z "${1}" ]] && (echo "${PATH}" | tr ':' '\n' | grep -F "${1}" > /dev/null) || export PATH="${1}:${PATH}"
 }
 function __bash_path_append() {
-  [[ ! -z "$1" ]] && echo "$PATH" | tr ':' '\n' | grep -F "$1" > /dev/null || export PATH="${PATH}:$1"
+  [[ ! -z "${1}" ]] && (echo "${PATH}" | tr ':' '\n' | grep -F "${1}" > /dev/null) || export PATH="${PATH}:${1}"
 }
 
-##XXX function postactivate {
-##XXX     local venv="${1}"
-##XXX     local venv=${venv:-${VIRTUAL_ENV}}
-##XXX     local venv=${venv:-.venv}
-##XXX     for script in ${venv}/postactivate/postactivate.d/*.sh ;do
-##XXX         [[ -x "${script}" ]] && echo "sourcing ${script}" && source "${script}"
-##XXX     done
-##XXX }
-
 __bash_path_prepend "${HOME}/bin"
-__bash_path_prepend "$(dirname $(readlink -f "${BASH_SOURCE[0]}"))/sbin"
-__bash_path_prepend "$(dirname $(readlink -f "${BASH_SOURCE[0]}"))/bin"
-__bash_path_prepend "${HOME}/.local/share/../bin"
+__bash_path_append "${HOME}/.local/share/../bin"
+__bash_path_append "$(dirname $(readlink -f "${BASH_SOURCE[0]}"))/bin"
+__bash_path_append "$(dirname $(readlink -f "${BASH_SOURCE[0]}"))/sbin"
 
-##FIXME: choose text editor on this order: emacs, zile, vim, nano, vi
+# Choose text editor in this order: emacs, zile, vim, nano, vi
 if [ ! -z $(which emacs 2> /dev/null) ] ;then
   VISUAL=emacs
   EDITOR="zile"
@@ -80,7 +71,24 @@ shopt -s globstar
 shopt -s cmdhist
 
 
-function install_mise {
+function direnv_install {
+  if command -v direnv > /dev/null 2>&1; then
+    return 0
+  else
+    export BIN_PATH="${HOME}/.local/bin" 
+    [[ -d "${BIN_PATH}" ]] || mkdir -p "${BIN_PATH}"
+    curl -sSfL https://direnv.net/install.sh | bash > /dev/null
+  fi
+
+  if ! command -v direnv > /dev/null 2>&1; then
+    echo "ERROR: could not install direnv" >&2
+    return 1
+  fi
+}
+function direnv_hook {
+  eval "$(direnv hook bash)"
+}
+function mise_install {
   ## make sure mise is installed
   which mise > /dev/null 2>&1 || (curl https://mise.run | bash)
 
@@ -103,8 +111,6 @@ EOD
 ##-----------------------------------------------------------------------------------
   fi
 }
-function install_direnv {
-  eval "$(direnv hook bash)"
-}
-install_mise
-install_direnv
+direnv_install
+mise_install
+direnv_hook
