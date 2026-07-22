@@ -87,7 +87,8 @@ function install_mise {
   local DIRENV_MISE="${HOME}/.config/direnv/lib/use_mise.sh"
   if [[ ! -f "$DIRENV_MISE" ]] || ! grep -q "use_mise" "$DIRENV_MISE"; then
 ##-----------------------------------------------------------------------------------
-cat <<'EOD' >> "$DIRENV_MISE"
+mkdir -p $(dirname "${DIRENV_MISE}")
+cat <<EOD >> "$DIRENV_MISE"
 # ~/.config/direnv/lib/use_mise.sh
 use_mise() {
   export PATH="$HOME/.local/bin:$PATH"
