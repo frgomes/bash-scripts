@@ -12,7 +12,7 @@ function bmad_install {
   npx bmad-method install \
     --directory "." \
     --output-folder "./_bmad-output" \
-    --tools claude-code,cursor,codex,github-copilot,gemini,openclaw \
+    --tools claude-code,cursor,codex,github-copilot,gemini,openclaw,opencode \
     --user-name "${firstname}" \
     --action update \
     --yes
