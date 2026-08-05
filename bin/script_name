@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  echo "Labels a shell script with is own name"
+  echo "Usage: $0 [-i|--in-place] [-q|--quiet] <script1.sh> [script2.sh ...]"
+  echo "Options:"
+  echo "  -i, --in-place   Modify shell scripts in-place."
+  echo "  -q, --quiet      Quiet mode."
+  echo "  Without -i, the script only inspects and lists resolved targets."
+  exit 1
+}
+
+IN_PLACE=false
+QUIET=false
+FILES=()
+
+# Parse command-line flags
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -i|--in-place)
+      IN_PLACE=true
+      shift
+      ;;
+    -q|--quiet)
+      QUIET=true
+      shift
+      ;;
+    -h|--help)
+      usage
+      ;;
+    --)
+      shift
+      FILES+=("$@")
+      break
+      ;;
+    -*)
+      usage
+      ;;
+    *)
+      FILES+=("$1")
+      shift
+      ;;
+  esac
+done
+
+if [ "${#FILES[@]}" -eq 0 ]; then
+  usage
+fi
+
+# Helper function to handle quiet mode cleanly
+log_msg() {
+  if [ "$QUIET" = false ]; then
+    echo "$@"
+  fi
+}
+
+for file in "${FILES[@]}"; do
+  # Follow symbolic links to get the real file path
+  real_file=$(readlink -f "$file" 2>/dev/null || true)
+
+  if [ -z "$real_file" ] || [ ! -f "$real_file" ]; then
+    log_msg "${file}:::File does not exist."
+    continue
+  fi
+
+  # Extract the actual resolved file name
+  filename=$(basename "$real_file")
+  first_line=$(head -n 1 "$real_file" 2>/dev/null || true)
+
+  # Validate if the file is a shell script (shebang or shell extension)
+  if [[ ! "$first_line" =~ ^#! ]] && [[ ! "$filename" =~ \.(sh|bash|zsh|ksh|fish)$ ]]; then
+    log_msg "${file}:::Not recognized as a shell script."
+    continue
+  fi
+
+  # Skip non-text / binary files silently
+  if file -b --mime-type "$real_file" 2>/dev/null | grep -qvE 'text/|x-empty'; then
+    log_msg "${file}:::Binary file skipped."
+    continue
+  fi
+
+  # Dry-run mode: Just list resolved file information
+  if [ "$IN_PLACE" = false ]; then
+    log_msg "${file}:${filename}:${real_file}"
+    continue
+  fi
+
+  # In-place modification mode
+  header_line="# script: ${filename}"
+
+  # If a header already exists, update it rather than duplicating
+  if grep -qE '^# script:' "$real_file"; then
+    sed -i "s|^# script:.*|${header_line}|" "$real_file" >/dev/null 2>&1
+    log_msg "${file}:${filename}:${real_file}"
+    continue
+  fi
+
+  if [[ "$first_line" =~ ^#! ]]; then
+    # Insert header line right after line 1 (the existing shebang)
+    sed -i "1a ${header_line}" "$real_file" >/dev/null 2>&1
+    log_msg "${file}:${filename}:${real_file}"
+  else
+    # Insert a default shebang at line 1 and header at line 2
+    sed -i -e "1i #!/usr/bin/env sh" -e "1a ${header_line}" "$real_file" >/dev/null 2>&1
+    log_msg "${file}:${filename}:${real_file}"
+  fi
+done
