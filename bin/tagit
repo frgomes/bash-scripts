@@ -1,0 +1,162 @@
+#!/usr/bin/env bash
+# file: tagit
+set -euo pipefail
+
+usage() {
+  echo "Labels shell scripts, Python, JS, TS, Rust, YAML, TOML, Markdown, and JSON files with their own filename."
+  echo "Usage: $0 [-i|--in-place] [-q|--quiet] <file1> [file2 ...]"
+  echo "Options:"
+  echo "  -i, --in-place   Modify target files in-place."
+  echo "  -q, --quiet      Quiet mode."
+  echo "  Without -i, the script only inspects and lists resolved targets."
+  exit 1
+}
+
+IN_PLACE=false
+QUIET=false
+FILES=()
+
+# Parse command-line flags
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -i|--in-place)
+      IN_PLACE=true
+      shift
+      ;;
+    -q|--quiet)
+      QUIET=true
+      shift
+      ;;
+    -h|--help)
+      usage
+      ;;
+    --)
+      shift
+      FILES+=("$@")
+      break
+      ;;
+    -*)
+      usage
+      ;;
+    *)
+      FILES+=("$1")
+      shift
+      ;;
+  esac
+done
+
+if [ "${#FILES[@]}" -eq 0 ]; then
+  usage
+fi
+
+# Helper function to handle quiet mode cleanly
+log_msg() {
+  if [ "$QUIET" = false ]; then
+    echo "$@"
+  fi
+}
+
+for file in "${FILES[@]}"; do
+  # Follow symbolic links to get the real file path
+  real_file=$(readlink -f "$file" 2>/dev/null || true)
+
+  if [ -z "$real_file" ] || [ ! -f "$real_file" ]; then
+    log_msg "${file}:::File does not exist."
+    continue
+  fi
+
+  # Extract the actual resolved file name
+  filename=$(basename "$real_file")
+  first_line=$(head -n 1 "$real_file" 2>/dev/null || true)
+
+  # Detect file type
+  file_type=""
+  if [[ "$first_line" =~ ^#! ]] || [[ "$filename" =~ \.(sh|bash|zsh|ksh|fish)$ ]]; then
+    file_type="shell"
+  elif [[ "$filename" =~ \.py$ ]]; then
+    file_type="python"
+  elif [[ "$filename" =~ \.(js|mjs|cjs)$ ]]; then
+    file_type="js"
+  elif [[ "$filename" =~ \.(ts|tsx)$ ]]; then
+    file_type="ts"
+  elif [[ "$filename" =~ \.rs$ ]]; then
+    file_type="rust"
+  elif [[ "$filename" =~ \.(yaml|yml)$ ]]; then
+    file_type="yaml"
+  elif [[ "$filename" =~ \.toml$ ]]; then
+    file_type="toml"
+  elif [[ "$filename" =~ \.(md|markdown)$ ]]; then
+    file_type="markdown"
+  elif [[ "$filename" =~ \.json$ ]]; then
+    file_type="json"
+  else
+    log_msg "${file}:::Not recognized as a supported file type."
+    continue
+  fi
+
+  # Skip non-text / binary files
+  if file -b --mime-type "$real_file" 2>/dev/null | grep -qvE 'text/|x-empty|xml|json'; then
+    log_msg "${file}:::Binary file skipped."
+    continue
+  fi
+
+  # Dry-run mode: Just list resolved file information
+  if [ "$IN_PLACE" = false ]; then
+    log_msg "${file}:${filename}:${real_file} (${file_type})"
+    continue
+  fi
+
+  # In-place modification mode per file type
+  case "$file_type" in
+    shell|python)
+      header_line="# file: ${filename}"
+      if grep -qE '^# (file|script):' "$real_file"; then
+        sed -i "s|^# \(file\|script\):.*|${header_line}|" "$real_file" >/dev/null 2>&1
+      elif [[ "$first_line" =~ ^#! ]]; then
+        sed -i "1a ${header_line}" "$real_file" >/dev/null 2>&1
+      else
+        sed -i "1i ${header_line}" "$real_file" >/dev/null 2>&1
+      fi
+      ;;
+
+    js|ts|rust)
+      header_line="// file: ${filename}"
+      if grep -qE '^\/\/\!? (file|script):' "$real_file"; then
+        sed -i "s|^\/\/\!? \(file\|script\):.*|${header_line}|" "$real_file" >/dev/null 2>&1
+      elif [[ "$first_line" =~ ^#! ]]; then
+        sed -i "1a ${header_line}" "$real_file" >/dev/null 2>&1
+      else
+        sed -i "1i ${header_line}" "$real_file" >/dev/null 2>&1
+      fi
+      ;;
+
+    yaml|toml)
+      header_line="# file: ${filename}"
+      if grep -qE '^# file:' "$real_file"; then
+        sed -i "s|^# file:.*|${header_line}|" "$real_file" >/dev/null 2>&1
+      else
+        sed -i "1i ${header_line}" "$real_file" >/dev/null 2>&1
+      fi
+      ;;
+
+    markdown)
+      header_line="<!-- file: ${filename} -->"
+      if grep -qE '^<!-- file:.*-->' "$real_file"; then
+        sed -i "s|^<!-- file:.*-->|${header_line}|" "$real_file" >/dev/null 2>&1
+      else
+        sed -i "1i ${header_line}" "$real_file" >/dev/null 2>&1
+      fi
+      ;;
+
+    json)
+      header_line="/* file: ${filename} */"
+      if grep -qE '^\/\* file:.*\*\/$' "$real_file"; then
+        sed -i "s|^\/\* file:.*\*\/|${header_line}|" "$real_file" >/dev/null 2>&1
+      else
+        sed -i "1i ${header_line}" "$real_file" >/dev/null 2>&1
+      fi
+      ;;
+  esac
+
+  log_msg "${file}:${filename}:${real_file}"
+done
