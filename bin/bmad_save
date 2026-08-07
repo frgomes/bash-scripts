@@ -13,7 +13,7 @@ function bmad_save() {
       mkdir -p ${dst} > /dev/null 2>&1
       # echo "$dir" ...
       local archive=${dst}/${now}_${name}-bmad.tar.bz2
-      tar -C "${dir}" -cpJf "${archive}" .codex/ .github/ _bmad-output/ docs/ documentation/
+      tar -C "${dir}" -cpJf "${archive}" AGENTS.md _bmad-output/ docs/ documentation/
       echo "${archive}"
   fi
 }
