@@ -102,7 +102,7 @@ for file in "${FILES[@]}"; do
 
   # Dry-run mode: Just list resolved file information
   if [ "$IN_PLACE" = false ]; then
-    log_msg "${file}:${filename}:${real_file} (${file_type})"
+    log_msg "${file}:${filename}:${real_file}:${file_type}"
     continue
   fi
 
