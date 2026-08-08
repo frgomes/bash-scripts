@@ -1,4 +1,4 @@
-#!/bin/bash -eu
+#!/bin/bash -eux
 
 function bmad_install {
   local fullname=$(getent passwd | grep $(whoami) | cut -d: -f5)
@@ -8,7 +8,8 @@ function bmad_install {
     local firstname=$(echo "${fullname}" | cut -d' ' -f1)
   fi
 
-  which npx > /dev/null 2>&1 || install_node 24.16.0
+  which npx > /dev/null 2>&1 || ( echo "ERROR: could not find npx" && exit 1 )
+
   npx bmad-method install \
     --directory "." \
     --output-folder "./_bmad-output" \
