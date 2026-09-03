@@ -1,6 +1,6 @@
 #!/bin/bash -eu
 
-function __zap {
+function __dev_clean {
   which find >/dev/null 2>&1 || apt+ install findutils
   local args=$@
   cmd=${args:=xargs rm -r -f}
@@ -13,4 +13,4 @@ function __zap {
   find . -type l \( -name '.#*#' -o -name '#*#' \) | $cmd
 }
 
-__zap $*
+__dev_clean $*
