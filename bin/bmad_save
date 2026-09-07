@@ -1,21 +1,7 @@
 #!/bin/bash
 
 function bmad_save() {
-  command -v tar >/dev/null 2>&1 || apt+ install tar
-  
-  local now=$(date +%Y%m%d_%H%M%S)
-  local cwd="${1:-$(pwd)}"
-
-  if [ -d "$cwd" ] ;then
-      local dir="$( readlink -f "$cwd" )"
-      local dst=${HOME}/backup/archives"${dir}"
-      local name="$( basename "$dir" )"
-      mkdir -p ${dst} > /dev/null 2>&1
-      # echo "$dir" ...
-      local archive=${dst}/${now}_${name}-bmad.tar.bz2
-      tar -C "${dir}" -cpJf "${archive}" AGENTS.md _bmad-output/ docs/ documentation/
-      echo "${archive}"
-  fi
+  backup -n bmad_save AGENTS.md _bmad-output/ docs/ documentation/
 }
 
-bmad_save $*
+bmad_save "$@"

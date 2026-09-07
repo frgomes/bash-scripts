@@ -1,32 +1,307 @@
-#!/bin/bash -eu
+#!/usr/bin/env bash
+set -euo pipefail
 
-function backup() {
-  command -v fd-find >/dev/null 2>&1 || which fd >/dev/null 2>&1 || apt+ install fd
-  command -v grep    >/dev/null 2>&1 || apt+ install grep
-  command -v tar     >/dev/null 2>&1 || apt+ install tar
-  
-  local now=$(date +%Y%m%d_%H%M%S)
-  local cwd="${1:-$(pwd)}"
+readonly BACKUP_ROOT="${HOME}/backup/archives"
 
-  if [ -d "$cwd" ] ;then
-      local dir="$( readlink -f "$cwd" )"
-      local dst=${HOME}/backup/archives"${dir}"
-      local name="$( basename "$dir" )"
-      mkdir -p ${dst} > /dev/null 2>&1
-      # echo "$dir" ...
-      local archive=${dst}/${now}_${name}.tar.bz2
-      echo "${archive}"
+__backup_usage() {
+    cat <<'EOF'
+Usage:
+  backup [OPTIONS] [FILE_OR_DIRECTORY ...]
 
-      find "${dir}" -type f | grep -F -v "${dir}"'./*.iml' | grep -F -v "${dir}"'./.idea/' | grep -F -v "${dir}"'./.hg/' | grep -F -v '/.git/' | grep -F -v '/.lib/' | grep -F -v '/node_modules/' | grep -F -v '/target/' | \
-          tar cvpJf "${archive}" -T - > /dev/null 2>&1
+Options:
+  -f, --format FORMAT
+      Compression format:
+        gz    tar with gzip compression (default)
+        bz2   tar with bzip2 compression
+        xz    tar with xz compression
+        zip   ZIP archive
 
-      # copy to Dropbox, if available
-      local replica=${HOME}/Dropbox/Private/backup/"${dst}"
-      mkdir -p "${replica}" > /dev/null 2>&1
-      if [ $? -eq 0 ] ;then
-          cp ${archive} "${replica}"
-      fi
-  fi
+  -n, --name NAME
+      Name used after the timestamp in the archive filename.
+      The default is "backup".
+
+  -h, --help
+      Display this help message.
+
+Examples:
+  backup
+  backup file.txt
+  backup file.txt directory/
+  backup --name source-code src/ tests/ README.md
+  backup --format bz2 --name project file.txt directory/
+  backup -f zip -n documents ~/Documents ~/Pictures/photo.jpg
+
+Generated filenames:
+  20260907_154800_backup.tar.gz
+  20260907_154800_source-code.tar.gz
+  20260907_154800_documents.zip
+EOF
 }
 
-backup $*
+# Write a NUL-delimited list of regular files beneath PATH.
+#
+# Paths are written relative to the filesystem root so that archives do not
+# contain absolute pathnames. Excluded directories are pruned recursively.
+__backup_files() {
+    local path="$1"
+    local resolved_path
+
+    resolved_path="$(readlink -f -- "$path")"
+
+    if [[ -f "$resolved_path" ]]; then
+        printf '%s\0' "${resolved_path#/}"
+        return
+    fi
+
+    find "$resolved_path" \
+        \( \
+            -type d \
+            \( \
+                -name '.idea'        -o \
+                -name '.hg'          -o \
+                -name '.git'         -o \
+                -name '.lib'         -o \
+                -name '.venv'        -o \
+                -name 'node_modules' -o \
+                -name 'target'       -o \
+                -name 'dist' \
+            \) \
+            -prune \
+        \) \
+        -o -type f -printf '%P\0' |
+    while IFS= read -r -d '' relative_path; do
+        printf '%s\0' "${resolved_path#/}/${relative_path}"
+    done
+}
+
+# Collect files from all supplied paths into one NUL-delimited file list.
+__backup_collect_files() {
+    local output_file="$1"
+    shift
+
+    local path
+
+    : >"$output_file"
+
+    for path in "$@"; do
+        __backup_files "$path" >>"$output_file"
+    done
+}
+
+__backup_create_tar() {
+    local compression="$1"
+    local archive="$2"
+    local file_list="$3"
+    local alg="gzip"
+
+    case "$compression" in
+        bz2) alg="bzip2";;
+        xz)  alg="xz";;
+        *)   alg="gzip";;
+    esac
+
+    tar \
+        --create \
+        --preserve-permissions \
+        --file="$archive" \
+        --directory=/ \
+        --null \
+        --verbatim-files-from \
+        --${alg} \
+        --files-from="$file_list"
+}
+
+__backup_create_zip() {
+    local archive="$1"
+    local file_list="$2"
+    local file
+    local files_added=0
+
+    rm -f -- "$archive"
+
+    # `zip -@` uses newline-delimited input, so it is unsafe for filenames
+    # containing newlines. Read the NUL-delimited list and pass each filename
+    # to zip as a separate argument instead.
+    while IFS= read -r -d '' file; do
+        (
+            cd /
+            zip -q "$archive" -- "$file"
+        )
+
+        files_added=1
+    done <"$file_list"
+
+    if (( files_added == 0 )); then
+        printf 'No eligible files were found.\n' >&2
+        return 1
+    fi
+}
+
+backup() {
+    local compression="gz"
+    local archive_name="backup"
+    local archive
+    local extension
+    local now
+    local path
+    local file_list
+
+    # Parse short and long options.
+    while (( $# > 0 )); do
+        case "$1" in
+            -f|--format)
+                if (( $# < 2 )); then
+                    printf 'Option %s requires an argument.\n' "$1" >&2
+                    return 2
+                fi
+
+                compression="$2"
+                shift 2
+                ;;
+
+            --format=*)
+                compression="${1#*=}"
+                shift
+                ;;
+
+            -n|--name)
+                if (( $# < 2 )); then
+                    printf 'Option %s requires an argument.\n' "$1" >&2
+                    return 2
+                fi
+
+                archive_name="$2"
+                shift 2
+                ;;
+
+            --name=*)
+                archive_name="${1#*=}"
+                shift
+                ;;
+
+            -h|--help)
+                __backup_usage
+                return 0
+                ;;
+
+            --)
+                shift
+                break
+                ;;
+
+            -*)
+                printf 'Unknown option: %s\n' "$1" >&2
+                __backup_usage >&2
+                return 2
+                ;;
+
+            *)
+                break
+                ;;
+        esac
+    done
+
+    # Use the current directory when no paths are supplied.
+    if (( $# == 0 )); then
+        set -- "$(pwd)"
+    fi
+
+    if [[ -z "$archive_name" ]]; then
+        printf 'The archive name cannot be empty.\n' >&2
+        return 2
+    fi
+
+    # Prevent --name from introducing additional path components.
+    if [[ "$archive_name" == */* ]]; then
+        printf 'The archive name cannot contain "/": %s\n' \
+            "$archive_name" >&2
+        return 2
+    fi
+
+    case "$compression" in
+        gz)
+            extension="tar.gz"
+            ;;
+        bz2)
+            extension="tar.bz2"
+            ;;
+        xz)
+            extension="tar.xz"
+            ;;
+        zip)
+            extension="zip"
+            ;;
+        *)
+            printf 'Unsupported compression format: %s\n' \
+                "$compression" >&2
+            printf 'Supported formats: gz, bz2, xz, zip\n' >&2
+            return 2
+            ;;
+    esac
+
+    # Validate all input paths before creating an archive.
+    for path in "$@"; do
+        if [[ ! -e "$path" ]]; then
+            printf 'File or directory not found: %s\n' "$path" >&2
+            return 1
+        fi
+
+        if [[ ! -f "$path" && ! -d "$path" ]]; then
+            printf 'Unsupported file type: %s\n' "$path" >&2
+            return 1
+        fi
+    done
+
+    command -v find     >/dev/null 2>&1 || apt+ install findutils
+    command -v readlink >/dev/null 2>&1 || apt+ install coreutils
+    command -v mktemp   >/dev/null 2>&1 || apt+ install coreutils
+
+    case "$compression" in
+        gz)
+            command -v tar  >/dev/null 2>&1 || apt+ install tar
+            command -v gzip >/dev/null 2>&1 || apt+ install gzip
+            ;;
+        bz2)
+            command -v tar   >/dev/null 2>&1 || apt+ install tar
+            command -v bzip2 >/dev/null 2>&1 || apt+ install bzip2
+            ;;
+        xz)
+            command -v tar >/dev/null 2>&1 || apt+ install tar
+            command -v xz  >/dev/null 2>&1 || apt+ install xz
+            ;;
+        zip)
+            command -v zip >/dev/null 2>&1 || apt+ install zip
+            ;;
+    esac
+
+    mkdir -p -- "$BACKUP_ROOT"
+
+    now="$(date +%Y%m%d_%H%M%S)"
+    archive="${BACKUP_ROOT}/${now}_${archive_name}.${extension}"
+
+    # Build the complete file list before creating the archive. This prevents
+    # the archive from accidentally including itself when BACKUP_ROOT is
+    # located under one of the directories being backed up.
+    file_list="$(mktemp)"
+    trap 'rm -f -- "$file_list"' RETURN
+
+    __backup_collect_files "$file_list" "$@"
+
+    if [[ ! -s "$file_list" ]]; then
+        printf 'No eligible files were found.\n' >&2
+        return 1
+    fi
+
+    case "$compression" in
+        gz|bz2|xz)
+            __backup_create_tar "$compression" "$archive" "$file_list"
+            ;;
+        zip)
+            __backup_create_zip "$archive" "$file_list"
+            ;;
+    esac
+
+    printf '%s\n' "$archive"
+}
+
+backup "$@"
