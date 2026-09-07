@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# file: backup
+
 set -euo pipefail
 
 readonly BACKUP_ROOT="${HOME}/backup/archives"
@@ -9,6 +11,20 @@ Usage:
   backup [OPTIONS] [FILE_OR_DIRECTORY ...]
 
 Options:
+  -d, --destination DIRECTORY
+      Directory where the archive will be created, relative to BACKUP_ROOT.
+
+      The default is the current working directory, with its leading slash
+      removed.
+
+      Examples:
+        -d a/b/c
+            Saves under: ${BACKUP_ROOT}/a/b/c
+
+        From /home/user/workspace/project, with no -d:
+            Saves under:
+            ${BACKUP_ROOT}/home/user/workspace/project
+
   -f, --format FORMAT
       Compression format:
         gz    tar with gzip compression (default)
@@ -25,16 +41,17 @@ Options:
 
 Examples:
   backup
-  backup file.txt
   backup file.txt directory/
-  backup --name source-code src/ tests/ README.md
-  backup --format bz2 --name project file.txt directory/
-  backup -f zip -n documents ~/Documents ~/Pictures/photo.jpg
+
+  backup --destination a/b/c file.txt directory/
+  backup -d a/b/c -n project src/ tests/
+  backup -d releases -f bz2 -n project file.txt directory/
+  backup -d documents -f zip -n personal ~/Documents ~/Pictures/photo.jpg
 
 Generated filenames:
   20260907_154800_backup.tar.gz
-  20260907_154800_source-code.tar.gz
-  20260907_154800_documents.zip
+  20260907_154800_project.tar.bz2
+  20260907_154800_personal.zip
 EOF
 }
 
@@ -45,6 +62,7 @@ EOF
 __backup_files() {
     local path="$1"
     local resolved_path
+    local relative_path
 
     resolved_path="$(readlink -f -- "$path")"
 
@@ -92,12 +110,12 @@ __backup_create_tar() {
     local compression="$1"
     local archive="$2"
     local file_list="$3"
-    local alg="gzip"
+    local algorithm=gzip
 
     case "$compression" in
-        bz2) alg="bzip2";;
-        xz)  alg="xz";;
-        *)   alg="gzip";;
+        bz2) algorithm="bzip2";;
+        xz) algorithm="xz";;
+        *) algorithm="gzip";;
     esac
 
     tar \
@@ -107,7 +125,7 @@ __backup_create_tar() {
         --directory=/ \
         --null \
         --verbatim-files-from \
-        --${alg} \
+        "--${algorithm}" \
         --files-from="$file_list"
 }
 
@@ -119,9 +137,9 @@ __backup_create_zip() {
 
     rm -f -- "$archive"
 
-    # `zip -@` uses newline-delimited input, so it is unsafe for filenames
+    # `zip -@` uses newline-delimited input and is unsafe for filenames
     # containing newlines. Read the NUL-delimited list and pass each filename
-    # to zip as a separate argument instead.
+    # to zip individually.
     while IFS= read -r -d '' file; do
         (
             cd /
@@ -140,15 +158,36 @@ __backup_create_zip() {
 backup() {
     local compression="gz"
     local archive_name="backup"
+
+    # The default destination mirrors the absolute current directory beneath
+    # BACKUP_ROOT. For example, /home/user/project becomes home/user/project.
+    local destination_name="${PWD#/}"
+
+    local destination
     local archive
     local extension
     local now
     local path
     local file_list
 
-    # Parse short and long options.
+    # Parse short and long options. Options must appear before input paths.
     while (( $# > 0 )); do
         case "$1" in
+            -d|--destination)
+                if (( $# < 2 )); then
+                    printf 'Option %s requires an argument.\n' "$1" >&2
+                    return 2
+                fi
+
+                destination_name="$2"
+                shift 2
+                ;;
+
+            --destination=*)
+                destination_name="${1#*=}"
+                shift
+                ;;
+
             -f|--format)
                 if (( $# < 2 )); then
                     printf 'Option %s requires an argument.\n' "$1" >&2
@@ -201,9 +240,9 @@ backup() {
         esac
     done
 
-    # Use the current directory when no paths are supplied.
+    # Use the current directory as the input when no paths are supplied.
     if (( $# == 0 )); then
-        set -- "$(pwd)"
+        set -- "$PWD"
     fi
 
     if [[ -z "$archive_name" ]]; then
@@ -211,10 +250,29 @@ backup() {
         return 2
     fi
 
-    # Prevent --name from introducing additional path components.
+    # Prevent the archive name from introducing path components.
     if [[ "$archive_name" == */* ]]; then
         printf 'The archive name cannot contain "/": %s\n' \
             "$archive_name" >&2
+        return 2
+    fi
+
+    if [[ -z "$destination_name" ]]; then
+        printf 'The destination cannot be empty.\n' >&2
+        return 2
+    fi
+
+    # The destination must always be relative to BACKUP_ROOT.
+    if [[ "$destination_name" == /* ]]; then
+        printf 'The destination must be relative to BACKUP_ROOT: %s\n' \
+            "$destination_name" >&2
+        return 2
+    fi
+
+    # Prevent destination traversal outside BACKUP_ROOT.
+    if [[ "/${destination_name}/" == *"/../"* ]]; then
+        printf 'The destination cannot contain ".." components: %s\n' \
+            "$destination_name" >&2
         return 2
     fi
 
@@ -239,7 +297,7 @@ backup() {
             ;;
     esac
 
-    # Validate all input paths before creating an archive.
+    # Validate every input before creating the archive.
     for path in "$@"; do
         if [[ ! -e "$path" ]]; then
             printf 'File or directory not found: %s\n' "$path" >&2
@@ -274,16 +332,20 @@ backup() {
             ;;
     esac
 
-    mkdir -p -- "$BACKUP_ROOT"
+    destination="${BACKUP_ROOT}/${destination_name}"
+    mkdir -p -- "$destination"
 
     now="$(date +%Y%m%d_%H%M%S)"
-    archive="${BACKUP_ROOT}/${now}_${archive_name}.${extension}"
+    archive="${destination}/${now}_${archive_name}.${extension}"
 
     # Build the complete file list before creating the archive. This prevents
-    # the archive from accidentally including itself when BACKUP_ROOT is
-    # located under one of the directories being backed up.
+    # the output archive from including itself when BACKUP_ROOT is beneath
+    # one of the directories being backed up.
     file_list="$(mktemp)"
-    trap 'rm -f -- "$file_list"' RETURN
+
+    # Expand the variable when the trap is registered so cleanup still works
+    # after local variables leave scope.
+    trap "rm -f -- $(printf '%q' "$file_list")" RETURN
 
     __backup_collect_files "$file_list" "$@"
 
