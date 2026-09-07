@@ -122,9 +122,9 @@ function apt+ {
                     local obj=$(__apt+_${distro} | grep -E "^${pkg}:" | grep -E -v '(^[ \t]*#)|(^[ \t]*$)' | cut -d: -f2)
                     local obj=${obj:-${id}}
                     case "${distro}" in
-                        Debian|Ubuntu) [[ -f ${obj} ]] || which ${obj} >/dev/null 2>&1 || sudo ${cmd} ;;
-                        openSUSE)      [[ -f ${obj} ]] || which ${obj} >/dev/null 2>&1 || sudo ${cmd} ;;
-                        Fedora)        [[ -f ${obj} ]] || which ${obj} >/dev/null 2>&1 || sudo ${cmd} ;;
+                        Debian|Ubuntu) [[ -f ${obj} ]] || command -v ${obj} >/dev/null 2>&1 || sudo ${cmd} ;;
+                        openSUSE)      [[ -f ${obj} ]] || command -v ${obj} >/dev/null 2>&1 || sudo ${cmd} ;;
+                        Fedora)        [[ -f ${obj} ]] || command -v ${obj} >/dev/null 2>&1 || sudo ${cmd} ;;
                         *)             echo "Unsupported distribution: ${distro}" ; return 1;;
                     esac
 		        fi

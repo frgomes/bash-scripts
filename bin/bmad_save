@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function bmad_save() {
-  apt+ install tar
+  command -v tar >/dev/null 2>&1 || apt+ install tar
   
   local now=$(date +%Y%m%d_%H%M%S)
   local cwd="${1:-$(pwd)}"

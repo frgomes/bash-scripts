@@ -6,7 +6,7 @@ function __bash_install_app_help(){
 }
 
 function __bash_install_app_worker() {
-  which curl >/dev/null 2>&1 || apt+ install curl
+  command -v curl >/dev/null 2>&1 || apt+ install curl
 
   [[ $# -lt 3 ]] && __bash_install_app_help && return 1
   local url="$1"

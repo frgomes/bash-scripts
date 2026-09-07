@@ -1,7 +1,7 @@
 #!/bin/bash -eu
 
 function rg+ {
-    apt+ install rg
+    command -v rg  >/dev/null 2>&1 || apt+ install rg
     case "${1}" in
         ant)   shift; rg -g 'build.xml' -H -n $@;;
         pom)   shift; rg -g 'pom.xml'   -H -n $@;;

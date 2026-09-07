@@ -24,7 +24,7 @@ function git_sparse_checkout {
     local url="${arg}"
     [[ $# == 0 ]] || shift
 
-    # obtain branch, which the default is master for historical reasons
+    # obtain branch
     if [[ "${arg}" != "--" ]] ;then arg="${1:-master}" ;fi
     if [[ "${arg}" == "--" ]] ;then
       local tag=master
@@ -33,7 +33,7 @@ function git_sparse_checkout {
       [[ $# == 0 ]] || shift
     fi
 
-    # obtain the project directory, which defaults to the repository name
+    # obtain the project directory
     local prj=$(echo "$url" | sed 's:/:\n:g' | tail -1)
 
     if [[ "${arg}" != "--" ]] ;then arg="${1:-.}" ;fi

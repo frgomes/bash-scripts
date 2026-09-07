@@ -4,12 +4,12 @@ function __install_jupyter_worker {
   local SCALA_MAJOR="${1}"
   local ALMOND_VERSION="${2}"
 
-  which python3 >/dev/null 2>&1 || apt+ install python3-minimal
+  command -v python3 >/dev/null 2>&1 || apt+ install python3-minimal
   python3 -m ensurepip
   python3 -m pip install --upgrade pip
   python3 -m pip install --upgrade pygments jupyter
 
-  which coursier > /dev/null 2>&1 || ${dir}/install_coursier
+  command -v coursier > /dev/null 2>&1 || ${dir}/install_coursier
   coursier launch --fork almond:${ALMOND_VERSION} -- --install --force
 
   ##XXX python3 -m pip install --upgrade --force jupyter_contrib_nbextensions jupyter_nbextensions_configurator

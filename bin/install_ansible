@@ -1,9 +1,9 @@
 #!/bin/bash -eu
 
 function install_ansible_binaries {
-  which python3 >/dev/null 2>&1 || apt+ install python3
-  which pip3    >/dev/null 2>&1 || apt+ install python-pip
-  which ansible >/dev/null 2>&1 || python3 -m pip install --quiet --upgrade pip ansible
+  command -v python3 >/dev/null 2>&1 || apt+ install python3
+  command -v pip3    >/dev/null 2>&1 || apt+ install python-pip
+  command -v ansible >/dev/null 2>&1 || python3 -m pip install --quiet --upgrade pip ansible
 }
 
 function __install_ansible {

@@ -44,7 +44,7 @@ function install_android_sdk_tools_binaries {
   mkdir -p ${folder}/cmdline-tools/${tooling}
   mv ${folder}/cmdline-tools/{bin,lib,NOTICE.txt,source.properties} ${folder}/cmdline-tools/${tooling}
 
-  # At this point, I've opted for an arcane approach: create a script which performs the remaining installation steps.
+  # At this point, I've opted for an arcane approach: create a script that performs the remaining installation steps.
   # Maybe in future I decide for a direct approach.
   # However, given that Google decided to rename things and change other details, it turns out that the current approach using
   # an installation script is preferrable since I can more easily debug the installation process and fix whatever needs to be fixed.

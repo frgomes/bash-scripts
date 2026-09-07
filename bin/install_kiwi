@@ -32,7 +32,7 @@ function __install_kiwi_binaries {
 }
 
 function __install_kiwi_apps {
-  which python3 >/dev/null 2>&1 || apt+ install python3-minimal
+  command -v python3 >/dev/null 2>&1 || apt+ install python3-minimal
   pip3 --disable-pip-version-check install --upgrade kiwi kiwi_boxed_plugin kiwi-obs-plugin 
 }
 

@@ -10,7 +10,7 @@ function install_spark_binaries {
 
   [[ ! -d "${DOWNLOADS:-${HOME}/Downloads}" ]] && mkdir -p "${DOWNLOADS:-${HOME}/Downloads}"
   [[ ! -f "${DOWNLOADS:-${HOME}/Downloads}/spark-${spark_version}-bin-hadoop${hadoop_version}.tgz" ]] && \
-    which curl >/dev/null 2>&1 || apt+ install curl
+    command -v curl >/dev/null 2>&1 || apt+ install curl
     curl https://www-eu.apache.org/dist/spark/spark-${spark_version}/spark-${spark_version}-bin-hadoop${hadoop_version}.tgz -o "${DOWNLOADS:-${HOME}/Downloads}/spark-${spark_version}-bin-hadoop${hadoop_version}.tgz"
 
   local tools=${TOOLS_HOME:=$HOME/tools}

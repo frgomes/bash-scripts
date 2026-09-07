@@ -3,17 +3,15 @@
 set -euo pipefail
 
 usage() {
-  echo "Labels shell scripts, Python, JS, TS, Rust, YAML, TOML, Markdown, and JSON files with their own filename."
-  echo "Usage: $0 [-i|--in-place] [-q|--quiet] <file1> [file2 ...]"
+  echo "Labels shell scripts, Python, JS, TS, Rust, YAML, TOML, Markdown, and JSONC files with their own filename."
+  echo "Usage: $0 [-i|--in-place] <file1> [file2 ...]"
   echo "Options:"
   echo "  -i, --in-place   Modify target files in-place."
-  echo "  -q, --quiet      Quiet mode."
   echo "  Without -i, the script only inspects and lists resolved targets."
   exit 1
 }
 
 IN_PLACE=false
-QUIET=false
 FILES=()
 
 # Parse command-line flags
@@ -21,10 +19,6 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     -i|--in-place)
       IN_PLACE=true
-      shift
-      ;;
-    -q|--quiet)
-      QUIET=true
       shift
       ;;
     -h|--help)
@@ -49,11 +43,8 @@ if [ "${#FILES[@]}" -eq 0 ]; then
   usage
 fi
 
-# Helper function to handle quiet mode cleanly
 log_msg() {
-  if [ "$QUIET" = false ]; then
-    echo "$@"
-  fi
+  echo "$@"
 }
 
 for file in "${FILES[@]}"; do
@@ -87,8 +78,11 @@ for file in "${FILES[@]}"; do
     file_type="toml"
   elif [[ "$filename" =~ \.(md|markdown)$ ]]; then
     file_type="markdown"
+  elif [[ "$filename" =~ \.jsonc$ ]]; then
+    file_type="jsonc"
   elif [[ "$filename" =~ \.json$ ]]; then
-    file_type="json"
+    log_msg "${file}:::Standard JSON skipped (does not support comments)."
+    continue
   else
     log_msg "${file}:::Not recognized as a supported file type."
     continue
@@ -106,54 +100,74 @@ for file in "${FILES[@]}"; do
     continue
   fi
 
-  # In-place modification mode per file type
+  # Escape special replacement characters in filename for sed (\ and &)
+  safe_filename=$(echo "$filename" | sed -e 's/\\/\\\\/g' -e 's/&/\\&/g')
+
+  # In-place modification mode per file type (restricted to lines 1-2)
   case "$file_type" in
     shell|python)
-      header_line="# file: ${filename}"
-      if grep -qE '^# (file|script):' "$real_file"; then
-        sed -i "s|^# \(file\|script\):.*|${header_line}|" "$real_file" >/dev/null 2>&1
+      header_line="# file: ${safe_filename}"
+      if head -n 2 "$real_file" | grep -qE '^# (file|script):'; then
+        sed -i -E "1,2s|^# file:.*|${header_line}|" "$real_file"
+        sed -i -E "1,2s|^# script:.*|${header_line}|" "$real_file"
       elif [[ "$first_line" =~ ^#! ]]; then
-        sed -i "1a ${header_line}" "$real_file" >/dev/null 2>&1
+        sed -i "1a\\
+${header_line}" "$real_file"
       else
-        sed -i "1i ${header_line}" "$real_file" >/dev/null 2>&1
+        sed -i "1i\\
+${header_line}" "$real_file"
       fi
       ;;
 
     js|ts|rust)
-      header_line="// file: ${filename}"
-      if grep -qE '^\/\/\!? (file|script):' "$real_file"; then
-        sed -i "s|^\/\/\!? \(file\|script\):.*|${header_line}|" "$real_file" >/dev/null 2>&1
+      header_line="// file: ${safe_filename}"
+      if head -n 2 "$real_file" | grep -qE '^//!? (file|script):'; then
+        sed -i -E "1,2s|^// file:.*|${header_line}|" "$real_file"
+        sed -i -E "1,2s|^//! file:.*|${header_line}|" "$real_file"
+        sed -i -E "1,2s|^// script:.*|${header_line}|" "$real_file"
+        sed -i -E "1,2s|^//! script:.*|${header_line}|" "$real_file"
       elif [[ "$first_line" =~ ^#! ]]; then
-        sed -i "1a ${header_line}" "$real_file" >/dev/null 2>&1
+        sed -i "1a\\
+${header_line}" "$real_file"
       else
-        sed -i "1i ${header_line}" "$real_file" >/dev/null 2>&1
+        sed -i "1i\\
+${header_line}" "$real_file"
       fi
       ;;
 
     yaml|toml)
-      header_line="# file: ${filename}"
-      if grep -qE '^# file:' "$real_file"; then
-        sed -i "s|^# file:.*|${header_line}|" "$real_file" >/dev/null 2>&1
+      header_line="# file: ${safe_filename}"
+      if head -n 2 "$real_file" | grep -qE '^# (file|script):'; then
+        sed -i -E "1,2s|^# file:.*|${header_line}|" "$real_file"
+        sed -i -E "1,2s|^# script:.*|${header_line}|" "$real_file"
+      elif [[ "$first_line" =~ ^--- ]]; then
+        sed -i "1a\\
+${header_line}" "$real_file"
       else
-        sed -i "1i ${header_line}" "$real_file" >/dev/null 2>&1
+        sed -i "1i\\
+${header_line}" "$real_file"
       fi
       ;;
 
     markdown)
-      header_line="<!-- file: ${filename} -->"
-      if grep -qE '^<!-- file:.*-->' "$real_file"; then
-        sed -i "s|^<!-- file:.*-->|${header_line}|" "$real_file" >/dev/null 2>&1
+      header_line="<!-- file: ${safe_filename} -->"
+      if head -n 2 "$real_file" | grep -qE '^<!-- (file|script):.*-->'; then
+        sed -i -E "1,2s|^<!-- file:.*-->|${header_line}|" "$real_file"
+        sed -i -E "1,2s|^<!-- script:.*-->|${header_line}|" "$real_file"
       else
-        sed -i "1i ${header_line}" "$real_file" >/dev/null 2>&1
+        sed -i "1i\\
+${header_line}" "$real_file"
       fi
       ;;
 
-    json)
-      header_line="/* file: ${filename} */"
-      if grep -qE '^\/\* file:.*\*\/$' "$real_file"; then
-        sed -i "s|^\/\* file:.*\*\/|${header_line}|" "$real_file" >/dev/null 2>&1
+    jsonc)
+      header_line="/* file: ${safe_filename} */"
+      if head -n 2 "$real_file" | grep -qE '^/\* (file|script):.*\*/'; then
+        sed -i -E "1,2s|^/\* file:.*\*/|${header_line}|" "$real_file"
+        sed -i -E "1,2s|^/\* script:.*\*/|${header_line}|" "$real_file"
       else
-        sed -i "1i ${header_line}" "$real_file" >/dev/null 2>&1
+        sed -i "1i\\
+${header_line}" "$real_file"
       fi
       ;;
   esac

@@ -51,12 +51,12 @@ function install_kafka_binaries {
   fi
   if [[ -z "${archive}" ]] ;then
     local archive="${DOWNLOADS:-${HOME}/Downloads}/${file}"
-    which curl >/dev/null 2>&1 || apt+ install curl
+    command -v curl >/dev/null 2>&1 || apt+ install curl
     curl "$url" -o "${archive}"
   fi
 
   if [ ! -d "${tools}/${folder}" ] ;then
-    which tar >/dev/null 2>&1 || apt+ install tar
+    command -v tar >/dev/null 2>&1 || apt+ install tar
     tar -C "${tools}" -xpf "${archive}"
   fi
   if [ ! -z "${symlink}" ] ;then

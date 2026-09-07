@@ -1,7 +1,7 @@
 #!/bin/bash -eu
 
 #------------------------------------------------------------------
-# This script runs a command inside a container which comes with:
+# This script runs a command inside a container containing:
 #   * Rust
 #   * Android NDK
 #   * Android SDK
@@ -62,11 +62,11 @@ EOF
 
 # https://developers.redhat.com/blog/2019/04/04/build-and-run-buildah-inside-a-podman-container/
 function __miniglue_install_podman {
-    which podman  >/dev/null 2>&1 || apt+ install podman
-    which buildah >/dev/null 2>&1 || apt+ install buildah
+    command -v podman  >/dev/null 2>&1 || apt+ install podman
+    command -v buildah >/dev/null 2>&1 || apt+ install buildah
 }
 function __miniglue_install_curl {
-    which curl    >/dev/null 2>&1 || apt+ install curl ca-certificates gpg
+    command -v curl    >/dev/null 2>&1 || apt+ install curl ca-certificates gpg
 }
 
 function __miniglue_build_container {

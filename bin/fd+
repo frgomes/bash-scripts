@@ -7,8 +7,7 @@ function fd+ {
         *) cmd=fd;;
     esac
 
-    # always specify Debian package names and apt+ will adjust accordingly
-    apt+ install fd
+    command -v "${cmd}" >/dev/null 2>&1 || apt+ install fd
     ${cmd} $@
 }
 

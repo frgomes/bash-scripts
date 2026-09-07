@@ -7,7 +7,7 @@ function __bash_install_tar_help(){
 
 function __bash_install_tar_worker() {
   set -x
-  which curl >/dev/null 2>&1 || apt+ install curl
+  command -v curl >/dev/null 2>&1 || apt+ install curl
 
   [[ $# -lt 3 ]] && __bash_install_tar_help && return 1
   local url="$1"
@@ -38,7 +38,7 @@ function __bash_install_tar_worker() {
     local archive="${DOWNLOADS:-${HOME}/Downloads}/${file}"
   fi
 
-  which xz >/dev/null 2>&1 || apt+ install xz
+  command -v xz >/dev/null 2>&1 || apt+ install xz
 
   # validate existing archive
   [[ ! -s "${archive}" ]] && [[ ! $(tar -tf "${archive}" > /dev/null 2>&1) ]] && rm "${archive}" && local archive=""

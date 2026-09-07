@@ -2,4 +2,4 @@
 set -euo pipefail
 
 # install uv :: https://pypi.org/project/uv/
-which uv > /dev/null || curl -LsSf https://astral.sh/uv/install.sh | bash
+which uv > /dev/null 2>&1 || curl -LsSf https://astral.sh/uv/install.sh | bash

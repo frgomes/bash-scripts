@@ -16,7 +16,7 @@ v=${2:-$(python3 -V | cut -d' ' -f2)} # Python version to be installed onto the 
 
 
 # install uv :: https://pypi.org/project/uv/
-which uv > /dev/null || curl -LsSf https://astral.sh/uv/install.sh | sh
+which uv > /dev/null 2>&1 || curl -LsSf https://astral.sh/uv/install.sh | sh
 export PATH="$PATH:${HOME}/.local/bin"
 uv self update
 
@@ -38,8 +38,8 @@ uv pip install pip
 uv pip install pipx
 
 # install ruff, hatch and aider :: https://hatch.pypa.io
-which ruff  > /dev/null || uv tool install -p ${p} --managed-python ruff
-which hatch > /dev/null || uv tool install -p ${p} --managed-python hatch
+which ruff  > /dev/null 2>&1 || uv tool install -p ${p} --managed-python ruff
+which hatch > /dev/null 2>&1 || uv tool install -p ${p} --managed-python hatch
 
 # adjust PATH
 export PATH=${PATH}:${HOME}/.local/bin

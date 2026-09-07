@@ -5,7 +5,7 @@ function __install_rust_build_essential {
 }
 
 function __install_rust_install_dependencies {
-  which pkg-config > /dev/null 2>&1 || apt+ install openssl openssl-devel sqlite3 sqlite3-devel pkg-config
+  command -v pkg-config > /dev/null 2>&1 || apt+ install openssl openssl-devel sqlite3 sqlite3-devel pkg-config
 }
 
 function __install_rust_activator() {
@@ -35,7 +35,7 @@ function install_rust_binaries {
     && source "${HOME}"/.cargo/env && hash -r \
         && rustup component add --toolchain ${toolchain} rust-analyzer clippy rustfmt \
         && rustup component add --toolchain ${toolchain} rust-src \
-        && [[ -e $(which gcc) ]] || __install_rust_build_essential
+        && [[ -e $(command -v gcc > /dev/null 2>&1) ]] || __install_rust_build_essential
 }
 
 function __install_rust_addons {

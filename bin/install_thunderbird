@@ -14,7 +14,7 @@ function install_thunderbird_binaries {
   local version=128.4.0esr
 
   if [ ! -e "${DOWNLOADS:-${HOME}/Downloads}"/${name}-${version}.tar.bz2 ] ;then
-    which curl >/dev/null 2>&1 || apt+ install curl
+    command -v curl >/dev/null 2>&1 || apt+ install curl
     curl https://ftp.mozilla.org/pub/${name}/releases/${version}/${osarch}-${hwarch}/${lang}/${name}-${version}.tar.bz2 -o "${DOWNLOADS:-${HOME}/Downloads}"/${name}-${version}.tar.bz2
   fi
 

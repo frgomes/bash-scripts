@@ -1,9 +1,9 @@
 #!/bin/bash -eu
 
 function backup() {
-  apt+ install fd
-  apt+ install grep
-  apt+ install tar
+  command -v fd-find >/dev/null 2>&1 || which fd >/dev/null 2>&1 || apt+ install fd
+  command -v grep    >/dev/null 2>&1 || apt+ install grep
+  command -v tar     >/dev/null 2>&1 || apt+ install tar
   
   local now=$(date +%Y%m%d_%H%M%S)
   local cwd="${1:-$(pwd)}"

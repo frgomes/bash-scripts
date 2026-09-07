@@ -20,7 +20,7 @@
 #     he.ipv4-prefix=ipv4-
 #     he.ipv6-prefix=
 #
-# which means:
+# meaning:
 #
 # 1. provider "he" means: Hurricane Electric;
 # 2. defines a default password for updating DDNS records;
@@ -36,7 +36,7 @@
 #     cloudflare.password=secred
 #     cloudflare.iface=eth1,inet6,link,workstation.example.com
 #
-# which means:
+# meaning:
 #
 # 1. provider "cloudflare" means: CloudFlare;
 # 2. cloudflare.login represents a zone ID;
@@ -49,7 +49,7 @@
 #
 # What if you do not pass any information at all, except the password (and login, if required)?
 #
-# It will grab the first interface which is UP, if any, assume all protocols, global scope and your FQDN.
+# It will grab the first interface that is UP, if any, assume all protocols, global scope and your FQDN.
 #
 #
 # Installation
