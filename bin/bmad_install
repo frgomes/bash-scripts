@@ -8,12 +8,12 @@ function bmad_install {
     local firstname=$(echo "${fullname}" | cut -d' ' -f1)
   fi
 
-  which npx > /dev/null 2>&1 || ( echo "ERROR: could not find npx" && exit 1 )
+  command -v npx > /dev/null 2>&1 || ( echo "ERROR: could not find npx" && exit 1 )
 
   npx bmad-method install \
     --directory "." \
     --output-folder "./_bmad-output" \
-    --tools claude-code,cursor,codex,github-copilot,gemini,openclaw,opencode \
+    --tools claude-code,cursor,codex,github-copilot,gemini,opencode \
     --user-name "${firstname}" \
     --action update \
     --yes
