@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Filter paths that actually exist and return them as an array (or newline-separated)
+function filter_existing() {
+    local path
+    for path in "$@" ; do
+        [[ -e "${path}" ]] && printf '%s\n' "${path}"
+    done
+}
+
+filter_existing $@

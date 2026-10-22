@@ -1,7 +1,16 @@
 #!/bin/bash
+set -euo pipefail
 
 function bmad_save() {
-  backup -n bmad_save AGENTS.md _bmad-output/ docs/ documentation/
+    # Read existing paths into a bash array using mapfile
+    local list
+    mapfile -t list < <(filter_existing AGENTS.md _bmad-output/ docs/ documentation/ "$@")
+    if (( ${#list[@]} > 0 )); then
+        backup -n bmad_save ${list[*]}
+    else
+        echo "ERROR: could not find any of: AGENTS.md _bmad-output/ docs/ documentation/ "$@"" >&2
+        return 1
+    fi
 }
 
 bmad_save "$@"
