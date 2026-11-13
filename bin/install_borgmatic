@@ -1,0 +1,347 @@
+#!/usr/bin/env bash
+# file: install_borgmatic
+set -euo pipefail
+
+# --- Help Screen Function ---
+usage() {
+    cat << 'EOF'
+Usage: $0 [OPTIONS]
+
+A robust, automated multi-dataset installer and configuration script for borgmatic-powered user backups.
+
+OPTIONS:
+    -h, --help      Display this help screen and exit.
+
+EXPLANATION OF INPUTS & DEFAULTS:
+    - Repository Base Path: During execution, you will be prompted for your target repository base path.
+      * Default assumed: /mnt/backup/users/$(whoami)
+    - Passphrase: You will be prompted securely for an encryption passphrase (with confirmation) applied across all datasets.
+    - Prerequisite Check: Validates that 'borg' (borgbackup) is already installed on the system.
+
+MULTIPLE CONFIGURATIONS & DATASETS (ABSOLUTE PATHS & FLAT SCHEMA):
+    - Defines flat, modern borgmatic configurations in ~/.config/borgmatic.d/ using absolute paths.
+    - Separate isolated datasets are automatically created and scheduled for hourly execution:
+      1. Documents (/home/$(whoami)/Documents)
+      2. Pictures (/home/$(whoami)/Pictures)
+      3. Videos (/home/$(whoami)/Videos)
+      4. Music (/home/$(whoami)/Music)
+      5. Downloads (/home/$(whoami)/Downloads, excluding caches)
+      6. Workspaces (/home/$(whoami)/workspace and /home/$(whoami)/workspace-*, excluding build artifacts/venvs)
+      7. Home (/home/$(whoami), excluding specific datasets, OS trash/caches, and programming language artifacts)
+EOF
+    exit 0
+}
+
+# Parse command line arguments
+for arg in "$@"; do
+    case $arg in
+        -h|--help)
+            usage
+            ;;
+        *)
+            echo "[-] Unknown option: $arg"
+            echo "Run '$0 --help' for usage information."
+            exit 1
+            ;;
+    esac
+done
+
+# Ensure execution as a regular user (not root)
+if [[ $EUID -eq 0 ]]; then
+    echo "[-] Please run this script as your standard user, not with sudo."
+    echo "[-] Borgmatic user units and configs must reside in your home directory."
+    exit 1
+fi
+
+# Pre-requisite validation: Ensure borg is already installed
+echo "[+] Checking if borgbackup is installed..."
+if ! command -v borg &>/dev/null; then
+    echo "[-] Error: 'borg' command not found."
+    echo "[-] Please ensure borgbackup is installed on your system before running this script."
+    exit 1
+fi
+
+# --- Configuration & Defaults ---
+USER_HOME="$HOME"
+CONFIG_DIR="$USER_HOME/.config/borgmatic.d"
+DEFAULT_REPO_BASE="/mnt/backup/users/$(whoami)"
+
+echo "[+] Setting up multi-dataset borgmatic configuration for user: $(whoami)"
+
+# Prompt for repository base path
+read -rp "Enter Borg repository base path [$DEFAULT_REPO_BASE]: " REPO_BASE
+REPO_BASE="${REPO_BASE:-$DEFAULT_REPO_BASE}"
+
+# Ensure repository base parent directories exist before running borgmatic init
+echo "[+] Ensuring repository base path exists: ${REPO_BASE}"
+mkdir -p "${REPO_BASE}"
+
+# Prompt and confirm encryption passphrase
+while true; do
+    read -rsp "Enter encryption passphrase for all repositories: " BORG_PASSPHRASE
+    echo
+    read -rsp "Confirm encryption passphrase: " BORG_PASSPHRASE_CONFIRM
+    echo
+
+    if [[ "$BORG_PASSPHRASE" == "$BORG_PASSPHRASE_CONFIRM" ]]; then
+        if [[ -z "$BORG_PASSPHRASE" ]]; then
+            echo "[-] Passphrase cannot be empty. Please try again."
+            continue
+        fi
+        echo "[+] Passphrase confirmed successfully."
+        break
+    else
+        echo "[-] Passphrases do not match. Please try again."
+    fi
+done
+
+# Create configuration directory
+mkdir -p "$CONFIG_DIR"
+chmod 700 "$CONFIG_DIR"
+
+# Helper function to generate repo path
+get_repo() {
+    echo "${REPO_BASE}/$1-repo"
+}
+
+# --- 1. Documents Dataset ---
+echo "[+] Generating Documents dataset config..."
+cat << EOF > "$CONFIG_DIR/10-documents.yaml"
+source_directories:
+    - ${USER_HOME}/Documents
+repositories:
+    - path: $(get_repo documents)
+
+encryption_passphrase: "${BORG_PASSPHRASE}"
+compression: zstd,3
+
+retention:
+    keep_hourly: 24
+    keep_daily: 7
+    keep_weekly: 4
+    keep_monthly: 6
+
+checks:
+    - name: repository
+    - name: data
+EOF
+
+# --- 2. Pictures Dataset ---
+echo "[+] Generating Pictures dataset config..."
+cat << EOF > "$CONFIG_DIR/20-pictures.yaml"
+source_directories:
+    - ${USER_HOME}/Pictures
+repositories:
+    - path: $(get_repo pictures)
+
+encryption_passphrase: "${BORG_PASSPHRASE}"
+compression: zstd,3
+
+retention:
+    keep_hourly: 24
+    keep_daily: 7
+    keep_weekly: 4
+    keep_monthly: 6
+
+checks:
+    - name: repository
+    - name: data
+EOF
+
+# --- 3. Videos Dataset ---
+echo "[+] Generating Videos dataset config..."
+cat << EOF > "$CONFIG_DIR/30-videos.yaml"
+source_directories:
+    - ${USER_HOME}/Videos
+repositories:
+    - path: $(get_repo videos)
+
+encryption_passphrase: "${BORG_PASSPHRASE}"
+compression: zstd,3
+
+retention:
+    keep_hourly: 24
+    keep_daily: 7
+    keep_weekly: 4
+    keep_monthly: 3
+
+checks:
+    - name: repository
+    - name: data
+EOF
+
+# --- 4. Music Dataset ---
+echo "[+] Generating Music dataset config..."
+cat << EOF > "$CONFIG_DIR/40-music.yaml"
+source_directories:
+    - ${USER_HOME}/Music
+repositories:
+    - path: $(get_repo music)
+
+encryption_passphrase: "${BORG_PASSPHRASE}"
+compression: zstd,3
+
+retention:
+    keep_hourly: 24
+    keep_daily: 7
+    keep_weekly: 4
+    keep_monthly: 6
+
+checks:
+    - name: repository
+    - name: data
+EOF
+
+# --- 5. Downloads Dataset ---
+echo "[+] Generating Downloads dataset config..."
+cat << EOF > "$CONFIG_DIR/50-downloads.yaml"
+source_directories:
+    - ${USER_HOME}/Downloads
+exclude_patterns:
+    - '${USER_HOME}/Downloads/*/.cache'
+repositories:
+    - path: $(get_repo downloads)
+
+encryption_passphrase: "${BORG_PASSPHRASE}"
+compression: zstd,3
+
+retention:
+    keep_hourly: 12
+    keep_daily: 3
+    keep_weekly: 2
+    keep_monthly: 0
+
+checks:
+    - name: repository
+    - name: data
+EOF
+
+# --- 6. Workspaces Dataset (workspace and workspace-*) ---
+echo "[+] Generating Workspaces dataset config..."
+cat << EOF > "$CONFIG_DIR/60-workspace.yaml"
+source_directories:
+    - ${USER_HOME}/workspace
+    - ${USER_HOME}/workspace-*
+exclude_patterns:
+    - '**/node_modules'
+    - '**/.venv'
+    - '**/venv'
+    - '**/__pycache__'
+    - '**/.gradle'
+    - '**/.m2'
+    - '**/target'
+    - '**/.cargo/registry'
+    - '**/.next'
+    - '**/dist'
+    - '**/build'
+repositories:
+    - path: $(get_repo workspaces)
+
+encryption_passphrase: "${BORG_PASSPHRASE}"
+compression: zstd,3
+
+retention:
+    keep_hourly: 24
+    keep_daily: 7
+    keep_weekly: 4
+    keep_monthly: 6
+
+checks:
+    - name: repository
+    - name: data
+EOF
+
+# --- 7. Home Dataset (Excluding all other datasets & caches) ---
+echo "[+] Generating Home dataset config..."
+cat << EOF > "$CONFIG_DIR/70-home.yaml"
+source_directories:
+    - ${USER_HOME}
+exclude_patterns:
+    # Exclude other specialized datasets to avoid duplicate backups
+    - ${USER_HOME}/Documents
+    - ${USER_HOME}/Pictures
+    - ${USER_HOME}/Videos
+    - ${USER_HOME}/Music
+    - ${USER_HOME}/Downloads
+    - ${USER_HOME}/workspace
+    - ${USER_HOME}/workspace-*
+    # Exclude generic OS & desktop cache folders
+    - ${USER_HOME}/.cache
+    - ${USER_HOME}/.local/share/Trash
+    - ${USER_HOME}/.thumbnails
+    # Exclude programming language caches & build artifacts
+    - '**/node_modules'
+    - '**/.venv'
+    - '**/venv'
+    - '**/__pycache__'
+    - '**/.gradle'
+    - '**/.m2'
+    - '**/target'
+    - '**/.cargo/registry'
+    - '**/.npm'
+    - '**/.pnpm-store'
+    - '**/go/pkg/mod'
+repositories:
+    - path: $(get_repo home)
+
+encryption_passphrase: "${BORG_PASSPHRASE}"
+compression: zstd,3
+
+retention:
+    keep_hourly: 24
+    keep_daily: 7
+    keep_weekly: 4
+    keep_monthly: 6
+
+checks:
+    - name: repository
+    - name: data
+EOF
+
+# Secure all generated config files
+chmod 600 "$CONFIG_DIR"/*.yaml
+echo "[+] Configuration files successfully generated and secured in $CONFIG_DIR"
+
+# --- Initialize Repositories ---
+echo "[+] Initializing all Borg repositories..."
+for config in "$CONFIG_DIR"/*.yaml; do
+    echo "[*] Initializing repository for $(basename "$config" .yaml)..."
+    borgmatic -c "$config" init --encryption=repokey-blake2 || true
+done
+
+# --- Enable Systemd User Timer (Hourly) ---
+echo "[+] Configuring hourly systemd user automation..."
+mkdir -p "$USER_HOME/.config/systemd/user"
+
+# Enable lingering so backups run in the background even when logged out
+loginctl enable-linger "$(whoami)" || echo "[!] Warning: Could not enable lingering automatically. Run 'sudo loginctl enable-linger $(whoami)' manually if needed."
+
+if [[ ! -f "$USER_HOME/.config/systemd/user/borgmatic.service" ]]; then
+    cat << 'EOF' > "$USER_HOME/.config/systemd/user/borgmatic.service"
+[Unit]
+Description=borgmatic backup
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/borgmatic --syslog
+EOF
+fi
+
+cat << 'EOF' > "$USER_HOME/.config/systemd/user/borgmatic.timer"
+[Unit]
+Description=Run borgmatic backup hourly
+
+[Timer]
+OnCalendar=hourly
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+EOF
+
+systemctl --user daemon-reload
+systemctl --user enable --now borgmatic.timer
+
+echo "[] Multi-dataset hourly setup complete! All configurations are active and scheduled."

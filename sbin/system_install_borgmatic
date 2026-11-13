@@ -1,0 +1,172 @@
+#!/usr/bin/env bash
+# file: system_install_borgmatic
+set -euo pipefail
+
+# --- Help Screen Function ---
+usage() {
+    cat << 'EOF'
+Usage: sudo $0 [OPTIONS]
+
+A robust, automated installer and configuration script for borgmatic-powered root backups.
+
+OPTIONS:
+    -h, --help      Display this help screen and exit.
+
+EXPLANATION OF INPUTS & DEFAULTS:
+    - Repository Path: During execution, you will be prompted for your target Borg repository path.
+      * Default assumed: /mnt/backup/hosts/$(hostname)/root-repo
+    - Passphrase: You will be prompted securely for an encryption passphrase (with confirmation) to protect your backups.
+    - Mount Validation: The script performs an initial check ensuring /mnt/backup is actively mounted.
+
+DEFAULT BACKUP CONFIGURATION:
+    - Source Directory: Configured to back up the entire root folder ('/').
+    - Exclusions: Automatically excludes pseudo-filesystems, dynamic mounts and home folders:
+      (/home/*, /dev/*, /proc/*, /sys/*, /run/*, /tmp/*, /var/*, /mnt/*, /media/*, /lost+found)
+    - Retention Policy: Retains 24 hourly, 7 daily, 4 weekly, and 6 monthly archives.
+    - Automation: Deploys and enables a custom systemd timer (borgmatic.timer) for hourly execution.
+    - Integrity Checks: Configures automatic repository and data consistency checks.
+EOF
+    exit 0
+}
+
+# Parse command line arguments
+for arg in "$@"; do
+    case $arg in
+        -h|--help)
+            usage
+            ;;
+        *)
+            echo "[-] Unknown option: $arg"
+            echo "Run 'sudo $0 --help' for usage information."
+            exit 1
+            ;;
+    esac
+done
+
+# Ensure execution with root privileges
+if [[ $EUID -ne 0 ]]; then
+    echo "[-] This script must be run with root privileges (sudo)."
+    exit 1
+fi
+
+# Initial validation: ensure /mnt/backup is mounted
+echo "[+] Checking if /mnt/backup is mounted..."
+if ! mountpoint -q /mnt/backup; then
+    echo "[-] Error: /mnt/backup is not mounted. Please mount your backup storage before running this installer."
+    exit 1
+fi
+
+# Install borgmatic only if not already installed
+if ! command -v borgmatic &>/dev/null; then
+    echo "[+] Borgmatic not found. Installing dependency..."
+    if command -v dnf &>/dev/null; then
+        dnf install -y borgmatic
+    elif command -v apt-get &>/dev/null; then
+        apt-get update && apt-get install -y borgmatic
+    elif command -v zypper &>/dev/null; then
+        zypper refresh && zypper install -y borgmatic
+    else
+        echo "[-] Unsupported package manager. Please ensure borgmatic is installed."
+        exit 1
+    fi
+else
+    echo "[+] Borgmatic is already installed. Skipping package installation."
+fi
+
+# Define defaults
+DEFAULT_REPO="/mnt/backup/hosts/$(hostname)/root-repo"
+
+# Prompt for repository path
+read -rp "Enter Borg repository path [$DEFAULT_REPO]: " BORG_REPO
+BORG_REPO="${BORG_REPO:-$DEFAULT_REPO}"
+
+# Ensure parent directory of the repository exists before initialization
+echo "[+] Ensuring repository parent directory exists..."
+mkdir -p "$(dirname "$BORG_REPO")"
+
+# Prompt and confirm encryption passphrase
+while true; do
+    read -rsp "Enter Borg repository passphrase: " BORG_PASSPHRASE
+    echo
+    read -rsp "Confirm Borg repository passphrase: " BORG_PASSPHRASE_CONFIRM
+    echo
+
+    if [[ "$BORG_PASSPHRASE" == "$BORG_PASSPHRASE_CONFIRM" ]]; then
+        if [[ -z "$BORG_PASSPHRASE" ]]; then
+            echo "[-] Passphrase cannot be empty. Please try again."
+            continue
+        fi
+        echo "[+] Passphrase confirmed successfully."
+        break
+    else
+        echo "[-] Passphrases do not match. Please try again."
+    fi
+done
+
+# 1. Create secure configuration directory
+echo "[+] Creating /etc/borgmatic configuration directory..."
+mkdir -p /etc/borgmatic
+chmod 700 /etc/borgmatic
+
+# 2. Write out the declarative YAML configuration for root backup (with hourly retention)
+echo "[+] Generating /etc/borgmatic/config.yaml..."
+cat << EOF > /etc/borgmatic/config.yaml
+location:
+    source_directories:
+        - /
+    exclude_patterns:
+        - /home/*
+        - /dev/*
+        - /proc/*
+        - /sys/*
+        - /run/*
+        - /tmp/*
+        - /var/*
+        - /mnt/*
+        - /media/*
+        - /lost+found
+    repositories:
+        - ${BORG_REPO}
+
+storage:
+    encryption_passphrase: "${BORG_PASSPHRASE}"
+    compression: zstd,3
+
+retention:
+    keep_hourly: 24
+    keep_daily: 7
+    keep_weekly: 4
+    keep_monthly: 6
+
+consistency:
+    checks:
+        - repository
+        - data
+EOF
+
+# Restrict configuration file permissions to root only
+chmod 600 /etc/borgmatic/config.yaml
+
+# 3. Initialize the encrypted repository
+echo "[+] Initializing encrypted Borg repository at ${BORG_REPO}..."
+borgmatic init --encryption=repokey-blake2
+
+# 4. Deploy custom systemd hourly timer unit
+echo "[+] Configuring hourly systemd timer..."
+cat << 'EOF' > /etc/systemd/system/borgmatic.timer
+[Unit]
+Description=Run borgmatic root backup hourly
+
+[Timer]
+OnCalendar=hourly
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+EOF
+
+# Enable and start the systemd timer
+systemctl daemon-reload
+systemctl enable --now borgmatic.timer
+
+echo "[] Installation complete! Borgmatic is configured and hourly systemd timer is active."
