@@ -325,7 +325,7 @@ After=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/borgmatic --syslog
+ExecStart=/usr/bin/borgmatic
 EOF
 fi
 
