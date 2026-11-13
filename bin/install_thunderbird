@@ -11,16 +11,18 @@ function install_thunderbird_binaries {
   local lang=$(echo $LANG | cut -d. -f1 | sed "s/_/-/")
   local hwarch=$(uname -m | tr '[:upper:]' '[:lower:]')
   local osarch=$(uname -s | tr '[:upper:]' '[:lower:]')
-  local version=128.4.0esr
+  local version=159.0
+  local extension=tar.xz
+  local uncompress=J
 
-  if [ ! -e "${DOWNLOADS:-${HOME}/Downloads}"/${name}-${version}.tar.bz2 ] ;then
+  if [ ! -e "${DOWNLOADS:-${HOME}/Downloads}"/${name}-${version}.${extension} ] ;then
     command -v curl >/dev/null 2>&1 || apt+ install curl
-    curl https://ftp.mozilla.org/pub/${name}/releases/${version}/${osarch}-${hwarch}/${lang}/${name}-${version}.tar.bz2 -o "${DOWNLOADS:-${HOME}/Downloads}"/${name}-${version}.tar.bz2
+    curl https://download-installer.cdn.mozilla.net/pub/${name}/releases/${version}/${osarch}-${hwarch}/${lang}/${name}-${version}.${tar.xz} -o "${DOWNLOADS:-${HOME}/Downloads}"/${name}-${version}.${extension}
   fi
 
   local tools="${TOOLS_HOME:=$HOME/tools}"
   [[ ! -d "${tools}" ]] && mkdir -p "${tools}"
-  [[ ! -d "${tools}/${folder}" ]] && tar -C "${tools}" -xpf "${DOWNLOADS:-${HOME}/Downloads}"/${name}-${version}.tar.bz2
+  [[ ! -d "${tools}/${folder}" ]] && tar -C "${tools}" -xp${uncompress}f "${DOWNLOADS:-${HOME}/Downloads}"/${name}-${version}.${extension}
   [[ ! -d ~/bin ]] && mkdir -p ~/bin
   [[ ! -L ~/bin/"${name}" ]] && ln -s "${tools}/${name}/${name}" ~/bin/"${name}"
   echo ~/bin/${name}
