@@ -2,23 +2,29 @@
 # file: tagit
 set -euo pipefail
 
+ABS_PATH=false
+VERBOSE=false
+TARGETS=()
+
 usage() {
-  echo "Labels shell scripts, Python, JS, TS, Rust, YAML, TOML, Markdown, and JSONC files with their own filename."
-  echo "Usage: $0 [-i|--in-place] <file1> [file2 ...]"
+  echo "Labels shell scripts, Python, JS, TS, Rust, YAML, TOML, Markdown, and JSONC files with their path."
+  echo "Usage: $0 [-f] [-v] <file_or_dir> [file_or_dir ...]"
   echo "Options:"
-  echo "  -i, --in-place   Modify target files in-place."
-  echo "  Without -i, the script only inspects and lists resolved targets."
+  echo "  -f          Insert absolute file paths instead of relative file paths (default: relative)."
+  echo "  -v          Print resolved paths to stdout."
+  echo "  -h, --help  Show this help message."
   exit 1
 }
 
-IN_PLACE=false
-FILES=()
-
-# Parse command-line flags
+# Parse command-line flags (no stdin support)
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    -i|--in-place)
-      IN_PLACE=true
+    -f)
+      ABS_PATH=true
+      shift
+      ;;
+    -v)
+      VERBOSE=true
       shift
       ;;
     -h|--help)
@@ -26,39 +32,72 @@ while [[ $# -gt 0 ]]; do
       ;;
     --)
       shift
-      FILES+=("$@")
+      TARGETS+=("$@")
       break
       ;;
     -*)
       usage
       ;;
     *)
-      FILES+=("$1")
+      TARGETS+=("$1")
       shift
       ;;
   esac
 done
 
-if [ "${#FILES[@]}" -eq 0 ]; then
+if [ "${#TARGETS[@]}" -eq 0 ]; then
   usage
 fi
 
-log_msg() {
+log_out() {
   echo "$@"
 }
 
-for file in "${FILES[@]}"; do
-  # Follow symbolic links to get the real file path
-  real_file=$(readlink -f "$file" 2>/dev/null || true)
+log_err() {
+  echo "$@" >&2
+}
 
-  if [ -z "$real_file" ] || [ ! -f "$real_file" ]; then
-    log_msg "${file}:::File does not exist."
+# Collect files (recursively expanding directories)
+FILES=()
+for target in "${TARGETS[@]}"; do
+  if [ ! -e "$target" ] && [ ! -L "$target" ]; then
+    log_err "${target}:::File or directory does not exist."
     continue
   fi
 
-  # Extract the actual resolved file name
-  filename=$(basename "$real_file")
-  first_line=$(head -n 1 "$real_file" 2>/dev/null || true)
+  if [ -d "$target" ]; then
+    while IFS= read -r -d '' found_file; do
+      FILES+=("$found_file")
+    done < <(find -L "$target" -type f -print0 2>/dev/null | sort -z)
+  else
+    FILES+=("$target")
+  fi
+done
+
+for file in "${FILES[@]}"; do
+  abs_target=$(readlink -f "$file" 2>/dev/null || true)
+  if [ -z "$abs_target" ] || [ ! -f "$abs_target" ]; then
+    log_err "${file}:::File does not exist."
+    continue
+  fi
+
+  if [ "$ABS_PATH" = true ]; then
+    resolved_path="$abs_target"
+  else
+    if command -v realpath >/dev/null 2>&1; then
+      resolved_path=$(realpath --relative-to="$PWD" "$abs_target" 2>/dev/null || printf '%s' "$abs_target")
+    else
+      resolved_path=$(python3 -c 'import os, sys; print(os.path.relpath(sys.argv[1], sys.argv[2]))' "$abs_target" "$PWD")
+    fi
+  fi
+
+  if [ "$VERBOSE" = true ]; then
+    log_out "${resolved_path}"
+  fi
+
+  filename=$(basename "$abs_target")
+  filepath="$resolved_path"
+  first_line=$(head -n 1 "$abs_target" 2>/dev/null || true)
 
   # Detect file type
   file_type=""
@@ -74,103 +113,95 @@ for file in "${FILES[@]}"; do
     file_type="rust"
   elif [[ "$filename" =~ \.(yaml|yml)$ ]]; then
     file_type="yaml"
-  elif [[ "$filename" =~ \.toml$ ]]; then
+  elif [[ "$filename" =~ \.(toml|cfg|conf)$ ]]; then
     file_type="toml"
   elif [[ "$filename" =~ \.(md|markdown)$ ]]; then
     file_type="markdown"
   elif [[ "$filename" =~ \.jsonc$ ]]; then
     file_type="jsonc"
   elif [[ "$filename" =~ \.json$ ]]; then
-    log_msg "${file}:::Standard JSON skipped (does not support comments)."
+    log_err "${file}:::Standard JSON skipped (does not support comments)."
     continue
   else
-    log_msg "${file}:::Not recognized as a supported file type."
+    log_err "${file}:::Not recognized as a supported file type."
     continue
   fi
 
   # Skip non-text / binary files
-  if file -b --mime-type "$real_file" 2>/dev/null | grep -qvE 'text/|x-empty|xml|json'; then
-    log_msg "${file}:::Binary file skipped."
+  if file -b --mime-type "$abs_target" 2>/dev/null | grep -qvE 'text/|x-empty|xml|json'; then
+    log_err "${file}:::Binary file skipped."
     continue
   fi
 
-  # Dry-run mode: Just list resolved file information
-  if [ "$IN_PLACE" = false ]; then
-    log_msg "${file}:${filename}:${real_file}:${file_type}"
-    continue
-  fi
-
-  # Escape special replacement characters in filename for sed (\ and &)
-  safe_filename=$(echo "$filename" | sed -e 's/\\/\\\\/g' -e 's/&/\\&/g')
+  # Escape special replacement characters in filepath for sed (\ and &)
+  safe_filepath=$(printf '%s' "$filepath" | sed -e 's/\\/\\\\/g' -e 's/&/\\&/g')
 
   # In-place modification mode per file type (restricted to lines 1-2)
   case "$file_type" in
     shell|python)
-      header_line="# file: ${safe_filename}"
-      if head -n 2 "$real_file" | grep -qE '^# (file|script):'; then
-        sed -i -E "1,2s|^# file:.*|${header_line}|" "$real_file"
-        sed -i -E "1,2s|^# script:.*|${header_line}|" "$real_file"
+      header_line="# file: ${safe_filepath}"
+      if head -n 2 "$abs_target" | grep -qE '^# (file|script):'; then
+        sed -i -E "1,2s|^# file:.*|${header_line}|" "$abs_target"
+        sed -i -E "1,2s|^# script:.*|${header_line}|" "$abs_target"
       elif [[ "$first_line" =~ ^#! ]]; then
         sed -i "1a\\
-${header_line}" "$real_file"
+${header_line}" "$abs_target"
       else
         sed -i "1i\\
-${header_line}" "$real_file"
+${header_line}" "$abs_target"
       fi
       ;;
 
     js|ts|rust)
-      header_line="// file: ${safe_filename}"
-      if head -n 2 "$real_file" | grep -qE '^//!? (file|script):'; then
-        sed -i -E "1,2s|^// file:.*|${header_line}|" "$real_file"
-        sed -i -E "1,2s|^//! file:.*|${header_line}|" "$real_file"
-        sed -i -E "1,2s|^// script:.*|${header_line}|" "$real_file"
-        sed -i -E "1,2s|^//! script:.*|${header_line}|" "$real_file"
+      header_line="// file: ${safe_filepath}"
+      if head -n 2 "$abs_target" | grep -qE '^//!? (file|script):'; then
+        sed -i -E "1,2s|^// file:.*|${header_line}|" "$abs_target"
+        sed -i -E "1,2s|^//! file:.*|${header_line}|" "$abs_target"
+        sed -i -E "1,2s|^// script:.*|${header_line}|" "$abs_target"
+        sed -i -E "1,2s|^//! script:.*|${header_line}|" "$abs_target"
       elif [[ "$first_line" =~ ^#! ]]; then
         sed -i "1a\\
-${header_line}" "$real_file"
+${header_line}" "$abs_target"
       else
         sed -i "1i\\
-${header_line}" "$real_file"
+${header_line}" "$abs_target"
       fi
       ;;
 
     yaml|toml)
-      header_line="# file: ${safe_filename}"
-      if head -n 2 "$real_file" | grep -qE '^# (file|script):'; then
-        sed -i -E "1,2s|^# file:.*|${header_line}|" "$real_file"
-        sed -i -E "1,2s|^# script:.*|${header_line}|" "$real_file"
+      header_line="# file: ${safe_filepath}"
+      if head -n 2 "$abs_target" | grep -qE '^# (file|script):'; then
+        sed -i -E "1,2s|^# file:.*|${header_line}|" "$abs_target"
+        sed -i -E "1,2s|^# script:.*|${header_line}|" "$abs_target"
       elif [[ "$first_line" =~ ^--- ]]; then
         sed -i "1a\\
-${header_line}" "$real_file"
+${header_line}" "$abs_target"
       else
         sed -i "1i\\
-${header_line}" "$real_file"
+${header_line}" "$abs_target"
       fi
       ;;
 
     markdown)
-      header_line="<!-- file: ${safe_filename} -->"
-      if head -n 2 "$real_file" | grep -qE '^<!-- (file|script):.*-->'; then
-        sed -i -E "1,2s|^<!-- file:.*-->|${header_line}|" "$real_file"
-        sed -i -E "1,2s|^<!-- script:.*-->|${header_line}|" "$real_file"
+      header_line="<!-- file: ${safe_filepath} -->"
+      if head -n 2 "$abs_target" | grep -qE '^<!-- (file|script):.*-->'; then
+        sed -i -E "1,2s|^<!-- file:.*-->|${header_line}|" "$abs_target"
+        sed -i -E "1,2s|^<!-- script:.*-->|${header_line}|" "$abs_target"
       else
         sed -i "1i\\
-${header_line}" "$real_file"
+${header_line}" "$abs_target"
       fi
       ;;
 
     jsonc)
-      header_line="/* file: ${safe_filename} */"
-      if head -n 2 "$real_file" | grep -qE '^/\* (file|script):.*\*/'; then
-        sed -i -E "1,2s|^/\* file:.*\*/|${header_line}|" "$real_file"
-        sed -i -E "1,2s|^/\* script:.*\*/|${header_line}|" "$real_file"
+      header_line="/* file: ${safe_filepath} */"
+      if head -n 2 "$abs_target" | grep -qE '^/\* (file|script):.*\*/'; then
+        sed -i -E "1,2s|^/\* file:.*\*/|${header_line}|" "$abs_target"
+        sed -i -E "1,2s|^/\* script:.*\*/|${header_line}|" "$abs_target"
       else
         sed -i "1i\\
-${header_line}" "$real_file"
+${header_line}" "$abs_target"
       fi
       ;;
   esac
-
-  log_msg "${file}:${filename}:${real_file}"
 done
